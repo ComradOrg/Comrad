@@ -6,4 +6,58 @@
 
 
 MyLayout:
-    MyToolbar
+    scr_mngr: scr_mngr
+    orientation: 'vertical'
+    height: self.minimum_height
+
+    canvas:
+        Color:
+            rgba: 0,0,0,0.85 #get_color_from_hex(colors['Gray']['900'])
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    
+    MDToolbar:
+        id: toolbar
+        title: app.title
+        pos_hint: {'center_x': .5, 'center_y': 0.95}
+        md_bg_color: 0,0,0,1
+        background_palette: 'Red'
+        background_hue: '500'
+        specific_text_color: 1,0,0,1
+        right_action_items: [['radio-tower', partial(root.change_screen, 'feed')], ['account-group', partial(root.change_screen, 'people')], ['calendar', partial(root.change_screen, 'events')], ['message-processing-outline', partial(root.change_screen, 'messages')], ['bell-outline', partial(root.change_screen, 'notifications')]]
+        left_action_items: [[f"spiral3.png", partial(root.change_screen, 'welcome')]]
+    
+    ScreenManager:
+        id: scr_mngr
+        transition: NoTransition()
+    
+
+        WelcomeScreen:
+            name: 'welcome'
+            
+            MyLabel:
+                text: "Turning and turning in the widening gyre   \nThe falcon cannot hear the falconer;\nThings fall apart; the centre cannot hold;\nMere anarchy is loosed upon the world,\nThe blood-dimmed tide is loosed, and everywhere   \nThe ceremony of innocence is drowned;\nThe best lack all conviction, while the worst   \nAre full of passionate intensity.\n\nSurely some revelation is at hand;\nSurely the Second Coming is at hand.   \nThe Second Coming! Hardly are those words out   \nWhen a vast image out of Spiritus Mundi\nTroubles my sight: somewhere in sands of the desert   \nA shape with lion body and the head of a man,   \nA gaze blank and pitiless as the sun,   \nIs moving its slow thighs, while all about it   \nReel shadows of the indignant desert birds.   \nThe darkness drops again; but now I know   \nThat twenty centuries of stony sleep\nWere vexed to nightmare by a rocking cradle,   \nAnd what rough beast, its hour come round at last,   \nSlouches towards Bethlehem to be born?"
+                
+
+        FeedScreen:
+            name: 'feed'
+            ScrollView:
+                MDList:
+                    id: container
+                    halign: 'center'
+                    
+        
+        PeopleScreen:
+            name: 'people'
+            MyLabel:
+                text: "The falcon cannot hear the falconer..."
+
+        EventsScreen:
+            name: 'events'
+
+        MessagesScreen:
+            name: 'messages'
+
+        NotificationsScreen:
+            name: 'notifications'
