@@ -1,40 +1,9 @@
 #:import get_color_from_hex kivy.utils.get_color_from_hex
 #:import images_path kivymd.images_path
 #:import colors kivymd.color_definitions.colors
-
-ScreenManager:
-    BaseScreen:
-    FeedScreen:
+#:import partial functools.partial
+#:import NoTransition kivy.uix.screenmanager.NoTransition
 
 
-<BaseScreen>:
-    name: 'base'
-    MDToolbar:
-        title: "Gyre"
-        pos_hint: {'center_x': .5, 'center_y': 0.95}
-        md_bg_color: get_color_from_hex(colors['Red']['500'])
-        background_palette: 'Red'
-        background_hue: '500'
-        right_action_items: [['radio-tower', lambda x: x], ['camera', lambda x: x], ['play', lambda x: x]]
-        left_action_items: [[f"{images_path}kivymd_alpha.png", lambda x: x]]
-
-
-    MDFillRoundFlatButton:
-        text: "Gyre"
-        halign: "center"
-        pos_hint: {"center_x": 0.5, "center_y": 0.5}
-        md_bg_color: get_color_from_hex(colors['Red']['500'])
-
-
-    MDLabel:
-        text: "Turning and turning in the widening gyre..."
-        pos_hint: {"center_x": 0.5, "center_y": 0.435}
-        halign:"center"
-
-
-<FeedScreen>
-    name: 'feed'
-    MDLabel:
-        text: "The falcon cannot hear the falconer..."
-        pos_hint: {"center_x": 0.5, "center_y": 0.3}
-        halign:"center"
+MyLayout:
+    MyToolbar

@@ -1,1 +1,40 @@
-<kivymd.uix.button.MDIconButton object at 0x7f58c1d9f798><kivymd.uix.button.MDIconButton object at 0x7fa7a11b0660>
+testing
+<class '__main__.MyLayout'>
+<class '__main__.MainApp'>
+testing2
+<class '__main__.MainApp'>
+testing2
+<class '__main__.MainApp'>
+<class '__main__.MainApp'>
+<class '__main__.MainApp'>
+<__main__.MyIconButton object at 0x7f7d4ea78c78>
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+{}
+{}
+{}
+{}
+{}
+{}
+{}
+{}
+{}
+{}
