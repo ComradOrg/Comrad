@@ -18,7 +18,7 @@ from kivymd.uix.card import MDCard, MDSeparator
 from kivy.uix.gridlayout import GridLayout
 from kivy.metrics import dp
 from kivy.properties import NumericProperty
-from kivymd.uix.list import MDList, ThreeLineAvatarListItem
+from kivymd.uix.list import MDList, TwoLineAvatarListItem, ImageLeftWidget
 
 
 root = None
@@ -45,73 +45,46 @@ class MyLabel(MDLabel):
         for k,v in kwargs.items(): setattr(self,k,v)
 
 
-class ScrollCenterLayout(GridLayout):
-    rel_max = NumericProperty(dp(800))
-    rel_min = NumericProperty(dp(400))
-
-    def __init__(self, **kwargs):
-        super(ScrollCenterLayout, self).__init__(**kwargs)
-
-        self.rel_max = kwargs.get('rel_max', dp(800))
-        self.rel_min = kwargs.get('rel_min', dp(400))
-
-    def on_width(self, instance, value):
-        if self.rel_max < value:
-            padding = max(value * .125, (value - self.rel_max) / 2)
-        elif self.rel_min < value:
-            padding = min(value * .125, (value - self.rel_min) / 2)
-        elif self.rel_min < value:
-            padding = (value - self.rel_min) / 2
-        else:
-            padding = 0
-
-        self.padding[0] = self.padding[2] = padding
-
-
-class Post(MDCard):
-    """MDCard:
-        orientation: "vertical"
-        padding: "8dp"
-        size_hint: None, None
-        size: "280dp", "180dp"
-        pos_hint: {"center_x": .5, "center_y": .5}
-
-        MDLabel:
-            text: "Title"
-            theme_text_color: "Secondary"
-            size_hint_y: None
-            height: self.texture_size[1]
-
-        MDSeparator:
-            height: "1dp"
-
-        MDLabel:
-            text: "Body"
+class Post(TwoLineAvatarListItem):
     """
-
-    def __init__(self, title, author, content):
-        super().__init__()
-        self.orientation='vertical'
-        self.padding=dp(15)
-        self.size_hint = (1, None)
-        self.pos_hint = {"center_x": .5, "center_y": .5}
-        self.md_bg_color = (0.1,0.1,0.1,1)
-        self.halign = 'center'
-        self.add_widget(MyLabel(text=title, halign='left', size_hint_y=None)) #, size_hint_y=None, height='10dp'))
-        # self.add_widget(MyLabel(text=author, halign='left')) #, size_hint_y=None, height='10dp'))
-        self.add_widget(MyLabel(text=content, halign='left')) #, size_hint_y=None, height='50dp'))
+    text: "Three-line item with avatar"
+                        secondary_text: "Secondary text here"
+                        tertiary_text: "fit more text than usual"
+                        text_color: 1,0,0,1
+                        theme_text_color: 'Custom'
+    """
+    def __init__(self, title, content, *args, **kwargs):
+        super().__init__() #*args, **kwargs)
+        self.text = title
+        self.secondary_text = content
         
+        # self.theme_text_color='Custom'
+        # self.secondary_theme_text_color = 'Custom'
+        
+        # self.text_color=(1,0,0,1)
+        # self.secondary_text_color = (1,0,0,1)
+
+        avatar = ImageLeftWidget()
+        avatar.source = 'avatar.jpg'
+        self.add_widget(avatar)
+
+
+
 
 class FeedScreen(MDScreen):
     def on_enter(self):
-        for i in range(25):
-            post = Post(title=f'Title {i}', author=f'Author {i}', content='This is the content')
-            
-            sep = MDSeparator()
-            sep.height='1dp'
+        lim=25
+        with open('tweets.txt') as f:
+            for i,ln in enumerate(f):
+                if i>lim: break
+                    
+                post = Post(title=f'Marx Zuckerberg', content=ln.strip())
+                
+                sep = MDSeparator()
+                sep.height='1dp'
 
-            root.ids.container.add_widget(post)
-            root.ids.container.add_widget(sep)
+                root.ids.container.add_widget(post)
+                root.ids.container.add_widget(sep)
 
 class WelcomeScreen(MDScreen): pass
 class PeopleScreen(MDScreen): pass
