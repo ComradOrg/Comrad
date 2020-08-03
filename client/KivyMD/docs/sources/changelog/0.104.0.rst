@@ -1,0 +1,26 @@
+v0.104.0
+--------
+
+    See on GitHub: `tag 0.104.0 <https://github.com/kivymd/KivyMD/tree/0.104.0>`_ | `compare 0.103.0/0.104.0 <https://github.com/kivymd/KivyMD/compare/0.103.0...0.104.0>`_
+
+    .. code-block:: bash
+
+       pip install kivymd==0.104.0
+
+* Fixed bug in :class:`kivymd.uix.expansionpanel.MDExpansionPanel` if, with the panel open, without closing it, try to open another panel, then the chevron of the first panel remained open.
+* The :class:`kivymd.uix.textfield.MDTextFieldRound` class is now directly inherited from the :class:`kivy.uix.textinput.TextInput` class.
+* Removed :class:`kivymd.uix.textfield.MDTextFieldClear` class.
+* :class:`kivymd.uix.navigationdrawer.NavigationLayout` allowed to add :class:`kivymd.uix.toolbar.MDToolbar` class.
+* Added feature to control range of dates to be active in :class:`kivymd.uix.picker.MDDatePicker` class.
+* Updated :class:`kivymd.uix.navigationdrawer.MDNavigationDrawer` realization.
+* Removed :class:`kivymd.uix.card.MDCardPost` class.
+* Added :class:`kivymd.uix.card.MDCardSwipe` class.
+* Added `switch_tab` method for switching tabs to :class:`kivymd.uix.bottomnavigation.MDBottomNavigation` class.
+* Added feature to use panel type in the :class:`kivymd.uix.expansionpanel.MDExpansionPanel` class: :class:`kivymd.uix.expansionpanel.MDExpansionPanelOneLine`, :class:`kivymd.uix.expansionpanel.MDExpansionPanelTwoLine` or :class:`kivymd.uix.expansionpanel.MDExpansionPanelThreeLine`.
+* Fixed panel opening animation in the :class:`kivymd.uix.expansionpanel.MDExpansionPanel` class.
+* Delete `kivymd.uix.managerswiper.py`
+* Add `MDFloatingActionButtonSpeedDial` class
+* Added the feature to create text on tabs using markup, thereby triggering the `on_ref_press` event in the `MDTabsLabel` class
+* Added `color_indicator` attribute to set custom indicator color in the `MDTabs` class
+* Added the feature to change the background color of menu items in the `BaseListItem` class
+* Add `MDTapTargetView` class

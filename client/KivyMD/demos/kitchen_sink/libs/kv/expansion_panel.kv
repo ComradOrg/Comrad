@@ -1,0 +1,47 @@
+#:import os os
+#:import get_hex_from_color kivy.utils.get_hex_from_color
+
+
+<KitchenSinkExpansionPanelContent>:
+    orientation: 'vertical'
+    padding: dp(10)
+    spacing: dp(10)
+    adaptive_height: True
+
+    KitchenSinkTwoLineLeftIconItem:
+        text: "(050)-123-45-67"
+        secondary_text:
+            "[color=%s]Mobile[/color]" \
+            % get_hex_from_color(app.theme_cls.primary_color)
+        icon: 'phone'
+
+    KitchenSinkTwoLineLeftIconItem:
+        text: "kivydevelopment@gmail.com"
+        secondary_text:
+            "[color=%s]Work[/color]" \
+            % get_hex_from_color(app.theme_cls.primary_color)
+        icon: 'email'
+
+
+<KitchenSinkExpansionPanel@Screen>:
+    name: 'expansion panel'
+    on_enter: if len(card.children) <= 1: app.add_expansion_panel(card)
+
+    Toolbar:
+        id: toolbar
+        pos_hint: {"top": 1}
+
+    MDCard:
+        id: card
+        orientation: "vertical"
+        size_hint: .9, None
+        height: self.minimum_height
+        pos_hint: {"center_x": .5, "center_y": .5}
+
+        BoxLayout:
+            id: box
+            size_hint_y: None
+            height: dp(150)
+
+            FitImage:
+                source: f"{os.environ['KITCHEN_SINK_ASSETS']}guitar-1139397_1280.png"

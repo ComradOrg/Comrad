@@ -1,0 +1,60 @@
+name: Build demos
+on:
+  push:
+    branches-ignore:
+      - data
+      - gh-pages
+    tags:
+      - '**'
+  pull_request:
+    branches-ignore:
+      - data
+      - gh-pages
+
+jobs:
+  # Build job. Builds every demo app for Android with Buildozer
+  build-android:
+    name: Build Android [${{ matrix.demo-name }}]
+    strategy:
+      fail-fast: false
+      matrix:
+        demo-name: [kitchen_sink]
+    runs-on: ubuntu-latest
+    env:
+      PYTHONUNBUFFERED: 1
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        path: master
+
+    - name: Build with Buildozer
+      uses: ArtemSBulgakov/buildozer-action@v1
+      id: buildozer
+      with:
+        repository_root: master
+        workdir: demos/${{ matrix.demo-name }}
+
+    - name: Checkout data branch
+      uses: actions/checkout@v2
+      with:
+        path: data
+        ref: data # Branch name
+        persist-credentials: false
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.7
+        architecture: x64
+
+    - name: Push binary to data branch
+      run: |
+        # Use personal token to push (when using GITHUB_TOKEN, it will not allow pushes from PR)
+        cd data && \
+          git config user.name "KivyMD Bot" && \
+          git config user.email 69076719+KivyMD-Bot@users.noreply.github.com && \
+          git remote set-url origin https://KivyMD-Bot:${{ secrets.GH_PAT }}@github.com/${{ github.repository }} && \
+          cd ..
+        python master/.ci/move_binary.py "${{ steps.buildozer.outputs.filename }}" master data ${{ matrix.demo-name }}
