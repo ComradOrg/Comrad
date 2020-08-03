@@ -12,7 +12,7 @@ MyLayout:
 
     canvas:
         Color:
-            rgba: 0,0,0,0.85 #get_color_from_hex(colors['Gray']['900'])
+            rgba: 1,1,1,1 #get_color_from_hex(colors['Gray']['900'])
         Rectangle:
             pos: self.pos
             size: self.size
@@ -42,11 +42,44 @@ MyLayout:
 
         FeedScreen:
             name: 'feed'
+            # md_bg_color: 1,0,0,1
+            
+            # ScrollView:
+            #     pos_hint: {'center_x': .5}
+            #     size_hint_x: None
+            #     width: container.width
+            #     # size_hint_y: None
+            #     # 
+            #     # do_scroll_x: False
+            #     # bar_width: 10
+            #     # bar_color: app.theme_cls.primary_color
+            #     # bar_color_acrive: app.theme_cls.accent_color
+            #     # effect_cls: "DampedScrollEffect"
+            #     # scroll_type: ['bars']
+
             ScrollView:
+                id: scroll
+                size_hint: (1, 1)
+                pos_hint: {'center_x': .5, 'y': 0}
+                do_scroll_x: False
+                bar_width: 0
+                scroll_type: ['content']
+
                 MDList:
                     id: container
-                    halign: 'center'
-                    
+                    #cols: 1
+
+                    ThreeLineAvatarListItem:
+                        text: "Three-line item with avatar"
+                        secondary_text: "Secondary text here"
+                        tertiary_text: "fit more text than usual"
+                        text_color: 1,0,0,1
+                        theme_text_color: 'Custom'
+
+                        ImageLeftWidget:
+                            source: "spiral2.png"
+
+                
         
         PeopleScreen:
             name: 'people'

@@ -15,6 +15,10 @@ from kivymd.uix.label import MDLabel
 from kivy.uix.widget import Widget
 from kivymd.uix.list import OneLineListItem
 from kivymd.uix.card import MDCard, MDSeparator
+from kivy.uix.gridlayout import GridLayout
+from kivy.metrics import dp
+from kivy.properties import NumericProperty
+from kivymd.uix.list import MDList, ThreeLineAvatarListItem
 
 
 root = None
@@ -29,15 +33,40 @@ class MyLayout(BoxLayout):
     def change_screen(self, screen, *args):
         self.scr_mngr.current = screen
 
+
 class MyLabel(MDLabel):
-    kwargs = dict(
-                    theme_text_color='Custom',
-                    text_color=(1,0,0,1), 
-                    pos_hint = {'center_y': 0.5},
-                    halign='center')
     def __init__(self, *args, **kwargs):
-        kwargs = dict(list(self.kwargs.items()) + list(kwargs.items()))
-        super().__init__(*args, **kwargs) 
+        super().__init__(*args, **kwargs)
+        self.theme_text_color='Custom'
+        self.text_color=(1,0,0,1)
+        self.pos_hint = {'center_y': 0.5}
+        self.halign='center'
+        self.height=self.texture_size[1]
+        for k,v in kwargs.items(): setattr(self,k,v)
+
+
+class ScrollCenterLayout(GridLayout):
+    rel_max = NumericProperty(dp(800))
+    rel_min = NumericProperty(dp(400))
+
+    def __init__(self, **kwargs):
+        super(ScrollCenterLayout, self).__init__(**kwargs)
+
+        self.rel_max = kwargs.get('rel_max', dp(800))
+        self.rel_min = kwargs.get('rel_min', dp(400))
+
+    def on_width(self, instance, value):
+        if self.rel_max < value:
+            padding = max(value * .125, (value - self.rel_max) / 2)
+        elif self.rel_min < value:
+            padding = min(value * .125, (value - self.rel_min) / 2)
+        elif self.rel_min < value:
+            padding = (value - self.rel_min) / 2
+        else:
+            padding = 0
+
+        self.padding[0] = self.padding[2] = padding
+
 
 class Post(MDCard):
     """MDCard:
@@ -60,27 +89,29 @@ class Post(MDCard):
             text: "Body"
     """
 
-    def __init__(self, title, content):
+    def __init__(self, title, author, content):
         super().__init__()
         self.orientation='vertical'
-        # self.padding='8dp'
-        # self.size_hint = (None, None)
-        # self.size = ("280dp", "50dp")
+        self.padding=dp(15)
+        self.size_hint = (1, None)
         self.pos_hint = {"center_x": .5, "center_y": .5}
-        self.md_bg_color = (0,0,0,1)
+        self.md_bg_color = (0.1,0.1,0.1,1)
         self.halign = 'center'
-
-        self.add_widget(MyLabel(text=title))
-        # self.add_widget(MDSeparator(height='1dp'))
-        self.add_widget(MyLabel(text=content))
-
+        self.add_widget(MyLabel(text=title, halign='left', size_hint_y=None)) #, size_hint_y=None, height='10dp'))
+        # self.add_widget(MyLabel(text=author, halign='left')) #, size_hint_y=None, height='10dp'))
+        self.add_widget(MyLabel(text=content, halign='left')) #, size_hint_y=None, height='50dp'))
+        
 
 class FeedScreen(MDScreen):
     def on_enter(self):
-        for i in range(20):
-            root.ids.container.add_widget(
-                Post(title=f'Post {i}', content='This is the content This is the content This is the content This is the content This is the content This is the content This is the content This is the content This is the content This is the content This is the content This is the content This is the content This is the content This is the content This is the content This is the content This is the content This is the content This is the content This is the content This is the content This is the content This is the content This is the content This is the content This is the content This is the content This is the content This is the content This is the content This is the content This is the content This is the content This is the content This is the content This is the content This is the content This is the content This is the content This is the content This is the content This is the content This is the content This is the content This is the content ')
-            )
+        for i in range(25):
+            post = Post(title=f'Title {i}', author=f'Author {i}', content='This is the content')
+            
+            sep = MDSeparator()
+            sep.height='1dp'
+
+            root.ids.container.add_widget(post)
+            root.ids.container.add_widget(sep)
 
 class WelcomeScreen(MDScreen): pass
 class PeopleScreen(MDScreen): pass
@@ -97,6 +128,7 @@ class MainApp(MDApp):
         global app,root
         app = self
         self.root = root = Builder.load_file('main.kv')
+        self.root.change_screen('feed')
         return self.root
 
 
