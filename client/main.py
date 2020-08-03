@@ -18,8 +18,8 @@ from kivymd.uix.card import MDCard, MDSeparator
 from kivy.uix.gridlayout import GridLayout
 from kivy.metrics import dp
 from kivy.properties import NumericProperty
-from kivymd.uix.list import MDList, TwoLineAvatarListItem, ImageLeftWidget
-
+from kivymd.uix.list import * #MDList, ILeftBody, IRightBody, ThreeLineAvatarListItem, TwoLineAvatarListItem, BaseListItem, ImageLeftWidget
+from kivy.uix.image import Image, AsyncImage
 
 root = None
 app = None
@@ -44,6 +44,8 @@ class MyLabel(MDLabel):
         self.height=self.texture_size[1]
         for k,v in kwargs.items(): setattr(self,k,v)
 
+class ContactPhoto(ILeftBody, AsyncImage):
+    pass
 
 class Post(TwoLineAvatarListItem):
     """
@@ -68,7 +70,41 @@ class Post(TwoLineAvatarListItem):
         avatar.source = 'avatar.jpg'
         self.add_widget(avatar)
 
+        #icon = ImageRightWidget()
+        # icon.icon = 'messages'
 
+        #self.add_widget(icon)
+
+class PostWrapped(BaseListItem):
+    """
+    text: "Three-line item with avatar"
+                        secondary_text: "Secondary text here"
+                        tertiary_text: "fit more text than usual"
+                        text_color: 1,0,0,1
+                        theme_text_color: 'Custom'
+    """
+    def __init__(self, title, content, *args, **kwargs):
+        super().__init__() #*args, **kwargs)
+        # self.text = title
+        # self.secondary_text = content
+        
+        # # self.theme_text_color='Custom'
+        # # self.secondary_theme_text_color = 'Custom'
+        
+        # # self.text_color=(1,0,0,1)
+        # # self.secondary_text_color = (1,0,0,1)
+
+        # avatar = ImageLeftWidget()
+        # avatar.source = 'avatar.jpg'
+        # self.add_widget(avatar)
+        self.size_hint_y=None
+        self.height='100dp'
+        avatar = ImageLeftWidget()
+        avatar.source = 'avatar.jpg'
+        self.add_widget(avatar)
+        # self.add_widget(MyLabel(text=title,pos_hint={'center_y': 0.85},halign='left'))
+        # self.add_widget(MyLabel(text=content,pos_hint={'center_y': 0.45},halign='left'))
+        
 
 
 class FeedScreen(MDScreen):
