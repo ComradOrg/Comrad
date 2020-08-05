@@ -47,80 +47,61 @@ class MyLabel(MDLabel):
 class ContactPhoto(ILeftBody, AsyncImage):
     pass
 
-class Post(TwoLineAvatarListItem):
-    """
-    text: "Three-line item with avatar"
-                        secondary_text: "Secondary text here"
-                        tertiary_text: "fit more text than usual"
-                        text_color: 1,0,0,1
-                        theme_text_color: 'Custom'
-    """
-    def __init__(self, title, content, *args, **kwargs):
-        super().__init__() #*args, **kwargs)
-        self.text = title
-        self.secondary_text = content
-        
-        # self.theme_text_color='Custom'
-        # self.secondary_theme_text_color = 'Custom'
-        
-        # self.text_color=(1,0,0,1)
-        # self.secondary_text_color = (1,0,0,1)
 
-        avatar = ImageLeftWidget()
-        avatar.source = 'avatar.jpg'
-        self.add_widget(avatar)
-
-        #icon = ImageRightWidget()
-        # icon.icon = 'messages'
-
-        #self.add_widget(icon)
-
-class PostWrapped(BaseListItem):
-    """
-    text: "Three-line item with avatar"
-                        secondary_text: "Secondary text here"
-                        tertiary_text: "fit more text than usual"
-                        text_color: 1,0,0,1
-                        theme_text_color: 'Custom'
-    """
-    def __init__(self, title, content, *args, **kwargs):
-        super().__init__() #*args, **kwargs)
-        # self.text = title
-        # self.secondary_text = content
+class PostCard(MDCard):
+    def __init__(self, title = None, img_src = None, content = None):
+        super().__init__()
+        self.orientation="vertical"
+        self.padding="8dp"
+        self.size_hint=(0.9, 0.9)
+        # self.md_bg_color=(1,0,0,1)
+        self.pos_hint = {"center_x": .5, "center_y": .5}
         
-        # # self.theme_text_color='Custom'
-        # # self.secondary_theme_text_color = 'Custom'
-        
-        # # self.text_color=(1,0,0,1)
-        # # self.secondary_text_color = (1,0,0,1)
+        if title:
+            sep = MDSeparator()
+            sep.height='25dp'
+            self.add_widget(sep)
 
-        # avatar = ImageLeftWidget()
-        # avatar.source = 'avatar.jpg'
-        # self.add_widget(avatar)
-        self.size_hint_y=None
-        self.height='100dp'
-        avatar = ImageLeftWidget()
-        avatar.source = 'avatar.jpg'
-        self.add_widget(avatar)
-        # self.add_widget(MyLabel(text=title,pos_hint={'center_y': 0.85},halign='left'))
-        # self.add_widget(MyLabel(text=content,pos_hint={'center_y': 0.45},halign='left'))
-        
+            title = MDLabel(text=title)
+            # title.theme_text_color="Secondary"
+            title.size_hint_y=None
+            title.height=title.texture_size[1]
+            title.font_style='H5'
+            title.halign='center'
+            self.add_widget(title)
+
+            # spacing?
+            sep = MDSeparator()
+            sep.height='25dp'
+            self.add_widget(sep)
+
+
+        if img_src:
+            image = AsyncImage(source=img_src)
+            self.add_widget(image)
+
+        if content:
+            content=MDLabel(text=content)
+            content.pos_hint={'center_y':1}
+            content.font_style='Body1'
+            self.add_widget(content)
 
 
 class FeedScreen(MDScreen):
     def on_enter(self):
-        lim=25
+        i=0
+        lim=5
         with open('tweets.txt') as f:
-            for i,ln in enumerate(f):
+            for ln in f:
+                if ln.startswith('@') or ln.startswith('RT '): continue
+                i+=1
                 if i>lim: break
-                    
-                post = Post(title=f'Marx Zuckerberg', content=ln.strip())
                 
-                sep = MDSeparator()
-                sep.height='1dp'
-
-                root.ids.container.add_widget(post)
-                root.ids.container.add_widget(sep)
+                #post = Post(title=f'Marx Zuckerberg', content=ln.strip())
+                post = PostCard(title='Marx Zuckerberg',img_src='avatar.jpg',content=ln.strip())
+                print(post)
+                root.ids.post_carousel.add_widget(post)
+                
 
 class WelcomeScreen(MDScreen): pass
 class PeopleScreen(MDScreen): pass

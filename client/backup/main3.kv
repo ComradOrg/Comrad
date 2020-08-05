@@ -66,10 +66,66 @@ MyLayout:
             #MyLabel:
             #    text: "The falcon cannot hear the falconer..."
             Carousel:
-                id: post_carousel
                 direction: 'right'
-                
 
+                #AsyncImage:
+                #    source:'avatar.jpg'
+                MDCard:
+                    orientation: "vertical"
+                    padding: "8dp"
+                    size_hint: 0.9, 0.9
+                    # md_bg_color: 1,0,0,1
+                    pos_hint: {"center_x": .5, "center_y": .5}
+                    
+                    MDLabel:
+                        text: "Counter culture is dead"
+                        theme_text_color: "Secondary"
+                        size_hint_y: None
+                        height: self.texture_size[1]
+                        font_style: 'H5'
+                        halign: 'center'
+                    AsyncImage:
+                        source: 'avatar.jpg'
+                    MDLabel:
+                        text: "Resistance to popular music (Taylor Swift, etc) is culturally obsolete. It's no longer possible to 'counter' culture as 'bad' or aesthetically impoverished: music is good, TV is good, the internet is funny, and we're all just hooked up to the same cultural 'streams' and 'feeds'."
+                        pos_hint: {'center_y':1}
+                        font_style: 'Body1'
+                MDCard:
+                    orientation: "vertical"
+                    padding: "8dp"
+                    size_hint: 0.9, 0.9
+                    # md_bg_color: 1,0,0,1
+                    pos_hint: {"center_x": .5, "center_y": .5}
+                    
+                    MDLabel:
+                        text: "Can God compete with Adam?"
+                        theme_text_color: "Secondary"
+                        size_hint_y: None
+                        height: self.texture_size[1]
+                        font_style: 'H5'
+                        halign: 'center'
+                    AsyncImage:
+                        source: 'spiral4.png'
+                    MDLabel:
+                        text: "The lines to break Tech up on are already there, just covered up: Amazon is both the infrastructure connecting all businesses & consumers, while at the same time competing with those businesses—using its omnipotent money and omniscient data like God 'competing' with Adam & Eve."
+
+
+                MDCard:
+                    orientation: "vertical"
+                    padding: "8dp"
+                    size_hint: 0.9, 0.9
+                    pos_hint: {"center_x": .5, "center_y": .5}
+
+                    AsyncImage:
+                        source: 'spiral4.png'
+
+                    MDLabel:
+                        text: "The lines to break Tech up on are already there, just covered up: Amazon is both the infrastructure connecting all businesses & consumers, while at the same time competing with those businesses—using its omnipotent money and omniscient data like God 'competing' with Adam & Eve."
+
+                AsyncImage:
+                    source:'spiral2.png'
+                AsyncImage:
+                    source: 'spiral4.png'
 
 
         EventsScreen:
