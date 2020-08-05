@@ -48,3 +48,15 @@ We present a simplified set of social media features drawn from everything that'
 ### Open-source and community run
 
 Not just non-profit, we're anti-profit.
+
+## Design
+
+Design details are changing rapidly, but these are what we have so far.
+
+### App
+
+The 'client' or app is made with [KivyMD](https://github.com/kivymd/KivyMD), a variant of [Kivy](https://kivy.org/), a cross-platform mobile development framework in Python. Python is an easy and versatile progamming language to learn, which keeps the code accessible to as many people as possible.
+
+### Server
+
+The server also runs on Python, serving a graph database powered by [Neo4j](https://neo4j.com/).
