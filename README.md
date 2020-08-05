@@ -1,2 +1,50 @@
 # Gyre
-Mere anarchy is loosed upon the world
+
+
+<blockquote><i>
+Turning and turning in the widening gyre   
+<br/>The falcon cannot hear the falconer;
+</i></blockquote>
+
+Gyre is a free social network. Not 'free as in beer', like every other social network, but 'free as in freedom': it is predicated on anti-capitalist and anti-racist principles of social and spiritual freedom.
+
+
+## Features
+
+### Your traffic is untraceable
+
+All traffic is routed via Tor. You can't be surveilled by cops or monetized by capital. 
+
+### Be as anonymous as you wish
+
+Design a profile and account which is as anonymous as you want to make it. If you don't reveal yourself, your traffic or behavior elsewhere on the internet won't either.
+
+### Best of what's out there
+
+We present a simplified set of social media features drawn from everything that's out there and then some:
+
+* Profile
+  * Curate a profile with photo and posts (e.g. Twitter)
+  * Show profile to world (e.g. Twitter)
+  * Show profile only to friends (e.g. Facebook)
+  * Show profile only to your local area (e.g. Nextdoor)
+
+* Posting 
+  * Post to the entire world (e.g. Twitter)
+  * Post to your friends (e.g. Facebook)
+  * Post to your surrounding area by a distance radius (e.g. Nextdoor)
+  * Anonymously up-vote or down-vote posts (e.g. Reddit)
+  * Post anonymously or from your account (new from Gyre)
+
+* Organizing
+  * Host events and invite others (e.g. Facebook)
+  * Host events like protests anonymously (new from Gyre)
+
+* Messaging
+  * Message securely with encrypted contents (e.g. Signal)
+  * Message securely with untraceable metadata (new from Gyre)
+
+
+### Open-source and community run
+
+Not just non-profit, we're anti-profit.
