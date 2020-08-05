@@ -6,8 +6,6 @@ Turning and turning in the widening gyre
 <br/>The falcon cannot hear the falconer;
 <br/>Things fall apart; the centre cannot hold;
 <br/>Mere anarchy is loosed upon the world,
-<br/>The blood-dimmed tide is loosed, and everywhere   
-<br/>The ceremony of innocence is drowned
 </i></blockquote>
 
 Gyre is a free social network. Not 'free as in beer', like every other social network, but 'free as in freedom': it is predicated on anti-capitalist and anti-racist principles of social and spiritual freedom.
