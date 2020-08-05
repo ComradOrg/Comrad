@@ -41,6 +41,7 @@ We present a simplified set of social media features drawn from everything that'
 * Organizing
   * Host events and invite others (e.g. Facebook)
   * Host events like protests anonymously (new from Gyre)
+  * Anonymously pin on a map sites of danger, like police (e.g. Waze)
 
 * Messaging
   * Message securely with encrypted contents (e.g. Signal)
