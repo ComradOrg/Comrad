@@ -1,14 +1,6 @@
-# Gyre
+# Komrade
 
-
-<blockquote><i>
-Turning and turning in the widening gyre   
-<br/>The falcon cannot hear the falconer;
-<br/>Things fall apart; the centre cannot hold;
-<br/>Mere anarchy is loosed upon the world...
-</i></blockquote>
-
-Gyre is a free social network. Not 'free as in beer', like every other social network, but 'free as in freedom': it is predicated on anti-capitalist and anti-racist principles of social and spiritual freedom.
+Komrade is a social*ist* network. It is predicated on anti-capitalist and anti-racist principles of freedom and solidarity. It has state-of-the-art security to protect you and your data from cops and capitalist sharks.
 
 
 ## Features
@@ -36,16 +28,16 @@ We present a simplified set of social media features drawn from everything that'
   * Post to your friends (e.g. Facebook)
   * Post to your surrounding area by a distance radius (e.g. Nextdoor)
   * Anonymously up-vote or down-vote posts (e.g. Reddit)
-  * Post anonymously or from your account (new from Gyre)
+  * Post anonymously or from your account (Komrade)
 
 * Organizing
   * Host events and invite others (e.g. Facebook)
-  * Host events like protests anonymously (new from Gyre)
+  * Host events like protests anonymously (Komrade)
   * Anonymously pin on a map sites of danger, like police (e.g. Waze)
 
 * Messaging
   * Message securely with encrypted contents (e.g. Signal)
-  * Message securely with untraceable metadata (new from Gyre)
+  * Message securely with untraceable metadata (Komrade)
 
 
 ### Open-source and community run
