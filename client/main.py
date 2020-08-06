@@ -136,7 +136,7 @@ class MainApp(MDApp):
             #icon.icon='android' #user_font_size='200sp'
             icon.font_size='58dp'
             icon.user_font_size='58dp'
-
+ 
         if not self.is_logged_in():
             self.root.change_screen('login')
         else:
