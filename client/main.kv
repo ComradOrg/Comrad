@@ -5,6 +5,48 @@
 #:import NoTransition kivy.uix.screenmanager.NoTransition
 # :import MDCarousel kivymd.uix.carousel.MDCarousel
 
+
+
+
+
+## CLASS DEFS
+
+<MyBoxLayout>:
+    orientation: "vertical"
+    pos_hint: {'center_x':0.5, 'center_y':0.5}
+    size_hint:0.5,0.5
+    padding:'10dp'
+    md_bg_color:0,0,0,1
+    canvas:
+        Color:
+            rgb: 1,0,0,2
+        Line:
+            width: 1
+            rectangle: (self.x, self.y, self.width, self.height)
+
+
+<MyLabel>:
+    theme_text_color: 'Custom'
+    text_color: (1,0,0,1)
+    pos_hint: {'center_y': 0.5}
+    halign: 'center'
+    height: self.texture_size[1]
+    font_family: 'Courier'
+
+
+
+
+
+
+
+
+
+
+
+
+
+### LAYOUT
+
 MyLayout:
     scr_mngr: scr_mngr
     orientation: 'vertical'
@@ -13,10 +55,13 @@ MyLayout:
     canvas:
         Color:
             rgba: 0.925,0.925,0.925,1 #get_color_from_hex(colors['Gray']['900'])
+        
         Rectangle:
             pos: self.pos
             size: self.size
+            source: 'assets/komrade.png'
     
+
     MDToolbar:
         id: toolbar
         title: app.title
@@ -45,13 +90,9 @@ MyLayout:
             # text: "Login"
             # icon: "login"
 
-            MDBoxLayout:
-                orientation: "vertical"
-                pos_hint: {'center_x':0.5, 'center_y':0.5}
-                size_hint:0.5,None
-                padding:'10dp'
-                # md_bg_color:1,0,0,1
+            MyBoxLayout:
                 id: loginbox
+                size_hint:0.5,0.2
 
                 MDTextField:
                     id: username
@@ -60,6 +101,10 @@ MyLayout:
                     write_tab: False
                     multiline: False
                     helper_text_mode: "on_error"
+                    color_mode: 'custom'
+                    line_color_focus: 1,0,0,1
+                    line_color_normal: 1,0,0,1
+                    current_hint_text_color: 1,0,0,1
 
                 MDTextField:
                     id: password
@@ -69,6 +114,10 @@ MyLayout:
                     write_tab: False
                     multiline: False
                     helper_text_mode: "on_error"
+                    color_mode: 'custom'
+                    line_color_focus: 1,0,0,1
+                    line_color_normal: 1,0,0,1
+                    current_hint_text_color: 1,0,0,1
 
 
                 MDBoxLayout:
@@ -79,16 +128,23 @@ MyLayout:
                     spacing: '10dp'
                     pos_hint: {'center_x': .5}
 
-                    MDRaisedButton:
+                    MDRectangleFlatButton:
                         text: "login"
                         on_release:
                             app.login(username.text, password.text)
                             #app.root.change_screen("welcome")
+                        theme_text_color: "Custom"
+                        text_color: 1,0,0,1
+                        md_bg_color: 0,0,0,1
+
 
                     MDRectangleFlatButton:
                         text: "register"
                         on_release:
                             app.register(username.text, password.text)
+                        theme_text_color: "Custom"
+                        text_color: 1,0,0,1
+                        md_bg_color: 0,0,0,1
 
                 MDLabel:
                     id: login_status
@@ -101,13 +157,16 @@ MyLayout:
         WelcomeScreen:
             name: 'welcome'
             
-            MyLabel:
-                text: "Welcome!"
-                font_style: "H3"
-                pos_hint: {'center_y':0.85}
-                
-            MyLabel:
-                text: "\n\nTurning and turning in the widening gyre   \nThe falcon cannot hear the falconer;\nThings fall apart; the centre cannot hold;\nMere anarchy is loosed upon the world,\nThe blood-dimmed tide is loosed, and everywhere   \nThe ceremony of innocence is drowned;\nThe best lack all conviction, while the worst   \nAre full of passionate intensity.\n\nSurely some revelation is at hand..."
+            MyBoxLayout:
+                size_hint:0.666,0.666
+
+                MyLabel:
+                    text: "Welcome!"
+                    font_style: "H3"
+                    pos_hint: {'center_y':0.85}
+                    
+                MyLabel:
+                    text: "\n\nTurning and turning in the widening gyre   \nThe falcon cannot hear the falconer;\nThings fall apart; the centre cannot hold;\nMere anarchy is loosed upon the world,\nThe blood-dimmed tide is loosed, and everywhere   \nThe ceremony of innocence is drowned;\nThe best lack all conviction, while the worst   \nAre full of passionate intensity.\n\nSurely some revelation is at hand..."
                 
 
         PeopleScreen:
@@ -150,3 +209,4 @@ MyLayout:
 
         NotificationsScreen:
             name: 'notifications'
+

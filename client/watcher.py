@@ -39,15 +39,15 @@ class Handler(FileSystemEventHandler):
         if event.is_directory:
             return None
 
-        if event.src_path.endswith('gyre.json'): return None
-        if event.src_path.endswith('log.txt'): return None
-
         elif event.event_type == 'created':
             # Take any action here when a file is first created.
             print("Received created event - %s." % event.src_path)
 
         elif event.event_type == 'modified':
             # Taken any action here when a file is modified.
+            if event.src_path.endswith('.json'): return None
+            if '.json' in str(event.src_path): return None
+            if event.src_path.endswith('log.txt'): return None
             print("   \n\n\n\n\nReceived modified event - %s." % event.src_path)
             run_command()
 #

@@ -15,6 +15,7 @@ from kivymd.uix.label import MDLabel
 from kivy.uix.widget import Widget
 from kivymd.uix.list import OneLineListItem
 from kivymd.uix.card import MDCard, MDSeparator
+from kivymd.uix.boxlayout import MDBoxLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.metrics import dp
 from kivy.properties import NumericProperty
@@ -33,27 +34,16 @@ def log(x):
     with open('log.txt','a+') as of:
         of.write(str(x)+'\n')
 
-class MyLayout(BoxLayout):
+class MyLayout(MDBoxLayout):
     scr_mngr = ObjectProperty(None)
 
     def change_screen(self, screen, *args):
         self.scr_mngr.current = screen
 
 
+class MyBoxLayout(MDBoxLayout): pass
 
-class MyLabel(MDLabel):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.theme_text_color='Custom'
-        self.text_color=(1,0,0,1)
-        self.pos_hint = {'center_y': 0.5}
-        self.halign='center'
-        self.height=self.texture_size[1]
-        self.font_family='Courier'
-        for k,v in kwargs.items(): setattr(self,k,v)
-
-class ContactPhoto(ILeftBody, AsyncImage):
-    pass
+class MyLabel(MDLabel): pass
 
 
 class PostCard(MDCard):
@@ -105,7 +95,7 @@ class ProtectedScreen(MDScreen):
 
 
 
-class WelcomeScreen(MDScreen): pass
+class WelcomeScreen(ProtectedScreen): pass
 class LoginScreen(MDScreen): pass
 class PeopleScreen(ProtectedScreen): pass
 class EventsScreen(ProtectedScreen): pass
@@ -130,10 +120,10 @@ class FeedScreen(ProtectedScreen):
         
  
 class MainApp(MDApp):
-    title = 'Gyre'
+    title = 'Komrade'
     api = 'http://localhost:5555/api'
     logged_in=False
-    store = JsonStore('gyre.json')
+    store = JsonStore('komrade.json')
     login_expiry = 60 * 60 * 24 * 7  # once a week
     #login_expiry = 5 # 5 seconds
 
