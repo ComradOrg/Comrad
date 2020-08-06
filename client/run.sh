@@ -1,1 +1,1 @@
-python3 /home/ryan/github/Gyre/client/watcher.py
+python3 watcher.py
