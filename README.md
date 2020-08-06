@@ -1,6 +1,6 @@
 # Komrade
 
-Komrade is a social*ist* network. It is predicated on anti-capitalist and anti-racist principles of freedom and solidarity. It has state-of-the-art security to protect you and your data from cops and capitalist sharks.
+Komrade is a social*ist* network. It is predicated on anti-capitalist and anti-racist principles of freedom and solidarity.
 
 
 ## Features
