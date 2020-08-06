@@ -59,7 +59,7 @@ Not just non-profit, we're anti-profit.
 
 Got this working on front and backend.
 
-![Login screen](client/assets/screen-login.png)
+<img src="client/assets/screen-login.png" height="600" alt="Login screen" />
 
 
 
@@ -69,9 +69,7 @@ Got this working on front and backend.
 Experimenting with posts as 'cards', kind of like Tinder, which you can swipe up to up-vote or amplify, swipe down to down-vote or dampen, swipe left to see the next card and swipe right to see the previous. A horizontal feed basically. One image or video allowed; up to N words allowed; maybe a title? Design is horrendous so far, needs work. 
 
 
-![Login screen](client/assets/screen-post.png)
-
-
+<img src="client/assets/screen-post.png" height="600" alt="Post screen" />
 
 
 ## Technical details
