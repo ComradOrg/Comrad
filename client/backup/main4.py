@@ -45,30 +45,46 @@ class MyBoxLayout(MDBoxLayout): pass
 
 class MyLabel(MDLabel): pass
 
-class PostTitle(MDLabel): pass
-class PostContent(MDLabel): pass
 
 class PostCard(MDCard):
     def __init__(self, title = None, img_src = None, content = None):
         super().__init__()
-        self.title = title
-        self.img_src = img_src
-        self.content = content
+        self.orientation="vertical"
+        self.padding="8dp"
+        self.size_hint=(0.9, 0.9)
+        # self.md_bg_color=(1,0,0,1)
+        self.pos_hint = {"center_x": .5, "center_y": .5}
+        
+        if title:
+            sep = MDSeparator()
+            sep.height='25dp'
+            self.add_widget(sep)
 
-        # add to screen
-        #self.ids.post_title.text = self.title
-        #self.ids.post_content.text = self.content
-        #self.ids.post_img.source = self.img_src
-        title = PostTitle(text=self.title)
-        image = AsyncImage(source=self.img_src)
-        content = PostContent(text=self.content)
+            title = MDLabel(text=title)
+            # title.theme_text_color="Secondary"
+            title.size_hint_y=None
+            title.height=title.texture_size[1]
+            title.font_style='H5'
+            title.halign='center'
+            self.add_widget(title)
 
-        #content = PostContent()
+            # spacing?
+            sep = MDSeparator()
+            sep.height='25dp'
+            self.add_widget(sep)
 
-        self.add_widget(title)
-        self.add_widget(image)
-        self.add_widget(content)
 
+        if img_src:
+            image = AsyncImage(source=img_src)
+            self.add_widget(image)
+
+        if content:
+            content=MDLabel(text=content)
+            content.pos_hint={'center_y':1}
+            content.font_style='Body1'
+            self.add_widget(content)
+
+        
 
 class ProtectedScreen(MDScreen):
     def on_pre_enter(self):
@@ -85,7 +101,6 @@ class LoginScreen(MDScreen):
     #    global app
     #    if app.is_logged_in():
     #        app.root.change_screen('feed')
-    pass
     
 class PeopleScreen(ProtectedScreen): pass
 class EventsScreen(ProtectedScreen): pass
@@ -107,8 +122,6 @@ class FeedScreen(ProtectedScreen):
                 post = PostCard(title='Marx Zuckerberg',img_src='avatar.jpg',content=ln.strip())
                 print(post)
                 root.ids.post_carousel.add_widget(post)
-
-                
         
  
 class MainApp(MDApp):
@@ -123,20 +136,6 @@ class MainApp(MDApp):
         global app,root
         app = self
         self.root = root = Builder.load_file('main.kv')
-        
-        # edit logo
-        logo=root.ids.toolbar.ids.label_title
-        logo.font_name='assets/Strengthen.ttf'
-        logo.font_size='58dp'
-        logo.pos_hint={'center_y':0.43}
-        # icons
-        icons=root.ids.toolbar.ids.right_actions.children
-        for icon in icons:
-            #log(dir(icon))
-            #icon.icon='android' #user_font_size='200sp'
-            icon.font_size='58dp'
-            icon.user_font_size='58dp'
-
         if not self.is_logged_in():
             self.root.change_screen('login')
         else:

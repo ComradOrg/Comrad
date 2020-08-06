@@ -34,19 +34,7 @@
     font_family: 'Courier'
 
 
-<PostTitle>:
-    id: post_title
-    text: ''
-    size_hint_y: None
-    height: self.texture_size[1]
-    font_style: 'H5'
-    halign: 'center'
 
-<PostContent>:
-    id: post_content
-    text: ''
-    pos_hint: {'center_y':1}
-    font_style: 'Body1'
 
 <PostCard>:
     id: post
@@ -54,10 +42,31 @@
     padding: "8dp"
     size_hint: (0.9, 0.9)
     pos_hint: {"center_x": .5, "center_y": .5}
-    md_bg_color: (1,0,0,1)
+    
+    MDSeparator:
+        id: post_title_sep
+        height: '0dp'
+        
+    MDLabel:
+        id: post_title
+        text: self.title
+        size_hint_y: None
+        height: self.texture_size[1]
+        font_style: 'H5'
+        halign: 'center'
+        
+    MDSeparator:
+        id: post_title_sep2
+        height: '25dp'
 
-    
-    
+    AsyncImage:
+        id: post_img
+
+    MDLabel:
+        id: post_content
+        text: self.content
+        pos_hint: {'center_y':1}
+        font_style: 'Body1'
         
 
 
@@ -80,7 +89,7 @@ MyLayout:
         Rectangle:
             pos: self.pos
             size: self.size
-            source: 'assets/komrade2.png'
+            source: 'assets/komrade.png'
     
 
     MDToolbar:
@@ -93,11 +102,8 @@ MyLayout:
         specific_text_color: 1,0,0,1
         # right_action_items: [['radio-tower', partial(root.change_screen, 'feed')], ['account-group', partial(root.change_screen, 'people')], ['calendar', partial(root.change_screen, 'events')], ['message-processing-outline', partial(root.change_screen, 'messages')], ['bell-outline', partial(root.change_screen, 'notifications')]]
         right_action_items: [['post-outline', partial(root.change_screen, 'feed')], ['message-processing-outline', partial(root.change_screen, 'messages')], ['bell-outline', partial(root.change_screen, 'notifications')]]
-        left_action_items: [[f"assets/fist2.png", partial(root.change_screen, 'feed')]]
-        font_context: None
-        font_name: f'assets/Strengthen.ttf'
-
-
+        left_action_items: [[f"assets/logo.png", partial(root.change_screen, 'feed')]]
+    
     ScreenManager:
         id: scr_mngr
         # transition: NoTransition()
@@ -116,7 +122,7 @@ MyLayout:
 
             MyBoxLayout:
                 id: loginbox
-                size_hint:0.5,0.18
+                size_hint:0.5,0.2
 
                 MDTextField:
                     id: username
