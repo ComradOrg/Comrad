@@ -34,16 +34,16 @@ We present a simplified set of social media features drawn from everything that'
   * Post to your friends (e.g. Facebook)
   * Post to your surrounding area by a distance radius (e.g. Nextdoor)
   * Anonymously up-vote or down-vote posts (e.g. Reddit)
-  * Post anonymously or from your account (Komrade)
+  * Post anonymously or from your account (new)
 
 * Organizing
   * Host events and invite others (e.g. Facebook)
-  * Host events like protests anonymously (Komrade)
+  * Host events like protests anonymously (new)
   * Anonymously pin on a map sites of danger, like police (e.g. Waze)
 
 * Messaging
   * Message securely with encrypted contents (e.g. Signal)
-  * Message securely with untraceable metadata (Komrade)
+  * Message securely with untraceable metadata (new)
 
 
 ### Open-source and community run
