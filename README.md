@@ -7,7 +7,7 @@ Komrade is a social*ist* network. It is predicated on anti-capitalist and anti-r
 
 ### Your traffic is untraceable
 
-All traffic is routed via Tor. You can't be surveilled by cops or monetized by capital. 
+All traffic is routed via [Tor](https://www.torproject.org/), a global maze of computers so dense that even the FBI can't trace your footsteps. And what's untraceable is also unmonetizable: your data can't be harvested by technology companies and used for advertising algorithms. You're protected from both surveillance capitalism and the surveillance state.
 
 ### Be as anonymous as you wish
 
