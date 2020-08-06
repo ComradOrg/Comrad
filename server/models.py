@@ -14,7 +14,7 @@ class Person(MyGraphObject):
 
     name = Property()
     name_irl = Property()
-    pass_key = Property()
+    passkey = Property()
 
     posts = RelatedTo('Post','WROTE')
     follows = RelatedTo('Person','FOLLOWS')
@@ -74,7 +74,7 @@ def test_models():
     x.posts.add(p1)
     y.posts.add(p2)
     G.push(y)
-    
+
     y.posts.add(p3)
 
     g1=Group(); g1.name='BlocBloc'

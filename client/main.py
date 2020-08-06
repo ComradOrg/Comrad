@@ -20,6 +20,8 @@ from kivy.metrics import dp
 from kivy.properties import NumericProperty
 from kivymd.uix.list import * #MDList, ILeftBody, IRightBody, ThreeLineAvatarListItem, TwoLineAvatarListItem, BaseListItem, ImageLeftWidget
 from kivy.uix.image import Image, AsyncImage
+import requests,json
+
 
 root = None
 app = None
@@ -30,8 +32,10 @@ def log(x):
 
 class MyLayout(BoxLayout):
     scr_mngr = ObjectProperty(None)
+
     def change_screen(self, screen, *args):
         self.scr_mngr.current = screen
+
 
 
 class MyLabel(MDLabel):
@@ -86,8 +90,26 @@ class PostCard(MDCard):
             content.font_style='Body1'
             self.add_widget(content)
 
+        
 
-class FeedScreen(MDScreen):
+class ProtectedScreen(MDScreen):
+    def on_pre_enter(self):
+        global app
+        if app.logged_on==False:
+            app.root.change_screen('login')
+        
+
+
+
+class WelcomeScreen(MDScreen): pass
+class LoginScreen(MDScreen): pass
+class PeopleScreen(ProtectedScreen): pass
+class EventsScreen(ProtectedScreen): pass
+class MessagesScreen(ProtectedScreen): pass
+class NotificationsScreen(ProtectedScreen): pass
+
+
+class FeedScreen(ProtectedScreen):
     def on_enter(self):
         i=0
         lim=5
@@ -101,25 +123,42 @@ class FeedScreen(MDScreen):
                 post = PostCard(title='Marx Zuckerberg',img_src='avatar.jpg',content=ln.strip())
                 print(post)
                 root.ids.post_carousel.add_widget(post)
-                
-
-class WelcomeScreen(MDScreen): pass
-class PeopleScreen(MDScreen): pass
-class EventsScreen(MDScreen): pass
-class MessagesScreen(MDScreen): pass
-class NotificationsScreen(MDScreen): pass
-
-
+        
  
 class MainApp(MDApp):
     title = 'Gyre'
+    api = 'http://localhost:5555/api'
+    logged_on=False
 
     def build(self):
         global app,root
         app = self
         self.root = root = Builder.load_file('main.kv')
-        self.root.change_screen('feed')
+        self.root.change_screen('login')
         return self.root
+
+
+    def login(self,un,pw):
+        url = self.api+'/login'        
+        res = requests.post(url, json={'name':un, 'passkey':pw})
+
+        if res.status_code==200:
+            self.logged_on=True
+            self.root.change_screen('welcome')
+            
+        else:
+            self.root.ids.login_status.text=res.text
+
+    def register(self,un,pw):
+        url = self.api+'/register'        
+        res = requests.post(url, json={'name':un, 'passkey':pw})
+        if res.status_code==200:
+            self.logged_on=True
+            self.root.change_screen('welcome')
+        else:
+            self.root.ids.login_status.text=res.text
+
+
 
 
 if __name__ == '__main__':

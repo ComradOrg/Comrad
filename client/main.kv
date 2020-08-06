@@ -31,7 +31,60 @@ MyLayout:
     ScreenManager:
         id: scr_mngr
         # transition: NoTransition()
-    
+
+
+        LoginScreen:
+            name: "login"
+            # text: "Login"
+            # icon: "login"
+
+            MDBoxLayout:
+                orientation: "vertical"
+                pos_hint: {'center_x':.5, 'center_y':0.55}
+                size_hint:0.5,0.5
+                padding:'10dp'
+                id: loginbox
+
+                MDTextField:
+                    id: username
+                    hint_text: "Username"
+                    required: True
+                    helper_text_mode: "on_error"
+
+                MDTextField:
+                    id: password
+                    password: True
+                    hint_text: "Password"
+                    required: True
+                    helper_text_mode: "on_error"
+
+
+                MDBoxLayout:
+                    id: buttonbox
+                    size_hint_y: None
+                    adaptive_width: True
+                    height: dp(56)
+                    spacing: '10dp'
+                    pos_hint: {'center_x': .5}
+
+                    MDRaisedButton:
+                        text: "login"
+                        on_release:
+                            app.login(username.text, password.text)
+                            #app.root.change_screen("welcome")
+
+                    MDRectangleFlatButton:
+                        text: "register"
+                        on_release:
+                            app.register(username.text, password.text)
+
+                MDLabel:
+                    id: login_status
+                    text:""
+                    theme_text_color: 'Error'
+                    pos_hint:{'center_x':.5}
+                    
+
 
         WelcomeScreen:
             name: 'welcome'
