@@ -25,13 +25,20 @@ MyLayout:
         background_palette: 'Red'
         background_hue: '500'
         specific_text_color: 1,0,0,1
-        right_action_items: [['radio-tower', partial(root.change_screen, 'feed')], ['account-group', partial(root.change_screen, 'people')], ['calendar', partial(root.change_screen, 'events')], ['message-processing-outline', partial(root.change_screen, 'messages')], ['bell-outline', partial(root.change_screen, 'notifications')]]
+        # right_action_items: [['radio-tower', partial(root.change_screen, 'feed')], ['account-group', partial(root.change_screen, 'people')], ['calendar', partial(root.change_screen, 'events')], ['message-processing-outline', partial(root.change_screen, 'messages')], ['bell-outline', partial(root.change_screen, 'notifications')]]
+        right_action_items: [['post-outline', partial(root.change_screen, 'feed')], ['message-processing-outline', partial(root.change_screen, 'messages')], ['bell-outline', partial(root.change_screen, 'notifications')]]
         left_action_items: [[f"assets/logo.png", partial(root.change_screen, 'welcome')]]
     
     ScreenManager:
         id: scr_mngr
         # transition: NoTransition()
 
+
+
+
+        ### 
+        # LOGIN SCREEN
+        ###
 
         LoginScreen:
             name: "login"
@@ -40,22 +47,27 @@ MyLayout:
 
             MDBoxLayout:
                 orientation: "vertical"
-                pos_hint: {'center_x':.5, 'center_y':0.55}
-                size_hint:0.5,0.5
+                pos_hint: {'center_x':0.5, 'center_y':0.5}
+                size_hint:0.5,None
                 padding:'10dp'
+                # md_bg_color:1,0,0,1
                 id: loginbox
 
                 MDTextField:
                     id: username
-                    hint_text: "Username"
+                    hint_text: "username"
                     required: True
+                    write_tab: False
+                    multiline: False
                     helper_text_mode: "on_error"
 
                 MDTextField:
                     id: password
                     password: True
-                    hint_text: "Password"
+                    hint_text: "password"
                     required: True
+                    write_tab: False
+                    multiline: False
                     helper_text_mode: "on_error"
 
 
@@ -90,7 +102,12 @@ MyLayout:
             name: 'welcome'
             
             MyLabel:
-                text: "Turning and turning in the widening gyre   \nThe falcon cannot hear the falconer;\nThings fall apart; the centre cannot hold;\nMere anarchy is loosed upon the world,\nThe blood-dimmed tide is loosed, and everywhere   \nThe ceremony of innocence is drowned;\nThe best lack all conviction, while the worst   \nAre full of passionate intensity.\n\nSurely some revelation is at hand;\nSurely the Second Coming is at hand.   \nThe Second Coming! Hardly are those words out   \nWhen a vast image out of Spiritus Mundi\nTroubles my sight: somewhere in sands of the desert   \nA shape with lion body and the head of a man,   \nA gaze blank and pitiless as the sun,   \nIs moving its slow thighs, while all about it   \nReel shadows of the indignant desert birds.   \nThe darkness drops again; but now I know   \nThat twenty centuries of stony sleep\nWere vexed to nightmare by a rocking cradle,   \nAnd what rough beast, its hour come round at last,   \nSlouches towards Bethlehem to be born?"
+                text: "Welcome!"
+                font_style: "H3"
+                pos_hint: {'center_y':0.85}
+                
+            MyLabel:
+                text: "\n\nTurning and turning in the widening gyre   \nThe falcon cannot hear the falconer;\nThings fall apart; the centre cannot hold;\nMere anarchy is loosed upon the world,\nThe blood-dimmed tide is loosed, and everywhere   \nThe ceremony of innocence is drowned;\nThe best lack all conviction, while the worst   \nAre full of passionate intensity.\n\nSurely some revelation is at hand..."
                 
 
         PeopleScreen:

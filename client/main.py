@@ -21,6 +21,9 @@ from kivy.properties import NumericProperty
 from kivymd.uix.list import * #MDList, ILeftBody, IRightBody, ThreeLineAvatarListItem, TwoLineAvatarListItem, BaseListItem, ImageLeftWidget
 from kivy.uix.image import Image, AsyncImage
 import requests,json
+from kivy.storage.jsonstore import JsonStore
+from kivy.core.window import Window
+Window.size = (640, 1136) #(2.65 * 200, 5.45 * 200)
 
 
 root = None
@@ -46,6 +49,7 @@ class MyLabel(MDLabel):
         self.pos_hint = {'center_y': 0.5}
         self.halign='center'
         self.height=self.texture_size[1]
+        self.font_family='Courier'
         for k,v in kwargs.items(): setattr(self,k,v)
 
 class ContactPhoto(ILeftBody, AsyncImage):
@@ -95,7 +99,7 @@ class PostCard(MDCard):
 class ProtectedScreen(MDScreen):
     def on_pre_enter(self):
         global app
-        if app.logged_on==False:
+        if not app.is_logged_in():
             app.root.change_screen('login')
         
 
@@ -128,14 +132,34 @@ class FeedScreen(ProtectedScreen):
 class MainApp(MDApp):
     title = 'Gyre'
     api = 'http://localhost:5555/api'
-    logged_on=False
+    logged_in=False
+    store = JsonStore('gyre.json')
+    login_expiry = 60 * 60 * 24 * 7  # once a week
+    #login_expiry = 5 # 5 seconds
 
     def build(self):
         global app,root
         app = self
         self.root = root = Builder.load_file('main.kv')
-        self.root.change_screen('login')
+        if not self.is_logged_in():
+            self.root.change_screen('login')
+        else:
+            self.root.change_screen('welcome')
         return self.root
+
+    def is_logged_in(self):
+        if self.logged_in: return True
+        if not self.store.exists('user'): return False
+        if self.store.get('user')['logged_in']:
+            if time.time() - self.store.get('user')['logged_in_when'] < self.login_expiry:
+                self.logged_in=True
+                return True
+        return False
+
+    def do_login(self):
+        self.logged_in=True
+        self.store.put('user',logged_in=True,logged_in_when=time.time())
+        self.root.change_screen('welcome')
 
 
     def login(self,un,pw):
@@ -143,9 +167,7 @@ class MainApp(MDApp):
         res = requests.post(url, json={'name':un, 'passkey':pw})
 
         if res.status_code==200:
-            self.logged_on=True
-            self.root.change_screen('welcome')
-            
+            self.do_login()
         else:
             self.root.ids.login_status.text=res.text
 
@@ -153,8 +175,7 @@ class MainApp(MDApp):
         url = self.api+'/register'        
         res = requests.post(url, json={'name':un, 'passkey':pw})
         if res.status_code==200:
-            self.logged_on=True
-            self.root.change_screen('welcome')
+            self.do_login()
         else:
             self.root.ids.login_status.text=res.text
 
