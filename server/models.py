@@ -64,8 +64,8 @@ class Group(MyGraphObject):
 
 
 def test_models():
-    x = Person(); x.name='Mr X'
-    y = Person(); y.name='Mr Y'
+    x = Person(); x.name='MrX'
+    y = Person(); y.name='MrY'
     p1 = Post(); p1.title='Post 1'; p1.content='Hello world!'
     p2 = Post(); p2.title='Post 2'; p2.content='Hello world!!!'
     p3 = Post(); p3.title='Post 3'; p3.content='Hello world!!!!!!!!!!!!'

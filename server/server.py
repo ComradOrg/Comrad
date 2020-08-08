@@ -5,6 +5,13 @@ from models import *
 from flask_api import FlaskAPI, status, exceptions
 from werkzeug.security import generate_password_hash,check_password_hash
 
+
+
+# works better with tor?
+import json
+jsonify = json.dumps
+jsonify = str
+
 # Start server
 
 app = flask.Flask(__name__)
@@ -105,4 +112,4 @@ def get_post(id=None):
 
 
 
-app.run(port=5555)
+app.run(host='0.0.0.0', port=5555)
