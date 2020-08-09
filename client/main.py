@@ -24,6 +24,8 @@ from kivy.uix.image import Image, AsyncImage
 import requests,json
 from kivy.storage.jsonstore import JsonStore
 from kivy.core.window import Window
+from kivy.core.text import LabelBase
+
 Window.size = (640, 1136) #(2.65 * 200, 5.45 * 200)
 
 
@@ -42,33 +44,70 @@ class MyLayout(MDBoxLayout):
 
 
 class MyBoxLayout(MDBoxLayout): pass
-
 class MyLabel(MDLabel): pass
 
+
+### POST CODE
 class PostTitle(MDLabel): pass
-class PostContent(MDLabel): pass
+class PostGridLayout(GridLayout): pass
+class PostImage(AsyncImage): pass
+
+class PostContent(MDLabel): 
+    def __init__(self,**kwargs):
+        super().__init__(**kwargs)
+        self.bind(width=lambda s, w: s.setter('text_size')(s, (w, None)))
+        self.bind(texture_size=self.setter('size'))
+        self.font_name='assets/overpass-mono-regular.otf'
+    #pass
+
+class PostAuthorLayout(MDBoxLayout): pass
+
+class PostAuthorLabel(MDLabel): 
+    def __init__(self,**kwargs):
+        super().__init__(**kwargs)
+        self.bind(width=lambda s, w: s.setter('text_size')(s, (w, None)))
+        self.bind(texture_size=self.setter('size'))
+        self.font_name='assets/overpass-mono-regular.otf'
+    pass
+class PostAuthorAvatar(AsyncImage): pass
 
 class PostCard(MDCard):
-    def __init__(self, title = None, img_src = None, content = None):
+    def __init__(self, author = None, title = None, img_src = None, content = None):
         super().__init__()
+        self.author = author
         self.title = title
         self.img_src = img_src
         self.content = content
+        self.bind(minimum_height=self.setter('height'))
 
-        # add to screen
-        #self.ids.post_title.text = self.title
-        #self.ids.post_content.text = self.content
-        #self.ids.post_img.source = self.img_src
+        # pieces
+        author_section_layout = PostAuthorLayout()
+        author_label = PostAuthorLabel(text=self.author)
+        author_label.font_size = '28dp'
+        author_avatar = PostAuthorAvatar(source=self.img_src)
+        author_section_layout.add_widget(author_avatar)
+        author_section_layout.add_widget(author_label)
+        # author_section_layout.add_widget(author_avatar)
+        self.add_widget(author_section_layout)
+
+        
         title = PostTitle(text=self.title)
-        image = AsyncImage(source=self.img_src)
+        # image = PostImage(source=self.img_src)
         content = PostContent(text=self.content)
-
+        
         #content = PostContent()
 
+        # add to screen
         self.add_widget(title)
-        self.add_widget(image)
+        # self.add_widget(image)
         self.add_widget(content)
+        #self.add_widget(layout)
 
+#####
+
+
+
+#### LOGIN
 
 class ProtectedScreen(MDScreen):
     def on_pre_enter(self):
@@ -104,22 +143,45 @@ class FeedScreen(ProtectedScreen):
                 if i>lim: break
                 
                 #post = Post(title=f'Marx Zuckerberg', content=ln.strip())
-                post = PostCard(title='Marx Zuckerberg',img_src='avatar.jpg',content=ln.strip())
+                post = PostCard(author='Marx Zuckerberg',title='',img_src='avatar.jpg',content=ln.strip())
                 print(post)
                 root.ids.post_carousel.add_widget(post)
 
                 
         
- 
+
+
+
+def get_tor_proxy_session():
+    session = requests.session()
+    # Tor uses the 9050 port as the default socks port
+    session.proxies = {'http':  'socks5://127.0.0.1:9050',
+                       'https': 'socks5://127.0.0.1:9050'}
+    return session    
+
+def get_tor_python_session():
+    from torpy.http.requests import TorRequests
+    with TorRequests() as tor_requests:
+        with tor_requests.get_session() as s:
+            return s
+
+from kivymd.font_definitions import theme_font_styles
 class MainApp(MDApp):
     title = 'Komrade'
-    api = 'http://localhost:5555/api'
+    #api = 'http://localhost:5555/api'
+    api = 'http://128.232.229.63:5555/api'
+    #api = 'http://komrades.net:5555/api'
     logged_in=False
     store = JsonStore('komrade.json')
     login_expiry = 60 * 60 * 24 * 7  # once a week
     #login_expiry = 5 # 5 seconds
 
+    def get_session(self):
+        return get_tor_proxy_session()
+        #return get_tor_python_session()
+
     def build(self):
+        # bind 
         global app,root
         app = self
         self.root = root = Builder.load_file('main.kv')
@@ -159,21 +221,27 @@ class MainApp(MDApp):
 
 
     def login(self,un,pw):
-        url = self.api+'/login'        
-        res = requests.post(url, json={'name':un, 'passkey':pw})
+        url = self.api+'/login'
 
-        if res.status_code==200:
-            self.do_login()
-        else:
-            self.root.ids.login_status.text=res.text
+        with self.get_session() as sess:
+            #res = requests.post(url, json={'name':un, 'passkey':pw})
+            res = sess.post(url, json={'name':un, 'passkey':pw})
+
+            if res.status_code==200:
+                self.do_login()
+            else:
+                self.root.ids.login_status.text=res.text
 
     def register(self,un,pw):
-        url = self.api+'/register'        
-        res = requests.post(url, json={'name':un, 'passkey':pw})
-        if res.status_code==200:
-            self.do_login()
-        else:
-            self.root.ids.login_status.text=res.text
+        url = self.api+'/register'
+
+        with self.get_session() as sess:
+            #res = requests.post(url, json={'name':un, 'passkey':pw})
+            res = sess.post(url, json={'name':un, 'passkey':pw})
+            if res.status_code==200:
+                self.do_login()
+            else:
+                self.root.ids.login_status.text=res.text
 
 
 

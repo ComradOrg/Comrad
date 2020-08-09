@@ -6,37 +6,43 @@ import struct
 #hostname = 'ifconfig.me'  # It's possible use onion hostname here as well
 #port = 80
 
-hostname = '128.232.229.63' #:5555'
+#hostname = 'komrades.net'
+hostname = '128.232.229.63'
 port = 5555
 
 
-#from torpy.http.requests import tor_requests_session
-#with tor_requests_session() as s:
+def try_torpy():
+    from torpy.http.requests import TorRequests
+    with TorRequests() as tor_requests:
+        with tor_requests.get_session() as s:
+        #with requests.Session() as s:
+            #res = s.get('http://'+hostname+':'+str(port) + '/api/followers/MrY')
+            #print(json.loads(res.text))
+            res = s.get('http://'+hostname+':'+str(port))
+            print(res,res.text)
 
 
 
-from torpy.http.requests import TorRequests
-with TorRequests() as tor_requests:
-    with tor_requests.get_session() as s:
-    #with requests.Session() as s:
-        #res = s.get('http://'+hostname+':'+str(port) + '/api/followers/MrY')
-        #print(json.loads(res.text))
-        res = s.get('http://'+hostname+':'+str(port))
-        print(res,res.text)
+def try_proxy():
+    import requests
+
+    def get_tor_session():
+        session = requests.session()
+        # Tor uses the 9050 port as the default socks port
+        session.proxies = {'http':  'socks5://127.0.0.1:9050',
+                        'https': 'socks5://127.0.0.1:9050'}
+        return session
+
+    # Make a request through the Tor connection
+    # IP visible through Tor
+    session = get_tor_session()
+    print(session.get("http://"+hostname+':'+str(port)).text)
+    # Above should print an IP different than your public IP
+
+    # Following prints your normal public IP
+    print(session.get("http://ifconfig.me").text)
 
 
-# tor = TorClient()
 
-
-
-# # # Choose random guard node and create 3-hops circuit
-# # try:
-# #     with tor.create_circuit(3) as circuit:
-# #         # Create tor stream to host    
-# #         with circuit.create_stream((hostname, port)) as stream:
-# #             # Now we can communicate with host
-# #             stream.send(b'GET / HTTP/1.0\r\nHost: %s\r\n\r\n' % hostname.encode())
-# #             recv = stream.recv(1024 * 10)
-# #             print(recv)
-# # except struct.error as e:
-# #     print('struct error!?',e)
+try_proxy()
+#try_torpy()
