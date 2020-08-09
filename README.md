@@ -57,7 +57,7 @@ Not just non-profit, we're anti-profit.
 
 #### Preview animation
 
-<img src="client/assets/komrade-screen-peek.gif" height="600" alt="Login screen" />
+<img src="client/assets/komrade-screen-peek.gif" height="600" alt="GIF animation" />
 
 #### Login screen
 
