@@ -70,7 +70,7 @@ Got this working on front and backend.
 
 #### Post
 
-Experimenting with posts as 'cards', kind of like Tinder, which you can swipe up to up-vote or amplify, swipe down to down-vote or dampen, swipe left to see the next card and swipe right to see the previous. A horizontal feed basically. One image or video allowed; up to 1000? words allowed; maybe a title? Design is horrendous so far, needs work. 
+Experimenting with posts as 'cards', kind of like Tinder, which you can swipe up to up-vote or amplify, swipe down to down-vote or dampen, swipe left to see the next card and swipe right to see the previous. A horizontal feed basically. One image or video allowed; up to 1000? words allowed; maybe a title?
 
 
 <img src="client/assets/screen-feed.png" height="600" alt="Post screen" />
