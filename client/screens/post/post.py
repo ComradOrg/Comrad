@@ -1,8 +1,10 @@
 from screens.base import ProtectedScreen
 from plyer import filechooser
 from kivymd.uix.button import MDRectangleFlatButton, MDIconButton
-from kivy.properties import ListProperty
+from kivy.properties import ListProperty,ObjectProperty
 from kivy.app import App
+from main import log
+from screens.feed.feed import *
 
 
 
@@ -35,6 +37,23 @@ class FileChoose(MDRectangleFlatButton):
         #App.get_running_app().root.ids.result.text = str(self.selection)
 
 
-class AddPostScreen(ProtectedScreen): pass
+class AddPostScreen(ProtectedScreen): 
+    post_id = ObjectProperty()
+    pass
 
-class ViewPostScreen(ProtectedScreen): pass
+class ViewPostScreen(ProtectedScreen): 
+    post_id = ObjectProperty()
+
+    def on_enter(self):
+        ln='woops'
+        
+        post = PostCard(
+            author='Marx Zuckerberg',
+            title='',
+            img_src='avatar.jpg',
+            content=ln.strip())
+        print(post)
+        self.add_widget(post)
+        
+    
+    pass

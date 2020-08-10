@@ -36,9 +36,14 @@ def log(x):
 
 class MyLayout(MDBoxLayout):
     scr_mngr = ObjectProperty(None)
+    post_id = ObjectProperty()
 
     def change_screen(self, screen, *args):
         self.scr_mngr.current = screen
+    
+    def view_post(self,post_id):
+        self.post_id=post_id
+        self.change_screen('view')
 
 
 class MyBoxLayout(MDBoxLayout): pass
@@ -71,7 +76,7 @@ def get_tor_python_session():
         with tor_requests.get_session() as s:
             return s
 
-from kivymd.font_definitions import theme_font_styles
+
 class MainApp(MDApp):
     title = 'Komrade'
     #api = 'http://localhost:5555/api'
@@ -183,9 +188,15 @@ class MainApp(MDApp):
             jsond={'img_src':server_filename, 'content':content}
             r = sess.post(url_post, json=jsond)
             log('got back from post: ' + r.text)
-            
-            self.root.ids.add_post_screen.ids.post_status.text='Post created'
+            post_id = r.text
+            if post_id.isdigit():
+                self.root.ids.add_post_screen.ids.post_status.text='Post created'
+                self.root.view_post(int(post_id))
 
+        def get_post(self,post_id):
+            with self.get_session() as sess:
+                r = sess.get(self.api+'/post/'+str(post_id))
+                print(r.text)
 
 
 if __name__ == '__main__':

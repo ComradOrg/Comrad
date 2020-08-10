@@ -118,25 +118,28 @@ def upload_file():
 
 
 @app.route('/api/post',methods=['POST'])
-def create_post():
-    data=request.json
-    # print(dir(request))
-    #files = request.files
-    #print(request.json)
-    print(data)
-    #print(request.files)
+@app.route('/api/post/<int:post_id>',methods=['GET'])
+def post(post_id=None):
 
-    post = Post()
-    post.content = data.get('content','')
-    post.img_src = data.get('img_src','')
-    G.push(post)
-    #print(dir(post.__ogm__.node))
+    if request.method == 'POST':
+        data=request.json
+        print(data)
+        post = Post()
+        post.content = data.get('content','')
+        post.img_src = data.get('img_src','')
+        G.push(post)
+        post_id=str(post.__ogm__.node.identity)
+        print('created new post!',post_id)
+        return post_id,status.HTTP_200_OK
 
-    post_id=str(post.__ogm__.node.identity)
+    print('got post id!',post_id)
+    posts = list(Post.match(G,post_id))
+    if not posts:
+        return str(post_id),status.HTTP_204_NO_CONTENT
     
-    # print('RECEIVED:',files['file'])
-    return post_id,status.HTTP_200_OK
-
+    post=posts[0]
+    print(post.data)
+    return str(post_id),status.HTTP_200_OK
 
 
 ### READ

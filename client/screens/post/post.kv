@@ -1,5 +1,6 @@
 #:import AddPostScreen screens.post.post.AddPostScreen
 #:import ViewPostScreen screens.post.post.ViewPostScreen
+#:import PostCard screens.feed.feed.PostCard
 
 
 <AddPostScreen>:
@@ -41,6 +42,7 @@
             FileChoose:
                 id: file_chooser_button
                 text: "upload"
+                #text: app.root.ids.scr_mngr.etc
                 on_release: self.choose()
                 #app.register(username.text, password.text)
                 theme_text_color: "Custom"
@@ -60,7 +62,7 @@
 
         MDLabel:
             id: post_status
-            text:""
+            text:"" #self.add_post_screen.post_id
             theme_text_color: 'Error'
             pos_hint:{'center_x':.5}
           

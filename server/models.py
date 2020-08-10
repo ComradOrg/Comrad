@@ -3,6 +3,10 @@ from py2neo import *
 from py2neo.ogm import *
 
 G = Graph(password='drive your plow over the bones of the dead')
+Nodes = NodeMatcher(G)
+Edges = RelationshipMatcher(G)
+
+
 
 class MyGraphObject(GraphObject):
     @property
