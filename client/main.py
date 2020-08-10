@@ -7,7 +7,7 @@ from kivy.lang import Builder
 from kivy.uix.boxlayout import BoxLayout
 from kivymd.theming import ThemeManager
 from kivy.properties import ObjectProperty,ListProperty
-import time
+import time,os
 from collections import OrderedDict
 from functools import partial
 from kivy.uix.screenmanager import NoTransition
@@ -111,7 +111,7 @@ class MainApp(MDApp):
         if not self.is_logged_in():
             self.root.change_screen('login')
         else:
-            self.root.change_screen('feed')
+            self.root.change_screen('post')
         return self.root
 
     def is_logged_in(self):
@@ -152,6 +152,39 @@ class MainApp(MDApp):
             else:
                 self.root.ids.login_status.text=res.text
 
+    def post(self, content='', img_src=[]):
+        log('content: '+str(content))
+        log('img_src: '+str(img_src))
+
+        jsond = {'content':str(content)}
+
+        # upload?
+        filename=img_src[0] if img_src and os.path.exists(img_src[0]) else ''            
+        
+        url_upload=self.api+'/upload'
+        url_post = self.api+'/post'
+        
+        server_filename=''
+            
+        if filename:
+            with self.get_session() as sess:
+            #res = sess.post(url, files=filesd, data={'data':json.dumps(jsond)}, headers=headers)
+                log(filename)
+                self.root.ids.add_post_screen.ids.post_status.text='Uploading file'
+                r = sess.post(url_upload,files={'file':open(filename,'rb')})
+                if r.status_code==200:
+                    server_filename = r.text
+                    self.root.ids.add_post_screen.ids.post_status.text='File uploaded'
+            
+        with self.get_session() as sess:
+            # add post
+            #log(self.root.ids.add_post_screen.ids.keys())
+            self.root.ids.add_post_screen.ids.post_status.text='Creating post'
+            jsond={'img_src':server_filename, 'content':content}
+            r = sess.post(url_post, json=jsond)
+            log('got back from post: ' + r.text)
+            
+            self.root.ids.add_post_screen.ids.post_status.text='Post created'
 
 
 

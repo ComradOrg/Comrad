@@ -4,7 +4,8 @@ from pathlib import Path
 from models import *
 from flask_api import FlaskAPI, status, exceptions
 from werkzeug.security import generate_password_hash,check_password_hash
-
+from flask import Flask, flash, request, redirect, url_for
+from werkzeug.utils import secure_filename
 
 
 # works better with tor?
@@ -16,6 +17,8 @@ jsonify = str
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
+app.config['UPLOAD_DIR'] = 'uploads/'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 @app.route('/')
 def home(): return '404 go home friend'
@@ -76,9 +79,64 @@ def register():
 
 ## CREATE
 
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def get_random_filename(filename):
+    import uuid
+    fn=uuid.uuid4().hex
+    return (fn[:3],fn[3:]+os.path.splitext(filename)[-1])
+
+@app.route('/api/upload',methods=['POST'])
+def upload_file():
+    files = request.files
+    # check if the post request has the file part
+    if 'file' not in request.files:
+        return 'No file found',status.HTTP_204_NO_CONTENT
+    
+    file = request.files['file']
+    
+    # if user does not select file, browser also
+    # submit an empty part without filename
+    print('filename!',file.filename)
+    if file.filename == '':
+        return 'No filename',status.HTTP_206_PARTIAL_CONTENT
+    
+    if file and allowed_file(file.filename):
+        prefix,filename = get_random_filename(file.filename) #secure_filename(file.filename)
+        #odir = os.path.join(app.config['UPLOAD_DIR'], os.path.dirname(filename))
+        #if not os.path.exists(odir):
+        folder = os.path.join(app.config['UPLOAD_DIR'], prefix)
+        if not os.path.exists(folder): os.mkdir(folder)
+        file.save(os.path.join(folder, filename))
+        #return redirect(url_for('uploaded_file', filename=filename))
+        return prefix+'/'+filename, status.HTTP_200_OK
+
+    # print('RECEIVED:',files['file'])
+    return 'Post created',status.HTTP_200_OK
+
+
 @app.route('/api/post',methods=['POST'])
 def create_post():
     data=request.json
+    # print(dir(request))
+    #files = request.files
+    #print(request.json)
+    print(data)
+    #print(request.files)
+
+    post = Post()
+    post.content = data.get('content','')
+    post.img_src = data.get('img_src','')
+    G.push(post)
+    #print(dir(post.__ogm__.node))
+
+    post_id=str(post.__ogm__.node.identity)
+    
+    # print('RECEIVED:',files['file'])
+    return post_id,status.HTTP_200_OK
+
 
 
 ### READ

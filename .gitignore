@@ -1,3 +1,6 @@
 __pycache__
 client/examples/*
 client/komrade.json
+uploads
+uploads/*
+uploads/*/*

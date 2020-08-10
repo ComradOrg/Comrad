@@ -1,4 +1,69 @@
-#:import PostScreen screens.post.post.PostScreen
+#:import AddPostScreen screens.post.post.AddPostScreen
+#:import ViewPostScreen screens.post.post.ViewPostScreen
 
-<PostScreen>:
+
+<AddPostScreen>:
     name: 'post'
+    id: post_screen
+
+    MyBoxLayout:
+        id: postbox
+        size_hint:0.5,0.18
+
+        # FileChoose:
+        #     size_hint_y: 0.1
+        #     on_release: self.choose()
+        #     text: 'Select a file'
+
+        MDTextField:
+            id: post_content_input
+            hint_text: "word?"
+            required: False
+            # write_tab: False
+            multiline: True
+            helper_text_mode: "on_error"
+            color_mode: 'custom'
+            line_color_focus: 1,0,0,1
+            line_color_normal: 1,0,0,1
+            current_hint_text_color: 1,0,0,1
+
+        
+
+
+        MDBoxLayout:
+            id: buttonbox
+            size_hint_y: None
+            adaptive_width: True
+            height: '56dp'
+            spacing: '10dp'
+            pos_hint: {'center_x': .5}
+
+            FileChoose:
+                id: file_chooser_button
+                text: "upload"
+                on_release: self.choose()
+                #app.register(username.text, password.text)
+                theme_text_color: "Custom"
+                text_color: 1,0,0,1
+                md_bg_color: 0,0,0,1
+
+            MDRectangleFlatButton:
+                text: "post"
+                on_release: app.post(post_content_input.text, file_chooser_button.selection)
+                    #app.root.change_screen("welcome")
+                theme_text_color: "Custom"
+                text_color: 1,0,0,1
+                md_bg_color: 0,0,0,1
+
+
+            
+
+        MDLabel:
+            id: post_status
+            text:""
+            theme_text_color: 'Error'
+            pos_hint:{'center_x':.5}
+          
+
+<ViewPostScreen>:
+    name: 'view'

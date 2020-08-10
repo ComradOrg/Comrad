@@ -21,6 +21,7 @@ class Person(MyGraphObject):
     followers = RelatedFrom('Person','FOLLOWS')
     based_in = RelatedTo('Place','BASED_IN')
     groups = RelatedTo('Group','IN_GROUP')
+    avatar = RelatedTo('Media','HAS_MEDIA')
 
 class Post(MyGraphObject):
     # properties
@@ -31,6 +32,7 @@ class Post(MyGraphObject):
     # relations
     author = RelatedFrom('Person','WROTE')
     location = RelatedTo('Place','BASED_IN')
+
 
     @property
     def data(self):
