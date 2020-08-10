@@ -45,13 +45,14 @@ class ViewPostScreen(ProtectedScreen):
     post_id = ObjectProperty()
 
     def on_enter(self):
-        ln='woops'
+        post = self.app.get_post(self.root.post_id)
+        log(post)
         
         post = PostCard(
             author='Marx Zuckerberg',
             title='',
             img_src='avatar.jpg',
-            content=ln.strip())
+            content=post['content'])
         print(post)
         self.add_widget(post)
         

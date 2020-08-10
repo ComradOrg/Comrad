@@ -130,16 +130,16 @@ def post(post_id=None):
         G.push(post)
         post_id=str(post.__ogm__.node.identity)
         print('created new post!',post_id)
-        return post_id,status.HTTP_200_OK
+        return {'post_id':post_id},status.HTTP_200_OK
 
     print('got post id!',post_id)
     posts = list(Post.match(G,post_id))
     if not posts:
-        return str(post_id),status.HTTP_204_NO_CONTENT
+        return {},status.HTTP_204_NO_CONTENT
     
     post=posts[0]
     print(post.data)
-    return str(post_id),status.HTTP_200_OK
+    return post.data,status.HTTP_200_OK
 
 
 ### READ

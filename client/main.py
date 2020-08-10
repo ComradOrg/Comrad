@@ -95,7 +95,7 @@ class MainApp(MDApp):
         # bind 
         global app,root
         app = self
-        self.root = root = Builder.load_file('main.kv')
+        self.root = root = Builder.load_file('root.kv')
         
         # edit logo
         logo=root.ids.toolbar.ids.label_title
@@ -116,7 +116,8 @@ class MainApp(MDApp):
         if not self.is_logged_in():
             self.root.change_screen('login')
         else:
-            self.root.change_screen('post')
+            self.root.post_id=135
+            self.root.change_screen('view')
         return self.root
 
     def is_logged_in(self):
@@ -178,8 +179,10 @@ class MainApp(MDApp):
                 self.root.ids.add_post_screen.ids.post_status.text='Uploading file'
                 r = sess.post(url_upload,files={'file':open(filename,'rb')})
                 if r.status_code==200:
-                    server_filename = r.text
-                    self.root.ids.add_post_screen.ids.post_status.text='File uploaded'
+                    rdata = r.json()
+                    server_filename = rdata.get('filename','')
+                    if server_filename:
+                        self.root.ids.add_post_screen.ids.post_status.text='File uploaded'
             
         with self.get_session() as sess:
             # add post
@@ -188,15 +191,17 @@ class MainApp(MDApp):
             jsond={'img_src':server_filename, 'content':content}
             r = sess.post(url_post, json=jsond)
             log('got back from post: ' + r.text)
-            post_id = r.text
-            if post_id.isdigit():
+            rdata = r.json()
+            post_id = rdata.get('post_id',None)
+            if post_id:
                 self.root.ids.add_post_screen.ids.post_status.text='Post created'
                 self.root.view_post(int(post_id))
 
-        def get_post(self,post_id):
-            with self.get_session() as sess:
-                r = sess.get(self.api+'/post/'+str(post_id))
-                print(r.text)
+    def get_post(self,post_id):
+        with self.get_session() as sess:
+            r = sess.get(self.api+'/post/'+str(post_id))
+            jsond = r.json()
+            return jsond
 
 
 if __name__ == '__main__':
