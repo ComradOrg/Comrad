@@ -1,0 +1,115 @@
+#:import FeedScreen screens.feed.feed.FeedScreen
+
+<FeedScreen>:
+    name: 'feed'
+    #MyLabel:
+    #    text: "The falcon cannot hear the falconer..."
+    Carousel:
+        id: post_carousel
+        direction: 'right'
+
+
+
+<PostTitle>:
+    id: post_title
+    text: ''
+    size_hint_y: None
+    height: self.texture_size[1]
+    font_style: 'H5'
+    halign: 'center'
+    height: '25'
+    size_hint_y: None
+
+<PostImage>:
+    # height: '25'
+    size_hint_y: None
+
+<PostGridLayout>:
+    cols: 1
+    size_hint: (1,None)
+    pos_hint: {'center_x':0.5, 'center_y':0}
+    md_bg_color: 1,1,0,1
+    height: self.minimum_height
+
+
+<PostAuthorLayout>:
+    cols: 2
+    orientation: 'horizontal'
+    size_hint: (1,None)
+    # size_hint:(None,None)
+    # pos_hint:(None,None)
+    pos_hint: {'center_x':0.5, 'center_y':0}
+    # md_bg_color: 1,1,0,1
+    height: '100dp' #self.minimum_height
+    # radius:[20,] 
+    # border_radius:20
+    
+<PostAuthorAvatar>:
+    size_hint:(None,None)
+    pos_hint:{'center_x':1,'x':1}
+    # padding:'10dp'
+    # canvas:
+    #     Color:
+    #         rgb: 1,0,0,1
+    #     Line:
+    #         width: 1
+    #         rectangle: (self.x, self.y, self.width, self.height)
+
+<PostAuthorLabel>:
+    id: post_author_label
+    text: ''
+    pos_hint: {'center_y':0.5, 'center_x':0.5}
+    # font_size:'100dp'
+    # font_style:'H5'
+    # font_style: 'custom'
+    #font_name: "Strengthen"
+    # height: '400'
+    size_hint_y: None
+    # size_hint_x: 100
+    text_color:1,0,0,1
+    theme_text_color: 'Custom'
+    halign: 'left'
+    padding: ('10dp','0dp')
+    
+    
+
+
+
+
+<PostContent>:
+    id: post_content
+    text: ''
+    pos_hint: {'center_y':1}
+    font_size:'58dp'
+    font_style:'H5'
+    #font_name: "Strengthen"
+    # height: '400'
+    size_hint_y: None
+    text_color:1,0,0,1
+    theme_text_color: 'Custom'
+    halign: 'left'
+    
+
+<PostCard>:
+    id: post
+    orientation: "vertical"
+    padding: "20dp"
+    size_hint: (0.9, None)
+    pos_hint: {"center_x": .5, "center_y": .5}
+    md_bg_color: (0,0,0,1)
+    height: self.minimum_height
+    radius:[20,] 
+    border_radius:20
+    # canvas:
+    #     Color:
+    #         rgb: 1,0,0,1
+    #     Line:
+    #         width: 1
+    #         rectangle: (self.x, self.y, self.width, self.height)
+    #         # radius:[20,] 
+    #         # border_radius:20
+
+
+    
+    
+        

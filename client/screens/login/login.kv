@@ -1,0 +1,69 @@
+#:import LoginScreen screens.login.login.LoginScreen
+
+<LoginScreen>:
+    name: "login"
+    # text: "Login"
+    # icon: "login"
+
+    MyBoxLayout:
+        id: loginbox
+        size_hint:0.5,0.18
+
+        MDTextField:
+            id: username
+            hint_text: "username"
+            required: True
+            write_tab: False
+            multiline: False
+            helper_text_mode: "on_error"
+            color_mode: 'custom'
+            line_color_focus: 1,0,0,1
+            line_color_normal: 1,0,0,1
+            current_hint_text_color: 1,0,0,1
+
+        MDTextField:
+            id: password
+            password: True
+            hint_text: "password"
+            required: True
+            write_tab: False
+            multiline: False
+            helper_text_mode: "on_error"
+            color_mode: 'custom'
+            line_color_focus: 1,0,0,1
+            line_color_normal: 1,0,0,1
+            current_hint_text_color: 1,0,0,1
+
+
+        MDBoxLayout:
+            id: buttonbox
+            size_hint_y: None
+            adaptive_width: True
+            height: '56dp'
+            spacing: '10dp'
+            pos_hint: {'center_x': .5}
+
+            MDRectangleFlatButton:
+                text: "login"
+                on_release:
+                    app.login(username.text, password.text)
+                    #app.root.change_screen("welcome")
+                theme_text_color: "Custom"
+                text_color: 1,0,0,1
+                md_bg_color: 0,0,0,1
+
+
+            MDRectangleFlatButton:
+                text: "register"
+                on_release:
+                    app.register(username.text, password.text)
+                theme_text_color: "Custom"
+                text_color: 1,0,0,1
+                md_bg_color: 0,0,0,1
+
+        MDLabel:
+            id: login_status
+            text:""
+            theme_text_color: 'Error'
+            pos_hint:{'center_x':.5}
+            

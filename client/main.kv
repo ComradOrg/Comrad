@@ -1,9 +1,17 @@
+#:include screens/login/login.kv
+#:include screens/feed/feed.kv
+#:include screens/post/post.kv
+#:include screens/messages/messages.kv
+#:include screens/notifications/notifications.kv
+
+
 #:import get_color_from_hex kivy.utils.get_color_from_hex
 #:import images_path kivymd.images_path
 #:import colors kivymd.color_definitions.colors
 #:import partial functools.partial
 #:import NoTransition kivy.uix.screenmanager.NoTransition
 # :import MDCarousel kivymd.uix.carousel.MDCarousel
+
 
 
 
@@ -33,110 +41,6 @@
     height: self.texture_size[1]
     font_family: 'Courier'
 
-
-<PostTitle>:
-    id: post_title
-    text: ''
-    size_hint_y: None
-    height: self.texture_size[1]
-    font_style: 'H5'
-    halign: 'center'
-    height: '25'
-    size_hint_y: None
-
-<PostImage>:
-    # height: '25'
-    size_hint_y: None
-
-<PostGridLayout>:
-    cols: 1
-    size_hint: (1,None)
-    pos_hint: {'center_x':0.5, 'center_y':0}
-    md_bg_color: 1,1,0,1
-    height: self.minimum_height
-
-
-<PostAuthorLayout>:
-    cols: 2
-    orientation: 'horizontal'
-    size_hint: (1,None)
-    # size_hint:(None,None)
-    # pos_hint:(None,None)
-    pos_hint: {'center_x':0.5, 'center_y':0}
-    # md_bg_color: 1,1,0,1
-    height: '100dp' #self.minimum_height
-    # radius:[20,] 
-    # border_radius:20
-    
-<PostAuthorAvatar>:
-    size_hint:(None,None)
-    pos_hint:{'center_x':1,'x':1}
-    # padding:'10dp'
-    # canvas:
-    #     Color:
-    #         rgb: 1,0,0,1
-    #     Line:
-    #         width: 1
-    #         rectangle: (self.x, self.y, self.width, self.height)
-
-<PostAuthorLabel>:
-    id: post_author_label
-    text: ''
-    pos_hint: {'center_y':0.5, 'center_x':0.5}
-    # font_size:'100dp'
-    # font_style:'H5'
-    # font_style: 'custom'
-    #font_name: "Strengthen"
-    # height: '400'
-    size_hint_y: None
-    # size_hint_x: 100
-    text_color:1,0,0,1
-    theme_text_color: 'Custom'
-    halign: 'left'
-    padding: ('10dp','0dp')
-    
-    
-
-
-
-
-<PostContent>:
-    id: post_content
-    text: ''
-    pos_hint: {'center_y':1}
-    font_size:'58dp'
-    font_style:'H5'
-    #font_name: "Strengthen"
-    # height: '400'
-    size_hint_y: None
-    text_color:1,0,0,1
-    theme_text_color: 'Custom'
-    halign: 'left'
-    
-
-<PostCard>:
-    id: post
-    orientation: "vertical"
-    padding: "20dp"
-    size_hint: (0.9, None)
-    pos_hint: {"center_x": .5, "center_y": .5}
-    md_bg_color: (0,0,0,1)
-    height: self.minimum_height
-    radius:[20,] 
-    border_radius:20
-    # canvas:
-    #     Color:
-    #         rgb: 1,0,0,1
-    #     Line:
-    #         width: 1
-    #         rectangle: (self.x, self.y, self.width, self.height)
-    #         # radius:[20,] 
-    #         # border_radius:20
-
-
-    
-    
-        
 
 
 
@@ -169,7 +73,6 @@ MyLayout:
         background_palette: 'Red'
         background_hue: '500'
         specific_text_color: 1,0,0,1
-        # right_action_items: [['radio-tower', partial(root.change_screen, 'feed')], ['account-group', partial(root.change_screen, 'people')], ['calendar', partial(root.change_screen, 'events')], ['message-processing-outline', partial(root.change_screen, 'messages')], ['bell-outline', partial(root.change_screen, 'notifications')]]
         right_action_items: [['post-outline', partial(root.change_screen, 'feed')], ['pencil-plus-outline', partial(root.change_screen, 'post')], ['message-processing-outline', partial(root.change_screen, 'messages')], ['bell-outline', partial(root.change_screen, 'notifications')], ['account-circle-outline', partial(root.change_screen, 'notifications')]]
         #left_action_items: [[f"assets/fist2.png", partial(root.change_screen, 'feed')]]
         font_context: None
@@ -180,137 +83,8 @@ MyLayout:
         id: scr_mngr
         # transition: NoTransition()
 
-
-
-
-        ### 
-        # LOGIN SCREEN
-        ###
-
         LoginScreen:
-            name: "login"
-            # text: "Login"
-            # icon: "login"
-
-            MyBoxLayout:
-                id: loginbox
-                size_hint:0.5,0.18
-
-                MDTextField:
-                    id: username
-                    hint_text: "username"
-                    required: True
-                    write_tab: False
-                    multiline: False
-                    helper_text_mode: "on_error"
-                    color_mode: 'custom'
-                    line_color_focus: 1,0,0,1
-                    line_color_normal: 1,0,0,1
-                    current_hint_text_color: 1,0,0,1
-
-                MDTextField:
-                    id: password
-                    password: True
-                    hint_text: "password"
-                    required: True
-                    write_tab: False
-                    multiline: False
-                    helper_text_mode: "on_error"
-                    color_mode: 'custom'
-                    line_color_focus: 1,0,0,1
-                    line_color_normal: 1,0,0,1
-                    current_hint_text_color: 1,0,0,1
-
-
-                MDBoxLayout:
-                    id: buttonbox
-                    size_hint_y: None
-                    adaptive_width: True
-                    height: '56dp'
-                    spacing: '10dp'
-                    pos_hint: {'center_x': .5}
-
-                    MDRectangleFlatButton:
-                        text: "login"
-                        on_release:
-                            app.login(username.text, password.text)
-                            #app.root.change_screen("welcome")
-                        theme_text_color: "Custom"
-                        text_color: 1,0,0,1
-                        md_bg_color: 0,0,0,1
-
-
-                    MDRectangleFlatButton:
-                        text: "register"
-                        on_release:
-                            app.register(username.text, password.text)
-                        theme_text_color: "Custom"
-                        text_color: 1,0,0,1
-                        md_bg_color: 0,0,0,1
-
-                MDLabel:
-                    id: login_status
-                    text:""
-                    theme_text_color: 'Error'
-                    pos_hint:{'center_x':.5}
-                    
-
-
-        WelcomeScreen:
-            name: 'welcome'
-            
-            MyBoxLayout:
-                size_hint:0.666,0.666
-
-                #MyLabel:
-                #    text: "Welcome!"
-                #    font_style: "H3"
-                #    pos_hint: {'center_y':0.85}
-                    
-                MyLabel:
-                    text: "\n\nTurning and turning in the widening gyre   \nThe falcon cannot hear the falconer;\nThings fall apart; the centre cannot hold;\nMere anarchy is loosed upon the world,\nThe blood-dimmed tide is loosed, and everywhere   \nThe ceremony of innocence is drowned;\nThe best lack all conviction, while the worst   \nAre full of passionate intensity.\n\nSurely some revelation is at hand..."
-                
-
-        PeopleScreen:
-            name: 'people'
-
-            ScrollView:
-                id: scroll
-                size_hint: (1, 1)
-                pos_hint: {'center_x': .5, 'y': 0}
-                do_scroll_x: False
-                bar_width: 0
-                scroll_type: ['content']
-
-                MDList:
-                    id: container
-                    # size_hint_y: None
-                    # height: '100dp'
-                    #padding: 0, self._list_vertical_padding
-
-
-
-                
-        
         FeedScreen:
-            name: 'feed'
-            #MyLabel:
-            #    text: "The falcon cannot hear the falconer..."
-            Carousel:
-                id: post_carousel
-                direction: 'right'
-                
-        AddPostScreen:
-            name: 'post'
-            
-
-
-        EventsScreen:
-            name: 'events'
-
+        PostScreen:
         MessagesScreen:
-            name: 'messages'
-
         NotificationsScreen:
-            name: 'notifications'
-
