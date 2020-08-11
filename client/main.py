@@ -115,7 +115,7 @@ class MainApp(MDApp):
         if not self.is_logged_in():
             self.root.change_screen('login')
         else:
-            self.root.post_id=179
+            self.root.post_id=190
             self.root.change_screen('view')
         return self.root
 
@@ -209,22 +209,25 @@ class MainApp(MDApp):
                     with open(ofn_json,'w') as of:
                         json.dump(jsond, of)
         
-        # is there an image?
-        img_src = jsond.get('img_src','')
-        if img_src:
-            # is it cached?
-            ofn_image = os.path.join('cache','img',img_src)
-            if not os.path.exists(ofn_image):
-                # create dir?
-                ofn_image_dir = os.path.split(ofn_image)[0]
-                if not os.path.exists(ofn_image_dir): os.makedirs(ofn_image_dir)
-                log('getting image!')
-                with self.get_session() as sess:
-                    with sess.get(self.api+'/download/'+img_src,stream=True) as r:
-                        with open(ofn_image,'wb') as of:
-                            shutil.copyfileobj(r.raw, of)
-
         return jsond
+
+        
+    def get_image(self, img_src):
+        # is there an image?
+        if not img_src: return 
+        # is it cached?
+        ofn_image = os.path.join('cache','img',img_src)
+        if not os.path.exists(ofn_image):
+            # create dir?
+            ofn_image_dir = os.path.split(ofn_image)[0]
+            if not os.path.exists(ofn_image_dir): os.makedirs(ofn_image_dir)
+            log('getting image!')
+            with self.get_session() as sess:
+                with sess.get(self.api+'/download/'+img_src,stream=True) as r:
+                    with open(ofn_image,'wb') as of:
+                        shutil.copyfileobj(r.raw, of)
+        return ofn_image
+
 
 
 if __name__ == '__main__':

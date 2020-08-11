@@ -49,21 +49,26 @@ class ViewPostScreen(ProtectedScreen):
             log('child: '+str(child))
             self.remove_widget(child)
         
-        post = self.app.get_post(self.root.post_id)
-        log(post)
-        img_src=os.path.join('cache','img',post['img_src']) if post['img_src'] else ''
+        post_json = self.app.get_post(self.root.post_id)
+        log(post_json)
+        img_src = post_json.get('img_src','')
+        content = post_json.get('content','')
+        cache_img_src = os.path.join('cache','img',img_src) if img_src else ''
         kwargs = dict(author='Marx Zuckerberg',
             title='',
             img_src=img_src,
-            content=post['content'])
+            content=content)
         log(kwargs)
+
         post = PostCard(**kwargs)
         
         print(post)
         self.add_widget(post)
 
+        
+
     def on_enter(self):
-        pass
+        for child in self.children: child.load_image()
         
     
     pass

@@ -6,6 +6,9 @@ from kivymd.uix.card import MDCard, MDSeparator
 from kivy.uix.scrollview import ScrollView
 from screens.base import ProtectedScreen
 from main import log
+import os
+from kivy.app import App
+    
 
 ### POST CODE
 class PostTitle(MDLabel): pass
@@ -42,7 +45,9 @@ class PostCard(MDCard):
         super().__init__()
         self.author = author
         self.title = title
-        self.img_src = img_src
+        self.img_src = img_src if img_src else ''
+        self.cache_img_src = os.path.join('cache','img',img_src) if img_src else ''
+        self.img_loaded = os.path.exists(self.cache_img_src)
         self.content = content
         self.bind(minimum_height=self.setter('height'))
 
@@ -56,9 +61,9 @@ class PostCard(MDCard):
         # author_section_layout.add_widget(author_avatar)
         # self.add_widget(author_section_layout)
 
-        if self.img_src:
+        if self.cache_img_src:
             image_layout = PostImageLayout()
-            image = PostImage(source=self.img_src)
+            self.image = image = PostImage(source=self.cache_img_src)
             image.height = '300dp'
             image_layout.add_widget(image)
             image_layout.height='300dp'
@@ -97,6 +102,20 @@ class PostCard(MDCard):
         scroller.add_widget(content)
         self.add_widget(scroller)
         # self.add_widget(post_layout)
+
+    @property
+    def app(self):
+        return App.get_running_app()
+
+    def load_image(self):
+        if not self.img_src: return
+        if self.img_loaded: return
+        
+        # otherwise load image...
+        self.app.get_image(self.img_src)
+        log('done getting image!')
+        self.image.reload()
+        self.img_loaded=True
 
 #####
 
