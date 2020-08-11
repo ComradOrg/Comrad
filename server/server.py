@@ -1,5 +1,5 @@
 import flask,os
-from flask import request, jsonify
+from flask import request, jsonify, send_from_directory
 from pathlib import Path
 from models import *
 from flask_api import FlaskAPI, status, exceptions
@@ -21,7 +21,7 @@ app.config['UPLOAD_DIR'] = 'uploads/'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 @app.route('/')
-def home(): return '404 go home friend'
+def home(): return {'error':'404 go home friend'}
 
 
 # Api Functions
@@ -34,18 +34,18 @@ def login():
     name=data.get('name','')
     passkey=data.get('passkey','')
     if not (name and passkey):
-        return 'Login failed',status.HTTP_400_BAD_REQUEST
+        return {'error':'Login failed'},status.HTTP_400_BAD_REQUEST
 
     persons = list(Person.match(G,name))
     if not persons:
-        return 'Login failed',status.HTTP_401_UNAUTHORIZED
+        return {'error':'Login failed'},status.HTTP_401_UNAUTHORIZED
 
     person = persons[0]
     real_passkey = person.passkey
     if not check_password_hash(real_passkey, passkey):
-        return 'Login failed',status.HTTP_401_UNAUTHORIZED
+        return {'error':'Login failed'},status.HTTP_401_UNAUTHORIZED
 
-    return 'Login success',status.HTTP_200_OK
+    return {'success':'Login success'},status.HTTP_200_OK
 
 @app.route('/api/register',methods=['POST'])
 def register():
@@ -55,11 +55,11 @@ def register():
     passkey=data.get('passkey','')
 
     if not (name and passkey):
-        return 'Register failed',status.HTTP_400_BAD_REQUEST
+        return {'error':'Register failed'},status.HTTP_400_BAD_REQUEST
 
     person = list(Person.match(G,name))
     if person:
-        return 'User exists',status.HTTP_401_UNAUTHORIZED
+        return {'error':'User exists'},status.HTTP_401_UNAUTHORIZED
 
     passkey = generate_password_hash(passkey)
 
@@ -70,7 +70,7 @@ def register():
     G.push(person)
 
     print('REGISTERED!',data)
-    return 'Account created',status.HTTP_200_OK
+    return {'success':'Account created'},status.HTTP_200_OK
 
 
 
@@ -93,7 +93,7 @@ def upload_file():
     files = request.files
     # check if the post request has the file part
     if 'file' not in request.files:
-        return 'No file found',status.HTTP_204_NO_CONTENT
+        return {'error':'No file found'},status.HTTP_204_NO_CONTENT
     
     file = request.files['file']
     
@@ -101,9 +101,10 @@ def upload_file():
     # submit an empty part without filename
     print('filename!',file.filename)
     if file.filename == '':
-        return 'No filename',status.HTTP_206_PARTIAL_CONTENT
+        return {'error':'No filename'},status.HTTP_206_PARTIAL_CONTENT
     
     if file and allowed_file(file.filename):
+        print('uploading file...')
         prefix,filename = get_random_filename(file.filename) #secure_filename(file.filename)
         #odir = os.path.join(app.config['UPLOAD_DIR'], os.path.dirname(filename))
         #if not os.path.exists(odir):
@@ -111,10 +112,9 @@ def upload_file():
         if not os.path.exists(folder): os.mkdir(folder)
         file.save(os.path.join(folder, filename))
         #return redirect(url_for('uploaded_file', filename=filename))
-        return prefix+'/'+filename, status.HTTP_200_OK
+        return {'filename':prefix+'/'+filename}, status.HTTP_200_OK
 
-    # print('RECEIVED:',files['file'])
-    return 'Post created',status.HTTP_200_OK
+    return {'error':'Upload failed'},status.HTTP_406_NOT_ACCEPTABLE
 
 
 @app.route('/api/post',methods=['POST'])
@@ -141,6 +141,11 @@ def post(post_id=None):
     print(post.data)
     return post.data,status.HTTP_200_OK
 
+@app.route('/api/download/<prefix>/<filename>',methods=['GET'])
+def download(prefix, filename):
+    filedir = os.path.join(app.config['UPLOAD_DIR'], prefix)
+    print(filedir, filename)
+    return send_from_directory(filedir, filename)
 
 ### READ
 

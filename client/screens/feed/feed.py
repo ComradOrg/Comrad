@@ -2,9 +2,10 @@ from kivymd.uix.label import MDLabel
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.image import AsyncImage
 from kivymd.uix.boxlayout import MDBoxLayout
-from kivymd.uix.card import MDCard
+from kivymd.uix.card import MDCard, MDSeparator
+from kivy.uix.scrollview import ScrollView
 from screens.base import ProtectedScreen
-
+from main import log
 
 ### POST CODE
 class PostTitle(MDLabel): pass
@@ -21,6 +22,8 @@ class PostContent(MDLabel):
 
 class PostAuthorLayout(MDBoxLayout): pass
 
+class PostImageLayout(MDBoxLayout): pass
+
 class PostAuthorLabel(MDLabel): 
     def __init__(self,**kwargs):
         super().__init__(**kwargs)
@@ -29,6 +32,10 @@ class PostAuthorLabel(MDLabel):
         self.font_name='assets/overpass-mono-regular.otf'
     pass
 class PostAuthorAvatar(AsyncImage): pass
+
+class PostLayout(MDBoxLayout): pass
+
+class PostScrollView(ScrollView): pass
 
 class PostCard(MDCard):
     def __init__(self, author = None, title = None, img_src = None, content = None):
@@ -43,30 +50,59 @@ class PostCard(MDCard):
         author_section_layout = PostAuthorLayout()
         author_label = PostAuthorLabel(text=self.author)
         author_label.font_size = '28dp'
-        author_avatar = PostAuthorAvatar(source=self.img_src)
+        author_avatar = PostAuthorAvatar(source='avatar.jpg') #self.img_src)
         author_section_layout.add_widget(author_avatar)
         author_section_layout.add_widget(author_label)
         # author_section_layout.add_widget(author_avatar)
-        self.add_widget(author_section_layout)
+        # self.add_widget(author_section_layout)
 
-        
-        title = PostTitle(text=self.title)
-        # image = PostImage(source=self.img_src)
+        if self.img_src:
+            image_layout = PostImageLayout()
+            image = PostImage(source=self.img_src)
+            image.height = '300dp'
+            image_layout.add_widget(image)
+            image_layout.height='300dp'
+            # log(image.image_ratio)
+
         content = PostContent(text=self.content)
         
+        # post_layout = PostGridLayout()
         #content = PostContent()
 
         # add to screen
-        self.add_widget(title)
-        # self.add_widget(image)
-        self.add_widget(content)
-        #self.add_widget(layout)
+        # self.add_widget(title)
+        # post_layout.add_widget(author_section_layout)
+        # post_layout.add_widget(image_layout)
+        # post_layout.add_widget(content)
+
+        
+        scroller = PostScrollView()
+        self.add_widget(author_section_layout)
+        # self.add_widget(MDLabel(text='hello'))
+        log('img_src ' + str(bool(self.img_src)))
+        if self.img_src: self.add_widget(image_layout)
+
+        def estimate_height(minlen=100,maxlen=500):
+            num_chars = len(self.content)
+            # num_lines = num_chars
+            height = num_chars*1.1
+            if height>maxlen: height=maxlen
+            if height<minlen: height=minlen
+            return height
+
+        scroller.size = ('300dp','%sdp' % estimate_height())
+        
+
+        # scroller.bind(size=('300dp',scroller.setter('height'))
+        scroller.add_widget(content)
+        self.add_widget(scroller)
+        # self.add_widget(post_layout)
 
 #####
 
 
 class FeedScreen(ProtectedScreen):
-    def on_enter(self):
+    def on_pre_enter_test(self):
         i=0
         lim=5
         with open('tweets.txt') as f:
@@ -83,3 +119,5 @@ class FeedScreen(ProtectedScreen):
                     content=ln.strip())
                 print(post)
                 self.ids.post_carousel.add_widget(post)
+
+    

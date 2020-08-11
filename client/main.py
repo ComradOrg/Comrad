@@ -25,6 +25,8 @@ import requests,json
 from kivy.storage.jsonstore import JsonStore
 from kivy.core.window import Window
 from kivy.core.text import LabelBase
+import shutil
+
 
 Window.size = (640, 1136) #(2.65 * 200, 5.45 * 200)
 
@@ -57,9 +59,6 @@ class MyLabel(MDLabel): pass
 
 
 
-
-                
-        
 
 
 
@@ -116,7 +115,7 @@ class MainApp(MDApp):
         if not self.is_logged_in():
             self.root.change_screen('login')
         else:
-            self.root.post_id=135
+            self.root.post_id=179
             self.root.change_screen('view')
         return self.root
 
@@ -172,36 +171,60 @@ class MainApp(MDApp):
         
         server_filename=''
             
-        if filename:
-            with self.get_session() as sess:
-            #res = sess.post(url, files=filesd, data={'data':json.dumps(jsond)}, headers=headers)
+        with self.get_session() as sess:
+            if filename:
                 log(filename)
                 self.root.ids.add_post_screen.ids.post_status.text='Uploading file'
-                r = sess.post(url_upload,files={'file':open(filename,'rb')})
-                if r.status_code==200:
-                    rdata = r.json()
-                    server_filename = rdata.get('filename','')
-                    if server_filename:
-                        self.root.ids.add_post_screen.ids.post_status.text='File uploaded'
-            
-        with self.get_session() as sess:
+                with sess.post(url_upload,files={'file':open(filename,'rb')}) as r1:
+                    if r1.status_code==200:
+                        rdata1 = r1.json()
+                        server_filename = rdata1.get('filename','')
+                        if server_filename:
+                            self.root.ids.add_post_screen.ids.post_status.text='File uploaded'
+
+
             # add post
-            #log(self.root.ids.add_post_screen.ids.keys())
             self.root.ids.add_post_screen.ids.post_status.text='Creating post'
             jsond={'img_src':server_filename, 'content':content}
-            r = sess.post(url_post, json=jsond)
-            log('got back from post: ' + r.text)
-            rdata = r.json()
-            post_id = rdata.get('post_id',None)
-            if post_id:
-                self.root.ids.add_post_screen.ids.post_status.text='Post created'
-                self.root.view_post(int(post_id))
+            with sess.post(url_post, json=jsond) as r2:
+                log('got back from post: ' + r2.text)
+                rdata2 = r2.json()
+                post_id = rdata2.get('post_id',None)
+                if post_id:
+                    self.root.ids.add_post_screen.ids.post_status.text='Post created'
+                    self.root.view_post(int(post_id))
 
     def get_post(self,post_id):
-        with self.get_session() as sess:
-            r = sess.get(self.api+'/post/'+str(post_id))
-            jsond = r.json()
-            return jsond
+        # get json from cache?
+        ofn_json = os.path.join('cache','json',str(post_id)+'.json')
+        if os.path.exists(ofn_json):
+            with open(ofn_json) as f:
+                jsond = json.load(f)
+        else:
+            with self.get_session() as sess:
+                with sess.get(self.api+'/post/'+str(post_id)) as r:
+                    jsond = r.json()
+
+                    # cache it!
+                    with open(ofn_json,'w') as of:
+                        json.dump(jsond, of)
+        
+        # is there an image?
+        img_src = jsond.get('img_src','')
+        if img_src:
+            # is it cached?
+            ofn_image = os.path.join('cache','img',img_src)
+            if not os.path.exists(ofn_image):
+                # create dir?
+                ofn_image_dir = os.path.split(ofn_image)[0]
+                if not os.path.exists(ofn_image_dir): os.makedirs(ofn_image_dir)
+                log('getting image!')
+                with self.get_session() as sess:
+                    with sess.get(self.api+'/download/'+img_src,stream=True) as r:
+                        with open(ofn_image,'wb') as of:
+                            shutil.copyfileobj(r.raw, of)
+
+        return jsond
 
 
 if __name__ == '__main__':

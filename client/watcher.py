@@ -36,6 +36,8 @@ class Handler(FileSystemEventHandler):
 
     @staticmethod
     def on_any_event(event):
+        if '/cache/' in str(event.src_path): return None
+        
         if event.is_directory:
             return None
 
@@ -47,6 +49,7 @@ class Handler(FileSystemEventHandler):
             # Taken any action here when a file is modified.
             if event.src_path.endswith('.json'): return None
             if '.json' in str(event.src_path): return None
+            
             if event.src_path.endswith('log.txt'): return None
             print("   \n\n\n\n\nReceived modified event - %s." % event.src_path)
             run_command()

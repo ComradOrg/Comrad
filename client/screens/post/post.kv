@@ -9,7 +9,7 @@
 
     MyBoxLayout:
         id: postbox
-        size_hint:0.5,0.18
+        size_hint:0.5,0.2
 
         # FileChoose:
         #     size_hint_y: 0.1
@@ -24,38 +24,40 @@
             multiline: True
             helper_text_mode: "on_error"
             color_mode: 'custom'
+            size_hint_y:0.5
+            # size: ('300dp','300dp')
             line_color_focus: 1,0,0,1
-            line_color_normal: 1,0,0,1
+            line_color_normal: 0,0,0,1
             current_hint_text_color: 1,0,0,1
 
         
 
 
-        MDBoxLayout:
-            id: buttonbox
-            size_hint_y: None
-            adaptive_width: True
-            height: '56dp'
-            spacing: '10dp'
-            pos_hint: {'center_x': .5}
+    MDBoxLayout:
+        id: buttonbox
+        # size_hint_y: None
+        adaptive_width: True
+        height: '56dp'
+        spacing: '10dp'
+        pos_hint: {'center_x': .5, 'y':0.41}
 
-            FileChoose:
-                id: file_chooser_button
-                text: "upload"
-                #text: app.root.ids.scr_mngr.etc
-                on_release: self.choose()
-                #app.register(username.text, password.text)
-                theme_text_color: "Custom"
-                text_color: 1,0,0,1
-                md_bg_color: 0,0,0,1
+        FileChoose:
+            id: file_chooser_button
+            text: "upload"
+            #text: app.root.ids.scr_mngr.etc
+            on_release: self.choose()
+            #app.register(username.text, password.text)
+            theme_text_color: "Custom"
+            text_color: 1,0,0,1
+            md_bg_color: 0,0,0,1
 
-            MDRectangleFlatButton:
-                text: "post"
-                on_release: app.post(post_content_input.text, file_chooser_button.selection)
-                    #app.root.change_screen("welcome")
-                theme_text_color: "Custom"
-                text_color: 1,0,0,1
-                md_bg_color: 0,0,0,1
+        MDRectangleFlatButton:
+            text: "post"
+            on_release: app.post(post_content_input.text, file_chooser_button.selection)
+                #app.root.change_screen("welcome")
+            theme_text_color: "Custom"
+            text_color: 1,0,0,1
+            md_bg_color: 0,0,0,1
 
 
             

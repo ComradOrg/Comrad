@@ -5,7 +5,7 @@ from kivy.properties import ListProperty,ObjectProperty
 from kivy.app import App
 from main import log
 from screens.feed.feed import *
-
+import os
 
 
 class FileChoose(MDRectangleFlatButton):
@@ -44,17 +44,26 @@ class AddPostScreen(ProtectedScreen):
 class ViewPostScreen(ProtectedScreen): 
     post_id = ObjectProperty()
 
-    def on_enter(self):
+    def on_pre_enter(self):
+        for child in self.children:
+            log('child: '+str(child))
+            self.remove_widget(child)
+        
         post = self.app.get_post(self.root.post_id)
         log(post)
-        
-        post = PostCard(
-            author='Marx Zuckerberg',
+        img_src=os.path.join('cache','img',post['img_src']) if post['img_src'] else ''
+        kwargs = dict(author='Marx Zuckerberg',
             title='',
-            img_src='avatar.jpg',
+            img_src=img_src,
             content=post['content'])
+        log(kwargs)
+        post = PostCard(**kwargs)
+        
         print(post)
         self.add_widget(post)
+
+    def on_enter(self):
+        pass
         
     
     pass

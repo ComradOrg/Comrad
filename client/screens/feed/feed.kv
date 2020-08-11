@@ -1,4 +1,5 @@
 #:import FeedScreen screens.feed.feed.FeedScreen
+#:import Window kivy.core.window.Window
 
 <FeedScreen>:
     name: 'feed'
@@ -20,16 +21,49 @@
     height: '25'
     size_hint_y: None
 
+
+<PostImageLayout>:
+    id: image_layout
+    cols: 1
+    orientation: 'vertical'
+    size_hint: (1,None)
+    # md_bg_color: 1,1,0,1
+    pos_hint: {'center_x':0.5} #, 'y':0.5}
+    # height: '100dp' #self.minimum_height
+    # width: '100dp'
+    height: '300dp'
+    # spacing:'100dp'
+    # padding:'100dp'
+
 <PostImage>:
     # height: '25'
+    # size: self.norm_image_size
+    allow_stretch: True
+    # keep_ratio: True
+    
     size_hint_y: None
+    size_hint_x: None
+    pos_hint: {'center_x':0.5}
+    size: (self.height*self.image_ratio,self.height)
+    # width: self.parent.width
+    # height: self.parent.width/self.image_ratio
+    # height: self.height
+    # width: self.height*self.image_ratio
+    canvas:
+        Color:
+            rgb: 0,0,0,1
+        Line:
+            width: 7
+            rectangle: (self.x, self.y, self.width, self.height)
+
+
 
 <PostGridLayout>:
     cols: 1
     size_hint: (1,None)
     pos_hint: {'center_x':0.5, 'center_y':0}
     md_bg_color: 1,1,0,1
-    height: self.minimum_height
+    # height: self.minimum_height
 
 
 <PostAuthorLayout>:
@@ -43,6 +77,8 @@
     height: '100dp' #self.minimum_height
     # radius:[20,] 
     # border_radius:20
+
+
     
 <PostAuthorAvatar>:
     size_hint:(None,None)
@@ -88,7 +124,11 @@
     text_color:1,0,0,1
     theme_text_color: 'Custom'
     halign: 'left'
-    
+
+<PostScrollView>:
+    size_hint: (1,None)
+    # pos_hint: {'center_y':0.5}
+    #size: ('300dp',self.height)
 
 <PostCard>:
     id: post
