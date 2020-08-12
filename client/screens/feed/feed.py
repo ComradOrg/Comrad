@@ -121,7 +121,7 @@ class PostCard(MDCard):
 
 
 class FeedScreen(ProtectedScreen):
-    def on_pre_enter_test(self):
+    def on_pre_enter(self):
         i=0
         lim=5
         with open('tweets.txt') as f:

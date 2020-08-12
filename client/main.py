@@ -90,10 +90,19 @@ class MainApp(MDApp):
         return get_tor_proxy_session()
         #return get_tor_python_session()
 
+    def get_username(self):
+        if hasattr(self,'username'): return self.username
+        self.load_store()
+        if hasattr(self,'username'): return self.username
+        return ''
+
     def build(self):
+        self.username=''
         # bind 
         global app,root
         app = self
+        #self.username = self.store.get('userd').get('username')
+        self.load_store()
         self.root = root = Builder.load_file('root.kv')
         
         # edit logo
@@ -114,27 +123,49 @@ class MainApp(MDApp):
  
         if not self.is_logged_in():
             self.root.change_screen('login')
+            log(self.username)
         else:
             self.root.post_id=190
             self.root.change_screen('view')
         return self.root
 
-    def is_logged_in(self):
+    def load_store(self):
+        if not self.store.exists('user'): return
+        userd=self.store.get('user')
+        if not userd: userd={}
+        self.logged_in_when = userd.get('logged_in_when')
+        self.username = userd.get('username','')
+        
+    def is_logged_in(self,just_check_timestamp=True, use_caching=True):
         if self.logged_in: return True
+        if not use_caching: return False
+
+        ###
         if not self.store.exists('user'): return False
-        if self.store.get('user')['logged_in']:
-            if time.time() - self.store.get('user')['logged_in_when'] < self.login_expiry:
-                self.logged_in=True
-                return True
+        userd=self.store.get('user')
+        if not userd: userd={}
+        if userd.get('logged_in'):
+            un=userd.get('username')
+            timestamp=userd.get('logged_in_when')
+
+            # just a time check
+            if timestamp and just_check_timestamp:
+                if time.time() - timestamp < self.login_expiry:
+                    self.logged_in=True
+                    #self.username=un
+                    return True
+            
         return False
 
-    def do_login(self):
+    def save_login(self,un):
         self.logged_in=True
-        self.store.put('user',logged_in=True,logged_in_when=time.time())
+        self.username=un
+        # self.store.put('username',un)
+        self.store.put('user',username=un,logged_in=True,logged_in_when=time.time())
         self.root.change_screen('feed')
 
 
-    def login(self,un,pw):
+    def login(self,un=None,pw=None):
         url = self.api+'/login'
 
         with self.get_session() as sess:
@@ -142,9 +173,12 @@ class MainApp(MDApp):
             res = sess.post(url, json={'name':un, 'passkey':pw})
 
             if res.status_code==200:
-                self.do_login()
+                data=res.json()
+                self.save_login(un)
+                return True
             else:
-                self.root.ids.login_status.text=res.text
+                # self.root.ids.login_status.text=res.text
+                return False
 
     def register(self,un,pw):
         url = self.api+'/register'
@@ -153,7 +187,7 @@ class MainApp(MDApp):
             #res = requests.post(url, json={'name':un, 'passkey':pw})
             res = sess.post(url, json={'name':un, 'passkey':pw})
             if res.status_code==200:
-                self.do_login()
+                self.save_login(un)
             else:
                 self.root.ids.login_status.text=res.text
 
@@ -174,6 +208,8 @@ class MainApp(MDApp):
         with self.get_session() as sess:
             if filename:
                 log(filename)
+                # copy file to cache
+
                 self.root.ids.add_post_screen.ids.post_status.text='Uploading file'
                 with sess.post(url_upload,files={'file':open(filename,'rb')}) as r1:
                     if r1.status_code==200:
@@ -182,10 +218,19 @@ class MainApp(MDApp):
                         if server_filename:
                             self.root.ids.add_post_screen.ids.post_status.text='File uploaded'
 
+                            # pre-cache
+                            cache_filename = os.path.join('cache','img',server_filename)
+                            cache_filedir = os.path.dirname(cache_filename)
+                            if not os.path.exists(cache_filedir): os.makedirs(cache_filedir)
+                            shutil.copyfile(filename,cache_filename) 
 
             # add post
             self.root.ids.add_post_screen.ids.post_status.text='Creating post'
-            jsond={'img_src':server_filename, 'content':content}
+            jsond={'img_src':server_filename, 'content':content, 'username':self.username}
+            
+            
+
+            # post    
             with sess.post(url_post, json=jsond) as r2:
                 log('got back from post: ' + r2.text)
                 rdata2 = r2.json()
@@ -193,6 +238,13 @@ class MainApp(MDApp):
                 if post_id:
                     self.root.ids.add_post_screen.ids.post_status.text='Post created'
                     self.root.view_post(int(post_id))
+
+                    # pre-cache
+                    with open(os.path.join('cache','json',str(post_id)+'.json'),'w') as of:
+                        json.dump(jsond, of)
+
+                    
+            
 
     def get_post(self,post_id):
         # get json from cache?

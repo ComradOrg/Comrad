@@ -70,7 +70,7 @@ def register():
     G.push(person)
 
     print('REGISTERED!',data)
-    return {'success':'Account created'},status.HTTP_200_OK
+    return {'success':'Account created', 'username':name, 'passkey':passkey},status.HTTP_200_OK
 
 
 
@@ -122,12 +122,25 @@ def upload_file():
 def post(post_id=None):
 
     if request.method == 'POST':
+        # get data
         data=request.json
-        print(data)
+        print('POST /api/post:',data)
+
+        # make post
         post = Post()
         post.content = data.get('content','')
         post.img_src = data.get('img_src','')
         G.push(post)
+
+        # attach to author
+        username=data.get('username','')
+        author = Person.match(G, username).first()
+        print('author?', author)
+        author.posts.add(post)
+        # post.author.add(author)
+        G.push(author)
+
+        # return
         post_id=str(post.__ogm__.node.identity)
         print('created new post!',post_id)
         return {'post_id':post_id},status.HTTP_200_OK
@@ -162,10 +175,32 @@ def get_follows(name=None):
     data = [p.data for p in person.follows]
     return jsonify(data)
 
+
+@app.route('/api/posts')
 @app.route('/api/posts/<name>')
 def get_posts(name=None):
-    person = Person.match(G, name).first()
-    data = [p.data for p in person.posts]
+    if name:
+        person = Person.match(G, name).first()
+        data = [p.data for p in person.posts]
+    else:
+        # data=[]
+        # def handle_row(row):
+        #     node = row[0]
+        #     data+=[node.data]  # do something with `node` here
+
+        # G.match
+        # G.cypher.execute("START z=node(*) RETURN z", row_handler=handle_row)
+        matcher = NodeMatcher(G)
+        posts = matcher.match('Post')
+        # posts = Post.match(G).where("_.content = '*'")
+        def to_data(post):
+            d=dict(post)
+            d['id']=post.identity
+            return d
+
+        data = [to_data(post) for post in posts]
+        # print(data)
+
     return jsonify(data)
 
 @app.route('/api/post/<int:id>')

@@ -44,8 +44,8 @@ class Post(MyGraphObject):
 
         authors=list(self.author)
         locations=list(self.location)
-        if authors: dx['author']=authors[0]
-        if locations: dx['location']=locations[0]
+        dx['author']=authors[0].name if authors else ''
+        dx['location']=locations[0].name if locations else ''
 
         return dx
 
@@ -99,6 +99,6 @@ def test_models():
     
 
 
-test_models()
+# test_models()
 
 
