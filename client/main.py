@@ -125,8 +125,8 @@ class MainApp(MDApp):
             self.root.change_screen('login')
             log(self.username)
         else:
-            self.root.post_id=190
-            self.root.change_screen('view')
+            # self.root.post_id=190
+            self.root.change_screen('feed')
         return self.root
 
     def load_store(self):
@@ -263,6 +263,13 @@ class MainApp(MDApp):
         
         return jsond
 
+    def get_posts(self):
+        with self.get_session() as sess:
+            with sess.get(self.api+'/posts') as r:
+                log(r.text)
+                jsond=r.json()
+                return jsond['posts']
+        return []
         
     def get_image(self, img_src):
         # is there an image?

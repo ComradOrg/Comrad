@@ -5,6 +5,7 @@ from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.card import MDCard, MDSeparator
 from kivy.uix.scrollview import ScrollView
 from screens.base import ProtectedScreen
+from kivy.properties import ListProperty
 from main import log
 import os
 from kivy.app import App
@@ -121,7 +122,32 @@ class PostCard(MDCard):
 
 
 class FeedScreen(ProtectedScreen):
+    posts = ListProperty()
+
     def on_pre_enter(self):
+        # log('ids:' +str(self.ids.post_carousel.ids))
+        for post in self.posts:
+            log('post: '+str(post))
+            self.ids.post_carousel.remove_widget(post)
+        
+        i=0
+        lim=25
+        for i,post in enumerate(reversed(self.app.get_posts())):
+            #if ln.startswith('@') or ln.startswith('RT '): continue
+            #i+=1
+            if i>lim: break
+            
+            #post = Post(title=f'Marx Zuckerberg', content=ln.strip())
+            post_obj = PostCard(
+                author='Marx Zuckerberg',
+                title='',
+                img_src=post.get('img_src',''),
+                content=post.get('content',''))
+            log(post)
+            self.posts.append(post_obj)
+            self.ids.post_carousel.add_widget(post_obj)
+
+    def on_pre_enter_test(self):
         i=0
         lim=5
         with open('tweets.txt') as f:
