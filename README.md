@@ -117,4 +117,4 @@ Change MainApp.app setting in main.py in the client to point to your server. You
 
 ### As user
 
-Coming soon.
+Coming soon. 
