@@ -6,3 +6,5 @@ uploads/*
 uploads/*/*
 
 client/log.txt
+venv
+.vscode
