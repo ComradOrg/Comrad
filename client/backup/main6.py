@@ -105,8 +105,8 @@ class MainApp(MDApp):
     #login_expiry = 5 # 5 seconds
 
     def get_session(self):
-        # return get_async_tor_proxy_session()
-        return get_tor_proxy_session()
+        return get_async_tor_proxy_session()
+        # return get_tor_proxy_session()
         #return get_tor_python_session()
 
     def get_username(self):
@@ -180,7 +180,7 @@ class MainApp(MDApp):
         self.logged_in=True
         self.username=un
         # self.store.put('username',un)
-        # self.store.put('user',username=un,logged_in=True,logged_in_when=time.time())
+        self.store.put('user',username=un,logged_in=True,logged_in_when=time.time())
         self.root.change_screen('feed')
 
 
@@ -190,7 +190,6 @@ class MainApp(MDApp):
         with self.get_session() as sess:
             #res = requests.post(url, json={'name':un, 'passkey':pw})
             res = sess.post(url, json={'name':un, 'passkey':pw})
-            log(res.text)
 
             if res.status_code==200:
                 data=res.json()
@@ -293,19 +292,6 @@ class MainApp(MDApp):
                 jsond=r.json()
                 return jsond['posts']
         return []
-
-    def get_posts_async(self):
-        result=[]
-        with self.get_session() as sess:
-            futures = [sess.get(self.api+'/posts')]
-            for future in as_completed(futures):
-                log('second?')
-                r=future.result()
-                log(r.text)
-                jsond=r.json()
-                result=jsond['posts']
-            log('first?')
-        return result
         
     def get_image(self, img_src):
         # is there an image?

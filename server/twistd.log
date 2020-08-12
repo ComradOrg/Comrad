@@ -1,0 +1,6 @@
+2020-08-12T14:13:34+0100 [twisted.logger._global#warn] Warning: primary log target selected twice at </home/ryan/github/Komrade/venv/lib/python3.6/site-packages/twisted/application/app.py:213> - previously selected at </home/ryan/github/Komrade/venv/lib/python3.6/site-packages/twisted/python/log.py:214>.  Remove one of the calls to beginLoggingTo.
+2020-08-12T14:13:34+0100 [twisted.scripts._twistd_unix.UnixAppLogger#info] twistd 20.3.0 (/home/ryan/github/Komrade/venv/bin/python 3.6.9) starting up.
+2020-08-12T14:13:34+0100 [twisted.scripts._twistd_unix.UnixAppLogger#info] reactor class: twisted.internet.epollreactor.EPollReactor.
+2020-08-12T14:13:34+0100 [-] Site starting on 8080
+2020-08-12T14:13:34+0100 [twisted.web.server.Site#info] Starting factory <twisted.web.server.Site object at 0x7f91e00ba400>
+2020-08-12T14:13:34+0100 [twisted.scripts._twistd_unix.UnixAppLogger#info] Server Shut Down.

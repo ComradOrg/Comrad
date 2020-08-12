@@ -1,4 +1,4 @@
-import flask,os,time
+import flask,os
 from flask import request, jsonify, send_from_directory
 from pathlib import Path
 from models import *
@@ -6,7 +6,6 @@ from flask_api import FlaskAPI, status, exceptions
 from werkzeug.security import generate_password_hash,check_password_hash
 from flask import Flask, flash, request, redirect, url_for
 from werkzeug.utils import secure_filename
-
 
 
 # works better with tor?
@@ -21,7 +20,6 @@ app.config["DEBUG"] = True
 app.config['UPLOAD_DIR'] = 'uploads/'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
-
 @app.route('/')
 def home(): return {'error':'404 go home friend'}
 
@@ -32,9 +30,6 @@ def home(): return {'error':'404 go home friend'}
 @app.route('/api/login',methods=['POST'])
 def login():
     data=request.json
-
-    print('sleeping...')
-    gevent.sleep(10)
     
     name=data.get('name','')
     passkey=data.get('passkey','')
@@ -205,10 +200,5 @@ def get_post(id=None):
 
 
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5555)
-    # socketio.run(app,host='0.0.0.0', port=5555)
-    # from gevent import pywsgi
-    # from geventwebsocket.handler import WebSocketHandler
-    # server = pywsgi.WSGIServer(('', 5555), app, handler_class=WebSocketHandler)
-    # server.serve_forever()
+
+app.run(host='0.0.0.0', port=5555)

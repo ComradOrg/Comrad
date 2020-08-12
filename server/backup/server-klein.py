@@ -1,69 +1,97 @@
-import flask,os,time
-from flask import request, jsonify, send_from_directory
+import os,time
 from pathlib import Path
 from models import *
-from flask_api import FlaskAPI, status, exceptions
-from werkzeug.security import generate_password_hash,check_password_hash
-from flask import Flask, flash, request, redirect, url_for
 from werkzeug.utils import secure_filename
+from werkzeug.security import generate_password_hash,check_password_hash
+from twisted.internet import defer
+from twisted.internet.defer import ensureDeferred
+from twisted.logger import Logger
+log = Logger()
 
+from klein import Klein
 
-
-# works better with tor?
 import json
 jsonify = json.dumps
-# jsonify = str
 
 # Start server
 
-app = flask.Flask(__name__)
+app = Klein()
+app.config = {}
 app.config["DEBUG"] = True
+app.config['SECRET_KEY'] = 'Bring out number weight & measure in a year of dearth'
+# socketio = SocketIO(app)
 app.config['UPLOAD_DIR'] = 'uploads/'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 
+## errors
+
+
 @app.route('/')
-def home(): return {'error':'404 go home friend'}
+def home(request): return jsonify({'error':'404 go home friend'})
 
 
 # Api Functions
 
+def read_request_json(request):
+    json_str = str(request.content.read().decode('utf-8'))
+    # print('json_str',type(json_str),json_str)
+    return json.loads(json_str)
+
+def get_person(name):
+    print('sleeping...')
+    time.sleep(10)
+    person = Person.nodes.get_or_none(name=name)
+    print('returning?')
+    return person
+
 ## LOGIN
 @app.route('/api/login',methods=['POST'])
-def login():
-    data=request.json
+def login(request):
+    data=read_request_json(request)
+    print('data',data)
 
-    print('sleeping...')
-    gevent.sleep(10)
+    
     
     name=data.get('name','')
     passkey=data.get('passkey','')
     if not (name and passkey):
-        return {'error':'Login failed'},status.HTTP_400_BAD_REQUEST
+        request.setResponseCode(400)
+        return jsonify({'error':'Login failed'})
 
-    person = Person.nodes.get_or_none(name=name)
+    # print('sleeping...')
+    # time.sleep(10)
+    # person = yield Person.nodes.get_or_none(name=name)
+    # print('sleeping...?')
+    person = get_person(name)
+
     if person is None:
-        return {'error':'User exists'},status.HTTP_401_UNAUTHORIZED
+        request.setResponseCode(401)
+        return jsonify({'error':'User exists'})
 
     real_passkey = person.passkey
     if not check_password_hash(real_passkey, passkey):
-        return {'error':'Login failed'},status.HTTP_401_UNAUTHORIZED
+        request.setResponseCode(401)
+        return jsonify({'error':'Login failed'})
 
-    return {'success':'Login success'},status.HTTP_200_OK
+    request.setResponseCode(200)
+    return jsonify({'success':'Login success'})
 
 @app.route('/api/register',methods=['POST'])
-def register():
-    data=request.json
+def register(request):
+    data=read_request_json(request)
     
     name=data.get('name','')
     passkey=data.get('passkey','')
 
     if not (name and passkey):
+        request.setResponseCode(400)
         return {'error':'Register failed'},status.HTTP_400_BAD_REQUEST
 
     person = Person.nodes.get_or_none(name=name)
     if person is not None:
-        return {'error':'User exists'},status.HTTP_401_UNAUTHORIZED
+        request.setResponseCode(401)
+        return {'error':'User exists'}
 
     passkey = generate_password_hash(passkey)
 
@@ -83,13 +111,9 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-def get_random_filename(filename):
-    import uuid
-    fn=uuid.uuid4().hex
-    return (fn[:3],fn[3:]+os.path.splitext(filename)[-1])
 
 @app.route('/api/upload',methods=['POST'])
-def upload():
+def upload(request):
     files = request.files
     # check if the post request has the file part
     if 'file' not in request.files:
@@ -128,11 +152,11 @@ def upload():
 
 @app.route('/api/post',methods=['POST'])
 @app.route('/api/post/<post_id>',methods=['GET'])
-def post(post_id=None):
+def post(request,post_id=None):
 
     if request.method == 'POST':
         # get data
-        data=request.json
+        data=read_request_json(request)
         print('POST /api/post:',data)
 
         # make post
@@ -163,7 +187,7 @@ def post(post_id=None):
     return post.data,status.HTTP_200_OK
 
 @app.route('/api/download/<prefix>/<filename>',methods=['GET'])
-def download(prefix, filename):
+def download(request, prefix, filename):
     filedir = os.path.join(app.config['UPLOAD_DIR'], prefix)
     print(filedir, filename)
     return send_from_directory(filedir, filename)
@@ -172,13 +196,13 @@ def download(prefix, filename):
 
 
 @app.route('/api/followers/<name>')
-def get_followers(name=None):
+def get_followers(request, name=None):
     person = Person.match(G, name).first()
     data = [p.data for p in person.followers]
     return jsonify(data)
 
 @app.route('/api/followers/<name>')
-def get_follows(name=None):
+def get_follows(request, name=None):
     person = Person.match(G, name).first()
     data = [p.data for p in person.follows]
     return jsonify(data)
@@ -186,7 +210,7 @@ def get_follows(name=None):
 
 @app.route('/api/posts')
 @app.route('/api/posts/<name>')
-def get_posts(name=None):
+def get_posts(request, name=None):
     if name:
         person = Person.nodes.get_or_none(name=name)
         data = [p.data for p in person.wrote.all] if person is not None else []
@@ -197,18 +221,13 @@ def get_posts(name=None):
     return jsonify({'posts':data})
 
 @app.route('/api/post/<int:id>')
-def get_post(id=None):
+def get_post(request, id=None):
     post = Post.match(G, int(id)).first()
     data = post.data
     return jsonify(data)
 
 
 
-
-if __name__ == '__main__':
+if __name__=='__main__':
     app.run(host='0.0.0.0', port=5555)
-    # socketio.run(app,host='0.0.0.0', port=5555)
-    # from gevent import pywsgi
-    # from geventwebsocket.handler import WebSocketHandler
-    # server = pywsgi.WSGIServer(('', 5555), app, handler_class=WebSocketHandler)
-    # server.serve_forever()
+    # socketio.run(app, host='0.0.0.0', port=5000)

@@ -133,6 +133,7 @@ class FeedScreen(ProtectedScreen):
         i=0
         lim=25
         for i,post in enumerate(reversed(self.app.get_posts())):
+            log('third?')
             #if ln.startswith('@') or ln.startswith('RT '): continue
             #i+=1
             if i>lim: break

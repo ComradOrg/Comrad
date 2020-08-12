@@ -98,7 +98,5 @@ def test_models():
     for a in [x,y,p1,p2,p3,g1,c1,c2]: G.push(a)
     
 
-
-# test_models()
-
-
+if __name__ == '__main__':
+    test_models()
