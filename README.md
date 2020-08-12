@@ -88,3 +88,33 @@ The 'client' or app is made with [KivyMD](https://github.com/kivymd/KivyMD), a v
 ### Server
 
 The server also runs on Python, serving a graph database powered by [Neo4j](https://neo4j.com/).
+
+## Install
+
+### As developer
+
+Clone the repo, install the requirements, and run:
+
+```
+git clone https://github.com/quadrismegistus/Komrade.git
+cd Komrade
+pip install -r requirements.txt
+```
+
+Then run the client:
+```
+cd client
+./run.sh
+```
+
+This is configured to use my server. Optionally, you can run your own server:
+
+```
+cd server
+./run.sh
+```
+Change MainApp.app setting in main.py in the client to point to your server. You will need neo4j installed. 
+
+### As user
+
+Coming soon.
