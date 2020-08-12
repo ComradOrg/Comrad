@@ -113,7 +113,7 @@ This is configured to use my server. Optionally, you can run your own server:
 cd server
 ./run.sh
 ```
-Change MainApp.app setting in main.py in the client to point to your server. You will need neo4j installed. 
+Change the SERVER_ADDR constant at the top of client/main.py to point to your server. You will need neo4j installed.
 
 ### As user
 

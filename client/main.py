@@ -1,3 +1,9 @@
+## CONFIG
+# change this to your external ip address for your server
+#(needs to be external to allow tor routing)
+SERVER_ADDR = '128.232.229.63:5555'
+
+# imports
 from kivy.uix.screenmanager import Screen,ScreenManager
 from kivymd.app import MDApp
 from kivymd.uix.button import MDFillRoundFlatButton, MDIconButton
@@ -26,6 +32,9 @@ from kivy.storage.jsonstore import JsonStore
 from kivy.core.window import Window
 from kivy.core.text import LabelBase
 import shutil
+
+
+
 
 
 Window.size = (640, 1136) #(2.65 * 200, 5.45 * 200)
@@ -79,7 +88,7 @@ def get_tor_python_session():
 class MainApp(MDApp):
     title = 'Komrade'
     #api = 'http://localhost:5555/api'
-    api = 'http://128.232.229.63:5555/api'
+    api = 'http://%s/api' % SERVER_ADDR
     #api = 'http://komrades.net:5555/api'
     logged_in=False
     store = JsonStore('komrade.json')
