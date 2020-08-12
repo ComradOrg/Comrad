@@ -29,7 +29,8 @@ We present a simplified set of social media features drawn from everything that'
   * Show profile only to friends (e.g. Facebook)
   * Show profile only to your local area (e.g. Nextdoor)
 
-* Posting 
+* Posting
+  * Post up to 1 image and/or 1000 characters
   * Post to the entire world (e.g. Twitter)
   * Post to your friends (e.g. Facebook)
   * Post to your surrounding area by a distance radius (e.g. Nextdoor)

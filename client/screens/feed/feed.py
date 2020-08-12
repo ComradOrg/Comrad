@@ -92,7 +92,7 @@ class PostCard(MDCard):
             image_layout.height='300dp'
             # log(image.image_ratio)
 
-        content = PostContent(text=self.content)
+        self.post_content = PostContent(text=self.content)
         
         # post_layout = PostGridLayout()
         #content = PostContent()
@@ -122,7 +122,7 @@ class PostCard(MDCard):
         
 
         # scroller.bind(size=('300dp',scroller.setter('height'))
-        scroller.add_widget(content)
+        scroller.add_widget(self.post_content)
         self.add_widget(scroller)
         # self.add_widget(post_layout)
 

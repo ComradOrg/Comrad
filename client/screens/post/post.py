@@ -90,8 +90,10 @@ class AddPostScreen(ProtectedScreen):
         post_TextField.font_name='assets/overpass-mono-regular.otf'
         post_TextField.hint_text='word?'
 
-        post.remove_widget(post.scroller)
-        post.add_widget(post_TextField)
+        # post.remove_widget(post.scroller)
+        post.scroller.remove_widget(post.post_content)
+        post.scroller.add_widget(post_TextField)
+        post.scroller.size=('300dp','300dp')
         self.add_widget(post)
 
         self.button_layout = ButtonLayout()
@@ -175,12 +177,13 @@ class AddPostScreen(ProtectedScreen):
 
     def post(self):
         # check?
+        maxlen = 500
         content = self.post_textfield.text
-        lencontent = len(content)
-        maxlen = int(self.post_textfield.max_text_length)
+        lencontent = content.strip().replace('  ',' ').count(' ')
+        # maxlen = int(self.post_textfield.max_text_length)
         lendiff = lencontent - maxlen
         if lendiff>0:
-            self.open_msg_dialog(f'Text is currently {lencontent} characters long, which is {lendiff} over the maximum text length of {maxlen} characters.\n\n({lencontent}/{maxlen})')
+            self.open_msg_dialog(f'Text is currently {lencontent} words long, which is {lendiff} over the maximum text length of {maxlen} words.\n\n({lencontent}/{maxlen})')
             return
 
         # log('?????????????????'+self.media_uid)
