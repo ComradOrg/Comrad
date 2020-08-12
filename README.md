@@ -113,7 +113,7 @@ This is configured to use my server. Optionally, you can run your own server:
 cd server
 ./run.sh
 ```
-Change the SERVER_ADDR constant at the top of client/main.py to point to your server. You will need neo4j installed.
+Change the SERVER_ADDR constant at the top of client/main.py to point to your server. You will need neo4j installed. You will also need to change the neo4j login configuration at the top of server/models.py.
 
 ### As user
 

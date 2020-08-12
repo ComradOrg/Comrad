@@ -1,7 +1,13 @@
+from neomodel import *
 
-from py2neo import *
-from py2neo.ogm import *
+NEO4J_USERNAME='neo4j'
+NEO4J_PASSWORD='drive your plow over the bones of the dead'
+NEO4J_SERVER='localhost'
+NEO4J_PORT=7687
 
+config.DATABASE_URL = f'bolt://{NEO4J_PASSWORD}:{NEO4J_PASSWORD}@{NEO4J_SERVER}:{NEO4J_PORT}'  # default
+
+exit()
 G = Graph(password='drive your plow over the bones of the dead')
 Nodes = NodeMatcher(G)
 Edges = RelationshipMatcher(G)
