@@ -93,7 +93,7 @@ The server also runs on Python, serving a graph database powered by [Neo4j](http
 
 ### As developer
 
-Clone the repo, install the requirements, and run:
+The usual installation:
 
 ```
 git clone https://github.com/quadrismegistus/Komrade.git
