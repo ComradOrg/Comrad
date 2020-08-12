@@ -7,9 +7,12 @@ from kivy.uix.scrollview import ScrollView
 from screens.base import ProtectedScreen
 from kivy.properties import ListProperty
 from main import log
-import os
+import os,time
+from datetime import datetime
 from kivy.app import App
-    
+
+
+
 
 ### POST CODE
 class PostTitle(MDLabel): pass
@@ -28,6 +31,7 @@ class PostAuthorLayout(MDBoxLayout): pass
 
 class PostImageLayout(MDBoxLayout): pass
 
+
 class PostAuthorLabel(MDLabel): 
     def __init__(self,**kwargs):
         super().__init__(**kwargs)
@@ -35,6 +39,14 @@ class PostAuthorLabel(MDLabel):
         self.bind(texture_size=self.setter('size'))
         self.font_name='assets/overpass-mono-regular.otf'
     pass
+
+class PostTimestampLabel(MDLabel): 
+    def __init__(self,**kwargs):
+        super().__init__(**kwargs)
+        self.bind(width=lambda s, w: s.setter('text_size')(s, (w, None)))
+        self.bind(texture_size=self.setter('size'))
+        self.font_name='assets/overpass-mono-regular.otf'
+
 class PostAuthorAvatar(AsyncImage): pass
 
 class PostLayout(MDBoxLayout): pass
@@ -42,14 +54,15 @@ class PostLayout(MDBoxLayout): pass
 class PostScrollView(ScrollView): pass
 
 class PostCard(MDCard):
-    def __init__(self, author = None, title = None, img_src = None, content = None):
+    def __init__(self, data):
         super().__init__()
-        self.author = author
-        self.title = title
-        self.img_src = img_src if img_src else ''
-        self.cache_img_src = os.path.join('cache','img',img_src) if img_src else ''
+        log('DATA: '+str(data))
+        self.author = data.get('author','[Anonymous]')
+        self.img_src = data.get('img_src','')
+        self.cache_img_src = os.path.join('cache','img',self.img_src) if self.img_src else ''
         self.img_loaded = os.path.exists(self.cache_img_src)
-        self.content = content
+        self.content = data.get('content','')
+        self.timestamp = data.get('timestamp',None)
         self.bind(minimum_height=self.setter('height'))
 
         # pieces
@@ -59,6 +72,15 @@ class PostCard(MDCard):
         author_avatar = PostAuthorAvatar(source='avatar.jpg') #self.img_src)
         author_section_layout.add_widget(author_avatar)
         author_section_layout.add_widget(author_label)
+
+        # timestamp
+        timestr=''
+        log(self.timestamp)
+        if self.timestamp:
+            dt_object = datetime.fromtimestamp(self.timestamp)
+            timestr = dt_object.strftime("%-d %b %Y %H:%M") 
+        log('timestr: '+timestr)
+        author_section_layout.add_widget(PostTimestampLabel(text=timestr))
         # author_section_layout.add_widget(author_avatar)
         # self.add_widget(author_section_layout)
 
@@ -82,7 +104,7 @@ class PostCard(MDCard):
         # post_layout.add_widget(content)
 
         
-        scroller = PostScrollView()
+        self.scroller = scroller = PostScrollView()
         self.add_widget(author_section_layout)
         # self.add_widget(MDLabel(text='hello'))
         log('img_src ' + str(bool(self.img_src)))
@@ -132,18 +154,14 @@ class FeedScreen(ProtectedScreen):
         
         i=0
         lim=25
-        for i,post in enumerate(reversed(self.app.get_posts())):
+        for i,post in enumerate(self.app.get_posts()):
             log('third?')
             #if ln.startswith('@') or ln.startswith('RT '): continue
             #i+=1
             if i>lim: break
             
             #post = Post(title=f'Marx Zuckerberg', content=ln.strip())
-            post_obj = PostCard(
-                author='Marx Zuckerberg',
-                title='',
-                img_src=post.get('img_src',''),
-                content=post.get('content',''))
+            post_obj = PostCard(post)
             log(post)
             self.posts.append(post_obj)
             self.ids.post_carousel.add_widget(post_obj)

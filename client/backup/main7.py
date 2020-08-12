@@ -2,7 +2,6 @@
 # change this to your external ip address for your server
 #(needs to be external to allow tor routing)
 SERVER_ADDR = '128.232.229.63:5555'
-DEFAULT_SCREEN='feed'
 
 # imports
 from kivy.uix.screenmanager import Screen,ScreenManager
@@ -146,7 +145,7 @@ class MainApp(MDApp):
             log(self.username)
         else:
             # self.root.post_id=190
-            self.root.change_screen(DEFAULT_SCREEN)
+            self.root.change_screen('post')
         return self.root
 
     def load_store(self):
@@ -213,57 +212,62 @@ class MainApp(MDApp):
                 pass
                 #self.root.ids.login_status.text=res.text
 
-    
-    def upload(self,orig_img_src):
+    def post(self, content='', img_src=[], logger=None):
+        timestamp=time.time()
+        log('content: '+str(content))
+        log('img_src: '+str(img_src))
+        logger = logger if logger is not None else log
+
+        jsond = {'content':str(content)}
+
+        # upload?
+        filename=img_src[0] if img_src and os.path.exists(img_src[0]) else ''            
+        
         url_upload=self.api+'/upload'
-        filename=orig_img_src[0] if orig_img_src and os.path.exists(orig_img_src[0]) else ''
-        if not filename: return
+        url_post = self.api+'/post'
         
         server_filename=''
         media_uid=None
             
         with self.get_session() as sess:
-            with sess.post(url_upload,files={'file':open(filename,'rb')}) as r1:
-                if r1.status_code==200:
-                    rdata1 = r1.json()
-                    server_filename = rdata1.get('filename','')
-                    media_uid=rdata1.get('media_uid')
-                    if server_filename:
-                        # pre-cache
-                        cache_filename = os.path.join('cache','img',server_filename)
-                        cache_filedir = os.path.dirname(cache_filename)
-                        if not os.path.exists(cache_filedir): os.makedirs(cache_filedir)
-                        shutil.copyfile(filename,cache_filename)
+            if filename:
+                log(filename)
+                # copy file to cache
 
-        return {'cache_filename':cache_filename, 'media_uid':media_uid, 'server_filename':server_filename}
-        
-        
-    
-    def post(self, content='', media_uid=None):
-        timestamp=time.time()
-        jsond = {'content':str(content),'media_uid':media_uid,
-                 'username':self.username, 'timestamp':timestamp}
+                logger('Uploading file')  #self.root.ids.add_post_screen.ids.post_status.text='Uploading file'
+                with sess.post(url_upload,files={'file':open(filename,'rb')}) as r1:
+                    if r1.status_code==200:
+                        rdata1 = r1.json()
+                        server_filename = rdata1.get('filename','')
+                        media_uid=rdata1.get('media_uid')
+                        if server_filename:
+                            logger('File uploaded')
 
-        url_post = self.api+'/post'
+                            # pre-cache
+                            cache_filename = os.path.join('cache','img',server_filename)
+                            cache_filedir = os.path.dirname(cache_filename)
+                            if not os.path.exists(cache_filedir): os.makedirs(cache_filedir)
+                            shutil.copyfile(filename,cache_filename) 
+
+            # add post
+            logger('Creating post')
+            jsond={'img_src':server_filename, 'content':content, 'username':self.username, 'media_uid':media_uid, 'timestamp':timestamp}
             
-        with self.get_session() as sess:
+            
+
             # post    
             with sess.post(url_post, json=jsond) as r2:
                 log('got back from post: ' + r2.text)
                 rdata2 = r2.json()
                 post_id = rdata2.get('post_id',None)
                 if post_id:
-                    # pre-cache
-                    cache_dir = os.path.join('cache','json',post_id[:3])
-                    cache_fnfn = os.path.join(cache_dir,post_id[3:]+'.json')
-                    if not os.path.exists(cache_dir): os.makedirs(cache_dir)
-                    with open(cache_fnfn,'w') as of:
-                        json.dump(jsond, of)
-                    
+                    logger('Post created')
                     #self.root.view_post(post_id)
                     self.root.change_screen('feed')
-        return {'post_id':post_id}
-                    
+
+                    # pre-cache
+                    with open(os.path.join('cache','json',str(post_id)+'.json'),'w') as of:
+                        json.dump(jsond, of)
 
                     
             

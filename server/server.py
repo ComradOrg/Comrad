@@ -33,8 +33,6 @@ def home(): return {'error':'404 go home friend'}
 def login():
     data=request.json
 
-    print('sleeping...')
-    gevent.sleep(10)
     
     name=data.get('name','')
     passkey=data.get('passkey','')
@@ -136,7 +134,7 @@ def post(post_id=None):
         print('POST /api/post:',data)
 
         # make post
-        post = Post(content=data.get('content','')).save()
+        post = Post(content=data.get('content',''), timestamp=data.get('timestamp')).save()
 
         # attach author
         name = data.get('username')
@@ -191,7 +189,7 @@ def get_posts(name=None):
         person = Person.nodes.get_or_none(name=name)
         data = [p.data for p in person.wrote.all] if person is not None else []
     else:
-        data = [p.data for p in Post.nodes.all()]
+        data = [p.data for p in Post.nodes.order_by('-timestamp')]
         # print(data)
 
     return jsonify({'posts':data})

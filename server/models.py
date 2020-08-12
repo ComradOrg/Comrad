@@ -59,9 +59,10 @@ class Post(StructuredNode):
     # properties
     uid = UniqueIdProperty()
     content = StringProperty()
-    has_media = RelationshipTo('Media','HAS_MEDIA')
+    timestamp = FloatProperty(index=True)
 
     # relations
+    has_media = RelationshipTo('Media','HAS_MEDIA')
     written_by = RelationshipFrom('Person','WROTE')
     located_in = RelationshipTo('Place','LOCATED')
 
@@ -75,7 +76,7 @@ class Post(StructuredNode):
 
     @property
     def img_src(self):
-        print(dir(self.has_media))
+        # print(dir(self.has_media))
         if self.has_media:
             media = self.has_media[0]
             return media.filename
@@ -83,7 +84,7 @@ class Post(StructuredNode):
 
     @property
     def data(self):
-        return {'uid':self.uid, 'content':self.content, 'img_src':self.img_src}
+        return {'uid':self.uid, 'content':self.content, 'img_src':self.img_src, 'timestamp':self.timestamp, 'author':self.author.name}
 
 
 class Place(StructuredNode):

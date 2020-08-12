@@ -3,73 +3,161 @@
 #:import PostCard screens.feed.feed.PostCard
 
 
+<AddPostTextField>
+    id: post_content_input
+    hint_text: "word?"
+    required: False
+    # write_tab: False
+    multiline: True
+    helper_text_mode: "persistent"
+    helper_text: "word?"
+    color_mode: 'custom'
+    # size_hint_y:0.5
+    size_hint: (1,None)
+    size: ('300dp','300dp')
+    pos_hint: {'center_x': 0.5}
+    line_color_focus: 1,0,0,1
+    line_color_normal: 1,0,0,1
+    current_hint_text_color: 1,0,0,1
+    max_text_length: 10
+    # mode:'fill'
+    font_size:'23dp'
+    # font_style:'H5'
+
+<ButtonLayout>:
+    id: buttonbox
+    # size_hint_y: None
+    adaptive_width: True
+    height: '56dp'
+    spacing: '10dp'
+    pos_hint: {'center_x': .5, 'y':0.05}
+    # md_bg_color: 1,1,0,1
+
+<UploadButton>:
+    id: file_chooser_button
+    text: "upload"
+    #text: app.root.ids.scr_mngr.etc
+    on_release: self.screen.choose()
+    #app.register(username.text, password.text)
+    theme_text_color: "Custom"
+    text_color: 1,0,0,1
+    md_bg_color: 0,0,0,1
+    font_size: '28sp'
+    # fill:1,0,0,1
+    font_name: 'assets/overpass-mono-regular.otf'
+
+<PostButton>:
+    text: "post"
+    on_release: self.screen.post() #self.post_content_input.text, file_chooser_button.selection)
+    theme_text_color: "Custom"
+    text_color: 1,0,0,1
+    md_bg_color: 0,0,0,1
+    font_size: '28sp'
+    # fill:1,0,0,1
+    font_name: 'assets/overpass-mono-regular.otf'
+
+<PostStatus>:
+    id: post_status
+    text:"" #self.add_post_screen.post_id
+    size_hint:(None,None)
+    md_bg_color:0,0,0,1
+    pos_hint:{'center_x':.5, 'y':0.1}
+    text_color: 1,0,0,1
+    md_bg_color: 0,0,0,1
+    font_size: '25sp'
+    # fill:1,0,0,1
+    font_name: 'assets/overpass-mono-regular.otf'
+
+<ProgressPopup>:
+    type: "custom"
+    size_hint: (None, None)
+    size: ('200dp','200dp')
+    md_bg_color: 0,0,0,1
+
+    MDBoxLayout:
+        id: popup_box_layout
+        size_hint:(1,1)
+        orientation: 'vertical'
+        cols:1
+        md_bg_color: 0,0,0,1
+        spacing:'0dp'
+        padding:'0dp'
+        # radius:[20,] 
+        # border_radius:20
+        canvas:
+            Color:
+                rgb: 1,0,0,1
+            Line:
+                width: 1
+                rectangle: (self.x, self.y, self.width, self.height)
+                # radius:[20,] 
+                # border_radius:20
+
+
+        MDLabel:
+            size_hint:(None,None)
+            id: progress_label
+            text: ''
+            halign: 'center'
+            theme_text_color: 'Custom'
+            text_color: 1,0,0,1
+            font_size: '18dp'
+            font_name: 'assets/overpass-mono-regular.otf'
+            pos_hint: {'center_x': .5, 'center_y': 0.5}
+
+
+    MDSpinner:
+        size_hint: None, None
+        size: '46dp','46dp'
+        pos_hint: {'center_x': .5, 'center_y': 0.5}
+        active: True
+        color:1,0,0,1
+
+<MessagePopup>:
+    type: "custom"
+    size_hint: None,None
+    size: ('300dp','300dp')
+    md_bg_color: 0,0,0,1
+
+    MDBoxLayout:
+        id: msg_popup_box_layout
+        size_hint:(1,1)
+        orientation: 'vertical'
+        cols:1
+        md_bg_color: 0,0,0,1
+        spacing:'0dp'
+        padding:'0dp'
+        pos_hint: {'center_x':0.5, 'center_y':0.5}
+        # radius:[20,] 
+        # border_radius:20
+        canvas:
+            Color:
+                rgb: 1,0,0,1
+            Line:
+                width: 1
+                rectangle: (self.x, self.y, self.width, self.height)
+                # radius:[20,] 
+                # border_radius:20
+
+
+        MDLabel:
+            # size_hint:(None,None)
+            id: msg_label
+            text: ''
+            halign: 'center'
+            # valign: 'middle'
+            theme_text_color: 'Custom'
+            text_color: 1,0,0,1
+            font_size: '18dp'
+            font_name: 'assets/overpass-mono-regular.otf'
+            pos_hint: {'center_x': .5, 'y': 0}
+
+    
+
 <AddPostScreen>:
     name: 'post'
     id: post_screen
 
-    MyBoxLayout:
-        id: postbox
-        size_hint:0.5,0.2
-
-        # FileChoose:
-        #     size_hint_y: 0.1
-        #     on_release: self.choose()
-        #     text: 'Select a file'
-
-        MDTextField:
-            id: post_content_input
-            hint_text: "word?"
-            required: False
-            # write_tab: False
-            multiline: True
-            helper_text_mode: "on_error"
-            color_mode: 'custom'
-            size_hint_y:0.5
-            # size: ('300dp','300dp')
-            line_color_focus: 1,0,0,1
-            line_color_normal: 0,0,0,1
-            current_hint_text_color: 1,0,0,1
-            max_text_length: 100
-            mode:'fill'
-
         
-
-
-    MDBoxLayout:
-        id: buttonbox
-        # size_hint_y: None
-        adaptive_width: True
-        height: '56dp'
-        spacing: '10dp'
-        pos_hint: {'center_x': .5, 'y':0.41}
-
-        FileChoose:
-            id: file_chooser_button
-            text: "upload"
-            #text: app.root.ids.scr_mngr.etc
-            on_release: self.choose()
-            #app.register(username.text, password.text)
-            theme_text_color: "Custom"
-            text_color: 1,0,0,1
-            md_bg_color: 0,0,0,1
-
-        MDRectangleFlatButton:
-            text: "post"
-            on_release: app.post(post_content_input.text, file_chooser_button.selection)
-                #app.root.change_screen("welcome")
-            theme_text_color: "Custom"
-            text_color: 1,0,0,1
-            md_bg_color: 0,0,0,1
-
-
-            
-
-        MDLabel:
-            id: post_status
-            text:"" #self.add_post_screen.post_id
-            theme_text_color: 'Error'
-            pos_hint:{'center_x':.5}
-          
-
 <ViewPostScreen>:
     name: 'view'

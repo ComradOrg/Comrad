@@ -1,14 +1,43 @@
 from screens.base import ProtectedScreen
 from plyer import filechooser
-from kivymd.uix.button import MDRectangleFlatButton, MDIconButton
+from kivymd.uix.label import MDLabel
+from kivymd.uix.textfield import MDTextField
+from kivymd.uix.boxlayout import MDBoxLayout
+from kivymd.uix.button import MDRectangleFlatButton, MDIconButton, MDRaisedButton
 from kivy.properties import ListProperty,ObjectProperty
 from kivy.app import App
 from main import log
 from screens.feed.feed import *
-import os
+import os,time,threading
+from threading import Thread
 
 
-class FileChoose(MDRectangleFlatButton):
+from kivymd.uix.dialog import MDDialog
+
+# # Progress bar code
+# class ProgressPopup(MDDialog):
+#     def __init__(self, *args, **kwargs):
+#         super().__init__(*args, **kwargs)
+#         content = MDLabel(font_style='Body1',
+#                           theme_text_color='Secondary',
+#                           text=kwargs.get('text',''),
+#                           size_hint_y=None,
+#                           valign='top')
+#         content.bind(texture_size=content.setter('size'))
+#         self.dialog = MDDialog(title="Close",
+#                                content=content,
+#                                size_hint=(.3, None),
+#                                height='200dp')
+
+#         self.dialog.add_action_button("Close me!",
+#                                       action=lambda *x: self.dismiss_callback())
+#         self.dialog.open()
+
+class ProgressPopup(MDDialog): pass
+class MessagePopup(MDDialog): pass
+
+
+class UploadButton(MDRectangleFlatButton):
     '''
     Button that triggers 'filechooser.open_file()' and processes
     the data response from filechooser Activity.
@@ -28,6 +57,8 @@ class FileChoose(MDRectangleFlatButton):
         '''
         self.selection = selection
 
+
+
     def on_selection(self, *a, **k):
         '''
         Update TextInput.text after FileChoose.selection is changed
@@ -36,10 +67,135 @@ class FileChoose(MDRectangleFlatButton):
         pass
         #App.get_running_app().root.ids.result.text = str(self.selection)
 
+class AddPostTextField(MDTextField): pass
+class ButtonLayout(MDBoxLayout): pass
+class PostButton(MDRectangleFlatButton): pass
+class PostStatus(MDRectangleFlatButton): pass
+
 
 class AddPostScreen(ProtectedScreen): 
     post_id = ObjectProperty()
-    pass
+
+    def on_pre_enter(self):
+        # clear
+        if hasattr(self,'post_status'): self.remove_widget(self.post_status)
+        if hasattr(self,'post_textfield'): self.post_textfield.text=''
+
+        post_json = {'author':self.app.username, 'timestamp':time.time()}
+        self.post_card = post = PostCard(post_json)
+        self.post_textfield = post_TextField = AddPostTextField()
+        post_TextField.line_color_focus=(1,0,0,1)
+        post_TextField.line_color_normal=(1,0,0,1)
+        post_TextField.current_hint_text_color=(1,0,0,1)
+        post_TextField.font_name='assets/overpass-mono-regular.otf'
+        post_TextField.hint_text='word?'
+
+        post.remove_widget(post.scroller)
+        post.add_widget(post_TextField)
+        self.add_widget(post)
+
+        self.button_layout = ButtonLayout()
+        self.upload_button = UploadButton()
+        self.upload_button.screen = self
+        self.post_button = PostButton()
+        self.post_button.screen = self
+        self.post_status = PostStatus()
+        self.post_status_added = False
+
+        self.button_layout.add_widget(self.upload_button)
+        self.button_layout.add_widget(self.post_button)
+       
+
+        self.post_button.md_bg_color=(0,0,0,1)
+        self.upload_button.md_bg_color=(0,0,0,1)
+        self.post_status.md_bg_color=(0,0,0,1)
+        
+        self.add_widget(self.button_layout)
+        # self.add_widget(self.post_status)
+
+    
+
+    def write_post_status(self,x):
+        self.post_status.text=str(x)
+        if not self.post_status_added:
+            self.add_widget(self.post_status)
+            self.post_status_added=True
+
+    def open_dialog(self,msg):
+        if not hasattr(self,'dialog') or not self.dialog:
+            self.dialog = ProgressPopup()
+            log(self.dialog.ids.keys())
+        self.dialog.ids.progress_label.text=msg
+        self.dialog.open()
+
+    def open_msg_dialog(self,msg):
+        if not hasattr(self,'msg_dialog') or not self.msg_dialog:
+            self.msg_dialog = MessagePopup()
+        self.msg_dialog.ids.msg_label.text=msg
+        self.msg_dialog.open()
+
+    def close_dialog(self):
+        if hasattr(self,'dialog'):
+            self.dialog.dismiss()
+
+    def close_msg_dialog(self):
+        if hasattr(self,'msg_dialog'):
+            self.msg_dialog.dismiss()
+
+
+    def choose(self):
+        # time.sleep(5)
+        
+        self.upload_button.choose()
+        self.orig_img_src = self.upload_button.selection
+        self.open_dialog('uploading')
+        # self.upload()
+        # self.close_dialog()
+        mythread = threading.Thread(target=self.upload)
+        mythread.start()
+
+    def upload(self):
+        rdata = self.app.upload(self.orig_img_src)
+        for k,v in rdata.items():
+            log('data!!!' + str(k) +':'+str(v))
+            setattr(self,k,v)
+        self.add_image()
+        self.close_dialog()
+
+    def add_image(self):
+        if hasattr(self,'image'): 
+            self.image.source=self.cache_filename
+        else:
+            self.image_layout = image_layout = PostImageLayout()
+            self.image = image = PostImage(source=self.cache_filename)
+            image.height = '300dp'
+            image_layout.add_widget(image)
+            image_layout.height='300dp'
+            self.post_card.add_widget(image_layout,index=1)
+
+    def post(self):
+        # check?
+        content = self.post_textfield.text
+        lencontent = len(content)
+        maxlen = int(self.post_textfield.max_text_length)
+        lendiff = lencontent - maxlen
+        if lendiff>0:
+            self.open_msg_dialog(f'Text is currently {lencontent} characters long, which is {lendiff} over the maximum text length of {maxlen} characters.\n\n({lencontent}/{maxlen})')
+            return
+
+        # log('?????????????????'+self.media_uid)
+        if not hasattr(self,'media_uid') and self.upload_button.selection:
+            log('REUPLOADING')
+            self.upload()
+
+        def do_post():
+            media_uid = self.media_uid if hasattr(self,'media_uid') else None
+            self.app.post(content=content, media_uid=media_uid) #, logger=logger)
+            self.close_dialog()
+        
+        self.open_dialog('posting')
+        Thread(target=do_post).start()
+        
 
 class ViewPostScreen(ProtectedScreen): 
     post_id = ObjectProperty()
@@ -50,22 +206,8 @@ class ViewPostScreen(ProtectedScreen):
             self.remove_widget(child)
         
         post_json = self.app.get_post(self.root.post_id)
-        log(post_json)
-        img_src = post_json.get('img_src','')
-        content = post_json.get('content','')
-        cache_img_src = os.path.join('cache','img',img_src) if img_src else ''
-        kwargs = dict(author='Marx Zuckerberg',
-            title='',
-            img_src=img_src,
-            content=content)
-        log(kwargs)
-
-        post = PostCard(**kwargs)
-        
-        print(post)
+        post = PostCard(post_json)
         self.add_widget(post)
-
-        
 
     def on_enter(self):
         for child in self.children: child.load_image()

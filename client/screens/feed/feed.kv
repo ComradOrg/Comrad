@@ -54,7 +54,7 @@
         Color:
             rgb: 0,0,0,1
         Line:
-            width: 7
+            width: 12
             rectangle: (self.x, self.y, self.width, self.height)
 
 
@@ -106,6 +106,22 @@
     text_color:1,0,0,1
     theme_text_color: 'Custom'
     halign: 'left'
+    padding: ('10dp','0dp')
+    
+<PostTimestampLabel>:
+    id: post_timestamp_label
+    text: ''
+    pos_hint: {'center_y':0.5, 'center_x':0.5}
+    # font_size:'100dp'
+    # font_style:'H5'
+    # font_style: 'custom'
+    #font_name: "Strengthen"
+    # height: '400'
+    size_hint_y: None
+    # size_hint_x: 100
+    text_color:1,0,0,1
+    theme_text_color: 'Custom'
+    halign: 'right'
     padding: ('10dp','0dp')
     
     
