@@ -55,6 +55,45 @@
             width: 2
             rectangle: (self.x, self.y, self.width, self.height)
 
+
+<AuthorInfoLayout>:
+    cols:1
+    orientation:'vertical'
+    size_hint:None,None
+    md_bg_color:0,0,0,1
+    width: '300dp'
+    pos_hint: {'center_x':0.5}
+    radius:[20,] 
+    border_radius:20
+
+<AuthorName>:
+    pos_hint: {'center_x':0.5}
+    
+<AuthorUsername>:
+    pos_hint: {'center_x':0.5}
+    theme_text_color:'Custom'
+    text_color: 1,0,0,1
+    halign:'center'
+    font_size:'28sp'
+
+<AuthorDesc>:
+
+<AuthorPlace>:
+
+<AuthorWebsite>:
+
+<AuthorFollowers>:
+
+<AuthorFollowing>:
+
+<ProfilePageLayout>:
+    cols:1
+    orientation:'vertical'
+    spacing:'10dp'
+    size_hint:1,None
+    # md_bg_color:1,0,0,1
+    pos_hint: {'center_x':0.5,'center_y':0.5}
+
 <ProfileAvatar>:
     size_hint:1,1
     # width: '200dp'

@@ -10,6 +10,8 @@ from kivy.properties import StringProperty
 from kivy.core.window import Window
 from kivy.core.image import Image as CoreImage
 import io
+from kivy.uix.carousel import Carousel
+from screens.feed.feed import PostCard
 
 img_src = 'assets/avatar.jpg' #cache/img/1e6/587e880344d1e88cec8fda65b1148.jpeg'
 # img_src = '/home/ryan/Pictures/Harrier.jpeg'
@@ -18,6 +20,8 @@ cover_img_src='assets/cover.jpg' #cache/img/60d/9de00e52e4758ade5969c50dc053f.jp
 class ProfileAvatar(Image): pass
 
 class LayoutAvatar(MDBoxLayout): pass
+
+class AuthorInfoLayout(MDBoxLayout): pass
 
 class LayoutCover(MDBoxLayout): 
     source=StringProperty()
@@ -62,6 +66,16 @@ def circularize_img(img_fn, width):
     # background.save('overlap.png')
     # return output
 
+class ProfilePageLayout(MDBoxLayout): pass
+
+
+class AuthorName(MDLabel): pass
+class AuthorUsername(MDLabel): pass
+class AuthorDesc(MDLabel): pass
+class AuthorPlace(MDLabel): pass
+class AuthorWebsite(MDLabel): pass
+class AuthorFollowers(MDLabel): pass
+class AuthorFollowing(MDLabel): pass
 
 
 class ProfileScreen(BaseScreen): 
@@ -69,7 +83,17 @@ class ProfileScreen(BaseScreen):
     #    global app
     #    if app.is_logged_in():
     #        app.root.change_screen('feed')
-    def on_pre_enter(self, do_cover_img=False, width=200):
+    def on_pre_enter(self, width=200):
+
+        # clear
+        if not hasattr(self,'carousel'):
+            self.carousel = Carousel()
+            self.carousel.direction='right'
+            self.posts=[]
+        else:
+            for post in self.posts:
+                self.carousel.remove_widget(post)
+
         # get circular image
         circ_img = circularize_img(img_src,200)
         self.avatar_layout = LayoutAvatar()
@@ -79,23 +103,39 @@ class ProfileScreen(BaseScreen):
         self.avatar_layout.height=dp(width)
         self.avatar_layout.width=dp(width)
         self.avatar_layout.add_widget(self.avatar) 
+        
 
-        if do_cover_img:
-            self.cover_image = CoverImage(source=cover_img_src)
-            self.cover_layout = LayoutCover(source=cover_img_src)
-            # max width
-            coverwidth = dp(Window.size[0])
-            coverheight = dp(Window.size[0] / self.cover_image.image_ratio)
-            # self.cover_layout.size=(coverwidth,coverheight)
-            self.cover_image.width=dp(coverwidth)
-            self.cover_image.height=dp(coverheight)
-            self.cover_layout.width = dp(coverwidth)
-            self.cover_layout.height = dp(coverheight)
-            self.cover_layout.add_widget(self.cover_image)
-            self.add_widget(self.cover_layout)
-            self.avatar_layout.pos_hint = {'center_x':0.2,'center_y':0.8}
+        ## author info
+        self.author_info_layout = AuthorInfoLayout()
+        self.app.name_irl = 'Marx Zuckerberg'
+        if hasattr(self.app,'name_irl'):
+            self.author_name_irl = AuthorName(text=self.app.name_irl)
+            self.author_info_layout.add_widget(self.author_name_irl)
+        
+        self.author_name = AuthorUsername(text=self.app.username)
+        self.author_name.font_name = 'assets/font.otf'
+        self.author_name.font_size = '28sp'
+        self.author_info_layout.add_widget(self.author_name)
+        
+        
+        ## add root widgets
+        self.page_layout = ProfilePageLayout()
+        self.page_layout.add_widget(self.avatar_layout)
+        self.page_layout.add_widget(self.author_info_layout)
+        
+        self.add_widget(self.carousel)
+        self.carousel.add_widget(self.page_layout)
 
-        self.add_widget(self.avatar_layout)
+        ## add posts
+        self.add_author_posts()
 
-
-    
+    def add_author_posts(self):
+        # add posts
+        lim=25
+        for i,post in enumerate(self.app.get_posts()):
+            if i>lim: break
+            
+            post_obj = PostCard(post)
+            log(post)
+            self.posts.append(post_obj)
+            self.carousel.add_widget(post_obj)
