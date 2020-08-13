@@ -2,7 +2,9 @@
 # change this to your external ip address for your server
 #(needs to be external to allow tor routing)
 SERVER_ADDR = '128.232.229.63:5555'
-DEFAULT_SCREEN='feed'
+DEFAULT_SCREEN='profile'
+HORIZONTAL = False
+WINDOW_SIZE = (1136,640) if HORIZONTAL else (640,1136)
 
 # imports
 from kivy.uix.screenmanager import Screen,ScreenManager
@@ -34,15 +36,11 @@ from kivy.core.window import Window
 from kivy.core.text import LabelBase
 import shutil
 
+Window.size = WINDOW_SIZE
 
-
-
-
-Window.size = (640, 1136) #(2.65 * 200, 5.45 * 200)
-
-def log(x):
+def log(*args):
     with open('log.txt','a+') as of:
-        of.write(str(x)+'\n')
+        of.write(' '.join([str(x) for x in args])+'\n')
 
 
 

@@ -1,0 +1,59 @@
+#:import ProfileScreen screens.profile.profile.ProfileScreen
+
+<ProfileScreen>:
+    id:profile_screen
+    name:'profile'
+
+<CoverImage>:
+    size_hint: None,None
+    # pos_hint: {'y':0}
+    # canvas:
+    #     Color:
+    #         rgb: 1,0,0,1
+    #     Line:
+    #         width: 1
+    #         rectangle: (self.x, self.y, self.width, self.height)
+
+<LayoutAvatar>:
+    cols:1
+    orientation:'vertical'
+    size_hint:None,None
+    # height:'200dp'
+    # width:'300dp'
+    md_bg_color:1,1,0,1
+    pos_hint: {'center_x':0.5,'center_y':0.88}
+    radius:[20,] 
+    border_radius:20
+    canvas:
+        Color:
+            rgb: 0,0,0,1
+        Line:
+            width: 3
+            rectangle: (self.x, self.y, self.width, self.height)
+
+<LayoutCover>:
+    cols:1
+    orientation:'vertical'
+    size_hint:None,None
+    # height:'200dp'
+    # width:'300dp'
+    md_bg_color:0,0,0,1
+    # height: '500dp'
+    pos_hint: {'center_x':0.5,'y':0.8}
+    # radius:[20,] 
+    # border_radius:20
+    
+    canvas:
+        # Rectangle:
+        #     pos: self.pos
+        #     size: self.size
+        #     # source: self.source
+        Color:
+            rgb: 0,0,0,1
+        Line:
+            width: 2
+            rectangle: (self.x, self.y, self.width, self.height)
+
+<ProfileAvatar>:
+    size_hint:1,1
+    # width: '200dp'
