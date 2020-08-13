@@ -4,9 +4,10 @@ Komrade is a socialist network. It is predicated on anti-capitalist and anti-rac
 
 ## Why another social network?
 
-Much of our life today is lived on social networks owned and operated by a handful of the largest multinational companies in the world. Facebook, for example, the largest of the social networks and the 6th most valuable company in the world, has 2.6 billion users (34% world population) on its main platform, 2 billion on WhatsApp, 1.3 billion on Messenger, and 1.1 billion on Instagram. These companies harvest every click of our digital lives, stretching back 20 years now; they listen through our phones; they squeeze every last drop of profit out of us. In the process, newspapers are destroyed, writers become 'content producers', and opaque algorithms reinforce race and gender inequalities. These platforms have become the infrastructure of all social life, and yet they are privately owned by a handful of out-of-touch white male billionaires.
+Is a 'socialist network' possible? Although the internet began with anarchic design principles, it quickly consolidated into the hands of a few of the largest corporations in the world. It has effectively recreated the capitalist mode of production within itself: the *means* of content production (social media platforms) are privatized while the *labor* of production (posting) remains socially distributed. Exploitation inheres in that relation, whether in the industrial factory or the digital platform.
 
-But we don't need them. The technology is simple. We can make our own social network: a socialist network. One that is private, secure, insurveillable, unmonetizable; one which would give people the security they need to communicate about whatever they want, including protesting against capital and the state.
+But the digital platform can be redesigned. The technology behind these social media platforms is actually quite simple. We can easily build our own social network, one which is secure, insurveillable, and unmonetizable—one which would give people the security they need to communicate about whatever they want, including protesting against capital and the state.
+
 
 ## Features
 
