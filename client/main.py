@@ -74,16 +74,16 @@ class MyLabel(MDLabel): pass
 def get_tor_proxy_session():
     session = requests.session()
     # Tor uses the 9050 port as the default socks port
-    session.proxies = {'http':  'socks5://127.0.0.1:9050',
-                       'https': 'socks5://127.0.0.1:9050'}
+    session.proxies = {'http':  'socks5://127.0.0.1:9150',
+                       'https': 'socks5://127.0.0.1:9150'}
     return session    
 
 def get_async_tor_proxy_session():
     from requests_futures.sessions import FuturesSession
     session = FuturesSession()
     # Tor uses the 9050 port as the default socks port
-    session.proxies = {'http':  'socks5://127.0.0.1:9050',
-                       'https': 'socks5://127.0.0.1:9050'}
+    session.proxies = {'http':  'socks5://127.0.0.1:9150',
+                       'https': 'socks5://127.0.0.1:9150'}
     return session    
 
 
