@@ -59,32 +59,56 @@
 <AuthorInfoLayout>:
     cols:1
     orientation:'vertical'
-    size_hint:None,None
+    size_hint:0.6666,None
     md_bg_color:0,0,0,1
-    width: '300dp'
+    # width: '300dp'
+    height: self.minimum_height
     pos_hint: {'center_x':0.5}
+    spacing:'10sp'
     radius:[20,] 
     border_radius:20
+    padding:'10sp'
+    canvas:
+        Color:
+            rgba: 1,0,0,0.5
+        Line:
+            width: 1
+            rounded_rectangle: (self.x, self.y, self.width, self.height, 20, 20, 20, 20)
 
 <AuthorName>:
     pos_hint: {'center_x':0.5}
+    theme_text_color:'Custom'
+    text_color: 1,0,0,1
+    halign:'center'
     
 <AuthorUsername>:
     pos_hint: {'center_x':0.5}
     theme_text_color:'Custom'
     text_color: 1,0,0,1
     halign:'center'
-    font_size:'28sp'
 
 <AuthorDesc>:
+    halign:'left'
 
 <AuthorPlace>:
+    theme_text_color: 'Custom'
+    text_color:1,0,0,1
 
 <AuthorWebsite>:
+    theme_text_color: 'Custom'
+    text_color:1,0,0,1
+
 
 <AuthorFollowers>:
+    theme_text_color: 'Custom'
+    text_color:1,0,0,1
+    size_hint:None,None
+    pos_hint:{'right':1}
 
 <AuthorFollowing>:
+    theme_text_color: 'Custom'
+    text_color:1,0,0,1
+    pos_hint:{'left':1}
 
 <ProfilePageLayout>:
     cols:1
@@ -97,3 +121,12 @@
 <ProfileAvatar>:
     size_hint:1,1
     # width: '200dp'
+
+<FollowerLayout>:
+    cols:2
+    orientation:'horizontal'
+    spacing:'25dp'
+    height:self.minimum_height
+    size_hint:1,None
+    # md_bg_color:1,0,0,1
+    pos_hint: {'center_x':0.5,'center_y':0.5}

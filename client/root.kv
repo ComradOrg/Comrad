@@ -38,10 +38,11 @@
 <MyLabel>:
     theme_text_color: 'Custom'
     text_color: (1,0,0,1)
-    pos_hint: {'center_y': 0.5}
+    # pos_hint: {'center_y': 0.5}
     halign: 'center'
     height: self.texture_size[1]
-    font_family: 'Courier'
+    font_name: 'assets/font.otf'
+    size_hint:1,None
 
 
 
@@ -56,15 +57,19 @@ MyLayout:
     scr_mngr: scr_mngr
     orientation: 'vertical'
     height: self.minimum_height
+    md_bg_color:0,0,0,1
 
     canvas:
         Color:
-            rgba: 0.925,0.925,0.925,1 #get_color_from_hex(colors['Gray']['900'])
+            rgba: 0.925,0.925,0.925,0.99 #get_color_from_hex(colors['Gray']['900'])
+            # rgba: 0,0,0,0.9 #get_color_from_hex(colors['Gray']['900'])
         
+
         Rectangle:
             pos: self.pos
             size: self.size
-            source: 'assets/komrade2.png'
+            source: 'assets/bg.png'
+            # texture: app.texture
     
 
     MDToolbar:

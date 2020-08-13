@@ -35,6 +35,7 @@ from kivy.storage.jsonstore import JsonStore
 from kivy.core.window import Window
 from kivy.core.text import LabelBase
 import shutil
+from kivy.uix.image import Image
 
 Window.size = WINDOW_SIZE
 
@@ -92,6 +93,19 @@ def get_tor_python_session():
         with tor_requests.get_session() as s:
             return s
 
+def draw_background(widget, img_fn='assets/bg.png'):
+    from kivy.core.image import Image as CoreImage
+    from kivy.graphics import Color, Rectangle 
+    widget.canvas.before.clear()
+    with widget.canvas.before:
+        Color(.4, .4, .4, 1)
+        texture = CoreImage(img_fn).texture
+        texture.wrap = 'repeat'
+        nx = float(widget.width) / texture.width
+        ny = float(widget.height) / texture.height
+        Rectangle(pos=widget.pos, size=widget.size, texture=texture,
+                  tex_coords=(0, 0, nx, 0, nx, ny, 0, ny))
+
 
 class MainApp(MDApp):
     title = 'Komrade'
@@ -102,6 +116,8 @@ class MainApp(MDApp):
     store = JsonStore('komrade.json')
     login_expiry = 60 * 60 * 24 * 7  # once a week
     #login_expiry = 5 # 5 seconds
+    texture = ObjectProperty()
+
 
     def get_session(self):
         # return get_async_tor_proxy_session()
@@ -115,6 +131,11 @@ class MainApp(MDApp):
         return ''
 
     def build(self):
+        # bind bg texture
+        # self.texture = Image(source='assets/bg.png').texture
+        # self.texture.wrap = 'clamp_to_edge'
+        # self.texture.uvsize = (-2, -2)
+
         self.username=''
         # bind 
         global app,root
@@ -122,6 +143,7 @@ class MainApp(MDApp):
         #self.username = self.store.get('userd').get('username')
         self.load_store()
         self.root = root = Builder.load_file('root.kv')
+        draw_background(self.root)
         
         # edit logo
         logo=root.ids.toolbar.ids.label_title
@@ -179,7 +201,7 @@ class MainApp(MDApp):
         self.logged_in=True
         self.username=un
         # self.store.put('username',un)
-        self.store.put('user',username=un,logged_in=True,logged_in_when=time.time())
+        # self.store.put('user',username=un,logged_in=True,logged_in_when=time.time())
         self.root.change_screen('feed')
 
 
@@ -286,6 +308,14 @@ class MainApp(MDApp):
     def get_posts(self):
         with self.get_session() as sess:
             with sess.get(self.api+'/posts') as r:
+                log(r.text)
+                jsond=r.json()
+                return jsond['posts']
+        return []
+
+    def get_my_posts(self):
+        with self.get_session() as sess:
+            with sess.get(self.api+'/posts/'+self.username) as r:
                 log(r.text)
                 jsond=r.json()
                 return jsond['posts']

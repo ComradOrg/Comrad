@@ -157,15 +157,12 @@
     height: self.minimum_height
     radius:[20,] 
     border_radius:20
-    # canvas:
-    #     Color:
-    #         rgb: 1,0,0,1
-    #     Line:
-    #         width: 1
-    #         rectangle: (self.x, self.y, self.width, self.height)
-    #         # radius:[20,] 
-    #         # border_radius:20
-
+    canvas:
+        Color:
+            rgba: 1,0,0,0.5
+        Line:
+            width: 1
+            rounded_rectangle: (self.x, self.y, self.width, self.height, 20, 20, 20, 20)
 
     
     

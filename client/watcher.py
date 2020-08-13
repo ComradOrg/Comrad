@@ -37,6 +37,7 @@ class Handler(FileSystemEventHandler):
     @staticmethod
     def on_any_event(event):
         if '/cache/' in str(event.src_path): return None
+        if '__pycache__' in str(event.src_path): return None
         
         if event.is_directory:
             return None

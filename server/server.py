@@ -187,7 +187,7 @@ def get_follows(name=None):
 def get_posts(name=None):
     if name:
         person = Person.nodes.get_or_none(name=name)
-        data = [p.data for p in person.wrote.all] if person is not None else []
+        data = [p.data for p in person.wrote.all()] if person is not None else []
     else:
         data = [p.data for p in Post.nodes.order_by('-timestamp')]
         # print(data)
