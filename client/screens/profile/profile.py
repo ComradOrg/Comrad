@@ -12,9 +12,10 @@ from kivy.core.image import Image as CoreImage
 import io
 
 img_src = 'assets/avatar.jpg' #cache/img/1e6/587e880344d1e88cec8fda65b1148.jpeg'
+# img_src = '/home/ryan/Pictures/Harrier.jpeg'
 cover_img_src='assets/cover.jpg' #cache/img/60d/9de00e52e4758ade5969c50dc053f.jpg'
 
-class ProfileAvatar(CoreImage): pass
+class ProfileAvatar(Image): pass
 
 class LayoutAvatar(MDBoxLayout): pass
 
@@ -72,31 +73,12 @@ class ProfileScreen(BaseScreen):
         # get circular image
         circ_img = circularize_img(img_src,200)
         self.avatar_layout = LayoutAvatar()
-        self.avatar = ProfileAvatar(io.BytesIO(circ_img.read()),ext='png')
-        
-        
-        log(self.avatar.width)
-        log(self.avatar.norm_image_size)
-
-        maxwidth=200
-        maxheight=200
-
-        imgwidth = self.avatar.norm_image_size[0]
-        imgheight = self.avatar.norm_image_size[1]
-
-
-        if imgheight>imgwidth:
-            newheight=maxheight
-            newwidth = newheight * self.avatar.image_ratio
-            log('new!',newwidth,newheight)
-        else:
-            newwidth=maxwidth
-            newheight = newwidth / self.avatar.image_ratio
-            
-        self.avatar_layout.height=dp(newheight)
-        self.avatar_layout.width=dp(newwidth)
+        img = CoreImage(io.BytesIO(circ_img.read()),ext='png')
+        self.avatar = ProfileAvatar()
+        self.avatar.texture = img.texture
+        self.avatar_layout.height=dp(width)
+        self.avatar_layout.width=dp(width)
         self.avatar_layout.add_widget(self.avatar) 
-
 
         if do_cover_img:
             self.cover_image = CoverImage(source=cover_img_src)

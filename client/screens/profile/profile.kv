@@ -20,16 +20,17 @@
     size_hint:None,None
     # height:'200dp'
     # width:'300dp'
-    md_bg_color:1,1,0,1
+    # md_bg_color:1,1,0,1
     pos_hint: {'center_x':0.5,'center_y':0.88}
-    radius:[20,] 
-    border_radius:20
+    # radius:[20,] 
+    # border_radius:20
     canvas:
         Color:
             rgb: 0,0,0,1
         Line:
-            width: 3
-            rectangle: (self.x, self.y, self.width, self.height)
+            width: 2
+            # rectangle: (self.x, self.y, self.width, self.height)
+            circle: (self.center_x, self.center_y, min(self.width, self.height) / 2) #(self.x, self.x, self.width)
 
 <LayoutCover>:
     cols:1
