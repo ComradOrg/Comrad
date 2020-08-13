@@ -1,13 +1,12 @@
 # Komrade
 
-Komrade is a social*ist* network. It is predicated on anti-capitalist and anti-racist principles of freedom and solidarity.
+Komrade is a socialist network. It is predicated on anti-capitalist and anti-racist principles of community and solidarity.
 
 ## Why another social network?
 
-Much of our life today is lived on social networks owned and operated by two or three of the largest, multinational companies in the world. These companies harvest every click of our digital lives, stretching back 20 years now; they listen through our phones; they squeeze every last drop of profit out of us. In the process, newspapers are destroyed, writers become 'content producers'; algorithms reinforce racist and gender inequalities. These platforms have become the infrastructure of all social life, and yet they are privately owned by a handful of out-of-touch white male billionaires. 
+Much of our life today is lived on social networks owned and operated by a handful of the largest multinational companies in the world. Facebook, for example, the largest of the social networks and the 6th most valuable company in the world, has 2.6 billion users (34% world population) on its main platform, 2 billion on WhatsApp, 1.3 billion on Messenger, and 1.1 billion on Instagram. These companies harvest every click of our digital lives, stretching back 20 years now; they listen through our phones; they squeeze every last drop of profit out of us. In the process, newspapers are destroyed, writers become 'content producers', and opaque algorithms reinforce race and gender inequalities. These platforms have become the infrastructure of all social life, and yet they are privately owned by a handful of out-of-touch white male billionaires.
 
 But we don't need them. The technology is simple. We can make our own social network: a socialist network. One that is private, secure, insurveillable, unmonetizable; one which would give people the security they need to communicate about whatever they want, including protesting against capital and the state.
-
 
 ## Features
 
