@@ -64,8 +64,8 @@ class HalfForgetfulStorage(ForgetfulStorage):
 
 
 
-# host="68.66.241.111"
-host="0.0.0.0"
+host="68.66.241.111"
+# host="0.0.0.0"
 
 async def run():
     # Create a node and start listening on port 5678
