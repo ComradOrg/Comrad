@@ -63,13 +63,6 @@ class MyLabel(MDLabel): pass
 
 
 
-#### LOGIN
-
-
-
-
-
-
 
 def get_tor_proxy_session():
     session = requests.session()
@@ -118,6 +111,20 @@ class MainApp(MDApp):
     #login_expiry = 5 # 5 seconds
     texture = ObjectProperty()
 
+    # def boot_kad(self):
+    #     # connect to kad?   
+
+    #     from kad import DHT
+    #     host1, port1 = '68.66.241.111', 3000
+    #     # dht1 = DHT(host1, port1)
+    #     host2, port2 = 'localhost', 3001
+    #     dht2 = DHT(host2, port2, seeds=[(host1, port1)])
+    #     # dht1["my_key"] = [u"My", u"json-serializable", u"Object"]
+
+    #     #log (dht2["my_key"])	# blocking get
+    #     dht2.get("my_key", lambda data: log ('from server!',data)) # threaded get
+
+
 
     def get_session(self):
         # return get_async_tor_proxy_session()
@@ -135,6 +142,8 @@ class MainApp(MDApp):
         # self.texture = Image(source='assets/bg.png').texture
         # self.texture.wrap = 'clamp_to_edge'
         # self.texture.uvsize = (-2, -2)
+
+        # self.boot_kad()
 
         self.username=''
         # bind 
@@ -353,5 +362,10 @@ class MainApp(MDApp):
 
 
 if __name__ == '__main__':
+
+    #### LOGIN
+
+
+
     App = MainApp()
     App.run()
