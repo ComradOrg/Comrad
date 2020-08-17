@@ -23,7 +23,7 @@ class HalfForgetfulStorage(ForgetfulStorage):
                 self.data=pickle.load(f)
 
 
-        print('loaded:',self.data)
+        # print('loaded:',self.data)
 
         #self.data = pickle.open('sto.dat','rb') #,writeback=True)
         # self.data = self.store.get('OrderedDict',OrderedDict())

@@ -11,6 +11,8 @@ from screens.feed.feed import *
 import os,time,threading
 from threading import Thread
 from kivymd.uix.dialog import MDDialog
+from kivy.core.image import Image as CoreImage
+import io,shutil
 
 class ProgressPopup(MDDialog): pass
 class MessagePopup(MDDialog): pass
@@ -128,30 +130,54 @@ class PostScreen(ProtectedScreen):
         
         self.upload_button.choose()
         self.orig_img_src = self.upload_button.selection
-        self.open_dialog('uploading')
+        # self.open_dialog('uploading')
         # self.upload()
         # self.close_dialog()
         mythread = threading.Thread(target=self.upload)
         mythread.start()
 
     def upload(self):
-        rdata = self.app.upload(self.orig_img_src)
-        for k,v in rdata.items():
-            log('data!!!' + str(k) +':'+str(v))
-            setattr(self,k,v)
-        self.add_image()
-        self.close_dialog()
+        # get file id
+        filename=self.orig_img_src[0] if self.orig_img_src and os.path.exists(self.orig_img_src[0]) else ''
+        if not filename: return
+        self.img_id = file_id = get_random_id()
+        self.img_ext = os.path.splitext(filename)[-1][1:]
 
-    def add_image(self):
-        if hasattr(self,'image'): 
-            self.image.source=self.cache_filename
-        else:
-            self.image_layout = image_layout = PostImageLayout()
-            self.image = image = PostImage(source=self.cache_filename)
-            image.height = '300dp'
-            image_layout.add_widget(image)
-            image_layout.height='300dp'
-            self.post_card.add_widget(image_layout,index=1)
+        # cache
+        tmp_img_fn = 'cache/img/'+self.img_id[:3]+'/'+self.img_id[3:]+'.'+self.img_ext
+        tmp_img_dir = os.path.dirname(tmp_img_fn)
+        if not os.path.exists(tmp_img_dir): os.makedirs(tmp_img_dir)
+        shutil.copyfile(filename, tmp_img_fn)
+
+        # rdata = self.app.upload(filename)
+        # if 'success' in rdata:
+        #     # log('rdata = ',rdata)
+        #     self.img_id = rdata['id']
+        #     self.img_data = rdata['data']
+        #     self.img_ext = rdata['ext']
+        
+        # #for k,v in rdata.items():
+        # #    log('data!!!' + str(k) +':'+str(v))
+        # #    setattr(self,k,v)
+        self.add_image(tmp_img_fn)
+        log('hey?',tmp_img_fn)
+        self.app.upload(tmp_img_fn)
+        
+        # self.close_dialog()
+
+    def add_image(self,filename):
+        if hasattr(self,'image_layout'):
+            self.post_card.remove_widget(self.image_layout)
+        
+        self.image_layout = image_layout = PostImageLayout()
+        self.image = image = PostImage(source=filename)
+        # self.image.texture = img.texture
+        self.image.height = '300dp'
+        self.image_layout.add_widget(self.image)
+        self.image_layout.height='300dp'
+        self.post_card.add_widget(self.image_layout,index=1)
+
+        
 
     def post(self):
         # check?
@@ -195,3 +221,9 @@ class PostScreen(ProtectedScreen):
         
     
 #     pass
+ 
+
+
+def get_random_id():
+    import uuid
+    return uuid.uuid4().hex

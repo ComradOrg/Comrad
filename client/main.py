@@ -189,6 +189,8 @@ class MainApp(MDApp):
         self.username = userd.get('username','')
         
     def is_logged_in(self,just_check_timestamp=True, use_caching=True):
+        # self.username='root'
+        # return True
         if self.logged_in: return True
         if not use_caching: return False
 
@@ -235,107 +237,40 @@ class MainApp(MDApp):
             self.root.ids.login_screen.login_status.text=dat['error']
             return False
 
-    def upload(self,orig_img_src):
-        url_upload=self.api+'/upload'
-        filename=orig_img_src[0] if orig_img_src and os.path.exists(orig_img_src[0]) else ''
-        if not filename: return
-        
-        server_filename=''
-        media_uid=None
-            
-        with self.get_session() as sess:
-            with sess.post(url_upload,files={'file':open(filename,'rb')}) as r1:
-                if r1.status_code==200:
-                    rdata1 = r1.json()
-                    server_filename = rdata1.get('filename','')
-                    media_uid=rdata1.get('media_uid')
-                    if server_filename:
-                        # pre-cache
-                        cache_filename = os.path.join('cache','img',server_filename)
-                        cache_filedir = os.path.dirname(cache_filename)
-                        if not os.path.exists(cache_filedir): os.makedirs(cache_filedir)
-                        shutil.copyfile(filename,cache_filename)
-
-        return {'cache_filename':cache_filename, 'media_uid':media_uid, 'server_filename':server_filename}
+    def upload(self,filename,file_id=None):
+        log('uploading filename:',filename)
+        rdata=self.api.upload(filename,file_id=file_id)
+        if rdata is not None:
+            rdata['success']='File uploaded'
+            return rdata
+        return {'error':'Upload failed'}
         
         
     
     def post(self, content='', media_uid=None):
         timestamp=time.time()
         jsond = {'content':str(content),'media_uid':media_uid,
-                 'username':self.username, 'timestamp':timestamp}
-
-        url_post = self.api+'/post'
+                 'author':self.username, 'timestamp':timestamp}
             
-        with self.get_session() as sess:
-            # post    
-            with sess.post(url_post, json=jsond) as r2:
-                log('got back from post: ' + r2.text)
-                rdata2 = r2.json()
-                post_id = rdata2.get('post_id',None)
-                if post_id:
-                    # pre-cache
-                    cache_dir = os.path.join('cache','json',post_id[:3])
-                    cache_fnfn = os.path.join(cache_dir,post_id[3:]+'.json')
-                    if not os.path.exists(cache_dir): os.makedirs(cache_dir)
-                    with open(cache_fnfn,'w') as of:
-                        json.dump(jsond, of)
-                    
-                    #self.root.view_post(post_id)
-                    self.root.change_screen('feed')
-        return {'post_id':post_id}
+        res=self.api.post(jsond)
+        if 'success' in res:
+            self.root.change_screen('feed')
+            return {'post_id':res['post_id']}
                     
 
                     
             
 
     def get_post(self,post_id):
-        # get json from cache?
-        ofn_json = os.path.join('cache','json',str(post_id)+'.json')
-        if os.path.exists(ofn_json):
-            with open(ofn_json) as f:
-                jsond = json.load(f)
-        else:
-            with self.get_session() as sess:
-                with sess.get(self.api+'/post/'+str(post_id)) as r:
-                    jsond = r.json()
-
-                    # cache it!
-                    with open(ofn_json,'w') as of:
-                        json.dump(jsond, of)
-        
-        return jsond
+        return self.api.get_post(post_id)
 
     def get_posts(self):
-        return []
-        with self.get_session() as sess:
-            with sess.get(self.api+'/posts') as r:
-                log(r.text)
-                jsond=r.json()
-                return jsond['posts']
-        return []
+        return self.api.get_posts()
 
     def get_my_posts(self):
-        with self.get_session() as sess:
-            with sess.get(self.api+'/posts/'+self.username) as r:
-                log(r.text)
-                jsond=r.json()
-                return jsond['posts']
-        return []
+        return self.api.get_posts('/author/'+self.username)
 
-    def get_posts_async(self):
-        result=[]
-        with self.get_session() as sess:
-            futures = [sess.get(self.api+'/posts')]
-            for future in as_completed(futures):
-                log('second?')
-                r=future.result()
-                log(r.text)
-                jsond=r.json()
-                result=jsond['posts']
-            log('first?')
-        return result
-        
+
     def get_image(self, img_src):
         # is there an image?
         if not img_src: return 

@@ -14,6 +14,8 @@ import asyncio
 from .crypto import *
 from main import log
 from .p2p import *
+from pathlib import Path
+from functools import partial
 
 # works better with tor?
 import json
@@ -41,21 +43,65 @@ class Api(object):
         #from .p2p import connect
         #self.node = connect()
 
-    def get(self,key):
+    def get(self,key_or_keys):
         async def _get():
             node = Server(storage=HalfForgetfulStorage())
             await node.listen(PORT_LISTEN)
             await node.bootstrap(NODES_PRIME)
-            return await node.get(key)
+
+            if type(key_or_keys) in {list,tuple,dict}:
+                keys = key_or_keys
+                res = []
+                res = await asyncio.gather(*[node.get(key) for key in keys])
+                log('RES?',res)
+            else:
+                key = key_or_keys
+                res = await node.get(key)
+
+            return res
+            
         return asyncio.run(_get())
 
-    def set(self,key,value):
+
+    def get_json(self,key_or_keys):
+        res = self.get(key_or_keys)
+        if type(res)==list:
+            return [None if x is None else json.loads(x) for x in res]
+        else:
+            return None if res is None else json.loads(res)
+
+    def set(self,key_or_keys,value_or_values):
+        log('hello?')
         async def _set():
-            node = Server(storage=HalfForgetfulStorage())
+            log('starting server...')
+            node = Server() #storage=HalfForgetfulStorage())
+            
+            log('listening...')
             await node.listen(PORT_LISTEN)
+            
+            log('bootstrapping...')
             await node.bootstrap(NODES_PRIME)
-            return await node.set(key,value)
-        return asyncio.run(_set())
+            
+
+            if type(key_or_keys) in {list,tuple,dict}:
+                keys = key_or_keys
+                values = value_or_values
+                log(len(keys),len(values))
+                assert len(keys)==len(values)
+                res = await asyncio.gather(*[node.set(key,value) for key,value in zip(keys,values)])
+                log('RES?',res)
+            else:
+                key = key_or_keys
+                value = value_or_values
+                res = await node.set(key,value)
+
+            node.stop()
+            return res
+        return asyncio.run(_set(), debug=True)
+
+    def set_json(self,key,value):
+        value_json = jsonify(value)
+        return self.set(key,value_json)
 
     def has(self,key):
         return self.get(key) is not None
@@ -63,14 +109,12 @@ class Api(object):
 
     ## PERSONS
     def get_person(self,username):
-        person = self.get('/person/'+username)
-        return None if person is None else json.loads(person)
+        return self.get_json('/person/'+username)
 
     def set_person(self,username,public_key):
         pem_public_key = save_public_key(public_key,return_instead=True)
         obj = {'name':username, 'public_key':pem_public_key.decode()}
-        obj_str = jsonify(obj)
-        self.set('/person/'+username,obj_str)
+        self.set_json('/person/'+username,obj)
 
 
 
@@ -131,7 +175,7 @@ class Api(object):
 
         # verify keys
         person_public_key_pem = person['public_key']
-        public_key = load_public_key(person_public_key_pem)
+        public_key = load_public_key(person_public_key_pem.encode())
         real_public_key = private_key.public_key()
 
         #log('PUBLIC',public_key.public_numbers())
@@ -141,51 +185,90 @@ class Api(object):
             return {'error':'keys do not match!'}
         return {'success':'Login successful', 'username':name}
 
+    def append_json(self,key,data):
+        sofar=self.get_json(key)
+        if sofar is None: sofar = []
+        new=sofar + ([data] if type(data)!=list else data)
+        if self.set_json(key, new):
+            return {'success':'Length increased to %s' % len(new)}
+        return {'error':'Could not append json'}
 
-"""
+    def upload(self,filename,file_id=None, uri='/img/',uri_part='/part/'):
+        import sys
 
+        if not file_id: file_id = get_random_id()
+        part_ids = []
+        part_keys = []
+        parts=[]
+        PARTS=[]
+        buffer_size=100
+        for part in bytes_from_file(filename,chunksize=1024*7):
+            part_id = get_random_id()
+            part_ids.append(part_id)
+            part_key='/part/'+part_id
+            part_keys.append(part_key)
+            parts.append(part)
+            # PARTS.append(part)
+            
+            log('part!:',sys.getsizeof(part))
+            #self.set(part_key,part)
 
-## LOGIN
-def login(data):
-    name=data.get('name','')
-    passkey=data.get('passkey','')
-    if not (name and passkey):
-        return {'error':'Login failed'},status.HTTP_400_BAD_REQUEST
+            if len(parts)>=buffer_size:
+                log('setting...')
+                self.set(part_keys,parts)
+                part_keys=[]
+                PARTS+=parts
+                parts=[]
 
-    person = Person.nodes.get_or_none(name=name)
-    if person is None:
-        return {'error':'User already exists'},status.HTTP_401_UNAUTHORIZED
+        # set all parts    
+        #self.set(part_keys,PARTS)
+        log('# parts:',len(PARTS))
+        if parts and part_keys: self.set(part_keys, parts)
 
-    real_passkey = person.passkey
-    if not check_password_hash(real_passkey, passkey):
-        return {'error':'Login failed'},status.HTTP_401_UNAUTHORIZED
+        # how many parts?
+        log('# pieces!',len(part_ids))
 
-    return {'success':'Login success'},status.HTTP_200_OK
+        file_store = {'ext':os.path.splitext(filename)[-1][1:], 'parts':part_ids}
+        log('FILE STORE??',file_store)
+        self.set_json(uri+file_id,file_store)
+        
+        # file_store['data'].seek(0)
+        file_store['id']=file_id
+        return file_store
 
+    def post(self,data):
+        post_id=get_random_id()
+        res = self.set_json('/post/'+post_id, data)
+        log('got data:',data)
 
+        ## add to channels
+        self.append_json('/posts/channel/earth', post_id)
+        
+        ## add to user
+        un=data.get('author')
+        if un: self.append_json('/posts/author/'+un, post_id)
 
-def register(name,passkey):
-    
-    if not (name and passkey):
-        return {'error':'Register failed'},status.HTTP_400_BAD_REQUEST
+        if res:
+            return {'success':'Posted! %s' % post_id, 'post_id':post_id}
+        return {'error':'Post failed'}
 
-    
-    if person is not None:
-        return {'error':'User exists'},status.HTTP_401_UNAUTHORIZED
+    def get_post(self,post_id):
+        return self.get_json('/post/'+post_id)
 
-    private_key,public_key = crypto.new_keys(password=passkey)
-
-
-
-    person = Person(name=name,passkey=passkey).save()
-    
-    print('REGISTERED!',data)
-    return {'success':'Account created', 'username':name},status.HTTP_200_OK
+    def get_posts(self,uri='/channel/earth'):
+        index = self.get_json('/posts'+uri)
+        if index is None: return []
+        data = self.get_json(['/post/'+x for x in index])
+        return data
 
 
 
 
 ## CREATE
+
+def get_random_id():
+    import uuid
+    return uuid.uuid4().hex
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -196,7 +279,7 @@ def get_random_filename(filename):
     fn=uuid.uuid4().hex
     return (fn[:3],fn[3:]+os.path.splitext(filename)[-1])
 
-@app.route('/api/upload',methods=['POST'])
+
 def upload():
     files = request.files
     # check if the post request has the file part
@@ -234,43 +317,6 @@ def upload():
     return {'error':'Upload failed'},status.HTTP_406_NOT_ACCEPTABLE
 
 
-@app.route('/api/post',methods=['POST'])
-@app.route('/api/post/<post_id>',methods=['GET'])
-def post(post_id=None):
-
-    if request.method == 'POST':
-        # get data
-        data=request.json
-        print('POST /api/post:',data)
-
-        # make post
-        post = Post(content=data.get('content',''), timestamp=data.get('timestamp')).save()
-
-        # attach author
-        name = data.get('username')
-        if name:
-            author = Person.nodes.get_or_none(name=name)
-            author.wrote.connect(post)
-        
-        # attach media
-        media_uid=data.get('media_uid')
-        if media_uid:
-            media=Media.nodes.get_or_none(uid=media_uid)
-            post.has_media.connect(media)
-
-        
-
-        # return
-        post_id=post.uid
-        print('created new post!',post_id)
-        return {'post_id':post_id},status.HTTP_200_OK
-
-    print('got post id!',post_id)
-    post = Post.nodes.get_or_none(uid=post_id)
-    if not post: return {},status.HTTP_204_NO_CONTENT
-    return post.data,status.HTTP_200_OK
-
-@app.route('/api/download/<prefix>/<filename>',methods=['GET'])
 def download(prefix, filename):
     filedir = os.path.join(app.config['UPLOAD_DIR'], prefix)
     print(filedir, filename)
@@ -279,21 +325,20 @@ def download(prefix, filename):
 ### READ
 
 
-@app.route('/api/followers/<name>')
+
 def get_followers(name=None):
     person = Person.match(G, name).first()
     data = [p.data for p in person.followers]
     return jsonify(data)
 
-@app.route('/api/followers/<name>')
+
 def get_follows(name=None):
     person = Person.match(G, name).first()
     data = [p.data for p in person.follows]
     return jsonify(data)
 
 
-@app.route('/api/posts')
-@app.route('/api/posts/<name>')
+
 def get_posts(name=None):
     if name:
         person = Person.nodes.get_or_none(name=name)
@@ -304,7 +349,7 @@ def get_posts(name=None):
 
     return jsonify({'posts':data})
 
-@app.route('/api/post/<int:id>')
+
 def get_post(id=None):
     post = Post.match(G, int(id)).first()
     data = post.data
@@ -313,13 +358,63 @@ def get_post(id=None):
 
 
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5555)
-    # socketio.run(app,host='0.0.0.0', port=5555)
-    # from gevent import pywsgi
-    # from geventwebsocket.handler import WebSocketHandler
-    # server = pywsgi.WSGIServer(('', 5555), app, handler_class=WebSocketHandler)
-    # server.serve_forever()
+import sys
+# def bytes_from_file(filename, chunksize=8192//2):
+#     with open(filename, "rb") as f:
+#         while True:
+#             chunk = f.read(chunksize)
+#             if chunk:
+#                 log(type(chunk), sys.getsizeof(chunk))
+#                 yield chunk
+#                 #yield from chunk
+#             else:
+#                 break
 
+# def bytes_from_file(filename,chunksize=8192):
+#     with open(filename,'rb') as f:
+#         barray = bytearray(f.read())
 
-"""
+#     for part in barray[0:-1:chunksize]:
+#         log('!?',part)
+#         yield bytes(part)
+
+def bytes_from_file(filename,chunksize=8192):
+    with open(filename, 'rb') as f:
+        while True:
+            piece = f.read(chunksize)  
+            if not piece:
+                break
+            yield piece
+
+# import sys
+# def bytes_from_file(path,chunksize=8000):
+#     ''' Given a path, return an iterator over the file
+#         that lazily loads the file.
+#     '''
+#     path = Path(path)
+#     bufsize = get_buffer_size(path)
+
+#     with path.open('rb') as file:
+#         reader = partial(file.read1, bufsize)
+#         for chunk in iter(reader, bytes()):
+#             _bytes=bytearray()
+#             for byte in chunk:
+#                 #if _bytes is None:
+#                 #    _bytes=byte
+#                 #else:
+#                 _bytes.append(byte)
+
+#                 if sys.getsizeof(_bytes)>=8192:
+#                     yield bytes(_bytes) #.bytes()
+#                     _bytes=bytearray()
+#         if _bytes:
+#             yield bytes(_bytes)
+
+# def get_buffer_size(path):
+#     """ Determine optimal buffer size for reading files. """
+#     st = os.stat(path)
+#     try:
+#         bufsize = st.st_blksize # Available on some Unix systems (like Linux)
+#     except AttributeError:
+#         bufsize = io.DEFAULT_BUFFER_SIZE
+#     return bufsize

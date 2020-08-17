@@ -1,0 +1,1 @@
+python -c "import p2p; p2p.start_first_node()"

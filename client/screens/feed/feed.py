@@ -1,6 +1,6 @@
 from kivymd.uix.label import MDLabel
 from kivy.uix.gridlayout import GridLayout
-from kivy.uix.image import AsyncImage
+from kivy.uix.image import AsyncImage, Image
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.card import MDCard, MDSeparator
 from kivy.uix.scrollview import ScrollView
@@ -18,6 +18,8 @@ from kivy.app import App
 class PostTitle(MDLabel): pass
 class PostGridLayout(GridLayout): pass
 class PostImage(AsyncImage): pass
+# class PostImage(CoreImage)
+class PostImageBytes(Image): pass
 
 class PostContent(MDLabel): 
     def __init__(self,**kwargs):
@@ -154,7 +156,7 @@ class FeedScreen(ProtectedScreen):
         
         i=0
         lim=25
-        for i,post in enumerate(self.app.get_posts()):
+        for i,post in enumerate(reversed(self.app.get_posts())):
             log('third?')
             #if ln.startswith('@') or ln.startswith('RT '): continue
             #i+=1
