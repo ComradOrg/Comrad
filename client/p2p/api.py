@@ -58,6 +58,7 @@ class Api(object):
                 key = key_or_keys
                 res = await node.get(key)
 
+            node.stop()
             return res
             
         return asyncio.run(_get())
@@ -68,6 +69,7 @@ class Api(object):
         if type(res)==list:
             return [None if x is None else json.loads(x) for x in res]
         else:
+            log('RES!!!',res)
             return None if res is None else json.loads(res)
 
     def set(self,key_or_keys,value_or_values):
@@ -93,7 +95,7 @@ class Api(object):
             else:
                 key = key_or_keys
                 value = value_or_values
-                res = await node.set(key,value)
+                res = await node.set(key,value) #'this is a test')
 
             node.stop()
             return res
@@ -101,6 +103,7 @@ class Api(object):
 
     def set_json(self,key,value):
         value_json = jsonify(value)
+        log('OH NO!',sys.getsizeof(value_json))
         return self.set(key,value_json)
 
     def has(self,key):

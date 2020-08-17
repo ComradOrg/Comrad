@@ -23,7 +23,7 @@ class HalfForgetfulStorage(ForgetfulStorage):
                 self.data=pickle.load(f)
 
 
-        # print('loaded:',self.data)
+        #print('>> loaded %s keys' % len(self.data))
 
         #self.data = pickle.open('sto.dat','rb') #,writeback=True)
         # self.data = self.store.get('OrderedDict',OrderedDict())
@@ -60,13 +60,14 @@ def start_first_node():
     handler.setFormatter(formatter)
     log = logging.getLogger('kademlia')
     log.addHandler(handler)
-    log.setLevel(logging.DEBUG)
+    log.setLevel(logging.INFO)
 
     loop = asyncio.get_event_loop()
     loop.set_debug(True)
 
 
-    shelf = HalfForgetfulStorage()
+    # shelf = HalfForgetfulStorage()
+    shelf = None
 
     server = Server(storage=shelf)
     loop.run_until_complete(server.listen(8468))

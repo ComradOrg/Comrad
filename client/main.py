@@ -34,7 +34,7 @@ import requests,json
 from kivy.storage.jsonstore import JsonStore
 from kivy.core.window import Window
 from kivy.core.text import LabelBase
-import shutil
+import shutil,sys
 from kivy.uix.image import Image
 from p2p import p2p,crypto,api
 
@@ -247,11 +247,11 @@ class MainApp(MDApp):
         
         
     
-    def post(self, content='', media_uid=None):
+    def post(self, content='', file_id=None):
         timestamp=time.time()
-        jsond = {'content':str(content),'media_uid':media_uid,
+        jsond = {'content':str(content),'file_id':file_id,
                  'author':self.username, 'timestamp':timestamp}
-            
+        # log('posting:',jsond,sys.getsizeof(json.dumps(jsond)))
         res=self.api.post(jsond)
         if 'success' in res:
             self.root.change_screen('feed')

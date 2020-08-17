@@ -191,17 +191,19 @@ class PostScreen(ProtectedScreen):
             return
 
         # log('?????????????????'+self.media_uid)
-        if not hasattr(self,'media_uid') and self.upload_button.selection:
-            log('REUPLOADING')
-            self.upload()
+        # if not hasattr(self,'img_id') and self.upload_button.selection:
+        #     log('REUPLOADING')
+        #     self.upload()
 
-        def do_post():
-            media_uid = self.media_uid if hasattr(self,'media_uid') else None
-            self.app.post(content=content, media_uid=media_uid) #, logger=logger)
-            self.close_dialog()
+        # def do_post():
+        #     media_uid = self.media_uid if hasattr(self,'media_uid') else None
+        #     self.app.post(content=content, media_uid=media_uid) #, logger=logger)
+        #     self.close_dialog()
         
-        self.open_dialog('posting')
-        Thread(target=do_post).start()
+        # self.open_dialog('posting')
+        # Thread(target=do_post).start()
+        file_id = self.img_id if hasattr(self,'img_id') else None
+        self.app.post(content=content, file_id=file_id)
         
 
 # class ViewPostScreen(ProtectedScreen): 
