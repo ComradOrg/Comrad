@@ -45,7 +45,7 @@ class Api(object):
 
     def get(self,key_or_keys):
         async def _get():
-            node = Server(storage=HalfForgetfulStorage())
+            node = Server() #storage=HalfForgetfulStorage())
             await node.listen(PORT_LISTEN)
             await node.bootstrap(NODES_PRIME)
 
@@ -53,7 +53,7 @@ class Api(object):
                 keys = key_or_keys
                 res = []
                 res = await asyncio.gather(*[node.get(key) for key in keys])
-                log('RES?',res)
+                #log('RES?',res)
             else:
                 key = key_or_keys
                 res = await node.get(key)
@@ -69,19 +69,19 @@ class Api(object):
         if type(res)==list:
             return [None if x is None else json.loads(x) for x in res]
         else:
-            log('RES!!!',res)
+            #log('RES!!!',res)
             return None if res is None else json.loads(res)
 
     def set(self,key_or_keys,value_or_values):
-        log('hello?')
+        # log('hello?')
         async def _set():
-            log('starting server...')
+            # log('starting server...')
             node = Server() #storage=HalfForgetfulStorage())
             
-            log('listening...')
+            # log('listening...')
             await node.listen(PORT_LISTEN)
             
-            log('bootstrapping...')
+            # log('bootstrapping...')
             await node.bootstrap(NODES_PRIME)
             
 
@@ -91,7 +91,7 @@ class Api(object):
                 log(len(keys),len(values))
                 assert len(keys)==len(values)
                 res = await asyncio.gather(*[node.set(key,value) for key,value in zip(keys,values)])
-                log('RES?',res)
+                # log('RES?',res)
             else:
                 key = key_or_keys
                 value = value_or_values
@@ -103,7 +103,7 @@ class Api(object):
 
     def set_json(self,key,value):
         value_json = jsonify(value)
-        log('OH NO!',sys.getsizeof(value_json))
+        # log('OH NO!',sys.getsizeof(value_json))
         return self.set(key,value_json)
 
     def has(self,key):
@@ -196,7 +196,7 @@ class Api(object):
             return {'success':'Length increased to %s' % len(new)}
         return {'error':'Could not append json'}
 
-    def upload(self,filename,file_id=None, uri='/img/',uri_part='/part/'):
+    def upload(self,filename,file_id=None, uri='/file/',uri_part='/part/'):
         import sys
 
         if not file_id: file_id = get_random_id()
@@ -238,6 +238,17 @@ class Api(object):
         # file_store['data'].seek(0)
         file_store['id']=file_id
         return file_store
+
+    def download(self,file_id):
+        file_store = self.get_json('/file/'+file_id)
+        if file_store is None: return
+
+        log('file_store!?',file_store)
+        keys = ['/part/'+x for x in file_store['parts']]
+        pieces = self.get(keys)
+        file_store['parts_data']=pieces
+        return file_store
+
 
     def post(self,data):
         post_id=get_random_id()

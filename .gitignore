@@ -4,7 +4,7 @@ client/komrade.json
 uploads
 uploads/*
 uploads/*/*
-
+client/cache
 client/log.txt
 venv
 .vscode

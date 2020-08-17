@@ -144,24 +144,20 @@ class PostScreen(ProtectedScreen):
         self.img_ext = os.path.splitext(filename)[-1][1:]
 
         # cache
-        tmp_img_fn = 'cache/img/'+self.img_id[:3]+'/'+self.img_id[3:]+'.'+self.img_ext
+        tmp_img_fn = 'cache/'+self.img_id[:3]+'/'+self.img_id[3:]+'.'+self.img_ext
         tmp_img_dir = os.path.dirname(tmp_img_fn)
         if not os.path.exists(tmp_img_dir): os.makedirs(tmp_img_dir)
         shutil.copyfile(filename, tmp_img_fn)
 
-        # rdata = self.app.upload(filename)
-        # if 'success' in rdata:
-        #     # log('rdata = ',rdata)
-        #     self.img_id = rdata['id']
-        #     self.img_data = rdata['data']
-        #     self.img_ext = rdata['ext']
-        
-        # #for k,v in rdata.items():
-        # #    log('data!!!' + str(k) +':'+str(v))
-        # #    setattr(self,k,v)
+        # add
         self.add_image(tmp_img_fn)
-        log('hey?',tmp_img_fn)
-        self.app.upload(tmp_img_fn)
+        
+        # upload
+        #def do_upload():
+            
+        self.app.upload(tmp_img_fn, file_id=file_id)
+
+        # Thread(target=do_upload).start()
         
         # self.close_dialog()
 
@@ -195,15 +191,16 @@ class PostScreen(ProtectedScreen):
         #     log('REUPLOADING')
         #     self.upload()
 
-        # def do_post():
-        #     media_uid = self.media_uid if hasattr(self,'media_uid') else None
-        #     self.app.post(content=content, media_uid=media_uid) #, logger=logger)
-        #     self.close_dialog()
+        def do_post():
+            file_id = self.img_id if hasattr(self,'img_id') else None
+            file_ext = self.img_ext if hasattr(self,'img_ext') else None
+            self.app.post(content=content, file_id=file_id, file_ext=file_ext)
+            import time
+            self.close_dialog()
         
-        # self.open_dialog('posting')
-        # Thread(target=do_post).start()
-        file_id = self.img_id if hasattr(self,'img_id') else None
-        self.app.post(content=content, file_id=file_id)
+        self.open_dialog('posting')
+        Thread(target=do_post).start()
+        
         
 
 # class ViewPostScreen(ProtectedScreen): 

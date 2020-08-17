@@ -240,18 +240,39 @@ class MainApp(MDApp):
     def upload(self,filename,file_id=None):
         log('uploading filename:',filename)
         rdata=self.api.upload(filename,file_id=file_id)
+        log('upload result:',rdata)
         if rdata is not None:
             rdata['success']='File uploaded'
             return rdata
         return {'error':'Upload failed'}
         
+    def download(self,file_id,output_fn=None):
+        log('downloading:',file_id)
+        file_dat = self.api.download(file_id)
+        if not output_fn:
+            file_id=file_dat['id']
+            file_ext=file_dat['ext']
+            output_fn=os.path.join('cache',file_id[:3]+'/'+file_id[3:]+'.'+file_ext)
         
+        output_dir=os.path.dirname(output_fn)
+        if not os.path.exists(output_dir): os.makedirs(output_dir)
+
+        with open(output_fn,'wb') as of:
+            for data_piece in file_dat['parts_data']:
+                if data_piece is not None:
+                    of.write(data_piece)
     
-    def post(self, content='', file_id=None):
-        timestamp=time.time()
-        jsond = {'content':str(content),'file_id':file_id,
-                 'author':self.username, 'timestamp':timestamp}
-        # log('posting:',jsond,sys.getsizeof(json.dumps(jsond)))
+    def post(self, content='', file_id=None, file_ext=None, anonymous=False):
+        #timestamp=time.time()
+        jsond={}
+        #jsond['timestamp']=
+        if content: jsond['content']=str(content)
+        if file_id: jsond['file_id']=str(file_id)
+        if file_ext: jsond['file_ext']=str(file_ext)
+        if not anonymous and self.username:
+            jsond['author']=self.username
+        
+        log('posting:',jsond)
         res=self.api.post(jsond)
         if 'success' in res:
             self.root.change_screen('feed')

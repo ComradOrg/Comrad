@@ -10,6 +10,7 @@ from main import log
 import os,time
 from datetime import datetime
 from kivy.app import App
+from threading import Thread
 
 
 
@@ -58,14 +59,21 @@ class PostScrollView(ScrollView): pass
 class PostCard(MDCard):
     def __init__(self, data):
         super().__init__()
-        log('DATA: '+str(data))
+        log('PostCard() got data: '+str(data))
         self.author = data.get('author','[Anonymous]')
-        self.img_src = data.get('img_src','')
-        self.cache_img_src = os.path.join('cache','img',self.img_src) if self.img_src else ''
+        self.img_id = data.get('file_id','')
+        self.img_ext = data.get('file_ext','')
+        self.img_src=self.img_id[:3]+'/'+self.img_id[3:]+'.'+self.img_ext if self.img_id else ''
+        self.cache_img_src = os.path.join('cache',self.img_src) if self.img_src else ''
         self.img_loaded = os.path.exists(self.cache_img_src)
         self.content = data.get('content','')
         self.timestamp = data.get('timestamp',None)
         self.bind(minimum_height=self.setter('height'))
+
+        log('PostCard.img_id =',self.img_id)
+        log('PostCard.img_ext =',self.img_ext)
+        log('PostCard.img_src =',self.img_src)
+        log('PostCard.cache_img_src =',self.cache_img_src)
 
         # pieces
         author_section_layout = PostAuthorLayout()
@@ -77,11 +85,11 @@ class PostCard(MDCard):
 
         # timestamp
         timestr=''
-        log(self.timestamp)
+        #log(self.timestamp)
         if self.timestamp:
             dt_object = datetime.fromtimestamp(self.timestamp)
             timestr = dt_object.strftime("%-d %b %Y %H:%M") 
-        log('timestr: '+timestr)
+        #log('timestr: '+timestr)
         author_section_layout.add_widget(PostTimestampLabel(text=timestr))
         # author_section_layout.add_widget(author_avatar)
         # self.add_widget(author_section_layout)
@@ -109,7 +117,7 @@ class PostCard(MDCard):
         self.scroller = scroller = PostScrollView()
         self.add_widget(author_section_layout)
         # self.add_widget(MDLabel(text='hello'))
-        log('img_src ' + str(bool(self.img_src)))
+        #log('img_src ' + str(bool(self.img_src)))
         if self.img_src: self.add_widget(image_layout)
 
         def estimate_height(minlen=100,maxlen=500):
@@ -127,6 +135,17 @@ class PostCard(MDCard):
         scroller.add_widget(self.post_content)
         self.add_widget(scroller)
         # self.add_widget(post_layout)
+
+        # log('?????',self.cache_img_src, os.path.exists(self.cache_img_src), os.stat(self.cache_img_src).st_size)
+        if self.cache_img_src and (not os.path.exists(self.cache_img_src) or not os.stat(self.cache_img_src).st_size):
+            def do_download():
+                log('downloading...')
+                self.app.download(self.img_id, self.cache_img_src)
+                self.image.reload()
+
+            #self.open_dialog('posting')
+            Thread(target=do_download).start()
+        
 
     @property
     def app(self):
@@ -151,20 +170,17 @@ class FeedScreen(ProtectedScreen):
     def on_pre_enter(self):
         # log('ids:' +str(self.ids.post_carousel.ids))
         for post in self.posts:
-            log('post: '+str(post))
             self.ids.post_carousel.remove_widget(post)
         
         i=0
         lim=25
         for i,post in enumerate(reversed(self.app.get_posts())):
-            log('third?')
             #if ln.startswith('@') or ln.startswith('RT '): continue
             #i+=1
             if i>lim: break
             
             #post = Post(title=f'Marx Zuckerberg', content=ln.strip())
             post_obj = PostCard(post)
-            log(post)
             self.posts.append(post_obj)
             self.ids.post_carousel.add_widget(post_obj)
 
