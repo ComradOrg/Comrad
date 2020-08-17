@@ -9,7 +9,7 @@ Is a 'socialist network' possible? Although the internet began with anarchic des
 But the digital platform can be redesigned. The technology behind these social media platforms is actually quite simple. We can easily build our own social network, one which is secure, insurveillable, and unmonetizable—one which would give people the security they need to communicate about whatever they want, including protesting against capital and the state.
 
 
-## Principles
+## Core Principles
 
 ### Encrypted
 
@@ -31,7 +31,7 @@ What's untraceable is also unmonetizable: your data can't be harvested by techno
 
 Not just non-profit, we're anti-profit.
 
-## Features
+## Social media features
 
 We present a simplified set of social media features drawn from everything that's out there and then some:
 
