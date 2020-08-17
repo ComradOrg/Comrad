@@ -33,9 +33,12 @@ class HalfForgetfulStorage(ForgetfulStorage):
         self.data[key] = (time.monotonic(), value)
         self.write()
 
+    def set(key,value):
+        self[key]=value
+
     def write(self):
         with open(self.fn,'wb') as f:
-            pickle.dump(self.data, f, protocol=pickle.HIGHEST_PROTOCOL)
+            pickle.dump(self.data, f)
 
     def get(self, key, default=None):
         # self.cull()
@@ -49,14 +52,16 @@ class HalfForgetfulStorage(ForgetfulStorage):
         return self.data[key][1]
 
 
-handler = logging.StreamHandler()
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-handler.setFormatter(formatter)
-log = logging.getLogger('kademlia')
-log.addHandler(handler)
-log.setLevel(logging.DEBUG)
+
 
 def start_first_node():
+    handler = logging.StreamHandler()
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    log = logging.getLogger('kademlia')
+    log.addHandler(handler)
+    log.setLevel(logging.DEBUG)
+
     loop = asyncio.get_event_loop()
     loop.set_debug(True)
 

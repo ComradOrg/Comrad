@@ -40,11 +40,22 @@ from p2p import p2p,crypto,api
 
 Window.size = WINDOW_SIZE
 
+# with open('log.txt','w') as of:
+#     of.write('### LOG ###\n')
+
+import logging
+handler = logging.StreamHandler()
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+handler.setFormatter(formatter)
+logger = logging.getLogger('app')
+logger.addHandler(handler)
+logger.setLevel(logging.DEBUG)
+
 def log(*args):
-    with open('log.txt','a+') as of:
-        of.write(' '.join([str(x) for x in args])+'\n')
-
-
+    #with open('log.txt','a+') as of:
+    #    of.write(' '.join([str(x) for x in args])+'\n')
+    line = ' '.join(str(x) for x in args)
+    logger.debug(line)
 
 class MyLayout(MDBoxLayout):
     scr_mngr = ObjectProperty(None)
@@ -130,14 +141,19 @@ class MainApp(MDApp):
         # self.texture.wrap = 'clamp_to_edge'
         # self.texture.uvsize = (-2, -2)
 
+        with open('log.txt','w') as of: of.write('## LOG ##\n')
+        self.load_store()
+
         # self.boot_kad()
+        from p2p.api import Api
+        self.api = Api(app_storage=self.store)
 
         self.username=''
         # bind 
         global app,root
         app = self
         #self.username = self.store.get('userd').get('username')
-        self.load_store()
+        
         self.root = root = Builder.load_file('root.kv')
         draw_background(self.root)
         
@@ -159,7 +175,7 @@ class MainApp(MDApp):
  
         if not self.is_logged_in():
             self.root.change_screen('login')
-            log(self.username)
+            #log(self.username)
         else:
             # self.root.post_id=190
             self.root.change_screen(DEFAULT_SCREEN)
@@ -202,35 +218,23 @@ class MainApp(MDApp):
 
 
     def login(self,un=None,pw=None):
-        url = self.api+'/login'
-
-        with self.get_session() as sess:
-            #res = requests.post(url, json={'name':un, 'passkey':pw})
-            res = sess.post(url, json={'name':un, 'passkey':pw})
-            log(res.text)
-
-            if res.status_code==200:
-                data=res.json()
-                self.save_login(un)
-                return True
-            else:
-                # self.root.ids.login_status.text=res.text
-                return False
+        dat = self.api.login(un,pw)
+        log(dat)
+        if 'success' in dat:
+            self.save_login(un)
+        elif 'error' in dat:
+            self.root.ids.login_screen.login_status.text=dat['error']
+        return False
 
     def register(self,un,pw):
-        # url = self.api+'/register'
+        dat = self.api.register(un,pw)
+        if 'success' in dat:
+            self.save_login(un)
+            return True
+        elif 'error' in dat:
+            self.root.ids.login_screen.login_status.text=dat['error']
+            return False
 
-        # with self.get_session() as sess:
-        #     #res = requests.post(url, json={'name':un, 'passkey':pw})
-        #     res = sess.post(url, json={'name':un, 'passkey':pw})
-        #     if res.status_code==200:
-        #         self.save_login(un)
-        #     else:
-        #         pass
-        #         #self.root.ids.login_status.text=res.text
-        res = api.register(un,pw)
-
-    
     def upload(self,orig_img_src):
         url_upload=self.api+'/upload'
         filename=orig_img_src[0] if orig_img_src and os.path.exists(orig_img_src[0]) else ''
@@ -303,6 +307,7 @@ class MainApp(MDApp):
         return jsond
 
     def get_posts(self):
+        return []
         with self.get_session() as sess:
             with sess.get(self.api+'/posts') as r:
                 log(r.text)

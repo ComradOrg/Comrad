@@ -10,32 +10,10 @@ from main import log
 from screens.feed.feed import *
 import os,time,threading
 from threading import Thread
-
-
 from kivymd.uix.dialog import MDDialog
-
-# # Progress bar code
-# class ProgressPopup(MDDialog):
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-#         content = MDLabel(font_style='Body1',
-#                           theme_text_color='Secondary',
-#                           text=kwargs.get('text',''),
-#                           size_hint_y=None,
-#                           valign='top')
-#         content.bind(texture_size=content.setter('size'))
-#         self.dialog = MDDialog(title="Close",
-#                                content=content,
-#                                size_hint=(.3, None),
-#                                height='200dp')
-
-#         self.dialog.add_action_button("Close me!",
-#                                       action=lambda *x: self.dismiss_callback())
-#         self.dialog.open()
 
 class ProgressPopup(MDDialog): pass
 class MessagePopup(MDDialog): pass
-
 
 class UploadButton(MDRectangleFlatButton):
     '''
@@ -73,7 +51,7 @@ class PostButton(MDRectangleFlatButton): pass
 class PostStatus(MDRectangleFlatButton): pass
 
 
-class AddPostScreen(ProtectedScreen): 
+class PostScreen(ProtectedScreen): 
     post_id = ObjectProperty()
 
     def on_pre_enter(self):
@@ -200,20 +178,20 @@ class AddPostScreen(ProtectedScreen):
         Thread(target=do_post).start()
         
 
-class ViewPostScreen(ProtectedScreen): 
-    post_id = ObjectProperty()
+# class ViewPostScreen(ProtectedScreen): 
+#     post_id = ObjectProperty()
 
-    def on_pre_enter(self):
-        for child in self.children:
-            log('child: '+str(child))
-            self.remove_widget(child)
+#     def on_pre_enter(self):
+#         for child in self.children:
+#             log('child: '+str(child))
+#             self.remove_widget(child)
         
-        post_json = self.app.get_post(self.root.post_id)
-        post = PostCard(post_json)
-        self.add_widget(post)
+#         post_json = self.app.get_post(self.root.post_id)
+#         post = PostCard(post_json)
+#         self.add_widget(post)
 
-    def on_enter(self):
-        for child in self.children: child.load_image()
+#     def on_enter(self):
+#         for child in self.children: child.load_image()
         
     
-    pass
+#     pass

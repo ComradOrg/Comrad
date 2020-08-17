@@ -27,7 +27,7 @@ def new_keys(save=True,password=None):
 
     return private_key,public_key
 
-def save_private_key(private_key,fn=PATH_PRIVATE_KEY,return_instead=False):
+def save_private_key(private_key,fn=PATH_PRIVATE_KEY,password=None, return_instead=False):
     pem = private_key.private_bytes(
         encoding=serialization.Encoding.PEM,
         format=serialization.PrivateFormat.PKCS8,
@@ -48,23 +48,28 @@ def save_public_key(public_key,fn=PATH_PUBLIC_KEY,return_instead=False):
 
 ### LOADING KEYS
 def load_keys():
-    return (load_private_key(), load_public_key())
+    return (load_private_key_from_file(), load_public_key_from_file())
 
-def load_private_key(fn=PATH_PRIVATE_KEY,password=None):
+def load_private_key(pem,password=None):
+    return serialization.load_pem_private_key(
+        pem,
+        password=password.encode() if password else None,
+        backend=default_backend()
+    )
+
+def load_private_key_from_file(fn=PATH_PRIVATE_KEY,password=None):
     with open(fn, "rb") as key_file:
-        return serialization.load_pem_private_key(
-            key_file.read(),
-            password=password.encode(),
+        return load_private_key(key_file.read(), password)
+
+def load_public_key(pem):
+    return serialization.load_pem_public_key(
+            pem,
             backend=default_backend()
         )
-        
 
-def load_public_key(fn=PATH_PUBLIC_KEY):
+def load_public_key_from_file(fn=PATH_PUBLIC_KEY):
     with open(fn, "rb") as key_file:
-        return serialization.load_pem_public_key(
-            key_file.read(),
-            backend=default_backend()
-        )
+        return load_public_key(key_file.read())
 
 ### DE/ENCRYPTING
 def encrypt_msg(message, public_key):

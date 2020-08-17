@@ -19,14 +19,14 @@ class LoginScreen(BaseScreen):
     #    if app.is_logged_in():
     #        app.root.change_screen('feed')
     def on_pre_enter(self):
-        log(self.ids)
-        log('hello?')
+        #log(self.ids)
+        #log('hello?')
         self.layout = LoginBoxLayout()
         
         self.username_field = UsernameField()
         self.username_field.line_color_focus=(1,0,0,1)
         self.layout.add_widget(self.username_field)
-        log(self.username_field)
+        #log(self.username_field)
         # self.username_field.text='hello????'
 
         self.password_field = PasswordField()
