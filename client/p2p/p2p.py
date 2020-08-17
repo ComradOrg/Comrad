@@ -7,8 +7,7 @@ import shelve
 from collections import OrderedDict
 import pickle,os
 
-HOST_NODE_PRIME = "128.232.229.63" #"68.66.241.111"
-    
+NODES_PRIME = [("128.232.229.63",8468), ("68.66.241.111",8468)]    
 
 
 class HalfForgetfulStorage(ForgetfulStorage):
@@ -49,26 +48,6 @@ class HalfForgetfulStorage(ForgetfulStorage):
     def __getitem__(self, key):
         return self.data[key][1]
 
-    def __repr__(self):
-        return repr(self.data)
-
-    def iter_older_than(self, seconds_old):
-        min_birthday = time.monotonic() - seconds_old
-        zipped = self._triple_iter()
-        matches = takewhile(lambda r: min_birthday >= r[1], zipped)
-        return list(map(operator.itemgetter(0, 2), matches))
-
-    def _triple_iter(self):
-        ikeys = self.data.keys()
-        ibirthday = map(operator.itemgetter(0), self.data.values())
-        ivalues = map(operator.itemgetter(1), self.data.values())
-        return zip(ikeys, ibirthday, ivalues)
-
-    def __iter__(self):
-        ikeys = self.data.keys()
-        ivalues = map(operator.itemgetter(1), self.data.values())
-        return zip(ikeys, ivalues)
-
 
 handler = logging.StreamHandler()
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -107,7 +86,7 @@ def connect():
         # Bootstrap the node by connecting to other known nodes, in this case
         # replace 123.123.123.123 with the IP of another node and optionally
         # give as many ip/port combos as you can for other nodes.
-        await node.bootstrap([(HOST_NODE_PRIME, 8468)])
+        await node.bootstrap(NODES_PRIME)
 
         # set a value for the key "my-key" on the network
         #await node.set("my-key2", "my awesome value")
