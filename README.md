@@ -11,13 +11,21 @@ But the digital platform can be redesigned. The technology behind these social m
 
 ## Features
 
-### Your traffic is untraceable
+### Encrypted
 
-All traffic is routed via [Tor](https://www.torproject.org/), a global maze of computers so dense that even the FBI can't trace your footsteps. And what's untraceable is also unmonetizable: your data can't be harvested by technology companies and used for advertising algorithms. You're protected from both surveillance capitalism and the surveillance state.
+All of your data is strongly encrypted, and only you and those you choose will be able to decrypt and read it. To anyone without the right decryption 'key', the data is nonsense.
 
-### Be as anonymous as you wish
+### Decentralized
 
-Design a profile and account which is as anonymous as you want to make it. If you don't reveal yourself, your traffic or behavior elsewhere on the internet won't either.
+Komrade doesn't live on a server, but rather in the ether between all the devices curently running Komrade. Rather than the hierarchical server/client relationship, which exposes the entire network to attacks on a central server, Komrade uses peer-to-peer networking to store its data and communicate across the network.
+
+### Untraceable
+
+All traffic is routed via [I2P](https://geti2p.net/en/), an anonymous global maze of computers so dense that even the FBI can't trace your footsteps.
+
+### Unmonetizable
+
+What's untraceable is also unmonetizable: your data can't be harvested by technology companies and used for advertising algorithms. You're protected from both surveillance capitalism and the surveillance state.
 
 ### Best of what's out there
 
