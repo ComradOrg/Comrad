@@ -93,9 +93,9 @@ Design details are changing rapidly, but these are what we have so far.
 
 The 'client' or app is made with [KivyMD](https://github.com/kivymd/KivyMD), a variant of [Kivy](https://kivy.org/), a cross-platform mobile development framework in Python. Python is an easy and versatile progamming language to learn, which keeps the code accessible to as many people as possible.
 
-### Server
+### Database
 
-The server also runs on Python, serving a graph database powered by [Neo4j](https://neo4j.com/).
+The database is a [Kademlia](https://github.com/bmuller/kademlia) Distributed Hash Table, a p2p data store, written in Python.
 
 ## Install
 
@@ -115,13 +115,6 @@ cd client
 ./run.sh
 ```
 
-This is configured to use my server. Optionally, you can run your own server:
-
-```
-cd server
-./run.sh
-```
-Change the SERVER_ADDR constant at the top of client/main.py to point to your server. You will need neo4j installed. You will also need to change the neo4j login configuration at the top of server/models.py.
 
 ### As user
 
