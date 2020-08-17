@@ -21,7 +21,7 @@ Komrade doesn't live on a server, but rather in the ether between all the device
 
 ### Untraceable
 
-All traffic is routed via [I2P](https://geti2p.net/en/), an anonymous global maze of computers so dense that even the FBI can't trace your footsteps.
+All traffic is routed via [I2P](https://geti2p.net/en/) (the "Invisible Internet Project"), an anonymous global maze of computers so dense that even the FBI can't trace your footsteps.
 
 ### Unmonetizable
 
