@@ -36,7 +36,7 @@ from kivy.core.window import Window
 from kivy.core.text import LabelBase
 import shutil
 from kivy.uix.image import Image
-from p2p.crypto import *
+from p2p import p2p,crypto,api
 
 Window.size = WINDOW_SIZE
 
@@ -103,28 +103,14 @@ def draw_background(widget, img_fn='assets/bg.png'):
 
 class MainApp(MDApp):
     title = 'Komrade'
-    #api = 'http://localhost:5555/api'
-    api = 'http://%s/api' % SERVER_ADDR
-    #api = 'http://komrades.net:5555/api'
     logged_in=False
     store = JsonStore('komrade.json')
     login_expiry = 60 * 60 * 24 * 7  # once a week
-    #login_expiry = 5 # 5 seconds
     texture = ObjectProperty()
 
-    # def boot_kad(self):
+    # def connect(self):
     #     # connect to kad?   
-
-    #     from kad import DHT
-    #     host1, port1 = '68.66.241.111', 3000
-    #     # dht1 = DHT(host1, port1)
-    #     host2, port2 = 'localhost', 3001
-    #     dht2 = DHT(host2, port2, seeds=[(host1, port1)])
-    #     # dht1["my_key"] = [u"My", u"json-serializable", u"Object"]
-
-    #     #log (dht2["my_key"])	# blocking get
-    #     dht2.get("my_key", lambda data: log ('from server!',data)) # threaded get
-
+    #     self.node = p2p.connect()
 
 
     def get_session(self):
@@ -232,16 +218,17 @@ class MainApp(MDApp):
                 return False
 
     def register(self,un,pw):
-        url = self.api+'/register'
+        # url = self.api+'/register'
 
-        with self.get_session() as sess:
-            #res = requests.post(url, json={'name':un, 'passkey':pw})
-            res = sess.post(url, json={'name':un, 'passkey':pw})
-            if res.status_code==200:
-                self.save_login(un)
-            else:
-                pass
-                #self.root.ids.login_status.text=res.text
+        # with self.get_session() as sess:
+        #     #res = requests.post(url, json={'name':un, 'passkey':pw})
+        #     res = sess.post(url, json={'name':un, 'passkey':pw})
+        #     if res.status_code==200:
+        #         self.save_login(un)
+        #     else:
+        #         pass
+        #         #self.root.ids.login_status.text=res.text
+        res = api.register(un,pw)
 
     
     def upload(self,orig_img_src):

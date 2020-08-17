@@ -92,7 +92,8 @@ def connect():
         #await node.set("my-key2", "my awesome value")
 
         # get the value associated with "my-key" from the network
-        result = await node.get("my-key2")
-        print(result)
+        #result = await node.get("my-key2")
+        # print(result)
+        return node
 
-    asyncio.run(run())
+    return asyncio.run(run())
