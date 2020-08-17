@@ -8,3 +8,4 @@ uploads/*/*
 client/log.txt
 venv
 .vscode
+sto.dat

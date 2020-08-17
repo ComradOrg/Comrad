@@ -36,6 +36,7 @@ from kivy.core.window import Window
 from kivy.core.text import LabelBase
 import shutil
 from kivy.uix.image import Image
+from p2p.crypto import *
 
 Window.size = WINDOW_SIZE
 

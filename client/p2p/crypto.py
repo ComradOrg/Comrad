@@ -27,19 +27,21 @@ def new_keys(save=True):
 
     return private_key,public_key
 
-def save_private_key(private_key,fn=PATH_PRIVATE_KEY):
+def save_private_key(private_key,fn=PATH_PRIVATE_KEY,return_instead=False):
     pem = private_key.private_bytes(
         encoding=serialization.Encoding.PEM,
         format=serialization.PrivateFormat.PKCS8,
         encryption_algorithm=serialization.NoEncryption()
     )
+    if return_instead: return pem
     with open(fn,'wb') as f: f.write(pem)
 
-def save_public_key(public_key,fn=PATH_PUBLIC_KEY):
+def save_public_key(public_key,fn=PATH_PUBLIC_KEY,return_instead=False):
     pem = public_key.public_bytes(
         encoding=serialization.Encoding.PEM,
         format=serialization.PublicFormat.SubjectPublicKeyInfo
     )
+    if return_instead: return pem
     with open(fn,'wb') as f: f.write(pem)
 
 
@@ -110,22 +112,22 @@ def verify_msg(message, signature, public_key):
 
 
 
-#private_key,public_key = new_keys()
-private_key,public_key = load_keys()
+# #private_key,public_key = new_keys()
+# private_key,public_key = load_keys()
 
-#print(private_key)
-#print(public_key)
+# #print(private_key)
+# #print(public_key)
 
 
-enc = encrypt_msg('Drive your plow over the bones of the dead', public_key)
-#print(enc)
+# #enc = encrypt_msg('Drive your plow over the bones of the dead', public_key)
+# #print(enc)
 
-dec = decrypt_msg(enc,private_key)
-#print(dec)
+# dec = decrypt_msg(enc,private_key)
+# #print(dec)
 
-msg = b'hello'
-signature = sign_msg(msg,private_key)
+# msg = b'hello'
+# signature = sign_msg(msg,private_key)
 
-#print(encrypt_msg(b'hello',public_key))
+# #print(encrypt_msg(b'hello',public_key))
 
-print(verify_msg(msg+b'!!',signature,public_key))
+# print(verify_msg(msg+b'!!',signature,public_key))
