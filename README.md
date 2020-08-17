@@ -9,7 +9,7 @@ Is a 'socialist network' possible? Although the internet began with anarchic des
 But the digital platform can be redesigned. The technology behind these social media platforms is actually quite simple. We can easily build our own social network, one which is secure, insurveillable, and unmonetizable—one which would give people the security they need to communicate about whatever they want, including protesting against capital and the state.
 
 
-## Core Principles
+## Core principles
 
 ### Encrypted
 
@@ -35,13 +35,13 @@ Not just non-profit, we're anti-profit.
 
 We present a simplified set of social media features drawn from everything that's out there and then some:
 
-### Profile
+#### Profile
   * Curate a profile with photo and posts (e.g. Twitter)
   * Show profile to world (e.g. Twitter)
   * Show profile only to friends (e.g. Facebook)
   * Show profile only to your local area (e.g. Nextdoor)
 
-### Posting
+#### Posting
   * Post up to 1 image and/or 1000 characters
   * Post to the entire world (e.g. Twitter)
   * Post to your friends (e.g. Facebook)
@@ -49,12 +49,12 @@ We present a simplified set of social media features drawn from everything that'
   * Anonymously up-vote or down-vote posts (e.g. Reddit)
   * Post anonymously or from your account (new)
 
-### Organizing
+#### Organizing
   * Host events and invite others (e.g. Facebook)
   * Host events like protests anonymously (new)
   * Anonymously pin on a map sites of danger, like police (e.g. Waze)
 
-### Messaging
+#### Messaging
   * Message securely with encrypted contents (e.g. Signal)
   * Message securely with untraceable metadata (new)
 
