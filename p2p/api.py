@@ -25,7 +25,7 @@ from main import log
 DEBUG = True
 UPLOAD_DIR = 'uploads/'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-NODES_PRIME = [("128.232.229.63",8468), ("68.66.241.111",8468)]    
+NODES_PRIME = [("128.232.229.63",8467), ("68.66.241.111",8467)]    
 PORT_SPEAK = 8468
 PORT_LISTEN = 8469
 
