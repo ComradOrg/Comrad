@@ -62,9 +62,9 @@ class Api(object):
             node.stop()
             return res
             
-        loop = asyncio.get_event_loop()
-        return loop.run_until_complete(_get)
-        # return asyncio.run(_get())
+        #loop = asyncio.get_event_loop()
+        #return loop.run_until_complete(_get)
+        return asyncio.run(_get())
 
 
     def get_json(self,key_or_keys):

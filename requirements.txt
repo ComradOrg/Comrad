@@ -8,8 +8,6 @@ kademlia==2.2.1
 Kivy==1.11.1
 Kivy-Garden==0.1.4
 kivymd==0.104.1
-llp==0.2.2
-mpi-slingshot==0.2.0
 pathtools==0.1.2
 Pillow==7.2.0
 plyer==1.4.3
