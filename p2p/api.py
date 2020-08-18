@@ -9,7 +9,6 @@
 # from werkzeug.utils import secure_filename
 import os,time
 from pathlib import Path
-from flask_api import status
 import asyncio
 from .crypto import *
 from main import log
@@ -63,7 +62,9 @@ class Api(object):
             node.stop()
             return res
             
-        return asyncio.run(_get())
+        loop = asyncio.get_event_loop()
+        return loop.run_until_complete(_get)
+        # return asyncio.run(_get())
 
 
     def get_json(self,key_or_keys):
@@ -131,8 +132,7 @@ class Api(object):
         
         if not (name and passkey):
             error('name and passkey not set')
-            return {'error':'Register failed'},status.HTTP_400_BAD_REQUEST
-
+            return {'error':'Register failed'}
         person = self.get_person(name)
         if person is not None:
             log('error! person exists')

@@ -1,1 +1,1 @@
-python -c "import p2p; p2p.start_first_node()"
+python -c "import p2p; p2p.boot_selfless_node()"
