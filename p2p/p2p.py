@@ -19,7 +19,7 @@ def boot_selfless_node(port=8468, loop=None):
     handler.setFormatter(formatter)
     log = logging.getLogger('kademlia')
     log.addHandler(handler)
-    log.setLevel(logging.INFO)
+    log.setLevel(logging.DEBUG)
 
     if not loop: loop = asyncio.get_event_loop()
     loop.set_debug(True)
