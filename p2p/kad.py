@@ -130,20 +130,36 @@ if __name__ == '__main__':
 
 
 class KadProtocol(KademliaProtocol):
-    remote_address = PROXY_ADDR
-    REMOTES_D={}
+    # remote_address = PROXY_ADDR
+    # REMOTES_D={}
 
-    def datagram_received(self, data, addr):
-        #if not hasattr(self,'remotes_d'): self.remotes_d={}
-        # print('\n\n!?!?!?',self.REMOTES_D, type(self.REMOTES_D))
-        # if addr in self.REMOTES_D:
-        #     self.REMOTES_D[addr].transport.sendto(data)
-        #     return
-        loop = asyncio.get_event_loop()
-        # self.REMOTES_D[addr] = RemoteDatagramProtocol(self, addr, data)
-        RDP = RemoteDatagramProtocol(self, addr, data)
-        coro = loop.create_datagram_endpoint(lambda: RDP, remote_addr=self.remote_address)
-        asyncio.ensure_future(coro)
+    # def datagram_received(self, data, addr):
+    #     #if not hasattr(self,'remotes_d'): self.remotes_d={}
+    #     # print('\n\n!?!?!?',self.REMOTES_D, type(self.REMOTES_D))
+    #     # if addr in self.REMOTES_D:
+    #     #     self.REMOTES_D[addr].transport.sendto(data)
+    #     #     return
+    #     loop = asyncio.get_event_loop()
+    #     # self.REMOTES_D[addr] = RemoteDatagramProtocol(self, addr, data)
+    #     RDP = RemoteDatagramProtocol(self, addr, data)
+    #     coro = loop.create_datagram_endpoint(lambda: RDP, remote_addr=self.remote_address)
+    #     asyncio.ensure_future(coro)
+
+    def handleCallResponse(self, result, node):
+        """
+        If we get a response, add the node to the routing table.  If
+        we get no response, make sure it's removed from the routing table.
+        """
+        if result[0]:
+            self.log.info("got response from %s, adding to router" % node)
+            self.router.addContact(node)
+            if self.router.isNewNode(node):
+                self.transferKeyValues(node)
+        else:
+            #self.log.debug("no response from %s, removing from router" % node)
+            #self.router.removeContact(node)
+            self.log.debug("no response from %s...")
+        return result
 
 
 class KadServer(Server):
