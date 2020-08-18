@@ -48,7 +48,7 @@ class Api(object):
         #self.node = self.connect()
         log('starting selfless daemon...')
         self.selfless = Thread(target=start_selfless_thread)
-        self.selfless.daemon = True
+        # self.selfless.daemon = True
         self.selfless.start()
         pass
 
