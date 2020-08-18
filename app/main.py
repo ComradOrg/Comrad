@@ -6,6 +6,11 @@ DEFAULT_SCREEN='profile'
 HORIZONTAL = False
 WINDOW_SIZE = (1136,640) if HORIZONTAL else (640,1136)
 
+import asyncio
+import os
+os.environ['KIVY_EVENTLOOP'] = 'async'
+# loop = asyncio.get_event_loop()
+# loop.set_debug(True)
 
 # imports
 from kivy.uix.screenmanager import Screen,ScreenManager
@@ -48,19 +53,19 @@ Window.size = WINDOW_SIZE
 # with open('log.txt','w') as of:
 #     of.write('### LOG ###\n')
 
-# import logging
-# handler = logging.StreamHandler()
-# formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-# handler.setFormatter(formatter)
-# logger = logging.getLogger('app')
-# logger.addHandler(handler)
-# logger.setLevel(logging.DEBUG)
+import logging
+handler = logging.StreamHandler()
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+handler.setFormatter(formatter)
+logger = logging.getLogger('app')
+logger.addHandler(handler)
+logger.setLevel(logging.DEBUG)
 
 def log(*args):
-    with open('log.txt','a+') as of:
-        of.write(' '.join([str(x) for x in args])+'\n')
-    # line = ' '.join(str(x) for x in args)
-    # logger.debug(line)
+    # with open('log.txt','a+') as of:
+        # of.write(' '.join([str(x) for x in args])+'\n')
+    line = ' '.join(str(x) for x in args)
+    logger.debug(line)
 
 class MyLayout(MDBoxLayout):
     scr_mngr = ObjectProperty(None)
@@ -146,6 +151,8 @@ class MainApp(MDApp):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.event_loop_worker = None
+        self.loop=asyncio.get_event_loop()
+
 
     
 
@@ -168,7 +175,7 @@ class MainApp(MDApp):
         # self.texture.uvsize = (-2, -2)
         # self.start_event_loop_thread()
 
-        with open('log.txt','w') as of: of.write('## LOG ##\n')
+        # with open('log.txt','w') as of: of.write('## LOG ##\n')
         self.load_store()
 
         # self.boot_kad()
@@ -364,11 +371,14 @@ class MainApp(MDApp):
 
 
 
-if __name__ == '__main__':
-
-    #### LOGIN
-
-
-
+def main():
     App = MainApp()
     App.run()
+
+
+if __name__ == '__main__':
+    # loop = asyncio.get_event_loop()
+    # asyncio.set_event_loop(loop)
+    # loop.run_until_complete(main())
+    # loop.close()
+    main()

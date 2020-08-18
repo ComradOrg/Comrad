@@ -136,6 +136,12 @@ class KadProtocol(KademliaProtocol):
     # remote_address = PROXY_ADDR
     # REMOTES_D={}
 
+    def __init__(self, source_node, storage, ksize):
+        RPCProtocol.__init__(self,wait_timeout=5)
+        self.router = RoutingTable(self, ksize, source_node)
+        self.storage = storage
+        self.source_node = source_node
+
     # def datagram_received(self, data, addr):
     #     #if not hasattr(self,'remotes_d'): self.remotes_d={}
     #     # print('\n\n!?!?!?',self.REMOTES_D, type(self.REMOTES_D))
@@ -167,6 +173,31 @@ class KadServer(Server):
     protocol_class = KadProtocol # KadProtocol #KademliaProtocol
 
 
-    pass
+    async def set_digest(self, dkey, value):
+        """
+        Set the given SHA1 digest key (bytes) to the given value in the
+        network.
+        """
+        node = Node(dkey)
+
+        nearest = self.protocol.router.find_neighbors(node)
+        if not nearest:
+            log.warning("There are no known neighbors to set key %s",
+                        dkey.hex())
+            return False
+
+        spider = NodeSpiderCrawl(self.protocol, node, nearest,
+                                 self.ksize, self.alpha)
+        nodes = await spider.find()
+        log.info("setting '%s' on %s", dkey.hex(), list(map(str, nodes)))
+
+        # if this node is close too, then store here as well
+        neighbs=[n.distance_to(node) for n in nodes]
+        biggest = max(neighbs) if neighbs else 0
+        if self.node.distance_to(node) < biggest:
+            self.storage[dkey] = value
+        results = [self.protocol.call_store(n, dkey, value) for n in nodes]
+        # return true only if at least one store call succeeded
+        return any(await asyncio.gather(*results))
 
 

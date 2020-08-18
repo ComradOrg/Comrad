@@ -13,7 +13,7 @@ def run_command():
     p = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
 
 class Watcher:
-    DIRECTORY_TO_WATCH = "/home/ryan/github/Komrade/client"
+    DIRECTORY_TO_WATCH = os.path.join(os.path.expanduser('~'),"/github/Komrade/p2p")
 
     def __init__(self):
         self.observer = Observer()

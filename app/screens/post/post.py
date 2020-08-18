@@ -133,8 +133,9 @@ class PostScreen(ProtectedScreen):
         # self.open_dialog('uploading')
         # self.upload()
         # self.close_dialog()
-        mythread = threading.Thread(target=self.upload)
-        mythread.start()
+        #mythread = threading.Thread(target=self.upload)
+        #mythread.start()
+        self.upload()
 
     def upload(self):
         # get file id
@@ -199,8 +200,8 @@ class PostScreen(ProtectedScreen):
             self.close_dialog()
         
         self.open_dialog('posting')
-        Thread(target=do_post).start()
-        
+        #Thread(target=do_post).start()
+        do_post()
         
 
 # class ViewPostScreen(ProtectedScreen): 

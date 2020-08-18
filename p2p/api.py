@@ -43,18 +43,27 @@ class Api(object):
 
 
     def __init__(self,app_storage):
-        #self.connect()
+        self._node=self.connect()
         self.app_storage = app_storage
-        # self.node = self.connect()
+        
         # log('starting selfless daemon...')
         # self.selfless = Thread(target=start_selfless_thread)
         # self.selfless.daemon = True
         # self.selfless.start()
         pass
 
+    @property
+    def node(self):
+        if not hasattr(self,'_node'):
+            self._node=self.connect()
+        return self._node
+
     def connect(self):
         log('connecting...')
-        async def _connect():
+        #loop=asyncio.get_event_loop()
+
+
+        async def _getdb():
             from .kad import KadServer
             log('starting server..')
             node = KadServer() #storage=HalfForgetfulStorage())
@@ -63,16 +72,32 @@ class Api(object):
             await node.bootstrap(NODES_PRIME)
             return node
 
+        async def _connect():
+            self._node0 = node = await _getdb() #await loop.create_task(_getdb())
+            # log('!!!',type(self._node))
+            #await node
+            #self.node = node
+            return node
+
+        # return asyncio.run(_connect())
+        # loop.set_debug(True)
+        # log('loop???',loop)
         return asyncio.run(_connect())
 
 
     def get(self,key_or_keys):
         from .kad import KadServer
+        # loop=asyncio.get_event_loop()
+        # asyncio.set_event_loop(loop)
 
         async def _get():
-            node = KadServer() #storage=HalfForgetfulStorage())
-            await node.listen(PORT_LISTEN)
-            await node.bootstrap(NODES_PRIME)
+            try:
+                await self.node
+            except TypeError:
+                pass
+
+            log('wtf??',self.node)
+            node = self.node
             # node=self.node
             
             if type(key_or_keys) in {list,tuple,dict}:
@@ -84,14 +109,17 @@ class Api(object):
                 key = key_or_keys
                 res = await node.get(key)
 
-            node.stop()
+            # node.stop()
             return res
             
         return asyncio.run(_get())
 
+        # return loop.create_task(_get())
+
 
     def get_json(self,key_or_keys):
         res = self.get(key_or_keys)
+        log('GET_JSON',res)
         if type(res)==list:
             return [None if x is None else json.loads(x) for x in res]
         else:
@@ -100,16 +128,14 @@ class Api(object):
 
     def set(self,key_or_keys,value_or_values):
         # log('hello?')
-        from .kad import KadServer
+        # loop=asyncio.get_event_loop()
+
         async def _set():
-            # log('starting server...')
-            node = KadServer() #storage=HalfForgetfulStorage())
-            
-            # log('listening...')
-            await node.listen(PORT_LISTEN)
-            
-            # log('bootstrapping...')
-            await node.bootstrap(NODES_PRIME)
+            try:
+                await self.node
+            except TypeError:
+                pass
+            node=self.node
             
 
             if type(key_or_keys) in {list,tuple,dict}:
@@ -124,8 +150,12 @@ class Api(object):
                 value = value_or_values
                 res = await node.set(key,value) #'this is a test')
 
-            node.stop()
+            # node.stop()
             return res
+
+        # loop=asyncio.get_event_loop()
+        # loop.create_task(_set())
+
         return asyncio.run(_set(), debug=True)
 
     def set_json(self,key,value):

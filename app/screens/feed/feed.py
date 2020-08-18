@@ -144,8 +144,9 @@ class PostCard(MDCard):
                 self.image.reload()
 
             #self.open_dialog('posting')
-            Thread(target=do_download).start()
-        
+            #Thread(target=do_download).start()
+            do_download()
+
 
     @property
     def app(self):
