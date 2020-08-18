@@ -128,6 +128,9 @@ def main(bind='0.0.0.0', port=8888,
 if __name__ == '__main__':
     main()
 
+log = logging.getLogger('kademlia')  # pylint: disable=invalid-name
+
+
 
 class KadProtocol(KademliaProtocol):
     # remote_address = PROXY_ADDR
@@ -145,20 +148,18 @@ class KadProtocol(KademliaProtocol):
     #     coro = loop.create_datagram_endpoint(lambda: RDP, remote_addr=self.remote_address)
     #     asyncio.ensure_future(coro)
 
-    def handleCallResponse(self, result, node):
+    def handle_call_response(self, result, node):
         """
         If we get a response, add the node to the routing table.  If
         we get no response, make sure it's removed from the routing table.
         """
-        if result[0]:
-            self.log.info("got response from %s, adding to router" % node)
-            self.router.addContact(node)
-            if self.router.isNewNode(node):
-                self.transferKeyValues(node)
-        else:
-            #self.log.debug("no response from %s, removing from router" % node)
-            #self.router.removeContact(node)
-            self.log.debug("no response from %s...")
+        if not result[0]:
+            log.warning("no response from %s, ?removing from router", node)
+            # self.router.remove_contact(node)
+            return result
+
+        log.info("got successful response from %s", node)
+        self.welcome_if_new(node)
         return result
 
 
