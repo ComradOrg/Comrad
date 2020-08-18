@@ -19,36 +19,64 @@ from functools import partial
 # works better with tor?
 import json
 jsonify = json.dumps
-
+from main import log
 # Start server
 
 DEBUG = True
 UPLOAD_DIR = 'uploads/'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 NODES_PRIME = [("128.232.229.63",8468), ("68.66.241.111",8468)]    
+PORT_SPEAK = 8468
 PORT_LISTEN = 8469
 
 # Api Functions
+from threading import Thread
+from .p2p import boot_selfless_node
+
+def start_selfless_thread():
+    async def _go():
+        loop=asyncio.get_event_loop()
+        return boot_selfless_node(port=PORT_SPEAK, loop=loop)
+    return asyncio.run(_go())
 
 class Api(object):
-    
+
 
     def __init__(self,app_storage):
         #self.connect()
         self.app_storage = app_storage
+        #self.node = self.connect()
+        log('starting selfless daemon...')
+        self.selfless = Thread(target=start_selfless_thread)
+        self.selfless.daemon = True
+        self.selfless.start()
         pass
 
-   # def connect(self):
-        #from .p2p import connect
-        #self.node = connect()
+    def connect(self):
+        log('connecting...')
+        async def _connect():
+            from .kad import KadServer
+            log('starting server..')
+            node = KadServer() #storage=HalfForgetfulStorage())
+
+            await node.listen(PORT_LISTEN)
+            await node.bootstrap(NODES_PRIME)
+            return node
+
+        return asyncio.run(_connect())
+
 
     def get(self,key_or_keys):
         from .kad import KadServer
 
         async def _get():
-            node = KadServer() #storage=HalfForgetfulStorage())
-            await node.listen(PORT_LISTEN)
-            await node.bootstrap(NODES_PRIME)
+            if not hasattr(self,'node'):
+                self.node = node = KadServer() #storage=HalfForgetfulStorage())
+                await node.listen(PORT_LISTEN)
+                await node.bootstrap(NODES_PRIME)
+                # node=self.node
+            else:
+                node = self.node
 
             if type(key_or_keys) in {list,tuple,dict}:
                 keys = key_or_keys
@@ -62,8 +90,6 @@ class Api(object):
             node.stop()
             return res
             
-        #loop = asyncio.get_event_loop()
-        #return loop.run_until_complete(_get)
         return asyncio.run(_get())
 
 

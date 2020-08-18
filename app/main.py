@@ -6,6 +6,7 @@ DEFAULT_SCREEN='profile'
 HORIZONTAL = False
 WINDOW_SIZE = (1136,640) if HORIZONTAL else (640,1136)
 
+
 # imports
 from kivy.uix.screenmanager import Screen,ScreenManager
 from kivymd.app import MDApp
@@ -39,6 +40,8 @@ from kivy.uix.image import Image
 import sys
 sys.path.append("..") # Adds higher directory to python modules path.
 from p2p import p2p,crypto,api
+from kivy.event import EventDispatcher
+import threading,asyncio
 
 Window.size = WINDOW_SIZE
 
@@ -114,6 +117,21 @@ def draw_background(widget, img_fn='assets/bg.png'):
                   tex_coords=(0, 0, nx, 0, nx, ny, 0, ny))
 
 
+
+
+
+
+
+
+#### LOOPER
+
+
+
+
+
+
+
+
 class MainApp(MDApp):
     title = 'Komrade'
     logged_in=False
@@ -124,6 +142,12 @@ class MainApp(MDApp):
     # def connect(self):
     #     # connect to kad?   
     #     self.node = p2p.connect()
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.event_loop_worker = None
+
+    
 
 
     def get_session(self):
@@ -142,6 +166,7 @@ class MainApp(MDApp):
         # self.texture = Image(source='assets/bg.png').texture
         # self.texture.wrap = 'clamp_to_edge'
         # self.texture.uvsize = (-2, -2)
+        # self.start_event_loop_thread()
 
         with open('log.txt','w') as of: of.write('## LOG ##\n')
         self.load_store()
@@ -181,6 +206,34 @@ class MainApp(MDApp):
             # self.root.post_id=190
             self.root.change_screen(DEFAULT_SCREEN)
         return self.root
+
+
+    # ## LOOP
+    # def start_event_loop_thread(self):
+    #     """Start the asyncio event loop thread. Bound to the top button."""
+    #     if self.event_loop_worker is not None:
+    #         return
+    #     #self.root.ids.btn.text = ("Running the asyncio EventLoop now...\n\n\n\n"
+    #     #                          "Now enter a few words below.")
+    #     self.event_loop_worker = worker =  EventLoopWorker()
+    #     #pulse_listener_label = self.root.ids.pulse_listener
+
+    #     #def display_on_pulse(instance, text):
+    #     #    pulse_listener_label.text = text
+
+    #     # make the label react to the worker's `on_pulse` event:
+    #     #worker.bind(on_pulse=display_on_pulse)
+    #     worker.start()
+
+    # def submit_pulse_text(self, text):
+    #     """Send the TextInput string over to the asyncio event loop worker."""
+    #     worker = self.event_loop_worker
+    #     if worker is not None:
+    #         loop = self.event_loop_worker.loop
+    #         # use the thread safe variant to run it on the asyncio event loop:
+    #         loop.call_soon_threadsafe(worker.set_pulse_text, text)
+
+
 
     def load_store(self):
         if not self.store.exists('user'): return
