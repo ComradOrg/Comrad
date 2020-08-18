@@ -3,6 +3,6 @@ app/komrade.json
 app/cache
 app/log.txt
 venv
-.vscode
+# .vscode
 sto.dat
 p2p/kademlia0
