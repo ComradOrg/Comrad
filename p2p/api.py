@@ -44,8 +44,10 @@ class Api(object):
         #self.node = connect()
 
     def get(self,key_or_keys):
+        from .kad import KadServer
+
         async def _get():
-            node = Server() #storage=HalfForgetfulStorage())
+            node = KadServer() #storage=HalfForgetfulStorage())
             await node.listen(PORT_LISTEN)
             await node.bootstrap(NODES_PRIME)
 
@@ -74,9 +76,10 @@ class Api(object):
 
     def set(self,key_or_keys,value_or_values):
         # log('hello?')
+        from .kad import KadServer
         async def _set():
             # log('starting server...')
-            node = Server() #storage=HalfForgetfulStorage())
+            node = KadServer() #storage=HalfForgetfulStorage())
             
             # log('listening...')
             await node.listen(PORT_LISTEN)

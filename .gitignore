@@ -5,3 +5,4 @@ app/log.txt
 venv
 .vscode
 sto.dat
+p2p/kademlia0
