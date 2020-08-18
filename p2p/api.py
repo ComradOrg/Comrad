@@ -45,10 +45,10 @@ class Api(object):
     def __init__(self,app_storage):
         #self.connect()
         self.app_storage = app_storage
-        #self.node = self.connect()
+        # self.node = self.connect()
         log('starting selfless daemon...')
         self.selfless = Thread(target=start_selfless_thread)
-        # self.selfless.daemon = True
+        self.selfless.daemon = True
         self.selfless.start()
         pass
 
@@ -70,14 +70,11 @@ class Api(object):
         from .kad import KadServer
 
         async def _get():
-            if not hasattr(self,'node'):
-                self.node = node = KadServer() #storage=HalfForgetfulStorage())
-                await node.listen(PORT_LISTEN)
-                await node.bootstrap(NODES_PRIME)
-                # node=self.node
-            else:
-                node = self.node
-
+            node = KadServer() #storage=HalfForgetfulStorage())
+            await node.listen(PORT_LISTEN)
+            await node.bootstrap(NODES_PRIME)
+            # node=self.node
+            
             if type(key_or_keys) in {list,tuple,dict}:
                 keys = key_or_keys
                 res = []
