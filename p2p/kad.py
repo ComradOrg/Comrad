@@ -163,7 +163,7 @@ class KadProtocol(KademliaProtocol):
 
 
 class KadServer(Server):
-    protocol_class = KademliaProtocol # KadProtocol #KademliaProtocol
+    protocol_class = KadProtocol # KadProtocol #KademliaProtocol
 
 
     pass
