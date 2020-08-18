@@ -48,19 +48,19 @@ Window.size = WINDOW_SIZE
 # with open('log.txt','w') as of:
 #     of.write('### LOG ###\n')
 
-import logging
-handler = logging.StreamHandler()
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-handler.setFormatter(formatter)
-logger = logging.getLogger('app')
-logger.addHandler(handler)
-logger.setLevel(logging.DEBUG)
+# import logging
+# handler = logging.StreamHandler()
+# formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+# handler.setFormatter(formatter)
+# logger = logging.getLogger('app')
+# logger.addHandler(handler)
+# logger.setLevel(logging.DEBUG)
 
 def log(*args):
-    # with open('log.txt','a+') as of:
-        # of.write(' '.join([str(x) for x in args])+'\n')
-    line = ' '.join(str(x) for x in args)
-    logger.debug(line)
+    with open('log.txt','a+') as of:
+        of.write(' '.join([str(x) for x in args])+'\n')
+    # line = ' '.join(str(x) for x in args)
+    # logger.debug(line)
 
 class MyLayout(MDBoxLayout):
     scr_mngr = ObjectProperty(None)
