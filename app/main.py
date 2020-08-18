@@ -36,6 +36,8 @@ from kivy.core.window import Window
 from kivy.core.text import LabelBase
 import shutil,sys
 from kivy.uix.image import Image
+import sys
+sys.path.append("..") # Adds higher directory to python modules path.
 from p2p import p2p,crypto,api
 
 Window.size = WINDOW_SIZE
@@ -145,8 +147,7 @@ class MainApp(MDApp):
         self.load_store()
 
         # self.boot_kad()
-        from p2p.api import Api
-        self.api = Api(app_storage=self.store)
+        self.api = api.Api(app_storage=self.store)
 
         self.username=''
         # bind 

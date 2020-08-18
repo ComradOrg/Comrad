@@ -1,11 +1,7 @@
 __pycache__
-client/examples/*
-client/komrade.json
-uploads
-uploads/*
-uploads/*/*
-client/cache
-client/log.txt
+app/komrade.json
+app/cache
+app/log.txt
 venv
 .vscode
 sto.dat
