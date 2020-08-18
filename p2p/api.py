@@ -46,10 +46,10 @@ class Api(object):
         #self.connect()
         self.app_storage = app_storage
         # self.node = self.connect()
-        log('starting selfless daemon...')
-        self.selfless = Thread(target=start_selfless_thread)
-        self.selfless.daemon = True
-        self.selfless.start()
+        # log('starting selfless daemon...')
+        # self.selfless = Thread(target=start_selfless_thread)
+        # self.selfless.daemon = True
+        # self.selfless.start()
         pass
 
     def connect(self):

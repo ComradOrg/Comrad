@@ -57,8 +57,8 @@ logger.addHandler(handler)
 logger.setLevel(logging.DEBUG)
 
 def log(*args):
-    #with open('log.txt','a+') as of:
-    #    of.write(' '.join([str(x) for x in args])+'\n')
+    # with open('log.txt','a+') as of:
+        # of.write(' '.join([str(x) for x in args])+'\n')
     line = ' '.join(str(x) for x in args)
     logger.debug(line)
 
