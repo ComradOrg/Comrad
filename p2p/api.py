@@ -1,8 +1,14 @@
 import os,time
 from pathlib import Path
 import asyncio
-from .crypto import *
-from .p2p import *
+try:
+    from .crypto import *
+    from .p2p import *
+    from .kad import *
+except ImportError:
+    from crypto import *
+    from p2p import *
+    from kad import KadServer
 from pathlib import Path
 from functools import partial
 
@@ -21,7 +27,6 @@ PORT_LISTEN = 8468
 
 # Api Functions
 from threading import Thread
-from .p2p import boot_selfless_node
 
 def start_selfless_thread():
     async def _go():
@@ -29,23 +34,26 @@ def start_selfless_thread():
         return boot_selfless_node(port=PORT_SPEAK, loop=loop)
     return asyncio.run(_go())
 
-async def _getdb(self,port=PORT_LISTEN):
-    from .kad import KadServer
-    self.log('starting server..')
+async def _getdb(self=None,port=PORT_LISTEN):
+    
+    if self: self.log('starting server..')
     node = KadServer() #storage=HalfForgetfulStorage())
 
-    self.log('listening..')
+    if self: self.log('listening..')
     await node.listen(port)
 
-    self.log('bootstrapping server..')
+    if self: self.log('bootstrapping server..')
     await node.bootstrap(NODES_PRIME)
     return node
 
+def logg(x):
+    print(x)
+
 class Api(object):
-    def __init__(self,app):
+    def __init__(self,app = None):
         self.app=app
-        self.app_storage = self.app.store
-        self.log = self.app.log
+        self.app_storage = self.app.store if app else {}
+        self.log = self.app.log if app else logg
         
         # self.log('starting selfless daemon...')
         # self.selfless = Thread(target=start_selfless_thread)
@@ -107,7 +115,8 @@ class Api(object):
         async def _set():
             # self.log('async _set()',self.node)
             # node=self.node
-            node=await _getdb(self,PORT_LISTEN+1)
+            #node=await _getdb(self,PORT_LISTEN+1)
+            node=self.node
             
             if type(key_or_keys) in {list,tuple,dict}:
                 keys = key_or_keys
@@ -121,7 +130,7 @@ class Api(object):
                 value = value_or_values
                 res = await node.set(key,value) #'this is a test')
 
-            node.stop()
+            #node.stop()
             return res
 
         # loop=asyncio.get_event_loop()
@@ -459,3 +468,16 @@ def bytes_from_file(filename,chunksize=8192):
 #     except AttributeError:
 #         bufsize = io.DEFAULT_BUFFER_SIZE
 #     return bufsize
+
+
+def test():
+    api = Api()
+    
+    # not working!
+    # api.set_json('my key',{'a':'value'})
+
+    node = asyncio.run(_getdb(None, port=8368))
+    print(node)
+
+if __name__=='__main__':
+    test()

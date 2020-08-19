@@ -6,9 +6,9 @@ import shelve
 from collections import OrderedDict
 import pickle,os
 
-NODES_PRIME = [("128.232.229.63",8467), ("68.66.241.111",8467)]    
+# NODES_PRIME = [("128.232.229.63",8467), ("68.66.241.111",8467)]    
 
-# NODES_PRIME = [("68.66.241.111",8467), ("10.42.0.13",8467)]
+NODES_PRIME = [("68.66.241.111",8467)] #    ("10.42.0.13",8467)]
 
 async def echo(msg):
     print('echo',msg)    

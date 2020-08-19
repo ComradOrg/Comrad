@@ -169,7 +169,7 @@ class KadProtocol(KademliaProtocol):
         """
         if not result[0]:
             log.warning("no response from %s, ?removing from router", node)
-            # self.router.remove_contact(node)
+            self.router.remove_contact(node)
             return result
 
         log.info("got successful response from %s", node)
@@ -222,9 +222,11 @@ class KadServer(Server):
             return None
         spider = ValueSpiderCrawl(self.protocol, node, nearest,
                                   self.ksize, self.alpha)
-        await spider.find()
+        found = await spider.find()
 
         log.info(f'spider done crawling: {spider}')
+        log.info(f'spider found value: {found}')
+        return found
 
     async def set(self, key, value):
         """
