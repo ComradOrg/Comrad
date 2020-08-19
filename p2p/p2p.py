@@ -44,7 +44,7 @@ def boot_selfless_node(port=8468, loop=None):
     # finally:
     #     server.stop()
     #     loop.close()
-    return loop
+    return server,loop
 
 
 def boot_lonely_selfless_node(port=8467):
@@ -55,7 +55,7 @@ def boot_lonely_selfless_node(port=8467):
     log.addHandler(handler)
     log.setLevel(logging.DEBUG)
 
-    loop = boot_selfless_node(port,loop=None)
+    server,loop = boot_selfless_node(port,loop=None)
     try:
         loop.run_forever()
     except KeyboardInterrupt:
