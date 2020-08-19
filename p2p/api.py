@@ -88,7 +88,7 @@ class Api(object):
                     #     self.root.ids.btn1.trigger_action()
 
                 i += 1
-                await asyncio.sleep(2)
+                await asyncio.sleep(10)
         except asyncio.CancelledError as e:
             self.log('Wasting time was canceled', e)
         finally:

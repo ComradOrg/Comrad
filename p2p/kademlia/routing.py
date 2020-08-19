@@ -7,8 +7,8 @@ from itertools import chain
 from collections import OrderedDict
 from kademlia.utils import shared_prefix, bytes_to_bit_string
 
-EXCLUDE_PORTS = {5637}
-# EXCLUDE_PORTS = {}
+# EXCLUDE_PORTS = {5637}
+EXCLUDE_PORTS = {}
 
 class KBucket:
     def __init__(self, rangeLower, rangeUpper, ksize, replacementNodeFactor=5):
@@ -190,7 +190,7 @@ class RoutingTable:
         for neighbor in TableTraverser(self, node):
             notexcluded = exclude is None or not neighbor.same_home_as(exclude)
             notexcluded_port = exclude_ports is None or neighbor.port not in exclude_ports
-            print('EXCLUDING_PORTS',notexcluded_port,exclude_ports)
+            #print('EXCLUDING_PORTS',notexcluded_port,exclude_ports)
             if neighbor.id != node.id and notexcluded:
                 heapq.heappush(nodes, (node.distance_to(neighbor), neighbor))
             if len(nodes) == k:
