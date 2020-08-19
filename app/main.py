@@ -2,8 +2,12 @@
 # change this to your external ip address for your server
 #(needs to be external to allow tor routing)
 DEFAULT_SCREEN='feed'
-HORIZONTAL = False
-WINDOW_SIZE = (1136,640) if HORIZONTAL else (640,1136)
+
+import random
+HORIZONTAL = random.choice([True,True,True,False])
+FACTOR=1
+WINDOW_SIZE = (1136*FACTOR,640*FACTOR) if HORIZONTAL else (640*FACTOR,1136*FACTOR)
+
 
 # monkeypatching the things that asyncio needs
 import subprocess
@@ -257,35 +261,39 @@ class MainApp(MDApp):
 
 
     def login(self,un=None,pw=None):
-        dat = self.api.login(un,pw)
-        self.log(dat)
-        if 'success' in dat:
-            self.save_login(un)
-        elif 'error' in dat:
-            self.root.ids.login_screen.login_status.text=dat['error']
-        return False
+        async def do():
+            dat = await self.api.login(un,pw)
+            self.log(dat)
+            if 'success' in dat:
+                self.save_login(un)
+            elif 'error' in dat:
+                self.root.ids.login_screen.login_status.text=dat['error']
+            return False
+        asyncio.create_task(do())
 
     def register(self,un,pw):
-        dat = self.api.register(un,pw)
-        if 'success' in dat:
-            self.save_login(un)
-            return True
-        elif 'error' in dat:
-            self.root.ids.login_screen.login_status.text=dat['error']
-            return False
+        async def do():
+            dat = await self.api.register(un,pw)
+            if 'success' in dat:
+                self.save_login(un)
+                return True
+            elif 'error' in dat:
+                self.root.ids.login_screen.login_status.text=dat['error']
+                return False
+        asyncio.create_task(do())
 
-    def upload(self,filename,file_id=None):
+    async def upload(self,filename,file_id=None):
         self.log('uploading filename:',filename)
-        rdata=self.api.upload(filename,file_id=file_id)
+        rdata=await self.api.upload(filename,file_id=file_id)
         self.log('upload result:',rdata)
         if rdata is not None:
             rdata['success']='File uploaded'
             return rdata
         return {'error':'Upload failed'}
         
-    def download(self,file_id,output_fn=None):
+    async def download(self,file_id,output_fn=None):
         self.log('downloading:',file_id)
-        file_dat = self.api.download(file_id)
+        file_dat = await self.api.download(file_id)
         if not output_fn:
             file_id=file_dat['id']
             file_ext=file_dat['ext']
@@ -325,26 +333,12 @@ class MainApp(MDApp):
     async def get_posts(self):
         return await self.api.get_posts()
 
-    def get_my_posts(self):
-        return self.api.get_posts('/author/'+self.username)
+    async def get_my_posts(self):
+        return await self.api.get_posts('/author/'+self.username)
 
 
-    def get_image(self, img_src):
-        # is there an image?
-        if not img_src: return 
-        # is it cached?
-        ofn_image = os.path.join('cache','img',img_src)
-        if not os.path.exists(ofn_image):
-            # create dir?
-            ofn_image_dir = os.path.split(ofn_image)[0]
-            if not os.path.exists(ofn_image_dir): os.makedirs(ofn_image_dir)
-            self.log('getting image!')
-            with self.get_session() as sess:
-                with sess.get(self.api+'/download/'+img_src,stream=True) as r:
-                    with open(ofn_image,'wb') as of:
-                        shutil.copyfileobj(r.raw, of)
-        return ofn_image
 
+    ### SYNCHRONOUS?
     def app_func(self):
         '''This will run both methods asynchronously and then block until they
         are finished
@@ -361,31 +355,6 @@ class MainApp(MDApp):
 
         return asyncio.gather(run_wrapper(), self.other_task)
 
-    async def waste_time_freely(self):
-        '''This method is also run by the asyncio loop and periodically prints
-        something.
-        '''
-        try:
-            i = 0
-            while True:
-                if self.root is not None:
-                    #status = self.root.ids.label.status
-                    status='TimeWaster'
-                    self.log('{} on the beach'.format(status))
-
-                    # # get some sleep
-                    # if self.root.ids.btn1.state != 'down' and i >= 2:
-                    #     i = 0
-                    #     self.log('Yawn, getting tired. Going to sleep')
-                    #     self.root.ids.btn1.trigger_action()
-
-                i += 1
-                await asyncio.sleep(2)
-        except asyncio.CancelledError as e:
-            self.log('Wasting time was canceled', e)
-        finally:
-            # when canceled, print that it finished
-            self.log('Done wasting time')
 
 
 if __name__ == '__main__':

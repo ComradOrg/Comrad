@@ -12,16 +12,40 @@
     id: loginbox
     orientation:'vertical'
     cols:1
-    size_hint:0.5,0.2
+    size_hint:0.5,None
     pos_hint: {'center_x':0.5,'center_y':0.5}
     md_bg_color: 0,0,0,1
     radius:[20,] 
     border_radius:20
     spacing:'10dp'
-    padding:'10dp'
+    padding:'25dp'
+    adaptive_height: True
+
+<UsernameLayout>:
+    cols:2
+    orientation:'horizontal'
+    adaptive_height: True
+    size_hint:1,None
+    # pos_hint:{'right':0.9}
+    # spacing:'100sp'
+    # md_bg_color:1,1,0,1
+
+    
+<UsernameLabel>:
+    theme_text_color: 'Custom'
+    text_color: 1,0,0,1
+    # width:'100sp'
+    adaptive_width: True
+    size_hint:None,None
+    # md_bg_color:1,0,0,1
+    # pos_hint: {'y':1}
+    halign:'center'
+    
+
 
 <UsernameField>:
     id: username
+    text: ""
     hint_text: "username"
     required: True
     write_tab: False
@@ -32,13 +56,14 @@
     line_color_normal: 1,0,0,1
     current_hint_text_color: 1,0,0,1
     error_color:1,0,0,1
-    # pos_hint: {'x':1,'y':0.8}
-    
-    # size_hint:(None,None)
+    pos_hint: {'center_x':0.5,'y':0.2}
+    size_hint:0.8,None
+
 
 
 <PasswordField>:
     id: password
+    text: ""
     password: True
     hint_text: "password"
     required: True
@@ -50,16 +75,21 @@
     line_color_normal: 1,0,0,1
     current_hint_text_color: 1,0,0,1
     text_color: 1,0,0,1
-    # pos_hint: {'center_x':1,'y':0.8}
-    # size_hint:(None,None)
+    pos_hint: {'center_x':0.5,'y':0.2}
+    size_hint:0.8,None
 
 <LoginButtonLayout>:
     id: buttonbox
-    size_hint_y: None
+    orientation:'horizontal'
+    cols: 2
+    # size_hint_y: None
     adaptive_width: True
     height: '56dp'
-    spacing: '10dp'
-    pos_hint: {'center_x': .5}
+    spacing: '25dp'
+    padding: '10dp'
+    # md_bg_color:1,1,0,1
+    size_hint:None,None
+    pos_hint: {'center_x': .5}#, 'bottom':1}
 
 <LoginButton>:
     text: "login"
@@ -69,6 +99,8 @@
     theme_text_color: "Custom"
     text_color: 1,0,0,1
     md_bg_color: 0,0,0,1
+    size_hint:None,None
+    # pos_hint: {'center_x': .5, 'bottom':1}
 
 <RegisterButton>:
     text: "register"
@@ -77,13 +109,17 @@
     theme_text_color: "Custom"
     text_color: 1,0,0,1
     md_bg_color: 0,0,0,1
+    # size_hint:1,None
 
 <LoginStatus>:
     id: login_status
     text:""
     theme_text_color: 'Error'
-    pos_hint:{'center_x':.5}
+    size_hint:1,1
+    halign:'center'
+    pos_hint:{'center_x':.5, 'center_y':0.5}
     
+
 
 <LoginScreen>:
     name: "login"

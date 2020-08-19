@@ -82,7 +82,7 @@ class Api(object):
             i = 0
             self._node = await self.connect()
             while True:
-                self.log(f'Node status (pulse {i}): {self._node}')
+                self.log(f'Node status (minute {i}): {self._node}')
 
                     # # get some sleep
                     # if self.root.ids.btn1.state != 'down' and i >= 2:
@@ -90,8 +90,9 @@ class Api(object):
                     #     self.log('Yawn, getting tired. Going to sleep')
                     #     self.root.ids.btn1.trigger_action()
 
-                i += 1
-                await asyncio.sleep(10)
+                #i += 1
+                await asyncio.sleep(60)
+                # pass
         except asyncio.CancelledError as e:
             self.log('Wasting time was canceled', e)
         finally:
@@ -169,33 +170,29 @@ class Api(object):
         # self.log('OH NO!',sys.getsizeof(value_json))
         return await self.set(key,value_json)
 
-    def has(self,key):
-        return self.get(key) is not None
+    async def has(self,key):
+        val=await self.get(key)
+        return val is not None
 
 
     ## PERSONS
-    def get_person(self,username):
-        return self.get_json('/person/'+username)
+    async def get_person(self,username):
+        return await self.get_json('/person/'+username)
 
-    def set_person(self,username,public_key):
+    async def set_person(self,username,public_key):
         pem_public_key = save_public_key(public_key,return_instead=True)
         obj = {'name':username, 'public_key':pem_public_key.decode()}
-        self.set_json('/person/'+username,obj)
+        await self.set_json('/person/'+username,obj)
 
 
 
 
 
     ## Register
-    def register(self,name,passkey):
-        
-        if not (name and passkey):
-            error('name and passkey not set')
-            return {'error':'Register failed'}
-        person = self.get_person(name)
-        if person is not None:
-            self.log('error! person exists')
-            return {'error':'Register failed'}
+    async def register(self,name,passkey):
+        if not (name and passkey): return {'error':'Name and password needed'}
+        person = await self.get_person(name)
+        if person is not None: return {'error':'Username already exists'}
 
         private_key,public_key = new_keys(password=passkey,save=False)
         pem_private_key = save_private_key(private_key,password=passkey,return_instead=True)
@@ -204,36 +201,38 @@ class Api(object):
         self.app_storage.put('_keys',
                             private=str(pem_private_key.decode()),
                             public=str(pem_public_key.decode())) #(private_key,password=passkey)
-        self.set_person(name,public_key)
+        await self.set_person(name,public_key)
         
 
-        self.log('success! Account created')
         return {'success':'Account created', 'username':name} 
 
     def load_private_key(self,password):
         if not self.app_storage.exists('_keys'): return None
         pem_private_key=self.app_storage.get('_keys').get('private')
         try:
-            return load_private_key(pem_private_key.encode(),password)
+            return {'success':load_private_key(pem_private_key.encode(),password)}
         except ValueError as e:
             self.log('!!',e)
-            return None
+            return {'error':'Incorrect password'}
 
 
 
     ## LOGIN
-    def login(self,name,passkey):
+    async def login(self,name,passkey):
         # verify input
         if not (name and passkey):
             return {'error':'Name and password required'}
 
         # try to load private key
-        private_key = self.load_private_key(passkey)
-        if private_key is None:
-            return {'error':'You have never registered on this device'}
+        private_key_dat = self.load_private_key(passkey)
+        if 'error' in private_key_dat:
+            return {'error':private_key_dat['error']}
+        if not 'success' in private_key_dat:
+            return {'error':'Incorrect password?'}
+        private_key = private_key_dat['success']
 
         # see if user exists
-        person = self.get_person(name)
+        person = await self.get_person(name)
         self.log(person)
         if person is None:
             return {'error':'Login failed'}
@@ -247,7 +246,7 @@ class Api(object):
         #log('REAL PUBLIC',real_public_key.public_numbers())
 
         if public_key.public_numbers() != real_public_key.public_numbers():
-            return {'error':'keys do not match!'}
+            return {'error':'Keys do not match!'}
         return {'success':'Login successful', 'username':name}
 
     async def append_json(self,key,data):
@@ -258,7 +257,7 @@ class Api(object):
             return {'success':'Length increased to %s' % len(new)}
         return {'error':'Could not append json'}
 
-    def upload(self,filename,file_id=None, uri='/file/',uri_part='/part/'):
+    async def upload(self,filename,file_id=None, uri='/file/',uri_part='/part/'):
         import sys
 
         if not file_id: file_id = get_random_id()
@@ -280,7 +279,7 @@ class Api(object):
 
             if len(parts)>=buffer_size:
                 self.log('setting...')
-                self.set(part_keys,parts)
+                await self.set(part_keys,parts)
                 part_keys=[]
                 PARTS+=parts
                 parts=[]
@@ -288,26 +287,26 @@ class Api(object):
         # set all parts    
         #self.set(part_keys,PARTS)
         self.log('# parts:',len(PARTS))
-        if parts and part_keys: self.set(part_keys, parts)
+        if parts and part_keys: await self.set(part_keys, parts)
 
         # how many parts?
         self.log('# pieces!',len(part_ids))
 
         file_store = {'ext':os.path.splitext(filename)[-1][1:], 'parts':part_ids}
         self.log('FILE STORE??',file_store)
-        self.set_json(uri+file_id,file_store)
+        await self.set_json(uri+file_id,file_store)
         
         # file_store['data'].seek(0)
         file_store['id']=file_id
         return file_store
 
-    def download(self,file_id):
-        file_store = self.get_json('/file/'+file_id)
+    async def download(self,file_id):
+        file_store = await self.get_json('/file/'+file_id)
         if file_store is None: return
 
         self.log('file_store!?',file_store)
         keys = ['/part/'+x for x in file_store['parts']]
-        pieces = self.get(keys)
+        pieces = await self.get(keys)
         file_store['parts_data']=pieces
         return file_store
 
@@ -342,119 +341,7 @@ class Api(object):
 
 
 
-## CREATE
-
-def get_random_id():
-    import uuid
-    return uuid.uuid4().hex
-
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-def get_random_filename(filename):
-    import uuid
-    fn=uuid.uuid4().hex
-    return (fn[:3],fn[3:]+os.path.splitext(filename)[-1])
-
-
-def upload():
-    files = request.files
-    # check if the post request has the file part
-    if 'file' not in request.files:
-        return {'error':'No file found'},status.HTTP_204_NO_CONTENT
-    
-    file = request.files['file']
-    
-    # if user does not select file, browser also
-    # submit an empty part without filename
-    print('filename!',file.filename)
-    if file.filename == '':
-        return {'error':'No filename'},status.HTTP_206_PARTIAL_CONTENT
-    
-    if file and allowed_file(file.filename):
-        print('uploading file...')
-        #prefix,filename = get_random_filename(file.filename) #secure_filename(file.filename)
-        #odir = os.path.join(app.config['UPLOAD_DIR'], os.path.dirname(filename))
-        #if not os.path.exists(odir):
-        ext = os.path.splitext(file.filename)[-1]
-        media = Media(ext=ext).save()
-        uid = media.uid
-        filename = media.filename
-        prefix,fn=filename.split('/')
-        
-        folder = os.path.join(app.config['UPLOAD_DIR'], prefix)
-        if not os.path.exists(folder): os.makedirs(folder)
-        file.save(os.path.join(folder, fn))
-        
-        
-        
-        #return redirect(url_for('uploaded_file', filename=filename))
-        return {'media_uid':uid, 'filename':filename}, status.HTTP_200_OK
-
-    return {'error':'Upload failed'},status.HTTP_406_NOT_ACCEPTABLE
-
-
-def download(prefix, filename):
-    filedir = os.path.join(app.config['UPLOAD_DIR'], prefix)
-    print(filedir, filename)
-    return send_from_directory(filedir, filename)
-
-### READ
-
-
-
-def get_followers(name=None):
-    person = Person.match(G, name).first()
-    data = [p.data for p in person.followers]
-    return jsonify(data)
-
-
-def get_follows(name=None):
-    person = Person.match(G, name).first()
-    data = [p.data for p in person.follows]
-    return jsonify(data)
-
-
-
-def get_posts(name=None):
-    if name:
-        person = Person.nodes.get_or_none(name=name)
-        data = [p.data for p in person.wrote.all()] if person is not None else []
-    else:
-        data = [p.data for p in Post.nodes.order_by('-timestamp')]
-        # print(data)
-
-    return jsonify({'posts':data})
-
-
-def get_post(id=None):
-    post = Post.match(G, int(id)).first()
-    data = post.data
-    return jsonify(data)
-
-
-
-
-import sys
-# def bytes_from_file(filename, chunksize=8192//2):
-#     with open(filename, "rb") as f:
-#         while True:
-#             chunk = f.read(chunksize)
-#             if chunk:
-#                 self.log(type(chunk), sys.getsizeof(chunk))
-#                 yield chunk
-#                 #yield from chunk
-#             else:
-#                 break
-
-# def bytes_from_file(filename,chunksize=8192):
-#     with open(filename,'rb') as f:
-#         barray = bytearray(f.read())
-
-#     for part in barray[0:-1:chunksize]:
-#         self.log('!?',part)
-#         yield bytes(part)
+## func
 
 def bytes_from_file(filename,chunksize=8192):
     with open(filename, 'rb') as f:
@@ -464,38 +351,15 @@ def bytes_from_file(filename,chunksize=8192):
                 break
             yield piece
 
-# import sys
-# def bytes_from_file(path,chunksize=8000):
-#     ''' Given a path, return an iterator over the file
-#         that lazily loads the file.
-#     '''
-#     path = Path(path)
-#     bufsize = get_buffer_size(path)
+def get_random_id():
+    import uuid
+    return uuid.uuid4().hex
 
-#     with path.open('rb') as file:
-#         reader = partial(file.read1, bufsize)
-#         for chunk in iter(reader, bytes()):
-#             _bytes=bytearray()
-#             for byte in chunk:
-#                 #if _bytes is None:
-#                 #    _bytes=byte
-#                 #else:
-#                 _bytes.append(byte)
 
-#                 if sys.getsizeof(_bytes)>=8192:
-#                     yield bytes(_bytes) #.bytes()
-#                     _bytes=bytearray()
-#         if _bytes:
-#             yield bytes(_bytes)
 
-# def get_buffer_size(path):
-#     """ Determine optimal buffer size for reading files. """
-#     st = os.stat(path)
-#     try:
-#         bufsize = st.st_blksize # Available on some Unix systems (like Linux)
-#     except AttributeError:
-#         bufsize = io.DEFAULT_BUFFER_SIZE
-#     return bufsize
+
+
+
 
 def test_api():
     api = Api()

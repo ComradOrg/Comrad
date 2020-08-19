@@ -172,6 +172,8 @@ class FeedScreen(ProtectedScreen):
     posts = ListProperty()
 
     def on_pre_enter(self):
+        super().on_pre_enter()
+        
         async def go():
             # self.log('ids:' +str(self.ids.post_carousel.ids))
             for post in self.posts:

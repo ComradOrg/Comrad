@@ -56,6 +56,8 @@ class PostScreen(ProtectedScreen):
     post_id = ObjectProperty()
 
     def on_pre_enter(self):
+        super().on_pre_enter()
+        
         # clear
         if hasattr(self,'post_status'): self.remove_widget(self.post_status)
         if hasattr(self,'post_textfield'): self.post_textfield.text=''
