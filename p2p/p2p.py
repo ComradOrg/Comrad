@@ -48,7 +48,14 @@ def boot_selfless_node(port=8468, loop=None):
 
 
 def boot_lonely_selfless_node(port=8467):
-    loop = boot_selfless_node(port)
+    handler = logging.StreamHandler()
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    log = logging.getLogger('kademlia')
+    log.addHandler(handler)
+    log.setLevel(logging.DEBUG)
+
+    loop = boot_selfless_node(port,loop=None)
     try:
         loop.run_forever()
     except KeyboardInterrupt:
