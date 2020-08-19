@@ -178,7 +178,7 @@ class KadProtocol(KademliaProtocol):
 
 
 class KadServer(Server):
-    protocol_class = KadProtocol # KadProtocol #KademliaProtocol
+    protocol_class = KademliaProtocol # KadProtocol #KademliaProtocol
 
     def __init__(self, *x, **y):
         super().__init__(*x,**y)

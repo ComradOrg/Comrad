@@ -471,13 +471,20 @@ def bytes_from_file(filename,chunksize=8192):
 
 
 def test():
-    api = Api()
+    #api = Api()
     
     # not working!
-    # api.set_json('my key',{'a':'value'})
+    #api.set_json('my key',{'a':'value'})
 
+    # direct node
     node = asyncio.run(_getdb(None, port=8368))
     print(node)
+    #async def set(node,key,value):
+    #    await node.set(key,value)
+    key='blah blah'
+    value='blee blee'
+    res = asyncio.run(node.set(key,value))
+    print(res)
 
 if __name__=='__main__':
     test()
