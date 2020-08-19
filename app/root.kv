@@ -13,8 +13,9 @@
 #:import partial functools.partial
 #:import NoTransition kivy.uix.screenmanager.NoTransition
 # :import MDCarousel kivymd.uix.carousel.MDCarousel
-
-
+#:import rgb main.rgb
+#:import COLOR_BG main.COLOR_BG
+#:import BG_IMG main.BG_IMG
 
 
 ## CLASS DEFS
@@ -35,7 +36,7 @@
 
 <MyLabel>:
     theme_text_color: 'Custom'
-    text_color: (1,0,0,1)
+    text_color: rgb(201,203,163)
     # pos_hint: {'center_y': 0.5}
     halign: 'center'
     height: self.texture_size[1]
@@ -51,33 +52,40 @@ MyLayout:
     scr_mngr: scr_mngr
     orientation: 'vertical'
     height: self.minimum_height
-    md_bg_color:0,0,0,1
+    md_bg_color:self.rgb(*COLOR_BG)
 
     canvas:
         Color:
-            rgba: 0.925,0.925,0.925,0.99 #get_color_from_hex(colors['Gray']['900'])
-            # rgba: 0,0,0,0.9 #get_color_from_hex(colors['Gray']['900'])
+            rgba: 1,1,1,1 #0.925,0.925,0.925,0.19 #get_color_from_hex(colors['Gray']['900'])
+            # rgba: 0.1,0.1,0.1,1 #get_color_from_hex(colors['Gray']['900'])
         
 
         Rectangle:
             pos: self.pos
             size: self.size
-            source: 'assets/bg.png'
+            source: BG_IMG
             # texture: app.texture
     
 
-    MDToolbar:
+    MyToolbar:
         id: toolbar
         title: app.title
         pos_hint: {'center_x': .5, 'center_y': 0.95}
         md_bg_color: 0.1,0.1,0.1,1
         background_palette: 'Red'
+        theme_text_color:'Custom'
         background_hue: '500'
-        specific_text_color: 1,0,0,1
         right_action_items: [['card-text-outline', partial(root.change_screen, 'feed')], ['pencil-plus-outline', partial(root.change_screen, 'post')], ['message-outline', partial(root.change_screen, 'messages')], ['bell-outline', partial(root.change_screen, 'notifications')], ['account-circle-outline', partial(root.change_screen, 'profile')]]
         #left_action_items: [[f"assets/fist2.png", partial(root.change_screen, 'feed')]]
         font_context: None
         font_name: f'assets/Strengthen.ttf'
+        # canvas:
+        #     Color:
+        #         rgb: rgb(67,92,61)
+        #     Line:
+        #         width: 1
+        #         rectangle: (self.x, self.y, self.width, self.height)
+
 
 
     ScreenManager:

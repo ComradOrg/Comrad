@@ -6,6 +6,10 @@
 #:import LoginButton screens.login.login.LoginButton
 #:import RegisterButton screens.login.login.RegisterButton
 #:import LoginStatus screens.login.login.LoginStatus
+#:import rgb main.rgb
+#:import COLOR_TEXT main.COLOR_TEXT
+#:import COLOR_CARD main.COLOR_CARD
+#:import COLOR_CARD_BORDER main.COLOR_CARD_BORDER
 
 
 <LoginBoxLayout>:
@@ -14,12 +18,20 @@
     cols:1
     size_hint:0.5,None
     pos_hint: {'center_x':0.5,'center_y':0.5}
-    md_bg_color: 0,0,0,1
+    md_bg_color: rgb(*COLOR_CARD)
     radius:[20,] 
     border_radius:20
     spacing:'10dp'
     padding:'25dp'
     adaptive_height: True
+    # canvas:
+    #     Color:
+    #         rgba: rgb(*COLOR_CARD_BORDER)
+    #     Line:
+    #         width: 1
+    #         rounded_rectangle: (self.x, self.y, self.width, self.height, 20, 20, 20, 20)
+
+ 
 
 <UsernameLayout>:
     cols:2
@@ -33,11 +45,11 @@
     
 <UsernameLabel>:
     theme_text_color: 'Custom'
-    text_color: 1,0,0,1
+    text_color: rgb(*COLOR_TEXT)
     # width:'100sp'
     adaptive_width: True
     size_hint:None,None
-    # md_bg_color:1,0,0,1
+    # md_bg_color:rgb(*COLOR_TEXT)
     # pos_hint: {'y':1}
     halign:'center'
     
@@ -52,12 +64,13 @@
     multiline: False
     helper_text_mode: "persistent"
     color_mode: 'custom'
-    line_color_focus: 1,0,0,1
-    line_color_normal: 1,0,0,1
-    current_hint_text_color: 1,0,0,1
-    error_color:1,0,0,1
+    line_color_focus: rgb(*COLOR_TEXT)
+    line_color_normal: rgb(*COLOR_TEXT)
+    current_hint_text_color: rgb(*COLOR_TEXT)
+    error_color:rgb(*COLOR_TEXT)
     pos_hint: {'center_x':0.5,'y':0.2}
     size_hint:0.8,None
+    font_size:'24sp'
 
 
 
@@ -71,10 +84,10 @@
     multiline: False
     helper_text_mode: "persistent"
     color_mode: 'custom'
-    line_color_focus: 1,0,0,1
-    line_color_normal: 1,0,0,1
-    current_hint_text_color: 1,0,0,1
-    text_color: 1,0,0,1
+    line_color_focus: rgb(*COLOR_TEXT)
+    line_color_normal: rgb(*COLOR_TEXT)
+    current_hint_text_color: rgb(*COLOR_TEXT)
+    text_color: rgb(*COLOR_TEXT)
     pos_hint: {'center_x':0.5,'y':0.2}
     size_hint:0.8,None
 
@@ -97,18 +110,20 @@
         app.login(self.parent.parent.parent.username_field.text, self.parent.parent.parent.password_field.text)
         #app.root.change_screen("welcome")
     theme_text_color: "Custom"
-    text_color: 1,0,0,1
+    text_color: rgb(*COLOR_TEXT)
     md_bg_color: 0,0,0,1
     size_hint:None,None
+    font_size:'24sp'
     # pos_hint: {'center_x': .5, 'bottom':1}
 
 <RegisterButton>:
-    text: "register"
+    text: "join"
     on_release:
         app.register(self.parent.parent.parent.username_field.text, self.parent.parent.parent.password_field.text)
     theme_text_color: "Custom"
-    text_color: 1,0,0,1
+    text_color: rgb(*COLOR_TEXT)
     md_bg_color: 0,0,0,1
+    font_size:'24sp'
     # size_hint:1,None
 
 <LoginStatus>:

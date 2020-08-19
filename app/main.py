@@ -1,13 +1,60 @@
 ## CONFIG
 # change this to your external ip address for your server
 #(needs to be external to allow tor routing)
-DEFAULT_SCREEN='feed'
+DEFAULT_SCREEN='profile'
 
 import random
-HORIZONTAL = random.choice([True,True,True,False])
+HORIZONTAL = False #random.choice([True,True,True,False])
 FACTOR=1
 WINDOW_SIZE = (1136*FACTOR,640*FACTOR) if HORIZONTAL else (640*FACTOR,1136*FACTOR)
 
+BG_IMG='assets/bg-russiangreen.png'
+
+grass=(201,203,163)
+russiangreen = (109,140,96)
+huntergreen = (67,92,61)
+kombugreen = (49,67,45)
+pinetreegreen = (29,40,27)
+junglegreen = (15, 21, 14)
+
+browncoffee=(77, 42, 34)
+rootbeer=(38, 7, 1)
+blackbean=(61, 12, 2)
+burntumber=(132, 55, 34)
+brownsugar=(175, 110, 81)
+antiquebrass= (198, 144, 118)
+royalbrown=(94, 55, 46)
+bole=(113, 65, 55)
+liver= (110, 56, 31)
+bistre=(58, 33, 14)
+skin1=(89, 47, 42)
+skin2=(80, 51, 53)
+skin3=(40, 24, 26)
+
+grullo=177, 158, 141
+smokyblack=33, 14, 0
+liverchestnut=148, 120, 96
+ashgray=196, 199, 188
+livchestnut2=156, 106, 73
+beaver=165, 134, 110
+rawumber=120, 95, 74
+
+dutchwhite=229,219,181
+
+COLOR_TOOLBAR= smokyblack #5,5,5 #russiangreen #pinetreegreen #kombugreen #(12,5,5) #russiangreen
+COLOR_BG = (0,73,54)
+# COLOR_ICON = (201,203,163)
+COLOR_LOGO = grullo#russiangreen #(0,0,0) #(0,0,0) #(151,177,140) #(132,162,118) #(109,140,106)
+COLOR_ICON = grullo#russiangreen #(0,0,0) #COLOR_LOGO
+COLOR_TEXT =dutchwhite #(241,233,203) #COLOR_ICON #(207,219,204) #(239,235,206) # (194,211,187) # (171,189,163) # (222,224,198) # COLOR_LOGO #(223, 223, 212)
+COLOR_CARD = smokyblack #skin2 #huntergreen #(30,23,20) #(51,73,45) # (67,92,61) #(12,9,10)
+# COLOR_TOOLBAR = (8s9,59,43)
+# COLOR_ICON = COLOR_LOGO = COLOR_TEXT
+# COLOR_TEXT=tuple([x+50 for x in russiangreen]) #COLOR_TOOLBAR
+# COLOR_ICON = COLOR_LOGO = grass
+# COLOR_LOGO = junglegreen #(199,22,22)
+# COLOR_ICON = COLOR_LOGO
+COLOR_CARD_BORDER = rawumber
 
 # monkeypatching the things that asyncio needs
 import subprocess
@@ -63,11 +110,15 @@ Window.size = WINDOW_SIZE
 
 # with open('log.txt','w') as of:
 #     of.write('### LOG ###\n')
-
+def rgb(r,g,b,a=1):
+    return (r/255,g/255,b/255,a)
 
 class MyLayout(MDBoxLayout):
     scr_mngr = ObjectProperty(None)
     post_id = ObjectProperty()
+
+    def rgb(self,r,g,b,a=1):
+        return rgb(r,g,b,a=a)
 
     def change_screen(self, screen, *args):
         self.scr_mngr.current = screen
@@ -80,6 +131,37 @@ class MyLayout(MDBoxLayout):
 class MyBoxLayout(MDBoxLayout): pass
 class MyLabel(MDLabel): pass
 
+class MyToolbar(MDToolbar):
+    action_icon_color = ListProperty()
+
+    def update_action_bar(self, action_bar, action_bar_items):
+        action_bar.clear_widgets()
+        new_width = 0
+        for item in action_bar_items:
+            new_width += dp(48)
+            action_bar.add_widget(
+                MDIconButton(
+                    icon=item[0],
+                    on_release=item[1],
+                    opposite_colors=True,
+                    text_color=(self.specific_text_color if not self.action_icon_color else self.action_icon_color),
+                    theme_text_color="Custom",
+                )
+            )
+        action_bar.width = new_width
+
+    def update_action_bar_text_colors(self, instance, value):
+        for child in self.ids["left_actions"].children:
+            if not self.action_icon_color:
+                child.text_color = self.specific_text_color
+            else:
+                child.text_color = self.action_icon_color
+
+        for child in self.ids["right_actions"].children:
+            if not self.action_icon_color:
+                child.text_color = self.specific_text_color
+            else:
+                child.text_color = self.action_icon_color
 
 
 
@@ -145,6 +227,8 @@ class MainApp(MDApp):
     # def connect(self):
     #     # connect to kad?   
     #     self.node = p2p.connect()
+    def rgb(self,*_): return rgb(*_)
+
     @property
     def logger(self):
         if not hasattr(self,'_logger'):
@@ -206,10 +290,14 @@ class MainApp(MDApp):
         draw_background(self.root)
         
         # edit logo
-        logo=root.ids.toolbar.ids.label_title
+        toolbar=root.ids.toolbar
+        toolbar.md_bg_color = root.rgb(*COLOR_TOOLBAR)
+        toolbar.action_icon_color=root.rgb(*COLOR_ICON)
+        logo=toolbar.ids.label_title
         logo.font_name='assets/Strengthen.ttf'
         logo.font_size='58dp'
         logo.pos_hint={'center_y':0.43}
+        logo.text_color=root.rgb(*COLOR_LOGO)
         
         # logged in?
         if not self.is_logged_in():

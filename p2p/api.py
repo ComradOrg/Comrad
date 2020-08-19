@@ -207,7 +207,7 @@ class Api(object):
         return {'success':'Account created', 'username':name} 
 
     def load_private_key(self,password):
-        if not self.app_storage.exists('_keys'): return None
+        if not self.app_storage.exists('_keys'): return {'error':'No login keys present on this device'}
         pem_private_key=self.app_storage.get('_keys').get('private')
         try:
             return {'success':load_private_key(pem_private_key.encode(),password)}

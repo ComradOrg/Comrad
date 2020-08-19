@@ -3,7 +3,7 @@ from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.textfield import MDTextField
 from kivymd.uix.button import MDRectangleFlatButton
 from kivymd.uix.label import MDLabel
-from main import MyLabel
+from main import MyLabel,rgb
 
 class LoginBoxLayout(MDBoxLayout): pass
 class LoginButtonLayout(MDBoxLayout): pass
@@ -30,8 +30,8 @@ class LoginScreen(BaseScreen):
         self.label_username = UsernameLabel(text="username:")
 
         self.username_field = UsernameField()
-        self.username_field.line_color_focus=(1,0,0,1)
-        self.username_field.line_color_normal=(1,0,0,0.25)
+        self.username_field.line_color_focus=rgb(201,203,163)
+        self.username_field.line_color_normal=rgb(201,203,163,0.25)
         self.username_field.font_name='assets/font.otf'
 
         self.layout_username.add_widget(self.label_username)
@@ -48,8 +48,8 @@ class LoginScreen(BaseScreen):
         self.label_username.font_name='assets/font.otf'
 
         self.password_field = PasswordField()
-        self.password_field.line_color_focus=(1,0,0,1)
-        self.password_field.line_color_normal=(1,0,0,0.25)
+        self.password_field.line_color_focus=rgb(201,203,163)
+        self.password_field.line_color_normal=rgb(201,203,163,0.25)
         self.password_field.font_name='assets/font.otf'
         
         self.layout_password.add_widget(self.label_password)
@@ -72,6 +72,9 @@ class LoginScreen(BaseScreen):
         self.login_status.font_name='assets/font.otf'
         
         self.layout.add_widget(self.login_status)
+
+        self.label_password.font_size='18sp'
+        self.label_username.font_size='18sp'
 
 
         ## add all

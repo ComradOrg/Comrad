@@ -16,7 +16,7 @@ from kivy.clock import Clock
 from functools import partial
 from copy import copy,deepcopy
 from kivy.animation import Animation
-from main import MyLabel
+from main import MyLabel,COLOR_ICON
 from misc import *
 
 
@@ -102,7 +102,7 @@ def circularize_img(img_fn, width, im=None, do_crop=True,bw=False,resize=True,ci
         fn = lambda x : 255 if x > thresh else 0
         im = im.convert('L').point(fn, mode='1').convert('RGB')
         orig_color = (255,255,255)
-        replacement_color = (255,0,0)
+        replacement_color = COLOR_ICON #(255,0,0)
         # img = im.convert('RGB')
         data = np.array(im)
         data[(data == orig_color).all(axis = -1)] = replacement_color

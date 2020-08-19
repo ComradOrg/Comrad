@@ -1,5 +1,9 @@
 #:import FeedScreen screens.feed.feed.FeedScreen
 #:import Window kivy.core.window.Window
+#:import rgb main.rgb
+#:import COLOR_CARD main.COLOR_CARD
+#:import COLOR_TEXT main.COLOR_TEXT
+#:import COLOR_CARD_BORDER main.COLOR_CARD_BORDER
 
 <FeedScreen>:
     name: 'feed'
@@ -87,7 +91,7 @@
     # padding:'10dp'
     # canvas:
     #     Color:
-    #         rgb: 1,0,0,1
+    #         rgb: rgb(*COLOR_TEXT)
     #     Line:
     #         width: 1
     #         rectangle: (self.x, self.y, self.width, self.height)
@@ -103,7 +107,7 @@
     # height: '400'
     size_hint_y: None
     # size_hint_x: 100
-    text_color:1,0,0,1
+    text_color:rgb(*COLOR_TEXT)
     theme_text_color: 'Custom'
     halign: 'left'
     padding: ('10dp','0dp')
@@ -119,7 +123,7 @@
     # height: '400'
     size_hint_y: None
     # size_hint_x: 100
-    text_color:1,0,0,1
+    text_color:rgb(*COLOR_TEXT)
     theme_text_color: 'Custom'
     halign: 'right'
     padding: ('10dp','0dp')
@@ -138,7 +142,7 @@
     #font_name: "Strengthen"
     # height: '400'
     size_hint_y: None
-    text_color:1,0,0,1
+    text_color:rgb(*COLOR_TEXT)
     theme_text_color: 'Custom'
     halign: 'left'
 
@@ -153,13 +157,13 @@
     padding: "20dp"
     size_hint: (0.9, None)
     pos_hint: {"center_x": .5, "center_y": .5}
-    md_bg_color: (0,0,0,1)
+    md_bg_color: rgb(*COLOR_CARD)
     height: self.minimum_height
     radius:[20,] 
     border_radius:20
     canvas:
         Color:
-            rgba: 0,0,0,0.5
+            rgba: rgb(*COLOR_CARD_BORDER,a=0.5)
         Line:
             width: 1
             rounded_rectangle: (self.x, self.y, self.width, self.height, 20, 20, 20, 20)
