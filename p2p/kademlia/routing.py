@@ -7,8 +7,8 @@ from itertools import chain
 from collections import OrderedDict
 from kademlia.utils import shared_prefix, bytes_to_bit_string
 
-# EXCLUDE_PORTS = {5637}
-EXCLUDE_PORTS = {}
+EXCLUDE_PORTS = {5637}
+# EXCLUDE_PORTS = {}
 
 class KBucket:
     def __init__(self, rangeLower, rangeUpper, ksize, replacementNodeFactor=5):
