@@ -177,8 +177,9 @@ class KadProtocol(KademliaProtocol):
         return result
 
 
+
 class KadServer(Server):
-    protocol_class = KademliaProtocol # KadProtocol #KademliaProtocol
+    protocol_class = KadProtocol # KadProtocol #KademliaProtocol
 
     def __init__(self, *x, **y):
         super().__init__(*x,**y)
@@ -266,3 +267,8 @@ class KadServer(Server):
         results = [self.protocol.call_store(n, dkey, value) for n in nodes]
         # return true only if at least one store call succeeded
         return any(await asyncio.gather(*results))
+
+
+
+#### NEVERMIND
+KadServer = Server
