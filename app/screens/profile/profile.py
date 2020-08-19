@@ -9,7 +9,7 @@ from kivy.metrics import dp
 from kivy.properties import StringProperty
 from kivy.core.window import Window
 from kivy.core.image import Image as CoreImage
-import io
+import io,asyncio
 from kivy.uix.carousel import Carousel
 from screens.feed.feed import PostCard
 from kivy.clock import Clock
@@ -48,6 +48,31 @@ class LayoutCover(MDBoxLayout):
 
 class CoverImage(Image): pass
 
+
+
+def binarize_image(image, threshold=200):
+    """Binarize an image."""
+    image = image.convert('L')  # convert image to monochrome
+    import numpy
+    image = numpy.array(image)
+    image = binarize_array(image, threshold)
+    imsave(target_path, image)
+    return image
+
+def binarize_array(numpy_array, threshold=200):
+    """Binarize a numpy array."""
+    import numpy
+    for i in range(len(numpy_array)):
+        for j in range(len(numpy_array[0])):
+            if numpy_array[i][j] > threshold:
+                numpy_array[i][j] = 255
+            else:
+                numpy_array[i][j] = 0
+    return numpy_array
+
+
+
+
 def crop_square(pil_img, crop_width, crop_height):
     img_width, img_height = pil_img.size
     return pil_img.crop(((img_width - crop_width) // 2,
@@ -55,21 +80,47 @@ def crop_square(pil_img, crop_width, crop_height):
                          (img_width + crop_width) // 2,
                          (img_height + crop_height) // 2))
 
-def circularize_img(img_fn, width, do_crop=True):
-    from PIL import Image, ImageOps, ImageDraw
-    
 
+def circularize_img(img_fn, width, im=None, do_crop=True,bw=False,resize=True,circularize=True):
+    from PIL import Image, ImageOps, ImageDraw
+    from kivy.app import App
+    import numpy as np
+    log=App.get_running_app().log
+
+    #if not im: 
     im = Image.open(img_fn)
+    log('??',im)
+    
+    
 
     # get center
     if do_crop: im = crop_square(im, width, width)
-    im = im.resize((width,width))
-    bigsize = (im.size[0] * 3, im.size[1] * 3)
-    mask = Image.new('L', bigsize, 0)
-    draw = ImageDraw.Draw(mask) 
-    draw.ellipse((0, 0) + bigsize, fill=255)
-    mask = mask.resize(im.size, Image.ANTIALIAS)
-    im.putalpha(mask)
+    if resize: im = im.resize((width,width))
+
+    if bw:
+        thresh = 175
+        fn = lambda x : 255 if x > thresh else 0
+        im = im.convert('L').point(fn, mode='1').convert('RGB')
+        orig_color = (255,255,255)
+        replacement_color = (255,0,0)
+        # img = im.convert('RGB')
+        data = np.array(im)
+        data[(data == orig_color).all(axis = -1)] = replacement_color
+        im = Image.fromarray(data, mode='RGB').convert('RGBA')
+    
+    if circularize_img:
+        bigsize = (im.size[0] * 3, im.size[1] * 3)
+        mask = Image.new('L', bigsize, 0)
+        draw = ImageDraw.Draw(mask) 
+        draw.ellipse((0, 0) + bigsize, fill=255)
+        mask = mask.resize(im.size, Image.ANTIALIAS)
+        im.putalpha(mask)
+
+
+    # give back bytes
+    
+
+    log('!!',im)
 
     output = ImageOps.fit(im, mask.size, centering=(0.5, 0.5))
     imgByteArr = io.BytesIO()
@@ -109,7 +160,7 @@ def update_screen_on_carousel_move(self,dt,width=75):
     if self.carousel.index:
         if not hasattr(self,'avatar_layout_small'):
             self.avatar_img.seek(0)
-            img,byte,avatar,avatar_layout = self.make_profile_img(width,do_crop=False,circ_img=self.avatar_img)
+            img,byte,avatar,avatar_layout = self.make_profile_img(width,do_crop=False,bw=True,circularize=False)
             avatar.screen = self
             avatar_layout.pos_hint = {'right':0.995, 'top':0.995}
             avatar_layout.opacity=0
@@ -148,10 +199,10 @@ class ProfileScreen(BaseScreen):
     username = None
     clock_scheduled=None
 
-    def make_profile_img(self,width,do_crop=True,circ_img=None):
+    def make_profile_img(self,width,do_crop=True,circ_img=None,bw=False,circularize=True):
 
-        if not circ_img:
-            circ_img = circularize_img(img_src,width,do_crop=do_crop)
+        circ_img = circularize_img(img_src,width,do_crop=do_crop,bw=bw,circularize=circularize)
+
         
         avatar_layout = LayoutAvatar()
         byte=io.BytesIO(circ_img.read())
@@ -259,12 +310,13 @@ class ProfileScreen(BaseScreen):
         self.carousel.add_widget(self.page_layout)
 
         ## add posts
-        self.add_author_posts()
+        asyncio.create_task(self.add_author_posts())
 
-    def add_author_posts(self):
+    async def add_author_posts(self):
         # add posts
         lim=25
-        for i,post in enumerate(self.app.get_my_posts()):
+        posts=await self.app.get_my_posts()
+        for i,post in enumerate(posts):
             if i>lim: break
             
             post_obj = PostCard(post)

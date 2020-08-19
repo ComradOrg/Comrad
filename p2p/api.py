@@ -213,7 +213,7 @@ class Api(object):
             return {'success':load_private_key(pem_private_key.encode(),password)}
         except ValueError as e:
             self.log('!!',e)
-            return {'error':'Incorrect password'}
+        return {'error':'Incorrect password'}
 
 
 

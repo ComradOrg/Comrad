@@ -138,7 +138,7 @@ def draw_background(widget, img_fn='assets/bg.png'):
 class MainApp(MDApp):
     title = 'Komrade'
     logged_in=False
-    store = JsonStore('komrade.json')
+    store = JsonStore('../p2p/.keys.json')
     login_expiry = 60 * 60 * 24 * 7  # once a week
     texture = ObjectProperty()
 
