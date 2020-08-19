@@ -23,12 +23,14 @@ class HalfForgetfulStorage(ForgetfulStorage):
         """
         By default, max age is a week.
         """
-        self.fn='sto.dat'
-        if not os.path.exists(self.fn):
-            self.data={}
-        else:
-            with open(self.fn,'rb') as f:
-                self.data=pickle.load(f)
+        self.fn='cache.sqlite'
+        from sqlitedict import SqliteDict
+        self.data = SqliteDict(self.fn, autocommit=True)
+        # if not os.path.exists(self.fn):
+        #     self.data={}
+        # else:
+        #     with open(self.fn,'rb') as f:
+        #         self.data=pickle.load(f)
 
 
         #print('>> loaded %s keys' % len(self.data))
@@ -39,14 +41,15 @@ class HalfForgetfulStorage(ForgetfulStorage):
 
     def __setitem__(self, key, value):
         self.data[key] = (time.monotonic(), value)
-        self.write()
+        #self.write()
 
     def set(key,value):
         self[key]=value
 
     def write(self):
-        with open(self.fn,'wb') as f:
-            pickle.dump(self.data, f)
+        pass
+        #with open(self.fn,'wb') as f:
+        #    pickle.dump(self.data, f)
 
     def get(self, key, default=None):
         # self.cull()
