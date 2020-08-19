@@ -1,8 +1,7 @@
 ## CONFIG
 # change this to your external ip address for your server
 #(needs to be external to allow tor routing)
-SERVER_ADDR = '128.232.229.63:5555'
-DEFAULT_SCREEN='profile'
+DEFAULT_SCREEN='feed'
 HORIZONTAL = False
 WINDOW_SIZE = (1136,640) if HORIZONTAL else (640,1136)
 
@@ -53,19 +52,6 @@ Window.size = WINDOW_SIZE
 # with open('log.txt','w') as of:
 #     of.write('### LOG ###\n')
 
-import logging
-handler = logging.StreamHandler()
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-handler.setFormatter(formatter)
-logger = logging.getLogger('app')
-logger.addHandler(handler)
-logger.setLevel(logging.DEBUG)
-
-def log(*args):
-    # with open('log.txt','a+') as of:
-        # of.write(' '.join([str(x) for x in args])+'\n')
-    line = ' '.join(str(x) for x in args)
-    logger.debug(line)
 
 class MyLayout(MDBoxLayout):
     scr_mngr = ObjectProperty(None)
@@ -147,11 +133,35 @@ class MainApp(MDApp):
     # def connect(self):
     #     # connect to kad?   
     #     self.node = p2p.connect()
+    @property
+    def logger(self):
+        if not hasattr(self,'_logger'):
+            import logging
+            handler = logging.StreamHandler()
+            formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+            handler.setFormatter(formatter)
+            self._logger = logger = logging.getLogger(self.title)
+            logger.addHandler(handler)
+            logger.setLevel(logging.DEBUG)
+        return self._logger
+
+    def log(self,*args):
+        line = ' '.join(str(x) for x in args)
+        self.logger.debug(line)
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        # start looping
         self.event_loop_worker = None
         self.loop=asyncio.get_event_loop()
+        
+        # load json storage
+        self.username=''
+        self.load_store()
+        
+        # connect to API
+        self.api = api.Api(app=self)
+
 
 
     
@@ -169,24 +179,11 @@ class MainApp(MDApp):
         return ''
 
     def build(self):
-        # bind bg texture
-        # self.texture = Image(source='assets/bg.png').texture
-        # self.texture.wrap = 'clamp_to_edge'
-        # self.texture.uvsize = (-2, -2)
-        # self.start_event_loop_thread()
-
-        # with open('log.txt','w') as of: of.write('## LOG ##\n')
-        self.load_store()
-
-        # self.boot_kad()
-        self.api = api.Api(app_storage=self.store)
-
-        self.username=''
         # bind 
         global app,root
         app = self
-        #self.username = self.store.get('userd').get('username')
         
+        # load root
         self.root = root = Builder.load_file('root.kv')
         draw_background(self.root)
         
@@ -195,50 +192,15 @@ class MainApp(MDApp):
         logo.font_name='assets/Strengthen.ttf'
         logo.font_size='58dp'
         logo.pos_hint={'center_y':0.43}
-        # icons
-        icons=root.ids.toolbar.ids.right_actions.children
-        for icon in icons:
-            #log(dir(icon))
-            #icon.icon='android' #user_font_size='200sp'
-            icon.font_size='58dp'
-            icon.user_font_size='58dp'
-            icon.width='58dp'
-            icon.size_hint=(None,None)
-            icon.height='58dp'
- 
+        
+        # logged in?
         if not self.is_logged_in():
             self.root.change_screen('login')
-            #log(self.username)
         else:
-            # self.root.post_id=190
             self.root.change_screen(DEFAULT_SCREEN)
+        
         return self.root
 
-
-    # ## LOOP
-    # def start_event_loop_thread(self):
-    #     """Start the asyncio event loop thread. Bound to the top button."""
-    #     if self.event_loop_worker is not None:
-    #         return
-    #     #self.root.ids.btn.text = ("Running the asyncio EventLoop now...\n\n\n\n"
-    #     #                          "Now enter a few words below.")
-    #     self.event_loop_worker = worker =  EventLoopWorker()
-    #     #pulse_listener_label = self.root.ids.pulse_listener
-
-    #     #def display_on_pulse(instance, text):
-    #     #    pulse_listener_label.text = text
-
-    #     # make the label react to the worker's `on_pulse` event:
-    #     #worker.bind(on_pulse=display_on_pulse)
-    #     worker.start()
-
-    # def submit_pulse_text(self, text):
-    #     """Send the TextInput string over to the asyncio event loop worker."""
-    #     worker = self.event_loop_worker
-    #     if worker is not None:
-    #         loop = self.event_loop_worker.loop
-    #         # use the thread safe variant to run it on the asyncio event loop:
-    #         loop.call_soon_threadsafe(worker.set_pulse_text, text)
 
 
 
@@ -282,7 +244,7 @@ class MainApp(MDApp):
 
     def login(self,un=None,pw=None):
         dat = self.api.login(un,pw)
-        log(dat)
+        self.log(dat)
         if 'success' in dat:
             self.save_login(un)
         elif 'error' in dat:
@@ -299,16 +261,16 @@ class MainApp(MDApp):
             return False
 
     def upload(self,filename,file_id=None):
-        log('uploading filename:',filename)
+        self.log('uploading filename:',filename)
         rdata=self.api.upload(filename,file_id=file_id)
-        log('upload result:',rdata)
+        self.log('upload result:',rdata)
         if rdata is not None:
             rdata['success']='File uploaded'
             return rdata
         return {'error':'Upload failed'}
         
     def download(self,file_id,output_fn=None):
-        log('downloading:',file_id)
+        self.log('downloading:',file_id)
         file_dat = self.api.download(file_id)
         if not output_fn:
             file_id=file_dat['id']
@@ -333,7 +295,7 @@ class MainApp(MDApp):
         if not anonymous and self.username:
             jsond['author']=self.username
         
-        log('posting:',jsond)
+        self.log('posting:',jsond)
         res=self.api.post(jsond)
         if 'success' in res:
             self.root.change_screen('feed')
@@ -362,7 +324,7 @@ class MainApp(MDApp):
             # create dir?
             ofn_image_dir = os.path.split(ofn_image)[0]
             if not os.path.exists(ofn_image_dir): os.makedirs(ofn_image_dir)
-            log('getting image!')
+            self.log('getting image!')
             with self.get_session() as sess:
                 with sess.get(self.api+'/download/'+img_src,stream=True) as r:
                     with open(ofn_image,'wb') as of:
@@ -371,7 +333,9 @@ class MainApp(MDApp):
 
 
 
+
 def main():
+    # start_logger()
     App = MainApp()
     App.run()
 

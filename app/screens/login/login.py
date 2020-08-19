@@ -1,5 +1,4 @@
 from screens.base import BaseScreen
-from main import log
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.textfield import MDTextField
 from kivymd.uix.button import MDRectangleFlatButton

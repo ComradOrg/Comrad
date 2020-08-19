@@ -65,12 +65,12 @@ class HalfForgetfulStorage(ForgetfulStorage):
         return zip(ikeys, ivalues)
 
 
-handler = logging.StreamHandler()
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-handler.setFormatter(formatter)
-log = logging.getLogger('kademlia')
-log.addHandler(handler)
-log.setLevel(logging.DEBUG)
+# handler = logging.StreamHandler()
+# formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+# handler.setFormatter(formatter)
+# log = logging.getLogger('kademlia')
+# log.addHandler(handler)
+# log.setLevel(logging.DEBUG)
 
 
 loop = asyncio.get_event_loop()

@@ -1,5 +1,4 @@
 from screens.base import BaseScreen
-from main import log
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.chip import MDChip
 from kivymd.uix.textfield import MDTextField
@@ -269,7 +268,7 @@ class ProfileScreen(BaseScreen):
             if i>lim: break
             
             post_obj = PostCard(post)
-            log(post)
+            self.log(post)
             self.posts.append(post_obj)
             self.carousel.add_widget(post_obj)
 

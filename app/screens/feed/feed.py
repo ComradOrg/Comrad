@@ -6,7 +6,6 @@ from kivymd.uix.card import MDCard, MDSeparator
 from kivy.uix.scrollview import ScrollView
 from screens.base import ProtectedScreen
 from kivy.properties import ListProperty
-from main import log
 import os,time
 from datetime import datetime
 from kivy.app import App
@@ -57,9 +56,13 @@ class PostLayout(MDBoxLayout): pass
 class PostScrollView(ScrollView): pass
 
 class PostCard(MDCard):
+    @property
+    def app(self): return App.get_running_app()
+    def log(self,*x): self.app.log(*x)
+
     def __init__(self, data):
         super().__init__()
-        log('PostCard() got data: '+str(data))
+        self.log('PostCard() got data: '+str(data))
         self.author = data.get('author','[Anonymous]')
         self.img_id = data.get('file_id','')
         self.img_ext = data.get('file_ext','')
@@ -70,10 +73,10 @@ class PostCard(MDCard):
         self.timestamp = data.get('timestamp',None)
         self.bind(minimum_height=self.setter('height'))
 
-        log('PostCard.img_id =',self.img_id)
-        log('PostCard.img_ext =',self.img_ext)
-        log('PostCard.img_src =',self.img_src)
-        log('PostCard.cache_img_src =',self.cache_img_src)
+        self.log('PostCard.img_id =',self.img_id)
+        self.log('PostCard.img_ext =',self.img_ext)
+        self.log('PostCard.img_src =',self.img_src)
+        self.log('PostCard.cache_img_src =',self.cache_img_src)
 
         # pieces
         author_section_layout = PostAuthorLayout()
@@ -100,7 +103,7 @@ class PostCard(MDCard):
             image.height = '300dp'
             image_layout.add_widget(image)
             image_layout.height='300dp'
-            # log(image.image_ratio)
+            # self.log(image.image_ratio)
 
         self.post_content = PostContent(text=self.content)
         
@@ -136,10 +139,10 @@ class PostCard(MDCard):
         self.add_widget(scroller)
         # self.add_widget(post_layout)
 
-        # log('?????',self.cache_img_src, os.path.exists(self.cache_img_src), os.stat(self.cache_img_src).st_size)
+        # self.log('?????',self.cache_img_src, os.path.exists(self.cache_img_src), os.stat(self.cache_img_src).st_size)
         if self.cache_img_src and (not os.path.exists(self.cache_img_src) or not os.stat(self.cache_img_src).st_size):
             def do_download():
-                log('downloading...')
+                self.log('downloading...')
                 self.app.download(self.img_id, self.cache_img_src)
                 self.image.reload()
 
@@ -158,7 +161,7 @@ class PostCard(MDCard):
         
         # otherwise load image...
         self.app.get_image(self.img_src)
-        log('done getting image!')
+        self.log('done getting image!')
         self.image.reload()
         self.img_loaded=True
 
@@ -169,7 +172,7 @@ class FeedScreen(ProtectedScreen):
     posts = ListProperty()
 
     def on_pre_enter(self):
-        # log('ids:' +str(self.ids.post_carousel.ids))
+        # self.log('ids:' +str(self.ids.post_carousel.ids))
         for post in self.posts:
             self.ids.post_carousel.remove_widget(post)
         
@@ -181,6 +184,7 @@ class FeedScreen(ProtectedScreen):
             if i>lim: break
             
             #post = Post(title=f'Marx Zuckerberg', content=ln.strip())
+            self.log('???')
             post_obj = PostCard(post)
             self.posts.append(post_obj)
             self.ids.post_carousel.add_widget(post_obj)

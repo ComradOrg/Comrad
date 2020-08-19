@@ -43,9 +43,10 @@ class HalfForgetfulStorage(ForgetfulStorage):
 
     def get(self, key, default=None):
         # self.cull()
-        print('looking for key: ', key)
+        print('looking for key: ', key.decode())
         if key in self.data:
-            print('found it!')
+            val=self[key]
+            print('...found it! = %s' % val)
             return self[key]
         return default
 

@@ -1,17 +1,7 @@
-
-# import flask,os,time
-# from flask import request, jsonify, send_from_directory
-# from pathlib import Path
-# from models import *
-# from flask_api import FlaskAPI, status, exceptions
-# from werkzeug.security import generate_password_hash,check_password_hash
-# from flask import Flask, flash, request, redirect, url_for
-# from werkzeug.utils import secure_filename
 import os,time
 from pathlib import Path
 import asyncio
 from .crypto import *
-from main import log
 from .p2p import *
 from pathlib import Path
 from functools import partial
@@ -19,13 +9,13 @@ from functools import partial
 # works better with tor?
 import json
 jsonify = json.dumps
-from main import log
+
 # Start server
 
 DEBUG = True
 UPLOAD_DIR = 'uploads/'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-from .p2p import NODES_PRIME    
+
 # PORT_SPEAK = 8468
 PORT_LISTEN = 8468
 
@@ -40,16 +30,18 @@ def start_selfless_thread():
     return asyncio.run(_go())
 
 class Api(object):
-
-
-    def __init__(self,app_storage):
-        self._node=self.connect()
-        self.app_storage = app_storage
+    def __init__(self,app):
+        self.app=app
+        self.app_storage = self.app.store
+        self.log = self.app.log
         
-        # log('starting selfless daemon...')
+        # self.log('starting selfless daemon...')
         # self.selfless = Thread(target=start_selfless_thread)
         # self.selfless.daemon = True
         # self.selfless.start()
+
+        # connect?
+        self._node=self.connect()
         pass
 
     @property
@@ -59,13 +51,13 @@ class Api(object):
         return self._node
 
     def connect(self):
-        log('connecting...')
+        self.log('connecting...')
         #loop=asyncio.get_event_loop()
 
 
         async def _getdb():
             from .kad import KadServer
-            log('starting server..')
+            self.log('starting server..')
             node = KadServer() #storage=HalfForgetfulStorage())
 
             await node.listen(PORT_LISTEN)
@@ -74,14 +66,14 @@ class Api(object):
 
         async def _connect():
             self._node0 = node = await _getdb() #await loop.create_task(_getdb())
-            # log('!!!',type(self._node))
+            # self.log('!!!',type(self._node))
             #await node
             #self.node = node
             return node
 
         # return asyncio.run(_connect())
         # loop.set_debug(True)
-        # log('loop???',loop)
+        # self.log('loop???',loop)
         return asyncio.run(_connect())
 
 
@@ -96,7 +88,7 @@ class Api(object):
             except TypeError:
                 pass
 
-            log('wtf??',self.node)
+            self.log('wtf??',self.node)
             node = self.node
             # node=self.node
             
@@ -119,15 +111,16 @@ class Api(object):
 
     def get_json(self,key_or_keys):
         res = self.get(key_or_keys)
-        log('GET_JSON',res)
+        self.log('GET_JSON',res)
         if type(res)==list:
+            # self.log('is a list!',json.loads(res[0]))
             return [None if x is None else json.loads(x) for x in res]
         else:
             #log('RES!!!',res)
             return None if res is None else json.loads(res)
 
     def set(self,key_or_keys,value_or_values):
-        # log('hello?')
+        # self.log('hello?')
         # loop=asyncio.get_event_loop()
 
         async def _set():
@@ -141,10 +134,10 @@ class Api(object):
             if type(key_or_keys) in {list,tuple,dict}:
                 keys = key_or_keys
                 values = value_or_values
-                log(len(keys),len(values))
+                self.log(len(keys),len(values))
                 assert len(keys)==len(values)
                 res = await asyncio.gather(*[node.set(key,value) for key,value in zip(keys,values)])
-                # log('RES?',res)
+                # self.log('RES?',res)
             else:
                 key = key_or_keys
                 value = value_or_values
@@ -160,7 +153,7 @@ class Api(object):
 
     def set_json(self,key,value):
         value_json = jsonify(value)
-        # log('OH NO!',sys.getsizeof(value_json))
+        # self.log('OH NO!',sys.getsizeof(value_json))
         return self.set(key,value_json)
 
     def has(self,key):
@@ -188,7 +181,7 @@ class Api(object):
             return {'error':'Register failed'}
         person = self.get_person(name)
         if person is not None:
-            log('error! person exists')
+            self.log('error! person exists')
             return {'error':'Register failed'}
 
         private_key,public_key = new_keys(password=passkey,save=False)
@@ -201,7 +194,7 @@ class Api(object):
         self.set_person(name,public_key)
         
 
-        log('success! Account created')
+        self.log('success! Account created')
         return {'success':'Account created', 'username':name} 
 
     def load_private_key(self,password):
@@ -210,7 +203,7 @@ class Api(object):
         try:
             return load_private_key(pem_private_key.encode(),password)
         except ValueError as e:
-            log('!!',e)
+            self.log('!!',e)
             return None
 
 
@@ -228,7 +221,7 @@ class Api(object):
 
         # see if user exists
         person = self.get_person(name)
-        log(person)
+        self.log(person)
         if person is None:
             return {'error':'Login failed'}
 
@@ -269,11 +262,11 @@ class Api(object):
             parts.append(part)
             # PARTS.append(part)
             
-            log('part!:',sys.getsizeof(part))
+            self.log('part!:',sys.getsizeof(part))
             #self.set(part_key,part)
 
             if len(parts)>=buffer_size:
-                log('setting...')
+                self.log('setting...')
                 self.set(part_keys,parts)
                 part_keys=[]
                 PARTS+=parts
@@ -281,14 +274,14 @@ class Api(object):
 
         # set all parts    
         #self.set(part_keys,PARTS)
-        log('# parts:',len(PARTS))
+        self.log('# parts:',len(PARTS))
         if parts and part_keys: self.set(part_keys, parts)
 
         # how many parts?
-        log('# pieces!',len(part_ids))
+        self.log('# pieces!',len(part_ids))
 
         file_store = {'ext':os.path.splitext(filename)[-1][1:], 'parts':part_ids}
-        log('FILE STORE??',file_store)
+        self.log('FILE STORE??',file_store)
         self.set_json(uri+file_id,file_store)
         
         # file_store['data'].seek(0)
@@ -299,7 +292,7 @@ class Api(object):
         file_store = self.get_json('/file/'+file_id)
         if file_store is None: return
 
-        log('file_store!?',file_store)
+        self.log('file_store!?',file_store)
         keys = ['/part/'+x for x in file_store['parts']]
         pieces = self.get(keys)
         file_store['parts_data']=pieces
@@ -309,7 +302,7 @@ class Api(object):
     def post(self,data):
         post_id=get_random_id()
         res = self.set_json('/post/'+post_id, data)
-        log('got data:',data)
+        self.log('got data:',data)
 
         ## add to channels
         self.append_json('/posts/channel/earth', post_id)
@@ -434,7 +427,7 @@ import sys
 #         while True:
 #             chunk = f.read(chunksize)
 #             if chunk:
-#                 log(type(chunk), sys.getsizeof(chunk))
+#                 self.log(type(chunk), sys.getsizeof(chunk))
 #                 yield chunk
 #                 #yield from chunk
 #             else:
@@ -445,7 +438,7 @@ import sys
 #         barray = bytearray(f.read())
 
 #     for part in barray[0:-1:chunksize]:
-#         log('!?',part)
+#         self.log('!?',part)
 #         yield bytes(part)
 
 def bytes_from_file(filename,chunksize=8192):

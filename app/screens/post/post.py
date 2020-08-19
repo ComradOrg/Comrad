@@ -6,7 +6,6 @@ from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.button import MDRectangleFlatButton, MDIconButton, MDRaisedButton
 from kivy.properties import ListProperty,ObjectProperty
 from kivy.app import App
-from main import log
 from screens.feed.feed import *
 import os,time,threading
 from threading import Thread
@@ -106,7 +105,6 @@ class PostScreen(ProtectedScreen):
     def open_dialog(self,msg):
         if not hasattr(self,'dialog') or not self.dialog:
             self.dialog = ProgressPopup()
-            log(self.dialog.ids.keys())
         self.dialog.ids.progress_label.text=msg
         self.dialog.open()
 

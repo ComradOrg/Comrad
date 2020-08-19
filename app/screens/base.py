@@ -18,6 +18,9 @@ class BaseScreen(MDScreen):
     def app(self):
         return App.get_running_app()
 
+    def log(self,*x):
+        return self.app.log(*x)
+
 class ProtectedScreen(BaseScreen):
     def on_pre_enter(self):
         if not self.app.is_logged_in():
