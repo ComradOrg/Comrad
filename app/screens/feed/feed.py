@@ -62,7 +62,7 @@ class PostCard(MDCard):
 
     def __init__(self, data):
         super().__init__()
-        self.log('PostCard() got data: '+str(data))
+        # self.log('PostCard() got data: '+str(data))
         self.author = data.get('author','[Anonymous]')
         self.img_id = data.get('file_id','')
         self.img_ext = data.get('file_ext','')
@@ -73,10 +73,10 @@ class PostCard(MDCard):
         self.timestamp = data.get('timestamp',None)
         self.bind(minimum_height=self.setter('height'))
 
-        self.log('PostCard.img_id =',self.img_id)
-        self.log('PostCard.img_ext =',self.img_ext)
-        self.log('PostCard.img_src =',self.img_src)
-        self.log('PostCard.cache_img_src =',self.cache_img_src)
+        # self.log('PostCard.img_id =',self.img_id)
+        # self.log('PostCard.img_ext =',self.img_ext)
+        # self.log('PostCard.img_src =',self.img_src)
+        # self.log('PostCard.cache_img_src =',self.cache_img_src)
 
         # pieces
         author_section_layout = PostAuthorLayout()
