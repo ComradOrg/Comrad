@@ -10,7 +10,7 @@ import os,time
 from datetime import datetime
 from kivy.app import App
 from threading import Thread
-
+import asyncio
 
 
 
@@ -172,22 +172,25 @@ class FeedScreen(ProtectedScreen):
     posts = ListProperty()
 
     def on_pre_enter(self):
-        # self.log('ids:' +str(self.ids.post_carousel.ids))
-        for post in self.posts:
-            self.ids.post_carousel.remove_widget(post)
-        
-        i=0
-        lim=25
-        for i,post in enumerate(reversed(self.app.get_posts())):
-            #if ln.startswith('@') or ln.startswith('RT '): continue
-            #i+=1
-            if i>lim: break
+        async def go():
+            # self.log('ids:' +str(self.ids.post_carousel.ids))
+            for post in self.posts:
+                self.ids.post_carousel.remove_widget(post)
             
-            #post = Post(title=f'Marx Zuckerberg', content=ln.strip())
-            self.log('???')
-            post_obj = PostCard(post)
-            self.posts.append(post_obj)
-            self.ids.post_carousel.add_widget(post_obj)
+            i=0
+            lim=25
+            posts=await self.app.get_posts()
+            for i,post in enumerate(reversed(posts)):
+                #if ln.startswith('@') or ln.startswith('RT '): continue
+                #i+=1
+                if i>lim: break
+                
+                #post = Post(title=f'Marx Zuckerberg', content=ln.strip())
+                self.log('???')
+                post_obj = PostCard(post)
+                self.posts.append(post_obj)
+                self.ids.post_carousel.add_widget(post_obj)
+        asyncio.create_task(go())
 
     def on_pre_enter_test(self):
         i=0

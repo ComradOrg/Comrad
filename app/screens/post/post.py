@@ -190,17 +190,16 @@ class PostScreen(ProtectedScreen):
         #     log('REUPLOADING')
         #     self.upload()
 
-        def do_post():
+        async def do_post():
             file_id = self.img_id if hasattr(self,'img_id') else None
             file_ext = self.img_ext if hasattr(self,'img_ext') else None
-            self.app.post(content=content, file_id=file_id, file_ext=file_ext)
+            await self.app.post(content=content, file_id=file_id, file_ext=file_ext)
             import time
             self.close_dialog()
         
         self.open_dialog('posting')
         #Thread(target=do_post).start()
-        do_post()
-        
+        asyncio.create_task(do_post())        
 
 # class ViewPostScreen(ProtectedScreen): 
 #     post_id = ObjectProperty()

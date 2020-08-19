@@ -14,7 +14,7 @@ subprocess.DEVNULL = -3  # noqa
 
 import asyncio
 import os
-os.environ['KIVY_EVENTLOOP'] = 'async'
+os.environ['KIVY_EVENTLOOP'] = 'asyncio'
 # loop = asyncio.get_event_loop()
 # loop.set_debug(True)
 
@@ -299,7 +299,7 @@ class MainApp(MDApp):
                 if data_piece is not None:
                     of.write(data_piece)
     
-    def post(self, content='', file_id=None, file_ext=None, anonymous=False):
+    async def post(self, content='', file_id=None, file_ext=None, anonymous=False):
         #timestamp=time.time()
         jsond={}
         #jsond['timestamp']=
@@ -310,7 +310,7 @@ class MainApp(MDApp):
             jsond['author']=self.username
         
         self.log('posting:',jsond)
-        res=self.api.post(jsond)
+        res=await self.api.post(jsond)
         if 'success' in res:
             self.root.change_screen('feed')
             return {'post_id':res['post_id']}
@@ -319,11 +319,11 @@ class MainApp(MDApp):
                     
             
 
-    def get_post(self,post_id):
-        return self.api.get_post(post_id)
+    async def get_post(self,post_id):
+        return await self.api.get_post(post_id)
 
-    def get_posts(self):
-        return self.api.get_posts()
+    async def get_posts(self):
+        return await self.api.get_posts()
 
     def get_my_posts(self):
         return self.api.get_posts('/author/'+self.username)
@@ -345,18 +345,66 @@ class MainApp(MDApp):
                         shutil.copyfileobj(r.raw, of)
         return ofn_image
 
+    def app_func(self):
+        '''This will run both methods asynchronously and then block until they
+        are finished
+        '''
+        # self.other_task = asyncio.ensure_future(self.waste_time_freely())
+        self.other_task = asyncio.ensure_future(self.api.connect_forever())
 
+        async def run_wrapper():
+            # we don't actually need to set asyncio as the lib because it is
+            # the default, but it doesn't hurt to be explicit
+            await self.async_run() #async_lib='asyncio')
+            print('App done')
+            self.other_task.cancel()
 
+        return asyncio.gather(run_wrapper(), self.other_task)
 
-def main():
-    # start_logger()
-    App = MainApp()
-    App.run()
+    async def waste_time_freely(self):
+        '''This method is also run by the asyncio loop and periodically prints
+        something.
+        '''
+        try:
+            i = 0
+            while True:
+                if self.root is not None:
+                    #status = self.root.ids.label.status
+                    status='TimeWaster'
+                    self.log('{} on the beach'.format(status))
+
+                    # # get some sleep
+                    # if self.root.ids.btn1.state != 'down' and i >= 2:
+                    #     i = 0
+                    #     self.log('Yawn, getting tired. Going to sleep')
+                    #     self.root.ids.btn1.trigger_action()
+
+                i += 1
+                await asyncio.sleep(2)
+        except asyncio.CancelledError as e:
+            self.log('Wasting time was canceled', e)
+        finally:
+            # when canceled, print that it finished
+            self.log('Done wasting time')
 
 
 if __name__ == '__main__':
-    # loop = asyncio.get_event_loop()
-    # asyncio.set_event_loop(loop)
-    # loop.run_until_complete(main())
-    # loop.close()
-    main()
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(MainApp().app_func())
+    loop.close()
+
+
+
+
+# def main():
+#     # start_logger()
+#     App = MainApp()
+#     App.run()
+
+
+# if __name__ == '__main__':
+#     # loop = asyncio.get_event_loop()
+#     # asyncio.set_event_loop(loop)
+#     # loop.run_until_complete(main())
+#     # loop.close()
+#     main()
