@@ -115,7 +115,6 @@ class Api(object):
             
             if type(key_or_keys) in {list,tuple,dict}:
                 keys = key_or_keys
-                res = []
                 res = await asyncio.gather(*[node.get(key) for key in keys])
                 #log('RES?',res)
             else:
@@ -125,12 +124,30 @@ class Api(object):
             #node.stop()
             return res
             
-        # return asyncio.run(_get())
-        #res = await asyncio.create_task(_get())
-        #self.log('RES =',res)
         return await _get()
-        # return loop.create_task(_get())
+    
+    async def set(self,key_or_keys,value_or_values):
+        async def _set():
+            # self.log('async _set()',self.node)
+            # node=self.node
+            #node=await _getdb(self)
+            node=await self.node
+            
+            if type(key_or_keys) in {list,tuple,dict}:
+                keys = key_or_keys
+                values = value_or_values
+                assert len(keys)==len(values)
+                res = await asyncio.gather(*[node.set(key,value) for key,value in zip(keys,values)])
+                # self.log('RES?',res)
+            else:
+                key = key_or_keys
+                value = value_or_values
+                res = await node.set(key,value)
 
+            #node.stop()
+            return res
+
+        return await _set()
 
     async def get_json(self,key_or_keys):
         res = await self.get(key_or_keys)
@@ -142,59 +159,12 @@ class Api(object):
             #log('RES!!!',res)
             return None if res is None else json.loads(res)
 
-    async def set(self,key_or_keys,value_or_values):
-        async def _go():
-            # self.log('async _set()',self.node)
-            # node=self.node
-            #node=await _getdb(self)
-            node=await self.node
-            
-            
-            if type(key_or_keys) in {list,tuple,dict}:
-                keys = key_or_keys
-                values = value_or_values
-                assert len(keys)==len(values)
-                res = await asyncio.gather(*[node.set(key,value) for key,value in zip(keys,values)])
-                # self.log('RES?',res)
-            else:
-                key = key_or_keys
-                value = value_or_values
-                res = await node.set(key,value) #'this is a test')
 
-            #node.stop()
-            return res
-
-        # loop=asyncio.get_event_loop()
-        # loop.create_task(_set())
-
-        # async def _set(key,value):
-        #     import asyncio
-        #     from kademlia.network import Server
-            
-        #     # Create a node and start listening on port 5678
-        #     node = Server()
-        #     await node.listen(5678)
-
-        #     # Bootstrap the node by connecting to other known nodes, in this case
-        #     # replace 123.123.123.123 with the IP of another node and optionally
-        #     # give as many ip/port combos as you can for other nodes.
-        #     await node.bootstrap(NODES_PRIME)
-
-        #     # set a value for the key "my-key" on the network
-        #     await node.set(key, value)
-
-        #     # get the value associated with "my-key" from the network
-        #     result = await node.get(key)
-
-        #     print(result)
-        #     return result
-
-        return _go()
 
     async def set_json(self,key,value):
         value_json = jsonify(value)
         # self.log('OH NO!',sys.getsizeof(value_json))
-        return self.set(key,value_json)
+        return await self.set(key,value_json)
 
     def has(self,key):
         return self.get(key) is not None
@@ -345,11 +315,11 @@ class Api(object):
         self.log('Api.post() got data back from set_json():',res)
 
         # ## add to channels
-        self.append_json('/posts/channel/earth', post_id)
+        await self.append_json('/posts/channel/earth', post_id)
         
         # ## add to user
         un=data.get('author')
-        if un: self.append_json('/posts/author/'+un, post_id)
+        if un: await self.append_json('/posts/author/'+un, post_id)
 
         if res:
             return {'success':'Posted! %s' % post_id, 'post_id':post_id}
