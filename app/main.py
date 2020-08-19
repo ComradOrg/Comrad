@@ -5,6 +5,13 @@ DEFAULT_SCREEN='feed'
 HORIZONTAL = False
 WINDOW_SIZE = (1136,640) if HORIZONTAL else (640,1136)
 
+# monkeypatching the things that asyncio needs
+import subprocess
+subprocess.PIPE = -1  # noqa
+subprocess.STDOUT = -2  # noqa
+subprocess.DEVNULL = -3  # noqa
+
+
 import asyncio
 import os
 os.environ['KIVY_EVENTLOOP'] = 'async'
@@ -45,7 +52,8 @@ import sys
 sys.path.append("..") # Adds higher directory to python modules path.
 from p2p import p2p,crypto,api
 from kivy.event import EventDispatcher
-import threading,asyncio
+import threading,asyncio,sys
+
 
 Window.size = WINDOW_SIZE
 
@@ -152,6 +160,12 @@ class MainApp(MDApp):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         # start looping
+
+        # self.log('PATH',sys.path)
+        # sys.path.append('./p2p')
+
+
+
         self.event_loop_worker = None
         self.loop=asyncio.get_event_loop()
         
