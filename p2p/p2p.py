@@ -25,8 +25,6 @@ def boot_selfless_node(port=8468, loop=None):
     loop.set_debug(True)
 
     # shelf = HalfForgetfulStorage()
-    shelf = None
-    print('starting kad server')
 
     #server = Server(storage=shelf)
     try:
@@ -48,12 +46,12 @@ def boot_selfless_node(port=8468, loop=None):
 
 
 def boot_lonely_selfless_node(port=8467):
-    handler = logging.StreamHandler()
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    handler.setFormatter(formatter)
-    log = logging.getLogger('kademlia')
-    log.addHandler(handler)
-    log.setLevel(logging.DEBUG)
+    # handler = logging.StreamHandler()
+    # formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    # handler.setFormatter(formatter)
+    # log = logging.getLogger('kademlia')
+    # log.addHandler(handler)
+    # log.setLevel(logging.DEBUG)
 
     server,loop = boot_selfless_node(port,loop=None)
     try:

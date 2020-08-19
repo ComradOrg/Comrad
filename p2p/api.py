@@ -29,6 +29,18 @@ def start_selfless_thread():
         return boot_selfless_node(port=PORT_SPEAK, loop=loop)
     return asyncio.run(_go())
 
+async def _getdb(self,port=PORT_LISTEN):
+    from .kad import KadServer
+    self.log('starting server..')
+    node = KadServer() #storage=HalfForgetfulStorage())
+
+    self.log('listening..')
+    await node.listen(port)
+
+    self.log('bootstrapping server..')
+    await node.bootstrap(NODES_PRIME)
+    return node
+
 class Api(object):
     def __init__(self,app):
         self.app=app
@@ -50,23 +62,10 @@ class Api(object):
             self._node=self.connect()
         return self._node
 
-    def connect(self):
+    def connect(self,port=PORT_LISTEN):
         self.log('connecting...')
-        async def _getdb():
-            from .kad import KadServer
-            self.log('starting server..')
-            node = KadServer() #storage=HalfForgetfulStorage())
-
-            self.log('listening..')
-            await node.listen(PORT_LISTEN)
-
-            self.log('bootstrapping server..')
-            await node.bootstrap(NODES_PRIME)
-            return node
-
         async def _connect():
-            return await _getdb() 
-
+            return await _getdb(self,port) 
         return asyncio.run(_connect())
 
 
@@ -74,8 +73,8 @@ class Api(object):
 
         async def _get():
             # self.log('async _get()',self.node)
-            node = self.node
-            # node=self.node
+            #node=await _getdb(self,PORT_LISTEN+1)
+            node=self.node
             
             if type(key_or_keys) in {list,tuple,dict}:
                 keys = key_or_keys
@@ -107,7 +106,8 @@ class Api(object):
     def set(self,key_or_keys,value_or_values):
         async def _set():
             # self.log('async _set()',self.node)
-            node=self.node
+            # node=self.node
+            node=await _getdb(self,PORT_LISTEN+1)
             
             if type(key_or_keys) in {list,tuple,dict}:
                 keys = key_or_keys
@@ -121,7 +121,7 @@ class Api(object):
                 value = value_or_values
                 res = await node.set(key,value) #'this is a test')
 
-            # node.stop()
+            node.stop()
             return res
 
         # loop=asyncio.get_event_loop()

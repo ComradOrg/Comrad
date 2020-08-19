@@ -145,7 +145,7 @@ class KadProtocol(KademliaProtocol):
     # REMOTES_D={}
 
     def __init__(self, source_node, storage, ksize):
-        RPCProtocol.__init__(self,wait_timeout=15)
+        RPCProtocol.__init__(self,wait_timeout=5)
         self.router = RoutingTable(self, ksize, source_node)
         self.storage = storage
         self.source_node = source_node
@@ -179,6 +179,10 @@ class KadProtocol(KademliaProtocol):
 
 class KadServer(Server):
     protocol_class = KadProtocol # KadProtocol #KademliaProtocol
+
+    def __init__(self, *x, **y):
+        super().__init__(*x,**y)
+        log.info(f'Storage has {len(self.storage.data)} keys')
 
     def __repr__(self):
         repr = f"""
