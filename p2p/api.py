@@ -52,43 +52,28 @@ class Api(object):
 
     def connect(self):
         self.log('connecting...')
-        #loop=asyncio.get_event_loop()
-
-
         async def _getdb():
             from .kad import KadServer
             self.log('starting server..')
             node = KadServer() #storage=HalfForgetfulStorage())
 
+            self.log('listening..')
             await node.listen(PORT_LISTEN)
+
+            self.log('bootstrapping server..')
             await node.bootstrap(NODES_PRIME)
             return node
 
         async def _connect():
-            self._node0 = node = await _getdb() #await loop.create_task(_getdb())
-            # self.log('!!!',type(self._node))
-            #await node
-            #self.node = node
-            return node
+            return await _getdb() 
 
-        # return asyncio.run(_connect())
-        # loop.set_debug(True)
-        # self.log('loop???',loop)
         return asyncio.run(_connect())
 
 
     def get(self,key_or_keys):
-        from .kad import KadServer
-        # loop=asyncio.get_event_loop()
-        # asyncio.set_event_loop(loop)
 
         async def _get():
-            try:
-                await self.node
-            except TypeError:
-                pass
-
-            self.log('wtf??',self.node)
+            # self.log('async _get()',self.node)
             node = self.node
             # node=self.node
             
@@ -120,21 +105,14 @@ class Api(object):
             return None if res is None else json.loads(res)
 
     def set(self,key_or_keys,value_or_values):
-        # self.log('hello?')
-        # loop=asyncio.get_event_loop()
-
         async def _set():
-            try:
-                await self.node
-            except TypeError:
-                pass
+            # self.log('async _set()',self.node)
             node=self.node
             
-
             if type(key_or_keys) in {list,tuple,dict}:
                 keys = key_or_keys
                 values = value_or_values
-                self.log(len(keys),len(values))
+                self.log('# keys and values?',len(keys),len(values))
                 assert len(keys)==len(values)
                 res = await asyncio.gather(*[node.set(key,value) for key,value in zip(keys,values)])
                 # self.log('RES?',res)
@@ -302,14 +280,14 @@ class Api(object):
     def post(self,data):
         post_id=get_random_id()
         res = self.set_json('/post/'+post_id, data)
-        self.log('got data:',data)
+        self.log('Api.post() got data back from set_json():',res)
 
-        ## add to channels
-        self.append_json('/posts/channel/earth', post_id)
+        # ## add to channels
+        # self.append_json('/posts/channel/earth', post_id)
         
-        ## add to user
-        un=data.get('author')
-        if un: self.append_json('/posts/author/'+un, post_id)
+        # ## add to user
+        # un=data.get('author')
+        # if un: self.append_json('/posts/author/'+un, post_id)
 
         if res:
             return {'success':'Posted! %s' % post_id, 'post_id':post_id}
