@@ -19,11 +19,11 @@ log.setLevel(logging.DEBUG)
 PROXY_ADDR = ('0.0.0.0',8368)
 
 class HalfForgetfulStorage(ForgetfulStorage):
-    def __init__(self, ttl=604800):
+    def __init__(self, fn='cache.sqlite', ttl=604800):
         """
         By default, max age is a week.
         """
-        self.fn='cache.sqlite'
+        self.fn=fn
         from sqlitedict import SqliteDict
         self.data = SqliteDict(self.fn, autocommit=True)
         # if not os.path.exists(self.fn):

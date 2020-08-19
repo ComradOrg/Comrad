@@ -47,7 +47,10 @@ def start_selfless_thread():
 async def _getdb(self=None,port=PORT_LISTEN):
     
     if self: self.log('starting server..')
-    node = KadServer() #storage=HalfForgetfulStorage())
+
+    import os
+    self.log(os.getcwd())
+    node = KadServer(storage=HalfForgetfulStorage(fn='../p2p/cache.sqlite'))
 
     if self: self.log('listening..')
     await node.listen(port)
