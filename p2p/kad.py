@@ -105,9 +105,9 @@ class HalfForgetfulStorage(ForgetfulStorage):
         except KeyError:
             val=[]
         if not val: return []
-        data_list = list(val)
-        #return [dat[1] for dat in data_list]
-        return data_list
+        #data_list = list(val)
+        return [dat[1] for dat in data_list]
+        #return data_list
 
 
 

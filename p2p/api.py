@@ -309,9 +309,7 @@ class Api(object):
             else:
                 key = key_or_keys
                 value = value_or_values
-                oldval = node.get(key)
-                newval = self.encode_data(value)
-                res = await node.set(key,)
+                res = await node.set(key,self.encode_data(value))
 
             #node.stop()
             return res
@@ -325,6 +323,7 @@ class Api(object):
         
         def jsonize(entry):
             self.log('jsonize!',entry)
+            if not entry: return entry
             if not 'val' in entry: return entry
             val=entry['val']
             try:
@@ -355,7 +354,7 @@ class Api(object):
 
     ## PERSONS
     async def get_person(self,username):
-        return await self.get_val('/person/'+username)
+        return await self.get_json_val('/person/'+username)
 
     async def set_person(self,username,pem_public_key):
         # pem_public_key = save_public_key(public_key,return_instead=True)
@@ -485,7 +484,7 @@ class Api(object):
 
 
     async def append_json(self,key,data):
-        sofar=await self.get_val(key)
+        sofar=await self.get_json_val(key)
         if sofar is None: sofar = []
         new=sofar + ([data] if type(data)!=list else data)
         if await self.set_json(key, new):
@@ -538,65 +537,68 @@ class Api(object):
 
     async def download(self,file_id):
         self.log('file_id =',file_id)
-        file_store = await self.get_val('/file/'+file_id)
+        file_store = await self.get_json_val('/file/'+file_id)
         self.log('file_store =',file_store)
         if file_store is None: return
 
         self.log('file_store!?',file_store)
         keys = ['/part/'+x for x in file_store['parts']]
         
-        #time,pieces,pub,sign = await self.get_val(keys)
-        pieces = await self.get_val(keys)
+        #time,pieces,pub,sign = await self.get_json_val(keys)
+        pieces = await self.get_json_val(keys)
         self.log('pieces = ',pieces)
         file_store['parts_data']=pieces
         return file_store
 
-    def get_current_event_id(self):
-        return self.get_val(self,'/current/event/id')
+    #def get_current_event_id(self):
+    #    return self.get_json_val(self,'/current/event/id')
 
-    def get_uri(self):
-        event_id = self.get_current_event_id()
-        event_id=1 if event_id is None else int(event_id) 
-        return f'/event/{event_id}'
+    # def get_uri(self):
+    #     event_id = self.get_current_event_id()
+    #     event_id=1 if event_id is None else int(event_id) 
+    #     return f'/post/{event_id}'
 
-    async def post(self,data):
+    async def post(self,data,channels = ['earth'], add_profile=True):
         post_id=get_random_id()
         res = await self.set_json('/post/'+post_id, data)
         self.log('Api.post() got data back from set_json():',res)
 
         # ## add to channels
-        await self.append_json('/posts/channel/earth', post_id)
-        
+        res = await asyncio.gather(*[
+            self.set_json(f'/posts/channel/{channel}',post_id) for channel in channels
+        ])
+
         # ## add to user
         un=data.get('author')
-        if un: await self.append_json('/posts/author/'+un, post_id)
+        if un: await self.set_json('/posts/author/'+un, post_id)
 
         if res:
             return {'success':'Posted! %s' % post_id, 'post_id':post_id}
         return {'error':'Post failed'}
 
-    async def get_val(self,uri):
+    async def get_json_val(self,uri):
         res=await self.get_json(uri)
-        self.log('get_val() got',res)
+        self.log('get_json_val() got',res)
         r=None
         if type(res) == dict:
             r=res.get('val',None)
         elif type(res) == list:
             r=[x.get('val',None) for x in res]
-        self.log('get_val() giving back',r)
+        self.log('get_json_val() giving back',r)
         return r
 
     async def get_post(self,post_id):
-        return await self.get_val(post_id)
+        return await self.get_json_val(post_id)
 
-    async def get_posts(self,uri='/channel/earth'):
-        index = await self.get_val('/posts'+uri)
+    async def get_posts(self,uri='/posts/channel/earth'):
+        # index = await self.get_json_val('/posts'+uri)
+        index = await self.get_json_val(uri)
         self.log('got index?',index)
         
         if index is None: return []
-        data = self.get_val(['/post/'+x for x in index])
-        
-        return await data
+        data = await self.get_json_val(['/post/'+x for x in index])
+        # return index
+        return data
 
 
 
