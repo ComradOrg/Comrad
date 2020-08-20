@@ -40,7 +40,9 @@ class HalfForgetfulStorage(ForgetfulStorage):
         self.ttl = ttl
 
     def __setitem__(self, key, value):
-        self.data[key] = (time.monotonic(), value)
+        if not key in self.data: self.data[key]=[]
+        self.data[key] = tuple(self.data[key] + [(time.monotonic(), value)])
+        print('VALUE IS NOW',self.data[key])
         #self.write()
 
     def set(key,value):
@@ -61,8 +63,10 @@ class HalfForgetfulStorage(ForgetfulStorage):
         return default
 
     def __getitem__(self, key):
-        return self.data[key][1]
-
+        print(f'??!?\n{key}\n{self.data[key]}')
+        # return self.data[key][1]
+        # (skip time part of tuple)
+        return tuple([dat[1] for dat in self.data[key]])
 
 
 
@@ -206,6 +210,7 @@ class KadServer(Server):
 
 
     async def get(self, key):
+        stop
         """
         Get a key if the network has it.
 
@@ -244,6 +249,8 @@ class KadServer(Server):
             )
         log.info("setting '%s' = '%s' on network", key, value)
         dkey = digest(key)
+
+        print('STORE??',type(self.storage),self.storage)
         self.storage[dkey]=value
         return await self.set_digest(dkey, value)
 
@@ -285,3 +292,5 @@ class KadServer(Server):
 
 #### NEVERMIND
 # KadServer = Server
+
+

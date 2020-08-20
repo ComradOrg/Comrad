@@ -9,17 +9,18 @@ import asyncio,time
 # logger.setLevel(logging.DEBUG)
 sys.path.append('../p2p')
 # logger.info(os.getcwd(), sys.path)
-BSEP=b'\n'
-BSEP2=b'\t'
+BSEP=b'\n\n'
+BSEP2=b'\t\n'
+BSEP3=b'\r\r'
 
 try:
     from .crypto import *
     from .p2p import *
     from .kad import *
-except ModuleNotFoundError:
+except (ModuleNotFoundError,ImportError):
     from crypto import *
     from p2p import *
-    from kad import KadServer
+    from kad import *
 from pathlib import Path
 from functools import partial
 
@@ -50,7 +51,7 @@ async def _getdb(self=None,port=PORT_LISTEN):
     if self: self.log('starting server..')
 
     import os
-    self.log(os.getcwd())
+    if self: self.log(os.getcwd())
     node = KadServer(storage=HalfForgetfulStorage(fn='../p2p/cache.sqlite'))
 
     if self: self.log('listening..')
@@ -308,7 +309,9 @@ class Api(object):
             else:
                 key = key_or_keys
                 value = value_or_values
-                res = await node.set(key,self.encode_data(value))
+                oldval = node.get(key)
+                newval = self.encode_data(value)
+                res = await node.set(key,)
 
             #node.stop()
             return res
@@ -548,6 +551,13 @@ class Api(object):
         file_store['parts_data']=pieces
         return file_store
 
+    def get_current_event_id(self):
+        return self.get_val(self,'/current/event/id')
+
+    def get_uri(self):
+        event_id = self.get_current_event_id()
+        event_id=1 if event_id is None else int(event_id) 
+        return f'/event/{event_id}'
 
     async def post(self,data):
         post_id=get_random_id()
@@ -612,9 +622,32 @@ def get_random_id():
 
 
 def test_api():
-    api = Api()
+    
     # api.set(['a','b','c'],[1,2,3])
-    api.set_json('whattttt',{'aaaaa':12222})
+    async def run():
+        #api = Api()
+        # await api.connect()
+        
+        #await api.set_json('whattttt',{'aaaaa':12222})
+        #await api.set_json('whattttt',[111])
+        #await api.set_json('whattttt',[111])
+        
+        #val = await api.get_json('whattttt')
+        
+        server = await _getdb()
+        await server.set('a',1)
+        await server.set('a',2)
+        await server.set('a',str([2,3,4,5]))
+
+        val = await server.get('a')
+        
+        
+
+        print(f'VAL = {val}')
+        return val
+    
+    asyncio.run(run())
+
 
 def test_basic():
     import asyncio
@@ -637,6 +670,8 @@ def test_basic():
 
         # set a value for the key "my-key" on the network
         await node.set("my-key", "my awesome value")
+        await node.set("my-key", "my awesome value2")
+        await node.set("my-key", "my awesome value3")
 
         # get the value associated with "my-key" from the network
         result = await node.get("my-key")
