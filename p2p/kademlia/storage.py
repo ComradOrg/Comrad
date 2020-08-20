@@ -4,6 +4,9 @@ import operator
 from collections import OrderedDict
 from abc import abstractmethod, ABC
 
+BSEP_ST = b'||||'
+
+import base64
 def xprint(*xx):
     raise Exception('\n'.join(str(x) for x in xx)) 
 
@@ -108,66 +111,46 @@ class ForgetfulStorage(IStorage):
 
 
 class HalfForgetfulStorage(ForgetfulStorage):
-    def __init__(self, fn='data.db', ttl=604800, log=print):
+    def __init__(self, fn='dbm.gnu', ttl=604800, log=print):
         """
         By default, max age is a week.
         """
         self.fn=fn
         self.log=log
         
-        import pickledb
-        self.data = pickledb.load(self.fn,False)
+        # import pickledb
+        # self.data = pickledb.load(self.fn,False)
+        import dbm
+        self.data = dbm.open(self.fn,flag='cs')
         self.ttl = ttl
 
-    def iter_older_than(self, seconds_old):
-        return []
-
-    def cull(self):
-        pass
 
     def keys(self):
-        return self.data.getall()
+        # return self.data.getall()
+        return self.data.keys()
 
     def __len__(self):
         return len(self.keys())
 
     def __setitem__(self, key, value):
-        stop
         self.set(key,value)
 
     def set(self, key,value):# try:
-        sofar = self.data.get(key)
-        if not sofar: sofar=[]
-        xprint('SOFAR',sofar)
-        #sofar = [sofar] if sofar and type(sofar)!=list else []
-        print('SOFAR',sofar)
-        newdat = (time.monotonic(), value)
-        newval = sofar + [newdat]
-        print('NEWVAL',newval)
-        #del self.data[key]
-        #self.data[key]=newval
-        
-        self.data.set(key,newval)
-        self.data.dump()
-        
-        print('VALUE IS NOW'+str(self.data.get(key)))
-
+        time_b=str(time.monotonic()).encode()
+        newdat = BSEP_ST.join([time_b, value])
+        self.data[key]=newdat
 
     def get(self, key, default=None):
         # print(f'??!?\n{key}\n{self.data[key]}')
         # return self.data[key][1]
         # (skip time part of tuple)
-        val=[]
-        try:
-            val=self.data.get(key)
-            self.log('VALLLL',val)
-        except KeyError:
-            pass
-        if type(val)!=list: val=[val]
-        data_list = val
-        self.log('data_list =',data_list)
-        return [dat for dat in data_list]
+        val=self.data[key] if key in self.data else None
+        self.log('VALLLL',val)
+        if val is None: return None
 
+        time_b,val_b = val.split(BSEP_ST)
+        rval = (float(time_b.decode()), val_b)
+        self.log('rvalll',rval)
 
     def __getitem__(self, key):
         return self.get(key)

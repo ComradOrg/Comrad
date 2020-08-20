@@ -93,7 +93,7 @@ class Api(object):
                     #     self.root.ids.btn1.trigger_action()
 
                 i += 1
-                await asyncio.sleep(5)
+                await asyncio.sleep(2)
                 # pass
         except asyncio.CancelledError as e:
             self.log('P2P node cancelled', e)
@@ -130,10 +130,12 @@ class Api(object):
                 tasks=[]
                 for key in keys:
                     time_vals = await node.get(key)
+                    self.log('time_vals1 =',time_vals)
                     if time_vals is None: return []
                     if type(time_vals)!=list: time_vals=[time_vals]
                     self.log(f'time_vals = {time_vals}')
-                    if get_last: time_vals = [time_vals[-1]]
+                    #if get_last: time_vals = [time_vals[-1]]
+                    
                     for _time,_vals in time_vals:
                         task = self.decode_data(_vals)
                         tasks+=[task]

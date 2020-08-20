@@ -199,8 +199,7 @@ class KadServer(Server):
 
         print('STORE??',type(self.storage),self.storage)
         self.storage[dkey]=value
-        newvalue=self.storage[dkey]
-        return await self.set_digest(dkey, newvalue)
+        return await self.set_digest(dkey, value)
 
     async def set_digest(self, dkey, value):
         """
@@ -226,8 +225,8 @@ class KadServer(Server):
         biggest = max(neighbs) if neighbs else 0
         log.info('my distance to node is %s, biggest distance is %s',
                  self.node.distance_to(node),biggest)
-        if self.node.distance_to(node) < biggest:
-            self.storage[dkey] = value
+        #if self.node.distance_to(node) < biggest:
+        #    self.storage[dkey] = value
         
         log.info('here are the nodes %s' % nodes)
         results = [self.protocol.call_store(n, dkey, value) for n in nodes]

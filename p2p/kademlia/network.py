@@ -166,6 +166,7 @@ class Server:
             )
         log.info("setting '%s' = '%s' on network", key, value)
         dkey = digest(key)
+        return self.storage.set(key,value)
         return await self.set_digest(dkey, value)
 
     async def set_digest(self, dkey, value):
