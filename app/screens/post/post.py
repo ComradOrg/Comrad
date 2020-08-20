@@ -11,7 +11,7 @@ import os,time,threading
 from threading import Thread
 from kivymd.uix.dialog import MDDialog
 from kivy.core.image import Image as CoreImage
-import io,shutil
+import io,shutil,asyncio
 from main import rgb,COLOR_TEXT
 
 class ProgressPopup(MDDialog): pass
@@ -157,7 +157,7 @@ class PostScreen(ProtectedScreen):
         # upload
         #def do_upload():
             
-        self.app.upload(tmp_img_fn, file_id=file_id)
+        asyncio.create_task(self.app.upload(tmp_img_fn, file_id=file_id))
 
         # Thread(target=do_upload).start()
         

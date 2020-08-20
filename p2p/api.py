@@ -301,7 +301,7 @@ class Api(object):
 
     async def get_json(self,key_or_keys):
         res = await self.get(key_or_keys)
-        # self.log('GET_JSON',res)
+        self.log('get_json() got',res)
         if res is None: return res
         
         def jsonize(entry):
@@ -477,7 +477,7 @@ class Api(object):
         parts=[]
         PARTS=[]
         buffer_size=100
-        for part in bytes_from_file(filename,chunksize=1024*7):
+        for part in bytes_from_file(filename,chunksize=1024*4):
             part_id = get_random_id()
             part_ids.append(part_id)
             part_key='/part/'+part_id
@@ -498,7 +498,8 @@ class Api(object):
         # set all parts    
         #self.set(part_keys,PARTS)
         self.log('# parts:',len(PARTS))
-        if parts and part_keys: await self.set(part_keys, parts)
+        if parts and part_keys:
+            await self.set(part_keys, parts)
 
         # how many parts?
         self.log('# pieces!',len(part_ids))
@@ -512,7 +513,9 @@ class Api(object):
         return file_store
 
     async def download(self,file_id):
+        self.log('file_id =',file_id)
         file_store = await self.get_val('/file/'+file_id)
+        self.log('file_store =',file_store)
         if file_store is None: return
 
         self.log('file_store!?',file_store)
@@ -540,6 +543,7 @@ class Api(object):
 
     async def get_val(self,uri):
         res=await self.get_json(uri)
+        self.log('get_val() got',res)
         if res is None:
             return res
         elif type(res) == dict:
