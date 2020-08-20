@@ -97,11 +97,11 @@ class KadProtocol(KademliaProtocol):
     # remote_address = PROXY_ADDR
     # REMOTES_D={}
 
-    def __init__(self, source_node, storage, ksize):
-        RPCProtocol.__init__(self,wait_timeout=5)
-        self.router = RoutingTable(self, ksize, source_node)
-        self.storage = storage
-        self.source_node = source_node
+    # def __init__(self, source_node, storage, ksize):
+    #     RPCProtocol.__init__(self,wait_timeout=5)
+    #     self.router = RoutingTable(self, ksize, source_node)
+    #     self.storage = storage
+    #     self.source_node = source_node
 
     # def datagram_received(self, data, addr):
     #     #if not hasattr(self,'remotes_d'): self.remotes_d={}
@@ -122,7 +122,7 @@ class KadProtocol(KademliaProtocol):
         """
         if not result[0]:
             log.warning("no response from %s, ?removing from router", node)
-            # self.router.remove_contact(node)
+            self.router.remove_contact(node)
             return result
 
         log.info("got successful response from %s", node)
@@ -132,7 +132,7 @@ class KadProtocol(KademliaProtocol):
 
 
 class KadServer(Server):
-    protocol_class = KadProtocol # KadProtocol #KademliaProtocol
+    protocol_class = KademliaProtocol # KadProtocol #KademliaProtocol
 
     # def __init__(self, *x, **y):
     #     self.storage = y['storage']
@@ -198,7 +198,7 @@ class KadServer(Server):
         dkey = digest(key)
 
         print('STORE??',type(self.storage),self.storage)
-        self.storage[dkey]=value
+        self.storage.set(dkey,value)
         return await self.set_digest(dkey, value)
 
     async def set_digest(self, dkey, value):
@@ -225,8 +225,8 @@ class KadServer(Server):
         biggest = max(neighbs) if neighbs else 0
         log.info('my distance to node is %s, biggest distance is %s',
                  self.node.distance_to(node),biggest)
-        #if self.node.distance_to(node) < biggest:
-        #    self.storage[dkey] = value
+        if self.node.distance_to(node) < biggest:
+            self.storage.set(dkey,value)
         
         log.info('here are the nodes %s' % nodes)
         results = [self.protocol.call_store(n, dkey, value) for n in nodes]
