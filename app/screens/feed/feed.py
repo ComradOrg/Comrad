@@ -145,6 +145,7 @@ class PostCard(MDCard):
                 self.log('downloading...')
                 await self.app.download(self.img_id, self.cache_img_src)
                 self.image.reload()
+                return True
 
             #self.open_dialog('posting')
             #Thread(target=do_download).start()
