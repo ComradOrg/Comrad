@@ -19,7 +19,7 @@ log.setLevel(logging.DEBUG)
 PROXY_ADDR = ('0.0.0.0',8368)
 
 class HalfForgetfulStorage(ForgetfulStorage):
-    def __init__(self, fn='cache.h5', ttl=604800, log=print):
+    def __init__(self, fn='data.db', ttl=604800, log=print):
         """
         By default, max age is a week.
         """

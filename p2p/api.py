@@ -132,7 +132,7 @@ class Api(object):
                     time_vals = await node.get(key)
                     if time_vals is None: return []
                     if type(time_vals)!=list: time_vals=[time_vals]
-                    self.log(f'time_Vals = {time_vals}')
+                    self.log(f'time_vals = {time_vals}')
                     if get_last: time_vals = [time_vals[-1]]
                     for _time,_vals in time_vals:
                         task = self.decode_data(_vals)
