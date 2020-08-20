@@ -132,7 +132,7 @@ class Api(object):
                 val = await node.get(key)
                 res = await self.decode_data(val)
             
-            self.log(f'_get({key_or_keys}) --> {res}')
+            # self.log(f'_get({key_or_keys}) --> {res}')
             return res
         return await _get()
 
@@ -253,7 +253,7 @@ class Api(object):
         ### THIRD LINE: SIGNATURE VERIFICATION
         # can we decrypt signature?
         val_array = val.split(sep2)
-        self.log('val_array =',val_array)
+        # self.log('val_array =',val_array)
         time_b,sender_pubkey_b,receiver_pubkey_b,msg,signature = val_array
         if not signature: return None
         sender_pubkey=load_pubkey(sender_pubkey_b)
@@ -289,7 +289,7 @@ class Api(object):
             'sign':signature
         }
 
-        self.log('GOT WDV:',WDV)
+        # self.log('GOT WDV:',WDV)
         return WDV
         
         
@@ -321,7 +321,7 @@ class Api(object):
 
     async def get_json(self,key_or_keys,get_last=True):
         
-        def jsonize(entry):
+        # def jsonize(entry):
             self.log('jsonize!',entry)
             if not entry: return entry
             if not 'val' in entry: return entry
@@ -330,7 +330,7 @@ class Api(object):
                 dat=json.loads(val) if val else val
             except UnicodeDecodeError:
                 dat=val
-            self.log('dat??',dat)
+            # self.log('dat??',dat)
             entry['val']=dat
             return entry
 

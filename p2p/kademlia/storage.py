@@ -129,7 +129,7 @@ class HalfForgetfulStorage(IStorage):
 
     def dump(self):
         async def do():
-            self.log('[async!!] dumping %s keys:\n%s...' % (len(self.keys()),self.keys()))
+            self.log('[async!!] dumping %s keys...' % len(self.keys()))
             with open(self.fn,'wb') as of:
                 pickle.dump(self.data, of)
         asyncio.create_task(do())

@@ -145,7 +145,7 @@ class KadServer(Server):
         KadServer()
             ksize = {self.ksize}
             alpha = {self.alpha}
-            storage = {self.storage}
+            storage = {len(self.storage.data)} keys
             node = {self.node}
             transport = {self.transport}
             protocol = {self.protocol}
