@@ -18,6 +18,8 @@ log.setLevel(logging.DEBUG)
 
 PROXY_ADDR = ('0.0.0.0',8368)
 
+
+
 class HalfForgetfulStorage(ForgetfulStorage):
     def __init__(self, fn='data.db', ttl=604800, log=print):
         """
@@ -38,7 +40,10 @@ class HalfForgetfulStorage(ForgetfulStorage):
         # import shelve
         # self.data = shelve.open(self.fn,'a')
         import pickledb
-        self.data = pickledb.load(self.fn,True)
+        self.data = pickledb.load(self.fn,False)
+        # stop
+        # raise Exception(str([fn, type(self.data), self.data]))
+        # stop
 
 
         #print('>> loaded %s keys' % len(self.data))
@@ -73,7 +78,7 @@ class HalfForgetfulStorage(ForgetfulStorage):
         #self.data[key]=newval
         
         self.data.set(key,newval)
-        # self.data.dump()
+        self.data.dump()
         
         print('VALUE IS NOW'+str(self.data.get(key)))
         #self.write()

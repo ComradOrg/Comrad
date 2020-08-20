@@ -84,7 +84,7 @@ class Api(object):
             i = 0
             self._node = await self.connect()
             while True:
-                # self.log(f'Node status (minute {i}): {self._node}')
+                if not i%10: self.log(f'Node status (tick {i}): {self._node}')
 
                     # # get some sleep
                     # if self.root.ids.btn1.state != 'down' and i >= 2:
