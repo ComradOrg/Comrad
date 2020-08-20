@@ -53,10 +53,10 @@ class HalfForgetfulStorage(ForgetfulStorage):
 
     def get(self, key, default=None):
         # self.cull()
-        print('looking for key: ', key)
+        # print('looking for key: ', key)
         if key in self.data:
             val=self[key]
-            print('...found it! = %s' % val)
+            # print('...found it! = %s' % val)
             return self[key]
         return default
 
@@ -232,17 +232,18 @@ class KadServer(Server):
     #     log.info(f'spider found value: {found}')
     #     return found
 
-    # async def set(self, key, value):
-    #     """
-    #     Set the given string key to the given value in the network.
-    #     """
-    #     if not check_dht_value_type(value):
-    #         raise TypeError(
-    #             "Value must be of type int, float, bool, str, or bytes"
-    #         )
-    #     log.info("setting '%s' = '%s' on network", key, value)
-    #     dkey = digest(key)
-    #     return await self.set_digest(dkey, value)
+    async def set(self, key, value):
+        """
+        Set the given string key to the given value in the network.
+        """
+        if not check_dht_value_type(value):
+            raise TypeError(
+                "Value must be of type int, float, bool, str, or bytes"
+            )
+        log.info("setting '%s' = '%s' on network", key, value)
+        dkey = digest(key)
+        self.storage[dkey]=value
+        return await self.set_digest(dkey, value)
 
     async def set_digest(self, dkey, value):
         """

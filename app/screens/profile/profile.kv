@@ -1,4 +1,6 @@
 #:import ProfileScreen screens.profile.profile.ProfileScreen
+#:import COLOR_TEXT main.COLOR_TEXT
+#:import rgb main.rgb
 
 <ProfileScreen>:
     id:profile_screen
@@ -9,7 +11,7 @@
     # pos_hint: {'y':0}
     # canvas:
     #     Color:
-    #         rgb: 1,0,0,1
+    #         rgb: rgb(*COLOR_TEXT)
     #     Line:
     #         width: 1
     #         rectangle: (self.x, self.y, self.width, self.height)
@@ -79,13 +81,13 @@
 <AuthorName>:
     pos_hint: {'center_x':0.5}
     theme_text_color:'Custom'
-    text_color: 1,0,0,1
+    text_color: rgb(*COLOR_TEXT)
     halign:'center'
     
 <AuthorUsername>:
     pos_hint: {'center_x':0.5}
     theme_text_color:'Custom'
-    text_color: 1,0,0,1
+    text_color: rgb(*COLOR_TEXT)
     halign:'center'
 
 <AuthorDesc>:
@@ -93,22 +95,22 @@
 
 <AuthorPlace>:
     theme_text_color: 'Custom'
-    text_color:1,0,0,1
+    text_color:rgb(*COLOR_TEXT)
 
 <AuthorWebsite>:
     theme_text_color: 'Custom'
-    text_color:1,0,0,1
+    text_color:rgb(*COLOR_TEXT)
 
 
 <AuthorFollowers>:
     theme_text_color: 'Custom'
-    text_color:1,0,0,1
+    text_color:rgb(*COLOR_TEXT)
     size_hint:None,None
     pos_hint:{'right':1}
 
 <AuthorFollowing>:
     theme_text_color: 'Custom'
-    text_color:1,0,0,1
+    text_color:rgb(*COLOR_TEXT)
     pos_hint:{'left':1}
 
 <ProfilePageLayout>:
@@ -118,7 +120,7 @@
     padding:'10dp'
     size_hint:1,None
     adaptive_height:True
-    # md_bg_color:1,0,0,1
+    # md_bg_color:rgb(*COLOR_TEXT)
     pos_hint: {'center_x':0.5,'center_y':0.5}
     # md_bg_color:1,1,0,1
 
@@ -132,5 +134,5 @@
     spacing:'25dp'
     height:self.minimum_height
     size_hint:1,None
-    # md_bg_color:1,0,0,1
+    # md_bg_color:rgb(*COLOR_TEXT)
     pos_hint: {'center_x':0.5,'center_y':0.5}

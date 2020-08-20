@@ -5,7 +5,10 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.exceptions import InvalidSignature
 import os
-from .syfr import * #import syfr
+try:
+    from .syfr import * #import syfr
+except ImportError:
+    from syfr import *
 
 key_dir = os.path.join(os.path.expanduser('~'),'.keys','komrade')
 if not os.path.exists(key_dir): os.makedirs(key_dir)
@@ -176,7 +179,7 @@ def verify_msg(message, signature, public_key):
 
 
 ## ONLY NEEDS RUN ONCE!
-def gen_global_keys(fn='.keys.global.json'):
+def gen_global_keys1(fn='.keys.global.json'):
     from kivy.storage.jsonstore import JsonStore
 
     private_key,public_key=new_keys(save=False,password=None)
@@ -186,6 +189,18 @@ def gen_global_keys(fn='.keys.global.json'):
     store = JsonStore('./.keys.global.json')
 
     store.put('_keys',private=str(pem_private_key.decode()),public=str(pem_public_key.decode())) #(private_key,password=passkey)
+
+def gen_global_keys(fn='.keys.global.json'):
+    from kivy.storage.jsonstore import JsonStore
+
+    store = JsonStore('./.keys.global.json')
+
+    #store.put('_keys',private=str(pem_private_key.decode()),public=str(pem_public_key.decode())) #(private_key,password=passkey)
+
+    private_key = generate_rsa_key()
+    pem_private_key = serialize_privkey(private_key, password=None)# save_private_key(private_key,password=passkey,return_instead=True)
+    pem_public_key = serialize_pubkey(private_key.public_key())
+    store.put('_keys',private=pem_private_key.decode(),public=pem_public_key.decode()) #(private_key,password=passkey)
 
 """
 import os

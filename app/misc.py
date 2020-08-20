@@ -13,12 +13,14 @@ from kivy.uix.boxlayout import BoxLayout
 from kivymd.theming import ThemableBehavior
 from kivymd.uix.button import MDIconButton
 from kivymd.uix.stacklayout import MDStackLayout
-
+from main import COLOR_TEXT,rgb,COLOR_ICON
 
 Builder.load_string(
     """
 #:import DEVICE_TYPE kivymd.material_resources.DEVICE_TYPE
-
+#:import COLOR_TEXT main.COLOR_TEXT
+#:import COLOR_ICON main.COLOR_ICON
+#:import rgb main.rgb
 
 <MyChooseChip>
     adaptive_height: True
@@ -33,7 +35,7 @@ Builder.load_string(
         self.minimum_width - (dp(10) if DEVICE_TYPE == "desktop" else dp(20)) \
         if root.icon != 'checkbox-blank-circle' else self.minimum_width
     theme_text_color: 'Custom'
-    text_color:1,0,0,1
+    text_color:rgb(*COLOR_TEXT)
 
     # canvas:
     #     Color:
@@ -65,7 +67,7 @@ Builder.load_string(
             disabled: True
             md_bg_color_disabled: 0, 0, 0, 0
             theme_text_color: "Custom"
-            text_color: 1,0,0,1
+            text_color: rgb(*COLOR_TEXT)
 
         Label:
             id: label
@@ -141,7 +143,7 @@ class MyChip(BoxLayout, ThemableBehavior):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         if not self.color:
-            self.color = (1,0,0,1) #self.theme_cls.primary_color
+            self.color = rgb(*COLOR_TEXT) #self.theme_cls.primary_color
 
     def on_icon(self, instance, value):
         if value == "":

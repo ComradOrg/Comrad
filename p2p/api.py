@@ -94,10 +94,10 @@ class Api(object):
                 await asyncio.sleep(60)
                 # pass
         except asyncio.CancelledError as e:
-            self.log('Wasting time was canceled', e)
+            self.log('P2P node cancelled', e)
         finally:
             # when canceled, print that it finished
-            self.log('Done wasting time')
+            self.log('P2P node shutting down')
 
     @property
     async def node(self):
@@ -141,7 +141,7 @@ class Api(object):
         """
         import time
         timestamp=time.time()
-        self.log('timestamp =',timestamp)
+        #self.log('timestamp =',timestamp)
         
         if type(val)!=bytes:
             value = str(val)
@@ -154,17 +154,24 @@ class Api(object):
 
 
         # encrypt?
-        if not receiver_pubkey: receiver_pubkey=self.public_key_global
+        if not receiver_pubkey:
+            receiver_pubkey=self.public_key_global
         # self.log('value while unencrypted =',value_bytes)
         
         # value_bytes = encrypt_msg(value_bytes, self.public_key_global)
+
+        # self.log(f"""encrypting
+        # val = {value_bytes}
+        # sender_privkey = {self.private_key}
+        # receiver_pubkey = {receiver_pubkey}
+        # """)
 
         res = encrypt(value_bytes, self.private_key, receiver_pubkey)
         
 
         #aes_ciphertext, encry_aes_key, hmac, hmac_signature, iv, metadata
         
-        self.log('value while encrypted =  ',res)
+        # self.log('value while encrypted =  ',res)
         # stop
         aes_ciphertext, encry_aes_key, iv = res
         #self.log('value =',value)
@@ -173,14 +180,14 @@ class Api(object):
 
         #self.log('pem_public_key =',pem_public_key)
         # stop
-        self.log('aes_ciphertext = ',aes_ciphertext,type(aes_ciphertext))
+        # self.log('aes_ciphertext = ',aes_ciphertext,type(aes_ciphertext))
 
         signature = sign(aes_ciphertext, self.private_key)
-        self.log('signature =',signature)
+        # self.log('signature =',signature)
 
         ## Verify!
         authentic = verify_signature(signature, aes_ciphertext, self.public_key)
-        self.log('message is authentic for set??',authentic)
+        # self.log('message is authentic for set??',authentic)
 
         # value_bytes_ascii = ''.join([chr(x) for x in value_bytes])
 
@@ -188,8 +195,8 @@ class Api(object):
         # jsonstr=jsonify(jsond)
 
         time_b=str(timestamp).encode()
-        val_encr = aes_ciphertext
-        val_encr_key = encry_aes_key
+        val_encr = base64.b64encode(aes_ciphertext)
+        val_encr_key = base64.b64encode(encry_aes_key)
         sender_pubkey_b = serialize_pubkey(self.public_key)
         receiver_pubkey_b = serialize_pubkey(receiver_pubkey)
         signature = signature
@@ -204,15 +211,15 @@ class Api(object):
             signature
         ])
 
-        self.log('well_documented_val() =',WDV)
+        # self.log('well_documented_val() =',WDV)
         return WDV
 
     async def unpack_well_documented_val(self,WDV,sep=BSEP,private_key=None):
-        self.log('WDV???',WDV)
+        # self.log('WDV???',WDV)
         if WDV is None: return WDV
         #WDV=[base64.b64decode(x) for x in WDV.split(sep)]
         WDV=WDV.split(sep)
-        self.log('WDV NEW:',WDV)
+        # self.log('WDV NEW:',WDV)
         
         time_b,val_encr,val_encr_key,iv,to_pub_b,from_pub_b,signature = WDV #.split(sep)
         to_pub = load_pubkey(to_pub_b)
@@ -221,8 +228,8 @@ class Api(object):
         # verify
         
         val_encr_decode = base64.b64decode(val_encr)
-        authentic = verify_signature(signature,val_encr,from_pub)
-        self.log('message is authentic for GET?',authentic,signature,val_encr)
+        authentic = verify_signature(signature,val_encr_decode,from_pub)
+        # self.log('message is authentic for GET?',authentic,signature,val_encr)
 
         if not authentic: 
             self.log('inauthentic message!')
@@ -230,7 +237,18 @@ class Api(object):
 
         # decrypt
         # self.log('val before decryption = ',val_encr)
-        if private_key is None: private_key=self.private_key_global
+        if private_key is None:
+            private_key=self.private_key_global
+        
+        val_encr = base64.b64decode(val_encr)
+        val_encr_key = base64.b64decode(val_encr_key)
+        # self.log(f"""decrypting
+        # val_encr = {val_encr}
+        # val_encr_key = {val_encr_key}
+        # iv = {iv}
+        # private_key = {private_key}
+        # """)
+        
         val = decrypt(val_encr, val_encr_key, iv, private_key)
         # self.log('val after decryption = ',val)
 
@@ -245,7 +263,7 @@ class Api(object):
             'sign':signature
         }
 
-        self.log('GOT WDV:',WDV)
+        # self.log('GOT WDV:',WDV)
         return WDV
         
         
@@ -277,7 +295,7 @@ class Api(object):
 
     async def get_json(self,key_or_keys):
         res = await self.get(key_or_keys)
-        self.log('GET_JSON',res)
+        # self.log('GET_JSON',res)
         if res is None: return res
         
         def jsonize(entry):
@@ -307,8 +325,7 @@ class Api(object):
 
     ## PERSONS
     async def get_person(self,username):
-        res=await self.get_json('/person/'+username)
-        return res.get('val') if res and type(res)==dict else res
+        return await self.get_val('/person/'+username)
 
     async def set_person(self,username,pem_public_key):
         # pem_public_key = save_public_key(public_key,return_instead=True)
@@ -375,6 +392,7 @@ class Api(object):
             return {'error':'Login failed'}
 
         # verify keys
+        self.log('got person =',person)
         person_public_key_pem = person['public_key']
         public_key = load_pubkey(person_public_key_pem) #load_public_key(person_public_key_pem.encode())
         self._public_key = real_public_key = private_key.public_key()
@@ -406,26 +424,32 @@ class Api(object):
         if not hasattr(self,'_public_key_global'):
             try:
                 pem=self.app.store_global.get('_keys').get('public',None)
-                self._public_key_global=load_public_key(pem.encode())
+                self.log('PEM GLOBAL = ',pem)
+                self._public_key_global=load_pubkey(pem.encode())
+                self.log('PUBKEYGLOBAL =',self._public_key_global)
                 return self._public_key_global
             except ValueError as e:        
                 self.log('!!',e)
-        return None
+        else:
+            return self._public_key_global
         
     @property
     def private_key_global(self):
         if not hasattr(self,'_private_key_global'):
             try:
                 pem=self.app.store_global.get('_keys').get('private',None)
-                self._private_key_global=load_private_key(pem.encode())
+                #self.log('PEM PRIVATE GLOBAL',pem)
+                self._private_key_global=load_privkey(pem.encode())
                 return self._private_key_global
             except ValueError as e:
                 self.log('!!',e)
-        return None
+        else:
+            return self._private_key_global
+        
 
 
     async def append_json(self,key,data):
-        sofar=await self.get_json(key)
+        sofar=await self.get_val(key)
         if sofar is None: sofar = []
         new=sofar + ([data] if type(data)!=list else data)
         if await self.set_json(key, new):
@@ -476,7 +500,7 @@ class Api(object):
         return file_store
 
     async def download(self,file_id):
-        file_store = await self.get_json('/file/'+file_id)
+        file_store = await self.get_val('/file/'+file_id)
         if file_store is None: return
 
         self.log('file_store!?',file_store)
@@ -502,14 +526,25 @@ class Api(object):
             return {'success':'Posted! %s' % post_id, 'post_id':post_id}
         return {'error':'Post failed'}
 
+    async def get_val(self,uri):
+        res=await self.get_json(uri)
+        if res is None:
+            return res
+        elif type(res) == dict:
+            return res.get('val',None)
+        elif type(res) == list:
+            return [x.get('val',None) for x in res]
+        return None
+
     async def get_post(self,post_id):
-        return self.get_json('/post/'+post_id)
+        return await self.get_val(post_id)
 
     async def get_posts(self,uri='/channel/earth'):
-        index = await self.get_json('/posts'+uri)
+        index = await self.get_val('/posts'+uri)
+        self.log('got index?',index)
         
         if index is None: return []
-        data = self.get_json(['/post/'+x for x in index])
+        data = self.get_val(['/post/'+x for x in index])
         
         return await data
 
