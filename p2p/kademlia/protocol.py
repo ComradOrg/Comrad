@@ -151,7 +151,7 @@ class KademliaProtocol(RPCProtocol):
 
         log.info("never seen %s before, adding to router", node)
         #for key, value in self.storage:
-        for key in self.storage.data.keys():
+        for key in self.storage.keys():
             value = self.storage[key]
             keynode = Node(digest(key))
             neighbors = self.router.find_neighbors(keynode)
