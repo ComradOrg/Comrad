@@ -19,18 +19,26 @@ log.setLevel(logging.DEBUG)
 PROXY_ADDR = ('0.0.0.0',8368)
 
 class HalfForgetfulStorage(ForgetfulStorage):
-    def __init__(self, fn='cache.sqlite', ttl=604800):
+    def __init__(self, fn='cache.h5', ttl=604800, log=print):
         """
         By default, max age is a week.
         """
         self.fn=fn
-        from sqlitedict import SqliteDict
-        self.data = SqliteDict(self.fn, autocommit=True)
+        self.log=log
+        #from sqlitedict import SqliteDict
+        #self.data = SqliteDict(self.fn, autocommit=True)
+        
+        #import h5py
+        #self.data = h5py.File(self.fn,'a')
         # if not os.path.exists(self.fn):
         #     self.data={}
         # else:
         #     with open(self.fn,'rb') as f:
         #         self.data=pickle.load(f)
+        # import shelve
+        # self.data = shelve.open(self.fn,'a')
+        import pickledb
+        self.data = pickledb.load(self.fn,False)
 
 
         #print('>> loaded %s keys' % len(self.data))
@@ -39,10 +47,32 @@ class HalfForgetfulStorage(ForgetfulStorage):
         # self.data = self.store.get('OrderedDict',OrderedDict())
         self.ttl = ttl
 
+    def cull(self):
+        pass
+
+    def keys(self):
+        return self.data.getall()
+
+    def __len__(self):
+        return len(self.keys())
+
     def __setitem__(self, key, value):
-        if not key in self.data: self.data[key]=[]
-        self.data[key] = tuple(self.data[key] + [(time.monotonic(), value)])
-        print('VALUE IS NOW',self.data[key])
+        # try:
+        #     sofar=self.data.get(key)
+        # except (KeyError,ValueError) as e:
+        #     sofar = []
+        sofar = self.data.get(key)
+        if type(sofar)!=list: sofar=[sofar]
+        newdat = (time.monotonic(), value)
+        newval = sofar + [newdat]
+        self.log('VALUE WAS',sofar)
+        #del self.data[key]
+        #self.data[key]=newval
+        
+        self.data.set(key,newval)
+        self.data.dump()
+        
+        raise Exception('VALUE IS NOW'+str(self.data.get(key)))
         #self.write()
 
     def set(key,value):
@@ -57,7 +87,7 @@ class HalfForgetfulStorage(ForgetfulStorage):
         # self.cull()
         # print('looking for key: ', key)
         if key in self.data:
-            val=self[key]
+            val=list(self[key])
             # print('...found it! = %s' % val)
             return self[key]
         return default
@@ -66,7 +96,8 @@ class HalfForgetfulStorage(ForgetfulStorage):
         print(f'??!?\n{key}\n{self.data[key]}')
         # return self.data[key][1]
         # (skip time part of tuple)
-        return tuple([dat[1] for dat in self.data[key]])
+        data_list = list(self.data.get(key))
+        return [dat[1] for dat in data_list]
 
 
 
@@ -210,7 +241,6 @@ class KadServer(Server):
 
 
     async def get(self, key):
-        stop
         """
         Get a key if the network has it.
 
@@ -252,7 +282,8 @@ class KadServer(Server):
 
         print('STORE??',type(self.storage),self.storage)
         self.storage[dkey]=value
-        return await self.set_digest(dkey, value)
+        newvalue=self.storage[dkey]
+        return await self.set_digest(dkey, newvalue)
 
     async def set_digest(self, dkey, value):
         """

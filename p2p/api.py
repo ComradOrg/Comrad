@@ -52,7 +52,7 @@ async def _getdb(self=None,port=PORT_LISTEN):
 
     import os
     if self: self.log(os.getcwd())
-    node = KadServer(storage=HalfForgetfulStorage(fn='../p2p/cache.sqlite'))
+    node = KadServer(storage=HalfForgetfulStorage(fn='../p2p/data.db',log=self.log))
 
     if self: self.log('listening..')
     await node.listen(port)
@@ -625,7 +625,7 @@ def test_api():
     
     # api.set(['a','b','c'],[1,2,3])
     async def run():
-        #api = Api()
+        api = Api()
         # await api.connect()
         
         #await api.set_json('whattttt',{'aaaaa':12222})
@@ -634,10 +634,18 @@ def test_api():
         
         #val = await api.get_json('whattttt')
         
-        server = await _getdb()
+        server = await _getdb(api)
         await server.set('a',1)
+        print(await server.get('a'))
+        await asyncio.sleep(5)
         await server.set('a',2)
+
+        print(await server.get('a'))
+        await asyncio.sleep(5)
+
         await server.set('a',str([2,3,4,5]))
+        print(await server.get('a'))
+        await asyncio.sleep(5)
 
         val = await server.get('a')
         
