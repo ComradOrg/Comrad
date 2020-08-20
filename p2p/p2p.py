@@ -71,6 +71,6 @@ def boot_lonely_selfless_node(port=8467):
     async def go():
         from api import Api,PORT_LISTEN
         API = Api()
-        await API.connect_forever(PORT_LISTEN - 1)
+        await API.connect_forever(8467)
     asyncio.run(go())
     
