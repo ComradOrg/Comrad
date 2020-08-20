@@ -148,7 +148,7 @@ class PostCard(MDCard):
 
             #self.open_dialog('posting')
             #Thread(target=do_download).start()
-            do_download()
+            asyncio.create_task(do_download())
 
 
     @property
