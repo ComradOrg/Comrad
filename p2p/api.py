@@ -93,7 +93,7 @@ class Api(object):
                     #     self.root.ids.btn1.trigger_action()
 
                 i += 1
-                await asyncio.sleep(2)
+                await asyncio.sleep(5)
                 # pass
         except asyncio.CancelledError as e:
             self.log('P2P node cancelled', e)

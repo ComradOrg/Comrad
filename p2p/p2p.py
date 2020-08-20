@@ -59,7 +59,7 @@ def boot_lonely_selfless_node(port=8467):
         i=0
         while i+1:
             if not i%10: print(node)
-            await asyncio.sleep(1)
+            await asyncio.sleep(5)
             i+=1
     
     asyncio.run(go())
