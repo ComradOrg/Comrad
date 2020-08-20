@@ -4,6 +4,10 @@ import operator
 from collections import OrderedDict
 from abc import abstractmethod, ABC
 
+def xprint(*xx):
+    raise Exception('\n'.join(str(x) for x in xx)) 
+
+
 
 class IStorage(ABC):
     """
@@ -92,3 +96,80 @@ class ForgetfulStorage(IStorage):
         ikeys = self.data.keys()
         ivalues = map(operator.itemgetter(1), self.data.values())
         return zip(ikeys, ivalues)
+
+
+
+
+
+
+
+
+
+
+
+class HalfForgetfulStorage(ForgetfulStorage):
+    def __init__(self, fn='data.db', ttl=604800, log=print):
+        """
+        By default, max age is a week.
+        """
+        self.fn=fn
+        self.log=log
+        
+        import pickledb
+        self.data = pickledb.load(self.fn,False)
+        self.ttl = ttl
+
+    def iter_older_than(self, seconds_old):
+        return []
+
+    def cull(self):
+        pass
+
+    def keys(self):
+        return self.data.getall()
+
+    def __len__(self):
+        return len(self.keys())
+
+    def __setitem__(self, key, value):
+        stop
+        self.set(key,value)
+
+    def set(self, key,value):# try:
+        sofar = self.data.get(key)
+        if not sofar: sofar=[]
+        xprint('SOFAR',sofar)
+        #sofar = [sofar] if sofar and type(sofar)!=list else []
+        print('SOFAR',sofar)
+        newdat = (time.monotonic(), value)
+        newval = sofar + [newdat]
+        print('NEWVAL',newval)
+        #del self.data[key]
+        #self.data[key]=newval
+        
+        self.data.set(key,newval)
+        self.data.dump()
+        
+        print('VALUE IS NOW'+str(self.data.get(key)))
+
+
+    def get(self, key, default=None):
+        # print(f'??!?\n{key}\n{self.data[key]}')
+        # return self.data[key][1]
+        # (skip time part of tuple)
+        val=[]
+        try:
+            val=self.data.get(key)
+            self.log('VALLLL',val)
+        except KeyError:
+            pass
+        if type(val)!=list: val=[val]
+        data_list = val
+        self.log('data_list =',data_list)
+        return [dat for dat in data_list]
+
+
+    def __getitem__(self, key):
+        return self.get(key)
+        
+        #return data_list

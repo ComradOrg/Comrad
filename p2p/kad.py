@@ -19,108 +19,6 @@ log.setLevel(logging.DEBUG)
 PROXY_ADDR = ('0.0.0.0',8368)
 
 
-
-class HalfForgetfulStorage(ForgetfulStorage):
-    def __init__(self, fn='data.db', ttl=604800, log=print):
-        """
-        By default, max age is a week.
-        """
-        self.fn=fn
-        self.log=log
-        #from sqlitedict import SqliteDict
-        #self.data = SqliteDict(self.fn, autocommit=True)
-        
-        #import h5py
-        #self.data = h5py.File(self.fn,'a')
-        # if not os.path.exists(self.fn):
-        #     self.data={}
-        # else:
-        #     with open(self.fn,'rb') as f:
-        #         self.data=pickle.load(f)
-        # import shelve
-        # self.data = shelve.open(self.fn,'a')
-        import pickledb
-        self.data = pickledb.load(self.fn,False)
-        # stop
-        # raise Exception(str([fn, type(self.data), self.data]))
-        # stop
-
-
-        #print('>> loaded %s keys' % len(self.data))
-
-        #self.data = pickle.open('sto.dat','rb') #,writeback=True)
-        # self.data = self.store.get('OrderedDict',OrderedDict())
-        self.ttl = ttl
-
-    def cull(self):
-        pass
-
-    def keys(self):
-        return self.data.getall()
-
-    def __len__(self):
-        return len(self.keys())
-
-    def __setitem__(self, key, value):
-        # try:
-        #     sofar=self.data.get(key)
-        # except (KeyError,ValueError) as e:
-        #     sofar = []
-        sofar = self.data.get(key)
-        if not sofar: sofar=[]
-        print('SOFAR',sofar)
-        #sofar = [sofar] if sofar and type(sofar)!=list else []
-        print('SOFAR',sofar)
-        newdat = (time.monotonic(), value)
-        newval = sofar + [newdat]
-        print('NEWVAL',newval)
-        #del self.data[key]
-        #self.data[key]=newval
-        
-        self.data.set(key,newval)
-        self.data.dump()
-        
-        print('VALUE IS NOW'+str(self.data.get(key)))
-        #self.write()
-
-    def set(key,value):
-        self[key]=value
-
-    def write(self):
-        pass
-        #with open(self.fn,'wb') as f:
-        #    pickle.dump(self.data, f)
-
-    def get(self, key, default=None):
-        # self.cull()
-        # print('looking for key: ', key)
-        # if key in self.data:
-        #     val=list(self[key])
-        #     # print('...found it! = %s' % val)
-        #     return self[key]
-        # return default
-        stop
-        return self[key]
-
-    def __getitem__(self, key):
-        # print(f'??!?\n{key}\n{self.data[key]}')
-        # return self.data[key][1]
-        # (skip time part of tuple)
-        val=[]
-        try:
-            val=self.data.get(key)
-            self.log('VALLLL',val)
-        except KeyError:
-            pass
-        if type(val)!=list: val=[val]
-        data_list = val
-        self.log('data_list =',data_list)
-        return [dat for dat in data_list]
-        
-        #return data_list
-
-
-
 """UDP proxy server."""
 
 import asyncio
@@ -236,9 +134,11 @@ class KadProtocol(KademliaProtocol):
 class KadServer(Server):
     protocol_class = KadProtocol # KadProtocol #KademliaProtocol
 
-    def __init__(self, *x, **y):
-        super().__init__(*x,**y)
-        log.info(f'Storage has {len(self.storage.data)} keys')
+    # def __init__(self, *x, **y):
+    #     self.storage = y['storage']
+    #     # raise Exception(str(self.storage))
+    #     super().__init__(*x,**y)
+    #     log.info(f'Storage has {len(self.storage.data)} keys')
 
     def __repr__(self):
         repr = f"""
