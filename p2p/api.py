@@ -594,7 +594,7 @@ class Api(object):
 
         # ## add to user
         un=data.get('author')
-        if un: await self.set_json('/posts/author/'+un, post_id)
+        if un and add_profile: await self.append_json('/posts/author/'+un, post_id)
 
         if res:
             asyncio.create_task(self.flush())
