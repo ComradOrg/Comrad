@@ -12,6 +12,7 @@ from threading import Thread
 from kivymd.uix.dialog import MDDialog
 from kivy.core.image import Image as CoreImage
 import io,shutil
+from main import rgb,COLOR_TEXT
 
 class ProgressPopup(MDDialog): pass
 class MessagePopup(MDDialog): pass
@@ -65,9 +66,9 @@ class PostScreen(ProtectedScreen):
         post_json = {'author':self.app.username, 'timestamp':time.time()}
         self.post_card = post = PostCard(post_json)
         self.post_textfield = post_TextField = AddPostTextField()
-        post_TextField.line_color_focus=(1,0,0,1)
-        post_TextField.line_color_normal=(1,0,0,1)
-        post_TextField.current_hint_text_color=(1,0,0,1)
+        post_TextField.line_color_focus=rgb(*COLOR_TEXT)
+        post_TextField.line_color_normal=rgb(*COLOR_TEXT)
+        post_TextField.current_hint_text_color=rgb(*COLOR_TEXT)
         post_TextField.font_name='assets/overpass-mono-regular.otf'
         post_TextField.hint_text='word?'
 

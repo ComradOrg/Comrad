@@ -1,4 +1,5 @@
 #:import PostScreen screens.post.post.PostScreen
+#:import COLOR_TEXT main.COLOR_TEXT
 
 <AddPostTextField>
     id: post_content_input
@@ -13,9 +14,9 @@
     size_hint: (1,None)
     # size: ('300dp','300dp')
     pos_hint: {'center_x': 0.5}
-    line_color_focus: 1,0,0,1
-    line_color_normal: 1,0,0,1
-    current_hint_text_color: 1,0,0,1
+    line_color_focus: rgb(*COLOR_TEXT)
+    line_color_normal: rgb(*COLOR_TEXT)
+    current_hint_text_color: rgb(*COLOR_TEXT)
     # max_text_length: 1000
     # mode:'fill'
     font_size:'23dp'
@@ -37,20 +38,20 @@
     on_release: self.screen.choose()
     #app.register(username.text, password.text)
     theme_text_color: "Custom"
-    text_color: 1,0,0,1
+    text_color: rgb(*COLOR_TEXT)
     md_bg_color: 0,0,0,1
     font_size: '28sp'
-    # fill:1,0,0,1
+    # fill:rgb(*COLOR_TEXT)
     font_name: 'assets/overpass-mono-regular.otf'
 
 <PostButton>:
     text: "post"
     on_release: self.screen.post() #self.post_content_input.text, file_chooser_button.selection)
     theme_text_color: "Custom"
-    text_color: 1,0,0,1
+    text_color: rgb(*COLOR_TEXT)
     md_bg_color: 0,0,0,1
     font_size: '28sp'
-    # fill:1,0,0,1
+    # fill:rgb(*COLOR_TEXT)
     font_name: 'assets/overpass-mono-regular.otf'
 
 <PostStatus>:
@@ -59,10 +60,10 @@
     size_hint:(None,None)
     md_bg_color:0,0,0,1
     pos_hint:{'center_x':.5, 'y':0.1}
-    text_color: 1,0,0,1
+    text_color: rgb(*COLOR_TEXT)
     md_bg_color: 0,0,0,1
     font_size: '25sp'
-    # fill:1,0,0,1
+    # fill:rgb(*COLOR_TEXT)
     font_name: 'assets/overpass-mono-regular.otf'
 
 <ProgressPopup>:
@@ -83,7 +84,7 @@
         # border_radius:20
         canvas:
             Color:
-                rgb: 1,0,0,1
+                rgb: rgb(*COLOR_TEXT)
             Line:
                 width: 1
                 rectangle: (self.x, self.y, self.width, self.height)
@@ -97,7 +98,7 @@
             text: ''
             halign: 'center'
             theme_text_color: 'Custom'
-            text_color: 1,0,0,1
+            text_color: rgb(*COLOR_TEXT)
             font_size: '18dp'
             font_name: 'assets/overpass-mono-regular.otf'
             pos_hint: {'center_x': .5, 'center_y': 0.5}
@@ -108,7 +109,7 @@
         size: '46dp','46dp'
         pos_hint: {'center_x': .5, 'center_y': 0.5}
         active: True
-        color:1,0,0,1
+        color:rgb(*COLOR_TEXT)
 
 <MessagePopup>:
     type: "custom"
@@ -129,7 +130,7 @@
         # border_radius:20
         canvas:
             Color:
-                rgb: 1,0,0,1
+                rgb: rgb(*COLOR_TEXT)
             Line:
                 width: 1
                 rectangle: (self.x, self.y, self.width, self.height)
@@ -144,7 +145,7 @@
             halign: 'center'
             # valign: 'middle'
             theme_text_color: 'Custom'
-            text_color: 1,0,0,1
+            text_color: rgb(*COLOR_TEXT)
             font_size: '18dp'
             font_name: 'assets/overpass-mono-regular.otf'
             pos_hint: {'center_x': .5, 'y': 0}

@@ -1,6 +1,6 @@
 import os,time,sys,logging
 from pathlib import Path
-import asyncio
+import asyncio,time
 # handler = logging.StreamHandler()
 # formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 # handler.setFormatter(formatter)
@@ -129,6 +129,52 @@ class Api(object):
             return res
             
         return await _get()
+
+    def well_documented_val(self,val):
+        """
+        What do we want to store with
+        
+        1) Timestamp
+        2) Value
+        3) Public key of author
+        4) Signature of value by author
+        """
+        from binascii import a2b_uu as ascii2binary
+        from binascii import b2a_uu as binary2ascii
+
+        timestamp=time.time()
+        self.log('timestamp =',timestamp)
+        
+        value = str(val)
+        try:
+            value_bytes = value.encode('utf-8')
+        except UnicodeDecodeError:
+            value_bytes = value.encode('ascii')
+
+        #self.log('value =',value)
+        
+        pem_public_key = save_public_key(self.public_key,return_instead=True)
+
+        #self.log('pem_public_key =',pem_public_key)
+        # stop
+
+        signature = sign_msg(value_bytes, self.private_key)
+        self.log('signature =',signature)
+
+        # value_bytes_ascii = ''.join([chr(x) for x in value_bytes])
+
+        # jsond = {'time':timestamp, 'val':value_bytes_ascii, 'pub':pem_public_key, 'sign':signature}
+        # jsonstr=jsonify(jsond)
+
+        sep=b'||||'
+        WDV = sep.join([str(timestamp).encode(), value_bytes,pem_public_key,signature])
+        # self.log('WDV = 'mWD)
+
+        # self.log(WDV.split(sep))
+
+        self.log('well_documented_val() =',WDV)
+        return WDV
+
     
     async def set(self,key_or_keys,value_or_values):
         async def _set():
@@ -141,12 +187,12 @@ class Api(object):
                 keys = key_or_keys
                 values = value_or_values
                 assert len(keys)==len(values)
-                res = await asyncio.gather(*[node.set(key,value) for key,value in zip(keys,values)])
+                res = await asyncio.gather(*[node.set(key,self.well_documented_val(value)) for key,value in zip(keys,values)])
                 # self.log('RES?',res)
             else:
                 key = key_or_keys
                 value = value_or_values
-                res = await node.set(key,value)
+                res = await node.set(key,self.well_documented_val(value))
 
             #node.stop()
             return res
@@ -229,7 +275,7 @@ class Api(object):
             return {'error':private_key_dat['error']}
         if not 'success' in private_key_dat:
             return {'error':'Incorrect password?'}
-        private_key = private_key_dat['success']
+        self._private_key = private_key = private_key_dat['success']
 
         # see if user exists
         person = await self.get_person(name)
@@ -240,7 +286,7 @@ class Api(object):
         # verify keys
         person_public_key_pem = person['public_key']
         public_key = load_public_key(person_public_key_pem.encode())
-        real_public_key = private_key.public_key()
+        self._public_key = real_public_key = private_key.public_key()
 
         #log('PUBLIC',public_key.public_numbers())
         #log('REAL PUBLIC',real_public_key.public_numbers())
@@ -248,6 +294,18 @@ class Api(object):
         if public_key.public_numbers() != real_public_key.public_numbers():
             return {'error':'Keys do not match!'}
         return {'success':'Login successful', 'username':name}
+
+    @property
+    def public_key(self):
+        if not hasattr(self,'_public_key'):
+            self.app.root.change_screen('login')
+        return self._public_key
+
+    @property
+    def private_key(self):
+        if not hasattr(self,'_private_key'):
+            self.app.root.change_screen('login')
+        return self._private_key
 
     async def append_json(self,key,data):
         sofar=await self.get_json(key)
