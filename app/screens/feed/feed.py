@@ -4,7 +4,7 @@ from kivy.uix.image import AsyncImage, Image
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.card import MDCard, MDSeparator
 from kivy.uix.scrollview import ScrollView
-from screens.base import ProtectedScreen
+from screens.base import ProtectedScreen,BaseScreen
 from kivy.properties import ListProperty
 import os,time
 from datetime import datetime
@@ -168,7 +168,7 @@ class PostCard(MDCard):
 #####
 
 
-class FeedScreen(ProtectedScreen):
+class FeedScreen(BaseScreen):
     posts = ListProperty()
 
     def on_pre_enter(self):

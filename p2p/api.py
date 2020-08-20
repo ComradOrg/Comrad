@@ -249,7 +249,13 @@ class Api(object):
         # private_key = {private_key}
         # """)
         
-        val = decrypt(val_encr, val_encr_key, iv, private_key)
+        # try to decrypt
+        val=None
+        for privkey,pubkey in self.keys:
+            try:
+                val = decrypt(val_encr, val_encr_key, iv, privkey)
+            except ValueError:
+                pass
         # self.log('val after decryption = ',val)
 
         # time=float(time.decode())
@@ -301,7 +307,7 @@ class Api(object):
         def jsonize(entry):
             if not 'val' in entry: return entry
             val=entry['val']
-            dat=json.loads(val.decode())
+            dat=json.loads(val.decode()) if val else val
             entry['val']=dat
             return entry
 
@@ -446,6 +452,12 @@ class Api(object):
         else:
             return self._private_key_global
         
+    @property
+    def keys(self):
+        keys= [(self.private_key_global,self.public_key_global)]
+        if hasattr(self,'_private_key') and hasattr(self,'_public_key'):
+            keys+=[(self.private_key,self.public_key)]
+        return keys
 
 
     async def append_json(self,key,data):
