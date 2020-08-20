@@ -99,6 +99,7 @@ class Api(object):
                 # pass
         except asyncio.CancelledError as e:
             self.log('P2P node cancelled', e)
+            await self.flush()
         finally:
             # when canceled, print that it finished
             self.log('P2P node shutting down')
@@ -345,7 +346,7 @@ class Api(object):
 
         # if key_or_keys.startsiwth('/post/'):
         res = await self.get(key_or_keys,get_last=get_last)
-        self.log('get_json() got',res)
+        #self.log('get_json() got',res)
         if not res: return None
         return jsonize_res(res)
            
@@ -405,7 +406,7 @@ class Api(object):
     def load_private_key(self,password):
         if not self.app_storage.exists('_keys'): return {'error':'No login keys present on this device'}
         pem_private_key=self.app_storage.get('_keys').get('private')
-        self.log('my private key ====',pem_private_key)
+        # self.log('my private key ====',pem_private_key)
         try:
             return {'success':load_privkey(pem_private_key,password)}
         except ValueError as e:
@@ -430,12 +431,12 @@ class Api(object):
 
         # see if user exists
         person = await self.get_person(name)
-        self.log(person)
+        # self.log(person)
         if person is None:
             return {'error':'Login failed'}
 
         # verify keys
-        self.log('got person =',person)
+        # self.log('got person =',person)
         person_public_key_pem = person['public_key']
         public_key = load_pubkey(person_public_key_pem) #load_public_key(person_public_key_pem.encode())
         self._public_key = real_public_key = private_key.public_key()
@@ -467,9 +468,9 @@ class Api(object):
         if not hasattr(self,'_public_key_global'):
             try:
                 pem=self.app.store_global.get('_keys').get('public',None)
-                self.log('PEM GLOBAL = ',pem)
+                # self.log('PEM GLOBAL = ',pem)
                 self._public_key_global=load_pubkey(pem.encode())
-                self.log('PUBKEYGLOBAL =',self._public_key_global)
+                # self.log('PUBKEYGLOBAL =',self._public_key_global)
                 return self._public_key_global
             except ValueError as e:        
                 self.log('!!',e)
@@ -524,11 +525,11 @@ class Api(object):
             parts.append(part)
             # PARTS.append(part)
             
-            self.log('part!:',sys.getsizeof(part))
+            # self.log('part!:',sys.getsizeof(part))
             #self.set(part_key,part)
 
             if len(parts)>=buffer_size:
-                self.log('setting...')
+                # self.log('setting...')
                 await self.set(part_keys,parts)
                 part_keys=[]
                 PARTS+=parts
@@ -536,15 +537,15 @@ class Api(object):
 
         # set all parts    
         #self.set(part_keys,PARTS)
-        self.log('# parts:',len(PARTS))
+        # self.log('# parts:',len(PARTS))
         if parts and part_keys:
             await self.set(part_keys, parts)
 
         # how many parts?
-        self.log('# pieces!',len(part_ids))
+        # self.log('# pieces!',len(part_ids))
 
         file_store = {'ext':os.path.splitext(filename)[-1][1:], 'parts':part_ids}
-        self.log('FILE STORE??',file_store)
+        # self.log('FILE STORE??',file_store)
         await self.set_json(uri+file_id,file_store)
         
         # file_store['data'].seek(0)
