@@ -185,3 +185,38 @@ def full_decrypt_block(response, receiver_privkey):
 
 def aes_decrypt_block(response, aes_key):
     return
+
+# def aes_rsa_encrypt(message, recipient_rsa_pub):
+#     aes_key = create_aes_key()
+#     aes_ciphertext, iv = aes_encrypt(message, aes_key)
+#     # hmac_key = hashlib.sha256(aes_key).hexdigest()
+
+#     #sender_pubkey = serialize_pubkey(rsa_priv.public_key())
+#     # recipient_rsa_pub = load_pubkey(receiver_pubkey)
+#     #recipient_rsa_pub = receiver_pubkey
+#     # metadata = loader.recompose_metadata(sender_pubkey, receiver_pubkey)
+
+#     encry_aes_key = rsa_encrypt(aes_key, recipient_rsa_pub)
+
+#     # hmac_list = [metadata, iv, aes_ciphertext, encry_aes_key]
+#     # hmac = create_hmac(hmac_key, hmac_list)
+#     # hmac_signature = sign(hmac, rsa_priv)
+
+#     # return aes_ciphertext, encry_aes_key, hmac, hmac_signature, iv, metadata
+#     return aes_ciphertext, encry_aes_key, iv #, sign
+
+
+# def aes_rsa_decrypt(aes_ciphertext, encry_aes_key, iv, rsa_priv): #, hmac, hmac_signature, rsa_priv, iv, metadata):
+#     aes_key = rsa_decrypt(encry_aes_key, rsa_priv)
+
+#     # hmac_key = hashlib.sha256(aes_key).hexdigest()
+#     # hmac_list = [metadata, iv, aes_ciphertext, encry_aes_key]
+#     # independent_hmac = create_hmac(hmac_key, hmac_list)
+#     # assert hmac == independent_hmac
+
+#     # sender_pub, receiver_pub = [x.split(':')[-1] for x in metadata.split(';')]
+#     # sender_pub = load_pubkey(sender_pub)
+#     #assert verify_signature(hmac_signature, hmac, sender_pub)
+
+#     plaintext = aes_decrypt(aes_ciphertext, aes_key, iv)
+#     return plaintext

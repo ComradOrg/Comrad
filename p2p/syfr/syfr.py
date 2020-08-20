@@ -184,12 +184,12 @@ def aes_decrypt(ciphertext, key, iv):
     return unpad(padded)
 
 
-def encrypt(message, rsa_priv, recipient_rsa_pub):
+def aes_rsa_encrypt(message, recipient_rsa_pub):
     aes_key = create_aes_key()
     aes_ciphertext, iv = aes_encrypt(message, aes_key)
     # hmac_key = hashlib.sha256(aes_key).hexdigest()
 
-    sender_pubkey = serialize_pubkey(rsa_priv.public_key())
+    #sender_pubkey = serialize_pubkey(rsa_priv.public_key())
     # recipient_rsa_pub = load_pubkey(receiver_pubkey)
     #recipient_rsa_pub = receiver_pubkey
     # metadata = loader.recompose_metadata(sender_pubkey, receiver_pubkey)
@@ -204,7 +204,7 @@ def encrypt(message, rsa_priv, recipient_rsa_pub):
     return aes_ciphertext, encry_aes_key, iv #, sign
 
 
-def decrypt(aes_ciphertext, encry_aes_key, iv, rsa_priv): #, hmac, hmac_signature, rsa_priv, iv, metadata):
+def aes_rsa_decrypt(aes_ciphertext, encry_aes_key, iv, rsa_priv): #, hmac, hmac_signature, rsa_priv, iv, metadata):
     aes_key = rsa_decrypt(encry_aes_key, rsa_priv)
 
     # hmac_key = hashlib.sha256(aes_key).hexdigest()

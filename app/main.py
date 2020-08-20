@@ -8,6 +8,8 @@ HORIZONTAL = False #random.choice([True,True,True,False])
 FACTOR=1
 WINDOW_SIZE = (1136*FACTOR,640*FACTOR) if HORIZONTAL else (640*FACTOR,1136*FACTOR)
 
+WINDOW_SIZE=1111,1111
+
 BG_IMG='assets/bg-brown.png'
 
 grass=(201,203,163)

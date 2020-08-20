@@ -9,7 +9,8 @@ import asyncio,time
 # logger.setLevel(logging.DEBUG)
 sys.path.append('../p2p')
 # logger.info(os.getcwd(), sys.path)
-BSEP=b'||||'
+BSEP=b'\n'
+BSEP2=b'\t'
 
 try:
     from .crypto import *
@@ -120,162 +121,167 @@ class Api(object):
             if type(key_or_keys) in {list,tuple,dict}:
                 keys = key_or_keys
                 self.log('??????!!!!!')
-                res = await asyncio.gather(*[self.unpack_well_documented_val(await node.get(key)) for key in keys])
+                res = await asyncio.gather(*[self.decode_data(await node.get(key)) for key in keys])
                 #log('RES?',res)
             else:
                 key = key_or_keys
-                res = await self.unpack_well_documented_val(await node.get(key))
+                res = await self.decode_data(await node.get(key))
 
             #node.stop()
             return res
             
         return await _get()
 
-    def well_documented_val(self,val,sep=BSEP,do_encrypt=True,receiver_pubkey=None):
+    def encode_data(self,val,sep=BSEP,sep2=BSEP2,do_encrypt=True,receiver_pubkey=None):
         """
         What do we want to store with
         
-        1) Timestamp
-        2) Value
-        3) Public key of author
-        4) Signature of value by author
+        1) [Encrypted payload:]
+            1) Timestamp
+            2) Public key of sender
+            3) Public key of recipient
+            4) AES-encrypted Value
+        2) [Decryption tools]
+            1) AES-decryption key
+            2) AES decryption IV value
+        5) Signature of value by author
         """
         import time
         timestamp=time.time()
-        #self.log('timestamp =',timestamp)
         
-        if type(val)!=bytes:
-            # value = str(val)
-            # try:
-            #     value_bytes = value.encode('utf-8')
-            # except UnicodeDecodeError:
-            #     value_bytes = value.encode('ascii')
-            value_bytes = base64.b64encode(bytes(val,'utf-8'))
-        else:
-            value_bytes=base64.b64encode(val)
+        # convert val to bytes
+        if type(val)!=bytes: val = bytes(val,'utf-8')
+        value_bytes=base64.b64encode(val)
 
+        # sign
+        signature = sign(value_bytes, self.private_key)
+        sender_pubkey_b = serialize_pubkey(self.public_key)
+
+        # Verify!
+        authentic = verify_signature(signature, value_bytes, self.public_key)
+        if not authentic:
+            self.log('message is inauthentic for set??',authentic)
+            return None
 
         # encrypt?
-        if not receiver_pubkey:
-            receiver_pubkey=self.public_key_global
-        # self.log('value while unencrypted =',value_bytes)
-        
-        # value_bytes = encrypt_msg(value_bytes, self.public_key_global)
-
-        # self.log(f"""encrypting
-        # val = {value_bytes}
-        # sender_privkey = {self.private_key}
-        # receiver_pubkey = {receiver_pubkey}
-        # """)
-
-        res = encrypt(value_bytes, self.private_key, receiver_pubkey)
-        
-
-        #aes_ciphertext, encry_aes_key, hmac, hmac_signature, iv, metadata
-        
-        # self.log('value while encrypted =  ',res)
-        # stop
-        aes_ciphertext, encry_aes_key, iv = res
-        #self.log('value =',value)
-        
-        pem_public_key = serialize_pubkey(receiver_pubkey)
-
-        #self.log('pem_public_key =',pem_public_key)
-        # stop
-        # self.log('aes_ciphertext = ',aes_ciphertext,type(aes_ciphertext))
-
-        signature = sign(aes_ciphertext, self.private_key)
-        # self.log('signature =',signature)
-
-        ## Verify!
-        authentic = verify_signature(signature, aes_ciphertext, self.public_key)
-        # self.log('message is authentic for set??',authentic)
-
-        # value_bytes_ascii = ''.join([chr(x) for x in value_bytes])
-
-        # jsond = {'time':timestamp, 'val':value_bytes_ascii, 'pub':pem_public_key, 'sign':signature}
-        # jsonstr=jsonify(jsond)
-
-        time_b=str(timestamp).encode()
-        val_encr = base64.b64encode(aes_ciphertext)
-        val_encr_key = base64.b64encode(encry_aes_key)
-        sender_pubkey_b = serialize_pubkey(self.public_key)
+        if not receiver_pubkey: receiver_pubkey=self.public_key_global
         receiver_pubkey_b = serialize_pubkey(receiver_pubkey)
-        signature = signature
+        time_b=str(timestamp).encode()
+        msg=value_bytes
 
-        WDV = sep.join([
+        # whole binary package
+        WDV = [
             time_b,
-            val_encr,
-            val_encr_key,
-            iv,
-            receiver_pubkey_b,
             sender_pubkey_b,
+            receiver_pubkey_b,
+            msg,
             signature
+        ]
+        payload = sep2.join(WDV)
+        
+        res = aes_rsa_encrypt(payload,receiver_pubkey)
+        if res is None: return None
+        payload_encr_aes, payload_encr_aes_key, payload_encr_aes_iv = res
+        
+        decryption_tools = sep2.join([
+            payload_encr_aes_key,
+            payload_encr_aes_iv
         ])
 
-        # self.log('well_documented_val() =',WDV)
-        return WDV
+        final_packet = sep.join([
+            payload_encr_aes,
+            decryption_tools
+        ])
 
-    async def unpack_well_documented_val(self,WDV,sep=BSEP,private_key=None):
-        # self.log('WDV???',WDV)
-        if WDV is None: return WDV
-        #WDV=[base64.b64decode(x) for x in WDV.split(sep)]
-        WDV=WDV.split(sep)
-        # self.log('WDV NEW:',WDV)
-        
-        time_b,val_encr,val_encr_key,iv,to_pub_b,from_pub_b,signature = WDV #.split(sep)
-        to_pub = load_pubkey(to_pub_b)
-        from_pub = load_pubkey(from_pub_b)
-        
-        # verify
-        
-        val_encr_decode = base64.b64decode(val_encr)
-        authentic = verify_signature(signature,val_encr_decode,from_pub)
-        # self.log('message is authentic for GET?',authentic,signature,val_encr)
+        return final_packet
 
+    async def decode_data(self,entire_packet,sep=BSEP,private_key=None,sep2=BSEP2):
+        if entire_packet is None: return entire_packet
+        #entire_packet = base64.b64decode(entire_packet)
+        
+        # get data
+        encrypted_payload, decryption_tools = entire_packet.split(sep)
+        decryption_tools=decryption_tools.split(sep2)
+
+        # ### FIRST LINE OF PROTECTION
+        # # is the receiver's public id in our list of public IDs?
+        # to_pub = load_pubkey(to_pub_b)
+        # oktogo=False
+        # CORRECT_PUB_KEY=None
+        # CORRECT_PRIV_KEY=None
+        # for privkey,pubkey in self.keys():
+        #     if pubkey.public_numbers() == to_pub.public_numbers():
+        #         oktogo=True
+        #         CORRECT_PUB_KEY = pubkey
+        #         CORRECT_PRIV_KEY = privkey
+        #         break
+        # if not oktogo: return None
+
+        
+
+        ### SECOND LINE OF PROTECTION
+        # first try to decrypt sender to see if we have access to this
+        # def _decrypt_aes_rsa(args):
+        #     val_encr,val_encr_key,iv = args
+        #     val = aes_rsa_decrypt(val_encr,val_encr_key,iv,CORRECT_PRIV_KEY)
+        #     return val
+        # from_pub_decr = _decrypt_rsa(*sender_encr)
+        # if not from_pub_decr: return None
+        # from_pub = load_pubkey(from_pub_b)
+        
+
+        ### NEW FIRST LINE: Try to decrypt!
+        val=None
+        for keyname,privkey,pubkey in self.keys():
+            try:
+                val = aes_rsa_decrypt(encrypted_payload,privkey,*decryption_tools)
+                #self.log('decrypted =',val)
+                break
+            except ValueError as e:
+                self.log(keyname,'did not work!') #,privkey,pubkey)
+                pass
+        if not val:
+            self.log('Content not intended for us')
+            return None
+
+        #stop
+
+        ### THIRD LINE: SIGNATURE VERIFICATION
+        # can we decrypt signature?
+        val_array = val.split(sep2)
+        self.log('val_array =',val_array)
+        time_b,sender_pubkey_b,receiver_pubkey_b,msg,signature = val_array
+        if not signature: return None
+        sender_pubkey=load_pubkey(sender_pubkey_b)
+        authentic = verify_signature(signature,msg,sender_pubkey)
         if not authentic: 
             self.log('inauthentic message!')
-            return {}
+            return None
 
-        # decrypt
-        # self.log('val before decryption = ',val_encr)
-        if private_key is None:
-            private_key=self.private_key_global
+
+        # ### FOURTH LINE: CONTENT ENCRYPTION
+        # if private_key is None:
+        #     private_key=self.private_key_global
         
-        val_encr = base64.b64decode(val_encr)
-        val_encr_key = base64.b64decode(val_encr_key)
+        # val_encr = base64.b64decode(val_encr)
+        # val_encr_key = base64.b64decode(val_encr_key)
         # self.log(f"""decrypting
         # val_encr = {val_encr}
         # val_encr_key = {val_encr_key}
         # iv = {iv}
         # private_key = {private_key}
         # """)
-        
-        # try to decrypt
-        val=None
-        for privkey,pubkey in self.keys:
-            try:
-                val = decrypt(val_encr, val_encr_key, iv, privkey)
-            except ValueError:
-                pass
-        # self.log('val after decryption = ',val)
 
-        # time=float(time.decode())
-        #val=val.decode()
-        # return time,val,pub,sign
-        self.log('valtype??',type(val),val)
-        # try:
-        #     valdec = val.decode()
-        # except UnicodeDecodeError:
-        #     valdec = val.decode('ascii')
-        # valdec = val #.decode() #base64.b64encode(val).decode()
-        valdec = base64.b64decode(val)
+        
+        # val = _decrypt_aes()
+        # self.log('val after decryption = ',val)
+        # valdec = base64.b64decode(val)
 
         WDV={
             'time':float(time_b.decode()),
-            'val':valdec,
-            'to':to_pub,
-            'from':from_pub,
+            'val':base64.b64decode(msg).decode(),
+            'to':receiver_pubkey_b,
+            'from':sender_pubkey_b,
             'sign':signature
         }
 
@@ -297,12 +303,12 @@ class Api(object):
                 keys = key_or_keys
                 values = value_or_values
                 assert len(keys)==len(values)
-                res = await asyncio.gather(*[node.set(key,self.well_documented_val(value)) for key,value in zip(keys,values)])
+                res = await asyncio.gather(*[node.set(key,self.encode_data(value)) for key,value in zip(keys,values)])
                 # self.log('RES?',res)
             else:
                 key = key_or_keys
                 value = value_or_values
-                res = await node.set(key,self.well_documented_val(value))
+                res = await node.set(key,self.encode_data(value))
 
             #node.stop()
             return res
@@ -467,11 +473,11 @@ class Api(object):
         else:
             return self._private_key_global
         
-    @property
+    #@property
     def keys(self):
-        keys= [(self.private_key_global,self.public_key_global)]
+        keys= [('/channel/global',self.private_key_global,self.public_key_global)]
         if hasattr(self,'_private_key') and hasattr(self,'_public_key'):
-            keys+=[(self.private_key,self.public_key)]
+            keys+=[('/channel/self',self.private_key,self.public_key)]
         return keys
 
 
