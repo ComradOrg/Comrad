@@ -321,8 +321,8 @@ class Api(object):
 
     async def get_json(self,key_or_keys,get_last=True):
         
-        # def jsonize(entry):
-            self.log('jsonize!',entry)
+        def jsonize(entry):
+            # self.log('jsonize!',entry)
             if not entry: return entry
             if not 'val' in entry: return entry
             val=entry['val']
