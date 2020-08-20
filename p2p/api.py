@@ -113,40 +113,25 @@ class Api(object):
 
 
     async def get(self,key_or_keys,get_last=True):
-        if not type(key_or_keys) in {list,tuple}: 
-            key_or_keys=[key_or_keys]
-
         async def _get():
-            # self.log('async _get()',self.node)
-            #node=await _getdb(self)
             node=await self.node
-
-            returned_vals = []
-            
+            res=None
             if type(key_or_keys) in {list,tuple,dict}:
                 keys = key_or_keys
-                self.log('??????!!!!!')
 
                 tasks=[]
                 for key in keys:
-                    time_vals = await node.get(key)
-                    self.log('time_vals1 =',time_vals)
-                    if time_vals is None: return []
-                    if type(time_vals)!=list: time_vals=[time_vals]
-                    self.log(f'time_vals = {time_vals}')
-                    #if get_last: time_vals = [time_vals[-1]]
-                    
-                    for _time,_vals in time_vals:
-                        task = self.decode_data(_vals)
-                        tasks+=[task]
-                
+                    val = await node.get(key)
+                    task = self.decode_data(val)
+                    tasks.append(task)
                 res = await asyncio.gather(*tasks)
-                self.log('RES?',res)
-                return list(res)
             else:
-                raise Exception('not allowed!')
-            return []
+                key=key_or_keys
+                val = await node.get(key)
+                res = await self.decode_data(val)
             
+            self.log(f'_get({key_or_keys}) --> {res}')
+            return res
         return await _get()
 
     def encode_data(self,val,sep=BSEP,sep2=BSEP2,do_encrypt=True,receiver_pubkey=None):
@@ -360,8 +345,7 @@ class Api(object):
         res = await self.get(key_or_keys,get_last=get_last)
         self.log('get_json() got',res)
         if not res: return None
-
-        return [jsonize_res(x) for x in res]
+        return jsonize_res(res)
            
 
 
@@ -514,7 +498,9 @@ class Api(object):
     async def append_json(self,key,data):
         sofar=await self.get_json_val(key)
         if sofar is None: sofar = []
-        new=sofar + ([data] if type(data)!=list else data)
+        if type(sofar)!=list: sofar=[sofar]
+        if type(data)!=list: data=[data]
+        new=sofar + data
         if await self.set_json(key, new):
             return {'success':'Length increased to %s' % len(new)}
         return {'error':'Could not append json'}
@@ -593,7 +579,7 @@ class Api(object):
 
         # ## add to channels
         res = await asyncio.gather(*[
-            self.set_json(f'/posts/channel/{channel}',post_id) for channel in channels
+            self.append_json(f'/posts/channel/{channel}',post_id) for channel in channels
         ])
 
         # ## add to user
