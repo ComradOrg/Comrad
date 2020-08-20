@@ -147,7 +147,7 @@ class HalfForgetfulStorage(IStorage):
     def values(self): return [self.data[k] for k in self.keys()]
 
     def set(self,key,value):
-        log(f'HFS.set({key}) -> {value}')
+        # log(f'HFS.set({key}) -> {value}')
 
         # store
         if key in self.data:
@@ -168,11 +168,11 @@ class HalfForgetfulStorage(IStorage):
 
     def get(self, key, default=None, incl_time=False):
         #self.cull()
-        log(f'HFS.get({key}) -> ?')
+        # log(f'HFS.get({key}) -> ?')
         try:
             val=self.data[key]
             # val=self.data.get(key)
-            log(f'HFS.get({key}) -> {val}')
+            # log(f'HFS.get({key}) -> {val}')
             if val is False: raise KeyError
             if val and not incl_time: val=val[1]
             return val

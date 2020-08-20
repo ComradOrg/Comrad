@@ -88,8 +88,8 @@ class KademliaProtocol(RPCProtocol):
     def rpc_store(self, sender, nodeid, key, value):
         source = Node(nodeid, sender[0], sender[1])
         self.welcome_if_new(source)
-        log.debug("got a store request from %s, storing '%s'='%s'",
-                  sender, key.hex(), value)
+        log.debug("got a store request from %s, storing '%s' -> %s (binary keys)'",
+                  sender, key.hex(), len(value))
         self.storage[key] = value
         return True
 
