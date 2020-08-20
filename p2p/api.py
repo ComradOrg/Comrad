@@ -79,10 +79,10 @@ class Api(object):
         #self._node=self.connect()
         pass
 
-    async def connect_forever(self):
+    async def connect_forever(self,port=PORT_LISTEN):
         try:
             i = 0
-            self._node = await self.connect()
+            self._node = await self.connect(port=port)
             while True:
                 if not i%10: self.log(f'Node status (tick {i}): {self._node}')
 
