@@ -52,7 +52,7 @@ async def _getdb(self=None,port=PORT_LISTEN):
 
     import os
     if self: self.log(os.getcwd())
-    node = KadServer(storage=HalfForgetfulStorage(fn='../p2p/data.db',log=(self.log if self else print)))
+    node = KadServer(storage=HalfForgetfulStorage()) #fn='../p2p/data.db',log=(self.log if self else print)))
 
     if self: self.log('listening..')
     await node.listen(port)
@@ -84,7 +84,9 @@ class Api(object):
             i = 0
             self._node = await self.connect(port=port)
             while True:
+                #self.log(i)
                 if not i%10: self.log(f'Node status (tick {i}): {self._node}')
+                if i and not i%60: await self.flush()
 
                     # # get some sleep
                     # if self.root.ids.btn1.state != 'down' and i >= 2:
@@ -93,7 +95,7 @@ class Api(object):
                     #     self.root.ids.btn1.trigger_action()
 
                 i += 1
-                await asyncio.sleep(5)
+                await asyncio.sleep(1)
                 # pass
         except asyncio.CancelledError as e:
             self.log('P2P node cancelled', e)
@@ -572,6 +574,14 @@ class Api(object):
     #     event_id=1 if event_id is None else int(event_id) 
     #     return f'/post/{event_id}'
 
+    async def flush(self):
+        self.log('saving back to db file...')
+        node = await self.node
+        node.storage.dump()
+        self.log('DONE saving back to db file...')
+        
+
+
     async def post(self,data,channels = ['earth'], add_profile=True):
         post_id=get_random_id()
         res = await self.set_json('/post/'+post_id, data)
@@ -587,6 +597,7 @@ class Api(object):
         if un: await self.set_json('/posts/author/'+un, post_id)
 
         if res:
+            asyncio.create_task(self.flush())
             return {'success':'Posted! %s' % post_id, 'post_id':post_id}
         return {'error':'Post failed'}
 

@@ -3,6 +3,7 @@ from itertools import takewhile
 import operator
 from collections import OrderedDict
 from abc import abstractmethod, ABC
+import asyncio
 
 BSEP_ST = b'||||'
 
@@ -109,26 +110,41 @@ class IStorage(ABC):
 
 
 
-import pickle
+import pickle,os
 class HalfForgetfulStorage(IStorage):
     def __init__(self, fn='dbm.pickle', ttl=604800, log=None):
         """
         By default, max age is a week.
         """
-        self.data = OrderedDict()
         self.fn = fn
         self.ttl = ttl
+        self.log = logger.info
+        self.data = OrderedDict() if not os.path.exists(self.fn) else self.load()
+
+        # import pickledb
+        # self.data = pickledb.load(self.fn,auto_dump=True)
+        #import shelve
+        #self.data = shelve.open(self.fn,flag='cs')
+        
 
     def dump(self):
-        with open(self.fn,'wb') as of:
-            pickle.dump(self.data, of)
+        async def do():
+            self.log('[async!!] dumping %s keys:\n%s...' % (len(self.keys()),self.keys()))
+            with open(self.fn,'wb') as of:
+                pickle.dump(self.data, of)
+        asyncio.create_task(do())
+
+    def load(self):
+        self.log('loading pickle...')
+        with open(self.fn,'rb') as of:
+            return pickle.load(of)
 
     def __setitem__(self, key, value):
         self.set(key,value)
 
     def keys(self): return self.data.keys()
-    def items(self): return self.data.items()
-    def values(self): return self.data.values()
+    def items(self): return [(k,v) for k,v in zip(self.keys(),self.values())]
+    def values(self): return [self.data[k] for k in self.keys()]
 
     def set(self,key,value):
         log(f'HFS.set({key}) -> {value}')
@@ -136,14 +152,15 @@ class HalfForgetfulStorage(IStorage):
         # store
         if key in self.data:
             del self.data[key]
-        self.data[key] = (time.monotonic(), value)
+        
+        newval = (time.monotonic(), value)
+        self.data[key] = newval
+        # self.data.set(key,newval)
 
         # save and prune
-        self.dump()
-        self.cull()
+        # self.dump()
+        # self.cull()
 
-    def keys(self):
-        return self.data.keys()
 
     def cull(self):
         for _, _ in self.iter_older_than(self.ttl):
@@ -154,8 +171,10 @@ class HalfForgetfulStorage(IStorage):
         log(f'HFS.get({key}) -> ?')
         try:
             val=self.data[key]
-            if not incl_time: val=val[1]
+            # val=self.data.get(key)
             log(f'HFS.get({key}) -> {val}')
+            if val is False: raise KeyError
+            if val and not incl_time: val=val[1]
             return val
         except (KeyError,IndexError) as e:
             pass
@@ -177,15 +196,15 @@ class HalfForgetfulStorage(IStorage):
         return list(map(operator.itemgetter(0, 2), matches))
 
     def _triple_iter(self):
-        ikeys = self.data.keys()
-        ibirthday = map(operator.itemgetter(0), self.data.values())
-        ivalues = map(operator.itemgetter(1), self.data.values())
+        ikeys = self.keys()
+        ibirthday = map(operator.itemgetter(0), self.values())
+        ivalues = map(operator.itemgetter(1), self.values())
         return zip(ikeys, ibirthday, ivalues)
 
     def __iter__(self):
         self.cull()
-        ikeys = self.data.keys()
-        ivalues = map(operator.itemgetter(1), self.data.values())
+        ikeys = self.keys()
+        ivalues = map(operator.itemgetter(1), self.values())
         return zip(ikeys, ivalues)
 
 
