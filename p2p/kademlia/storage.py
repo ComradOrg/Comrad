@@ -111,7 +111,7 @@ class ForgetfulStorage(IStorage):
 
 
 class HalfForgetfulStorage(ForgetfulStorage):
-    def __init__(self, fn='dbm.gnu', ttl=604800, log=print):
+    def __init__(self, fn='dbm', ttl=604800, log=print):
         """
         By default, max age is a week.
         """
@@ -123,6 +123,8 @@ class HalfForgetfulStorage(ForgetfulStorage):
         import dbm
         self.data = dbm.open(self.fn,flag='cs')
         self.ttl = ttl
+
+        self.log('have %s keys' % len(self))
 
 
     def keys(self):
@@ -139,6 +141,7 @@ class HalfForgetfulStorage(ForgetfulStorage):
         time_b=str(time.monotonic()).encode()
         newdat = BSEP_ST.join([time_b, value])
         self.data[key]=newdat
+        # return True
 
     def get(self, key, default=None):
         # print(f'??!?\n{key}\n{self.data[key]}')
@@ -151,6 +154,7 @@ class HalfForgetfulStorage(ForgetfulStorage):
         time_b,val_b = val.split(BSEP_ST)
         rval = (float(time_b.decode()), val_b)
         self.log('rvalll',rval)
+        return rval
 
     def __getitem__(self, key):
         return self.get(key)
