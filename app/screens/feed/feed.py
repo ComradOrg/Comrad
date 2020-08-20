@@ -141,9 +141,9 @@ class PostCard(MDCard):
 
         # self.log('?????',self.cache_img_src, os.path.exists(self.cache_img_src), os.stat(self.cache_img_src).st_size)
         if self.cache_img_src and (not os.path.exists(self.cache_img_src) or not os.stat(self.cache_img_src).st_size):
-            def do_download():
+            async def do_download():
                 self.log('downloading...')
-                self.app.download(self.img_id, self.cache_img_src)
+                await self.app.download(self.img_id, self.cache_img_src)
                 self.image.reload()
 
             #self.open_dialog('posting')
