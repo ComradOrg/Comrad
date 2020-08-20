@@ -681,6 +681,7 @@ def test_basic():
         await node.set("my-key", "my awesome value2")
         await node.set("my-key", "my awesome value3")
 
+
         # get the value associated with "my-key" from the network
         result = await node.get("my-key")
 

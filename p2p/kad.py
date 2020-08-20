@@ -38,7 +38,7 @@ class HalfForgetfulStorage(ForgetfulStorage):
         # import shelve
         # self.data = shelve.open(self.fn,'a')
         import pickledb
-        self.data = pickledb.load(self.fn,False)
+        self.data = pickledb.load(self.fn,True)
 
 
         #print('>> loaded %s keys' % len(self.data))
@@ -62,17 +62,20 @@ class HalfForgetfulStorage(ForgetfulStorage):
         # except (KeyError,ValueError) as e:
         #     sofar = []
         sofar = self.data.get(key)
-        if type(sofar)!=list: sofar=[sofar]
+        if not sofar: sofar=[]
+        print('SOFAR',sofar)
+        #sofar = [sofar] if sofar and type(sofar)!=list else []
+        print('SOFAR',sofar)
         newdat = (time.monotonic(), value)
         newval = sofar + [newdat]
-        self.log('VALUE WAS',sofar)
+        print('NEWVAL',newval)
         #del self.data[key]
         #self.data[key]=newval
         
         self.data.set(key,newval)
-        self.data.dump()
+        # self.data.dump()
         
-        raise Exception('VALUE IS NOW'+str(self.data.get(key)))
+        print('VALUE IS NOW'+str(self.data.get(key)))
         #self.write()
 
     def set(key,value):
@@ -86,19 +89,25 @@ class HalfForgetfulStorage(ForgetfulStorage):
     def get(self, key, default=None):
         # self.cull()
         # print('looking for key: ', key)
-        if key in self.data:
-            val=list(self[key])
-            # print('...found it! = %s' % val)
-            return self[key]
-        return default
+        # if key in self.data:
+        #     val=list(self[key])
+        #     # print('...found it! = %s' % val)
+        #     return self[key]
+        # return default
+        return self[key]
 
     def __getitem__(self, key):
-        print(f'??!?\n{key}\n{self.data[key]}')
+        # print(f'??!?\n{key}\n{self.data[key]}')
         # return self.data[key][1]
         # (skip time part of tuple)
-        data_list = list(self.data.get(key))
-        return [dat[1] for dat in data_list]
-
+        try:
+            val=self.data[key]
+        except KeyError:
+            val=[]
+        if not val: return []
+        data_list = list(val)
+        #return [dat[1] for dat in data_list]
+        return data_list
 
 
 
@@ -171,8 +180,6 @@ def main(bind='0.0.0.0', port=8888,
     loop.close()
 
 
-if __name__ == '__main__':
-    main()
 
 log = logging.getLogger('kademlia')  # pylint: disable=invalid-name
 
@@ -324,4 +331,16 @@ class KadServer(Server):
 #### NEVERMIND
 # KadServer = Server
 
+import time
+if __name__=='__main__':
+    # test
+    hfs = HalfForgetfulStorage(fn='test.db')
 
+    #hfs['a']=1
+    # time.sleep(2)
+    hfs['a']=1000
+
+    print(hfs['a'])
+
+
+    print(hfs['a'])
