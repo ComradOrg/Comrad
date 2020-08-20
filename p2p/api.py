@@ -112,24 +112,38 @@ class Api(object):
         return await _getdb(self,port)
 
 
-    async def get(self,key_or_keys):
+    async def get(self,key_or_keys,get_last=True):
+        if not type(key_or_keys) in {list,tuple}: 
+            key_or_keys=[key_or_keys]
 
         async def _get():
             # self.log('async _get()',self.node)
             #node=await _getdb(self)
             node=await self.node
+
+            returned_vals = []
             
             if type(key_or_keys) in {list,tuple,dict}:
                 keys = key_or_keys
                 self.log('??????!!!!!')
-                res = await asyncio.gather(*[self.decode_data(await node.get(key)) for key in keys])
-                #log('RES?',res)
-            else:
-                key = key_or_keys
-                res = await self.decode_data(await node.get(key))
 
-            #node.stop()
-            return res
+                tasks=[]
+                for key in keys:
+                    time_vals = await node.get(key)
+                    if time_vals is None: return []
+                    if type(time_vals)!=list: time_vals=[time_vals]
+                    self.log(f'time_Vals = {time_vals}')
+                    if get_last: time_vals = [time_vals[-1]]
+                    for _time,_vals in time_vals:
+                        task = self.decode_data(_vals)
+                        tasks+=[task]
+                
+                res = await asyncio.gather(*tasks)
+                self.log('RES?',res)
+                return list(res)
+            else:
+                raise Exception('not allowed!')
+            return []
             
         return await _get()
 
@@ -316,10 +330,7 @@ class Api(object):
 
         return await _set()
 
-    async def get_json(self,key_or_keys):
-        res = await self.get(key_or_keys)
-        self.log('get_json() got',res)
-        if res is None: return res
+    async def get_json(self,key_or_keys,get_last=True):
         
         def jsonize(entry):
             self.log('jsonize!',entry)
@@ -334,12 +345,27 @@ class Api(object):
             entry['val']=dat
             return entry
 
-        if type(res)==list:
-            jsonl=[jsonize(entry) for entry in res]
-            return jsonl
-        else:
-            entry = res
-            return jsonize(entry)
+        def jsonize_res(res):
+            # parse differently?
+            if type(res)==list:
+                jsonl=[jsonize(entry) for entry in res]
+                return jsonl
+            else:
+                entry = res
+                return jsonize(entry)
+
+        # if key_or_keys.startsiwth('/post/'):
+        res = await self.get(key_or_keys,get_last=get_last)
+        self.log('get_json() got',res)
+        if not res: return None
+
+        return [jsonize_res(x) for x in res]
+           
+
+
+        
+
+        
 
 
     async def set_json(self,key,value):
@@ -576,14 +602,14 @@ class Api(object):
             return {'success':'Posted! %s' % post_id, 'post_id':post_id}
         return {'error':'Post failed'}
 
-    async def get_json_val(self,uri):
-        res=await self.get_json(uri)
+    async def get_json_val(self,uri,get_last=True):
+        res=await self.get_json(uri,get_last=get_last)
         self.log('get_json_val() got',res)
         r=None
         if type(res) == dict:
-            r=res.get('val',None)
+            r=res.get('val',None) if res is not None else None
         elif type(res) == list:
-            r=[x.get('val',None) for x in res]
+            r=[x.get('val',None) for x in res if x is not None]
         self.log('get_json_val() giving back',r)
         return r
 
@@ -592,10 +618,11 @@ class Api(object):
 
     async def get_posts(self,uri='/posts/channel/earth'):
         # index = await self.get_json_val('/posts'+uri)
-        index = await self.get_json_val(uri)
-        self.log('got index?',index)
-        
+        index = await self.get_json_val(uri,get_last=False)
         if index is None: return []
+        if type(index)!=list: index=[index]
+        self.log('got index?',index)
+        index = [x for x in index if x is not None]
         data = await self.get_json_val(['/post/'+x for x in index])
         # return index
         return data

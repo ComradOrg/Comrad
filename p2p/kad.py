@@ -94,19 +94,24 @@ class HalfForgetfulStorage(ForgetfulStorage):
         #     # print('...found it! = %s' % val)
         #     return self[key]
         # return default
+        stop
         return self[key]
 
     def __getitem__(self, key):
         # print(f'??!?\n{key}\n{self.data[key]}')
         # return self.data[key][1]
         # (skip time part of tuple)
+        val=[]
         try:
-            val=self.data[key]
+            val=self.data.get(key)
+            self.log('VALLLL',val)
         except KeyError:
-            val=[]
-        if not val: return []
-        #data_list = list(val)
-        return [dat[1] for dat in data_list]
+            pass
+        if type(val)!=list: val=[val]
+        data_list = val
+        self.log('data_list =',data_list)
+        return [dat for dat in data_list]
+        
         #return data_list
 
 
