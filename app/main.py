@@ -383,6 +383,7 @@ class MainApp(MDApp):
     async def download(self,file_id,output_fn=None):
         self.log('downloading:',file_id)
         file_dat = await self.api.download(file_id)
+        self.log('file_dat =',file_dat)
         if not output_fn:
             file_id=file_dat['id']
             file_ext=file_dat['ext']

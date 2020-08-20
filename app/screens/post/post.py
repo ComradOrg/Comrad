@@ -1,4 +1,4 @@
-from screens.base import ProtectedScreen
+from screens.base import ProtectedScreen,BaseScreen
 from plyer import filechooser
 from kivymd.uix.label import MDLabel
 from kivymd.uix.textfield import MDTextField

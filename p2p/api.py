@@ -82,7 +82,7 @@ class Api(object):
             i = 0
             self._node = await self.connect()
             while True:
-                self.log(f'Node status (minute {i}): {self._node}')
+                # self.log(f'Node status (minute {i}): {self._node}')
 
                     # # get some sleep
                     # if self.root.ids.btn1.state != 'down' and i >= 2:
@@ -91,7 +91,7 @@ class Api(object):
                     #     self.root.ids.btn1.trigger_action()
 
                 i += 1
-                await asyncio.sleep(60)
+                await asyncio.sleep(5)
                 # pass
         except asyncio.CancelledError as e:
             self.log('P2P node cancelled', e)
@@ -119,6 +119,7 @@ class Api(object):
             
             if type(key_or_keys) in {list,tuple,dict}:
                 keys = key_or_keys
+                self.log('??????!!!!!')
                 res = await asyncio.gather(*[self.unpack_well_documented_val(await node.get(key)) for key in keys])
                 #log('RES?',res)
             else:
@@ -144,13 +145,14 @@ class Api(object):
         #self.log('timestamp =',timestamp)
         
         if type(val)!=bytes:
-            value = str(val)
-            try:
-                value_bytes = value.encode('utf-8')
-            except UnicodeDecodeError:
-                value_bytes = value.encode('ascii')
+            # value = str(val)
+            # try:
+            #     value_bytes = value.encode('utf-8')
+            # except UnicodeDecodeError:
+            #     value_bytes = value.encode('ascii')
+            value_bytes = base64.b64encode(bytes(val,'utf-8'))
         else:
-            value_bytes=val
+            value_bytes=base64.b64encode(val)
 
 
         # encrypt?
@@ -261,15 +263,23 @@ class Api(object):
         # time=float(time.decode())
         #val=val.decode()
         # return time,val,pub,sign
+        self.log('valtype??',type(val),val)
+        # try:
+        #     valdec = val.decode()
+        # except UnicodeDecodeError:
+        #     valdec = val.decode('ascii')
+        # valdec = val #.decode() #base64.b64encode(val).decode()
+        valdec = base64.b64decode(val)
+
         WDV={
             'time':float(time_b.decode()),
-            'val':val,
+            'val':valdec,
             'to':to_pub,
             'from':from_pub,
             'sign':signature
         }
 
-        # self.log('GOT WDV:',WDV)
+        self.log('GOT WDV:',WDV)
         return WDV
         
         
@@ -305,9 +315,14 @@ class Api(object):
         if res is None: return res
         
         def jsonize(entry):
+            self.log('jsonize!',entry)
             if not 'val' in entry: return entry
             val=entry['val']
-            dat=json.loads(val.decode()) if val else val
+            try:
+                dat=json.loads(val) if val else val
+            except UnicodeDecodeError:
+                dat=val
+            self.log('dat??',dat)
             entry['val']=dat
             return entry
 
@@ -477,7 +492,7 @@ class Api(object):
         parts=[]
         PARTS=[]
         buffer_size=100
-        for part in bytes_from_file(filename,chunksize=1024*4):
+        for part in bytes_from_file(filename,chunksize=1024*2):
             part_id = get_random_id()
             part_ids.append(part_id)
             part_key='/part/'+part_id
@@ -520,7 +535,10 @@ class Api(object):
 
         self.log('file_store!?',file_store)
         keys = ['/part/'+x for x in file_store['parts']]
-        time,pieces,pub,sign = await self.get(keys)
+        
+        #time,pieces,pub,sign = await self.get_val(keys)
+        pieces = await self.get_val(keys)
+        self.log('pieces = ',pieces)
         file_store['parts_data']=pieces
         return file_store
 
@@ -544,13 +562,13 @@ class Api(object):
     async def get_val(self,uri):
         res=await self.get_json(uri)
         self.log('get_val() got',res)
-        if res is None:
-            return res
-        elif type(res) == dict:
-            return res.get('val',None)
+        r=None
+        if type(res) == dict:
+            r=res.get('val',None)
         elif type(res) == list:
-            return [x.get('val',None) for x in res]
-        return None
+            r=[x.get('val',None) for x in res]
+        self.log('get_val() giving back',r)
+        return r
 
     async def get_post(self,post_id):
         return await self.get_val(post_id)

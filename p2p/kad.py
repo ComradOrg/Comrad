@@ -205,32 +205,34 @@ class KadServer(Server):
 
 
 
-    # async def get(self, key):
-    #     """
-    #     Get a key if the network has it.
+    async def get(self, key):
+        """
+        Get a key if the network has it.
 
-    #     Returns:
-    #         :class:`None` if not found, the value otherwise.
-    #     """
-    #     log.info("Looking up key %s", key)
-    #     dkey = digest(key)
-    #     # if this node has it, return it
-    #     if self.storage.get(dkey) is not None:
-    #         log.info('I already have this')
-    #         return self.storage.get(dkey)
-    #     node = Node(dkey)
-    #     nearest = self.protocol.router.find_neighbors(node)
-    #     log.info(f'My nearest nodes are: {nearest}')
-    #     if not nearest:
-    #         log.warning("There are no known neighbors to get key %s", key)
-    #         return None
-    #     spider = ValueSpiderCrawl(self.protocol, node, nearest,
-    #                               self.ksize, self.alpha)
-    #     found = await spider.find()
+        Returns:
+            :class:`None` if not found, the value otherwise.
+        """
+        log.info("Looking up key %s", key)
+        dkey = digest(key)
+        # if this node has it, return it
+        if self.storage.get(dkey) is not None:
+            log.info('I already have this')
+            return self.storage.get(dkey)
+        node = Node(dkey)
+        nearest = self.protocol.router.find_neighbors(node)
+        log.info(f'My nearest nodes are: {nearest}')
+        if not nearest:
+            log.warning("There are no known neighbors to get key %s", key)
+            return None
+        spider = ValueSpiderCrawl(self.protocol, node, nearest,
+                                  self.ksize, self.alpha)
+        found = await spider.find()
 
-    #     log.info(f'spider done crawling: {spider}')
-    #     log.info(f'spider found value: {found}')
-    #     return found
+        log.info(f'spider done crawling: {spider}')
+        log.info(f'spider found value: {found}')
+
+        self.storage[dkey]=found
+        return found
 
     async def set(self, key, value):
         """
