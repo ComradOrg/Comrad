@@ -5,6 +5,7 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.exceptions import InvalidSignature
 import os
+from .syfr import * #import syfr
 
 key_dir = os.path.join(os.path.expanduser('~'),'.keys','komrade')
 if not os.path.exists(key_dir): os.makedirs(key_dir)
@@ -27,6 +28,8 @@ def new_keys(save=True,password=None):
         save_public_key(public_key)
 
     return private_key,public_key
+
+
 
 def save_private_key(private_key,fn=PATH_PRIVATE_KEY,password=None, return_instead=False):
     pem = private_key.private_bytes(
@@ -75,13 +78,40 @@ def load_public_key_from_file(fn=PATH_PUBLIC_KEY):
 ### DE/ENCRYPTING
 def encrypt_msg(message, public_key):
     return public_key.encrypt(
-        str(message).encode(),
+        message,
         padding.OAEP(
             mgf=padding.MGF1(algorithm=hashes.SHA256()),
             algorithm=hashes.SHA256(),
             label=None
         )
     )
+
+def encrypt_msg_symmetric(message):
+    import os
+    from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+    from cryptography.hazmat.backends import default_backend
+    backend = default_backend()
+    key = os.urandom(32)
+    iv = os.urandom(16)
+    cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=backend)
+    encryptor = cipher.encryptor()
+    
+    ct = encryptor.update(message) + encryptor.finalize()
+    return ct
+    
+def decrypt_msg_symmetric():
+    import os
+    from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+    from cryptography.hazmat.backends import default_backend
+    backend = default_backend()
+    key = os.urandom(32)
+    iv = os.urandom(16)
+    cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=backend)
+
+    return ct
+    decryptor = cipher.decryptor()
+    decryptor.update(ct) + decryptor.finalize()
+    b'a secret message'
 
 def decrypt_msg(encrypted, private_key):
     return private_key.decrypt(
@@ -157,3 +187,16 @@ def gen_global_keys(fn='.keys.global.json'):
 
     store.put('_keys',private=str(pem_private_key.decode()),public=str(pem_public_key.decode())) #(private_key,password=passkey)
 
+"""
+import os
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+from cryptography.hazmat.backends import default_backend
+backend = default_backend()
+key = os.urandom(32)
+iv = os.urandom(16)
+cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=backend)
+encryptor = cipher.encryptor()
+ct = encryptor.update(b"a secret message") + encryptor.finalize()
+decryptor = cipher.decryptor()
+decryptor.update(ct) + decryptor.finalize()
+b'a secret message'"""

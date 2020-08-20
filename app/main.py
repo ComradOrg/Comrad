@@ -8,7 +8,7 @@ HORIZONTAL = False #random.choice([True,True,True,False])
 FACTOR=1
 WINDOW_SIZE = (1136*FACTOR,640*FACTOR) if HORIZONTAL else (640*FACTOR,1136*FACTOR)
 
-BG_IMG='assets/bg-russiangreen.png'
+BG_IMG='assets/bg-brown.png'
 
 grass=(201,203,163)
 russiangreen = (109,140,96)
@@ -44,8 +44,8 @@ dutchwhite=229,219,181
 COLOR_TOOLBAR= smokyblack #5,5,5 #russiangreen #pinetreegreen #kombugreen #(12,5,5) #russiangreen
 COLOR_BG = (0,73,54)
 # COLOR_ICON = (201,203,163)
-COLOR_LOGO = dutchwhite#russiangreen #(0,0,0) #(0,0,0) #(151,177,140) #(132,162,118) #(109,140,106)
-COLOR_ICON = dutchwhite#russiangreen #(0,0,0) #COLOR_LOGO
+COLOR_LOGO = grass#russiangreen #(0,0,0) #(0,0,0) #(151,177,140) #(132,162,118) #(109,140,106)
+COLOR_ICON = grass#russiangreen #(0,0,0) #COLOR_LOGO
 COLOR_TEXT =dutchwhite #(241,233,203) #COLOR_ICON #(207,219,204) #(239,235,206) # (194,211,187) # (171,189,163) # (222,224,198) # COLOR_LOGO #(223, 223, 212)
 COLOR_CARD = smokyblack #skin2 #huntergreen #(30,23,20) #(51,73,45) # (67,92,61) #(12,9,10)
 # COLOR_TOOLBAR = (8s9,59,43)

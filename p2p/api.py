@@ -130,7 +130,7 @@ class Api(object):
             
         return await _get()
 
-    def well_documented_val(self,val,sep=BSEP,encrypt=True):
+    def well_documented_val(self,val,sep=BSEP,do_encrypt=True,receiver_pubkey=None):
         """
         What do we want to store with
         
@@ -139,6 +139,7 @@ class Api(object):
         3) Public key of author
         4) Signature of value by author
         """
+        import time
         timestamp=time.time()
         self.log('timestamp =',timestamp)
         
@@ -153,22 +154,32 @@ class Api(object):
 
 
         # encrypt?
-        self.log('value while unencrypted =',value_bytes)
-        value_bytes = encrypt_msg(value_bytes, self.public_key_global)
-        self.log('value while encrypted =  ',value_bytes)
+        if not receiver_pubkey: receiver_pubkey=self.public_key_global
+        # self.log('value while unencrypted =',value_bytes)
+        
+        # value_bytes = encrypt_msg(value_bytes, self.public_key_global)
 
+        res = encrypt(value_bytes, self.private_key, receiver_pubkey)
+        
+
+        #aes_ciphertext, encry_aes_key, hmac, hmac_signature, iv, metadata
+        
+        self.log('value while encrypted =  ',res)
+        # stop
+        aes_ciphertext, encry_aes_key, iv = res
         #self.log('value =',value)
         
-        pem_public_key = save_public_key(self.public_key,return_instead=True)
+        pem_public_key = serialize_pubkey(receiver_pubkey)
 
         #self.log('pem_public_key =',pem_public_key)
         # stop
+        self.log('aes_ciphertext = ',aes_ciphertext,type(aes_ciphertext))
 
-        signature = sign_msg(value_bytes, self.private_key)
+        signature = sign(aes_ciphertext, self.private_key)
         self.log('signature =',signature)
 
         ## Verify!
-        authentic = verify_msg(value_bytes,signature,self.public_key)
+        authentic = verify_signature(signature, aes_ciphertext, self.public_key)
         self.log('message is authentic for set??',authentic)
 
         # value_bytes_ascii = ''.join([chr(x) for x in value_bytes])
@@ -176,36 +187,69 @@ class Api(object):
         # jsond = {'time':timestamp, 'val':value_bytes_ascii, 'pub':pem_public_key, 'sign':signature}
         # jsonstr=jsonify(jsond)
 
-        
-        WDV = sep.join([str(timestamp).encode(), value_bytes,pem_public_key,signature])
-        # self.log('WDV = 'mWD)
+        time_b=str(timestamp).encode()
+        val_encr = aes_ciphertext
+        val_encr_key = encry_aes_key
+        sender_pubkey_b = serialize_pubkey(self.public_key)
+        receiver_pubkey_b = serialize_pubkey(receiver_pubkey)
+        signature = signature
 
-        # self.log(WDV.split(sep))
+        WDV = sep.join([
+            time_b,
+            val_encr,
+            val_encr_key,
+            iv,
+            receiver_pubkey_b,
+            sender_pubkey_b,
+            signature
+        ])
 
-        # self.log('well_documented_val() =',WDV)
+        self.log('well_documented_val() =',WDV)
         return WDV
 
-    async def unpack_well_documented_val(self,WDV,sep=BSEP):
+    async def unpack_well_documented_val(self,WDV,sep=BSEP,private_key=None):
         self.log('WDV???',WDV)
-        time,val,pub,sign = WDV.split(sep)
-        pub=load_public_key(pub)
+        if WDV is None: return WDV
+        #WDV=[base64.b64decode(x) for x in WDV.split(sep)]
+        WDV=WDV.split(sep)
+        self.log('WDV NEW:',WDV)
+        
+        time_b,val_encr,val_encr_key,iv,to_pub_b,from_pub_b,signature = WDV #.split(sep)
+        to_pub = load_pubkey(to_pub_b)
+        from_pub = load_pubkey(from_pub_b)
         
         # verify
-        authentic = verify_msg(val,sign,pub)
-        self.log('message is authentic for GET?',authentic)
+        
+        val_encr_decode = base64.b64decode(val_encr)
+        authentic = verify_signature(signature,val_encr,from_pub)
+        self.log('message is authentic for GET?',authentic,signature,val_encr)
 
         if not authentic: 
             self.log('inauthentic message!')
-            return None
+            return {}
 
         # decrypt
-        self.log('val before decryption = ',val)
-        val = decrypt_msg(val, self.private_key_global)
-        self.log('val after decryption = ',val)
+        # self.log('val before decryption = ',val_encr)
+        if private_key is None: private_key=self.private_key_global
+        val = decrypt(val_encr, val_encr_key, iv, private_key)
+        # self.log('val after decryption = ',val)
 
-        time=float(time.decode())
+        # time=float(time.decode())
         #val=val.decode()
-        return time,val,pub,sign
+        # return time,val,pub,sign
+        WDV={
+            'time':float(time_b.decode()),
+            'val':val,
+            'to':to_pub,
+            'from':from_pub,
+            'sign':signature
+        }
+
+        self.log('GOT WDV:',WDV)
+        return WDV
+        
+        
+         #,signature
 
     
     async def set(self,key_or_keys,value_or_values):
@@ -234,27 +278,21 @@ class Api(object):
     async def get_json(self,key_or_keys):
         res = await self.get(key_or_keys)
         self.log('GET_JSON',res)
+        if res is None: return res
+        
+        def jsonize(entry):
+            if not 'val' in entry: return entry
+            val=entry['val']
+            dat=json.loads(val.decode())
+            entry['val']=dat
+            return entry
+
         if type(res)==list:
-            jsonl=[]
-            for time,val,pub,sign in res:
-                dat=json.loads(val.decode())
-                if type(dat)==dict:
-                    dat['_time']=time
-                    dat['_pub']=pub
-                    dat['_sign']=sign
-                jsonl.append(dat)
+            jsonl=[jsonize(entry) for entry in res]
             return jsonl
         else:
-            #log('RES!!!',res)
-            time,val,pub,sign = res
-            dat = None if res is None else json.loads(val.decode())
-            if type(dat)==dict:
-                dat['_time']=time
-                dat['_pub']=pub
-                dat['_sign']=sign
-
-            self.log('RETURNING -->',dat)
-            return dat
+            entry = res
+            return jsonize(entry)
 
 
     async def set_json(self,key,value):
@@ -269,11 +307,12 @@ class Api(object):
 
     ## PERSONS
     async def get_person(self,username):
-        return await self.get_json('/person/'+username)
+        res=await self.get_json('/person/'+username)
+        return res.get('val') if res and type(res)==dict else res
 
-    async def set_person(self,username,public_key):
-        pem_public_key = save_public_key(public_key,return_instead=True)
-        obj = {'name':username, 'public_key':pem_public_key.decode()}
+    async def set_person(self,username,pem_public_key):
+        # pem_public_key = save_public_key(public_key,return_instead=True)
+        obj = {'name':username, 'public_key':pem_public_key}
         await self.set_json('/person/'+username,obj)
 
 
@@ -286,16 +325,18 @@ class Api(object):
         person = await self.get_person(name)
         if person is not None: return {'error':'Username already exists'}
 
-        private_key,public_key = new_keys(password=passkey,save=False)
-        self._private_key = private_key
-        self._public_key = public_key
-        pem_private_key = save_private_key(private_key,password=passkey,return_instead=True)
-        pem_public_key = save_public_key(public_key,return_instead=True)
+        self._private_key = private_key = generate_rsa_key()
+        # self._public_key = public_key = self.private_key.public_key()
+        pem_private_key = serialize_privkey(self.private_key, password=passkey)# save_private_key(private_key,password=passkey,return_instead=True)
+        #pem_public_key = save_public_key(public_key,return_instead=True)
+        pem_public_key = serialize_pubkey(self.public_key)
+
+        await self.set_person(name,pem_public_key.decode())
+        
 
         self.app_storage.put('_keys',
-                            private=str(pem_private_key.decode()),
-                            public=str(pem_public_key.decode())) #(private_key,password=passkey)
-        await self.set_person(name,public_key)
+                            private=pem_private_key.decode(),
+                            public=pem_public_key.decode()) #(private_key,password=passkey)
         return {'success':'Account created', 'username':name} 
 
 
@@ -304,8 +345,9 @@ class Api(object):
     def load_private_key(self,password):
         if not self.app_storage.exists('_keys'): return {'error':'No login keys present on this device'}
         pem_private_key=self.app_storage.get('_keys').get('private')
+        self.log('my private key ====',pem_private_key)
         try:
-            return {'success':load_private_key(pem_private_key.encode(),password)}
+            return {'success':load_privkey(pem_private_key,password)}
         except ValueError as e:
             self.log('!!',e)
         return {'error':'Incorrect password'}
@@ -334,7 +376,7 @@ class Api(object):
 
         # verify keys
         person_public_key_pem = person['public_key']
-        public_key = load_public_key(person_public_key_pem.encode())
+        public_key = load_pubkey(person_public_key_pem) #load_public_key(person_public_key_pem.encode())
         self._public_key = real_public_key = private_key.public_key()
 
         #log('PUBLIC',public_key.public_numbers())
@@ -347,7 +389,10 @@ class Api(object):
     @property
     def public_key(self):
         if not hasattr(self,'_public_key'):
-            self.app.root.change_screen('login')
+            if not hasattr(self,'_private_key'):
+                self.app.root.change_screen('login')
+            else:
+                self._public_key=self.private_key.public_key()
         return self._public_key
 
     @property
