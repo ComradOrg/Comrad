@@ -44,8 +44,8 @@ dutchwhite=229,219,181
 COLOR_TOOLBAR= smokyblack #5,5,5 #russiangreen #pinetreegreen #kombugreen #(12,5,5) #russiangreen
 COLOR_BG = (0,73,54)
 # COLOR_ICON = (201,203,163)
-COLOR_LOGO = grullo#russiangreen #(0,0,0) #(0,0,0) #(151,177,140) #(132,162,118) #(109,140,106)
-COLOR_ICON = grullo#russiangreen #(0,0,0) #COLOR_LOGO
+COLOR_LOGO = dutchwhite#russiangreen #(0,0,0) #(0,0,0) #(151,177,140) #(132,162,118) #(109,140,106)
+COLOR_ICON = dutchwhite#russiangreen #(0,0,0) #COLOR_LOGO
 COLOR_TEXT =dutchwhite #(241,233,203) #COLOR_ICON #(207,219,204) #(239,235,206) # (194,211,187) # (171,189,163) # (222,224,198) # COLOR_LOGO #(223, 223, 212)
 COLOR_CARD = smokyblack #skin2 #huntergreen #(30,23,20) #(51,73,45) # (67,92,61) #(12,9,10)
 # COLOR_TOOLBAR = (8s9,59,43)
@@ -221,6 +221,7 @@ class MainApp(MDApp):
     title = 'Komrade'
     logged_in=False
     store = JsonStore('../p2p/.keys.json')
+    store_global = JsonStore('../p2p/.keys.global.json')
     login_expiry = 60 * 60 * 24 * 7  # once a week
     texture = ObjectProperty()
 

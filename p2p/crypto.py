@@ -3,6 +3,7 @@ from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding
+from cryptography.exceptions import InvalidSignature
 import os
 
 key_dir = os.path.join(os.path.expanduser('~'),'.keys','komrade')
@@ -104,15 +105,20 @@ def sign_msg(message, private_key):
     )
 
 def verify_msg(message, signature, public_key):
-    return public_key.verify(
-        signature,
-        message,
-        padding.PSS(
-            mgf=padding.MGF1(hashes.SHA256()),
-            salt_length=padding.PSS.MAX_LENGTH
-        ),
-        hashes.SHA256()
-    )
+    try:
+        verified = public_key.verify(
+            signature,
+            message,
+            padding.PSS(
+                mgf=padding.MGF1(hashes.SHA256()),
+                salt_length=padding.PSS.MAX_LENGTH
+            ),
+            hashes.SHA256()
+        )
+        return True
+    except InvalidSignature:
+        return False
+    return None
 
 
 
@@ -136,3 +142,18 @@ def verify_msg(message, signature, public_key):
 # #print(encrypt_msg(b'hello',public_key))
 
 # print(verify_msg(msg+b'!!',signature,public_key))
+
+
+
+## ONLY NEEDS RUN ONCE!
+def gen_global_keys(fn='.keys.global.json'):
+    from kivy.storage.jsonstore import JsonStore
+
+    private_key,public_key=new_keys(save=False,password=None)
+    pem_private_key = save_private_key(private_key,password=None,return_instead=True)
+    pem_public_key = save_public_key(public_key,return_instead=True)
+
+    store = JsonStore('./.keys.global.json')
+
+    store.put('_keys',private=str(pem_private_key.decode()),public=str(pem_public_key.decode())) #(private_key,password=passkey)
+

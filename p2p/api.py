@@ -9,7 +9,7 @@ import asyncio,time
 # logger.setLevel(logging.DEBUG)
 sys.path.append('../p2p')
 # logger.info(os.getcwd(), sys.path)
-
+BSEP=b'||||'
 
 try:
     from .crypto import *
@@ -90,7 +90,7 @@ class Api(object):
                     #     self.log('Yawn, getting tired. Going to sleep')
                     #     self.root.ids.btn1.trigger_action()
 
-                #i += 1
+                i += 1
                 await asyncio.sleep(60)
                 # pass
         except asyncio.CancelledError as e:
@@ -119,18 +119,18 @@ class Api(object):
             
             if type(key_or_keys) in {list,tuple,dict}:
                 keys = key_or_keys
-                res = await asyncio.gather(*[node.get(key) for key in keys])
+                res = await asyncio.gather(*[self.unpack_well_documented_val(await node.get(key)) for key in keys])
                 #log('RES?',res)
             else:
                 key = key_or_keys
-                res = await node.get(key)
+                res = await self.unpack_well_documented_val(await node.get(key))
 
             #node.stop()
             return res
             
         return await _get()
 
-    def well_documented_val(self,val):
+    def well_documented_val(self,val,sep=BSEP,encrypt=True):
         """
         What do we want to store with
         
@@ -139,17 +139,23 @@ class Api(object):
         3) Public key of author
         4) Signature of value by author
         """
-        from binascii import a2b_uu as ascii2binary
-        from binascii import b2a_uu as binary2ascii
-
         timestamp=time.time()
         self.log('timestamp =',timestamp)
         
-        value = str(val)
-        try:
-            value_bytes = value.encode('utf-8')
-        except UnicodeDecodeError:
-            value_bytes = value.encode('ascii')
+        if type(val)!=bytes:
+            value = str(val)
+            try:
+                value_bytes = value.encode('utf-8')
+            except UnicodeDecodeError:
+                value_bytes = value.encode('ascii')
+        else:
+            value_bytes=val
+
+
+        # encrypt?
+        self.log('value while unencrypted =',value_bytes)
+        value_bytes = encrypt_msg(value_bytes, self.public_key_global)
+        self.log('value while encrypted =  ',value_bytes)
 
         #self.log('value =',value)
         
@@ -161,19 +167,45 @@ class Api(object):
         signature = sign_msg(value_bytes, self.private_key)
         self.log('signature =',signature)
 
+        ## Verify!
+        authentic = verify_msg(value_bytes,signature,self.public_key)
+        self.log('message is authentic for set??',authentic)
+
         # value_bytes_ascii = ''.join([chr(x) for x in value_bytes])
 
         # jsond = {'time':timestamp, 'val':value_bytes_ascii, 'pub':pem_public_key, 'sign':signature}
         # jsonstr=jsonify(jsond)
 
-        sep=b'||||'
+        
         WDV = sep.join([str(timestamp).encode(), value_bytes,pem_public_key,signature])
         # self.log('WDV = 'mWD)
 
         # self.log(WDV.split(sep))
 
-        self.log('well_documented_val() =',WDV)
+        # self.log('well_documented_val() =',WDV)
         return WDV
+
+    async def unpack_well_documented_val(self,WDV,sep=BSEP):
+        self.log('WDV???',WDV)
+        time,val,pub,sign = WDV.split(sep)
+        pub=load_public_key(pub)
+        
+        # verify
+        authentic = verify_msg(val,sign,pub)
+        self.log('message is authentic for GET?',authentic)
+
+        if not authentic: 
+            self.log('inauthentic message!')
+            return None
+
+        # decrypt
+        self.log('val before decryption = ',val)
+        val = decrypt_msg(val, self.private_key_global)
+        self.log('val after decryption = ',val)
+
+        time=float(time.decode())
+        #val=val.decode()
+        return time,val,pub,sign
 
     
     async def set(self,key_or_keys,value_or_values):
@@ -203,12 +235,26 @@ class Api(object):
         res = await self.get(key_or_keys)
         self.log('GET_JSON',res)
         if type(res)==list:
-            # self.log('is a list!',json.loads(res[0]))
-            return [None if x is None else json.loads(x) for x in res]
+            jsonl=[]
+            for time,val,pub,sign in res:
+                dat=json.loads(val.decode())
+                if type(dat)==dict:
+                    dat['_time']=time
+                    dat['_pub']=pub
+                    dat['_sign']=sign
+                jsonl.append(dat)
+            return jsonl
         else:
             #log('RES!!!',res)
-            return None if res is None else json.loads(res)
+            time,val,pub,sign = res
+            dat = None if res is None else json.loads(val.decode())
+            if type(dat)==dict:
+                dat['_time']=time
+                dat['_pub']=pub
+                dat['_sign']=sign
 
+            self.log('RETURNING -->',dat)
+            return dat
 
 
     async def set_json(self,key,value):
@@ -241,6 +287,8 @@ class Api(object):
         if person is not None: return {'error':'Username already exists'}
 
         private_key,public_key = new_keys(password=passkey,save=False)
+        self._private_key = private_key
+        self._public_key = public_key
         pem_private_key = save_private_key(private_key,password=passkey,return_instead=True)
         pem_public_key = save_public_key(public_key,return_instead=True)
 
@@ -248,9 +296,10 @@ class Api(object):
                             private=str(pem_private_key.decode()),
                             public=str(pem_public_key.decode())) #(private_key,password=passkey)
         await self.set_person(name,public_key)
-        
-
         return {'success':'Account created', 'username':name} 
+
+
+    
 
     def load_private_key(self,password):
         if not self.app_storage.exists('_keys'): return {'error':'No login keys present on this device'}
@@ -306,6 +355,29 @@ class Api(object):
         if not hasattr(self,'_private_key'):
             self.app.root.change_screen('login')
         return self._private_key
+
+    @property
+    def public_key_global(self):
+        if not hasattr(self,'_public_key_global'):
+            try:
+                pem=self.app.store_global.get('_keys').get('public',None)
+                self._public_key_global=load_public_key(pem.encode())
+                return self._public_key_global
+            except ValueError as e:        
+                self.log('!!',e)
+        return None
+        
+    @property
+    def private_key_global(self):
+        if not hasattr(self,'_private_key_global'):
+            try:
+                pem=self.app.store_global.get('_keys').get('private',None)
+                self._private_key_global=load_private_key(pem.encode())
+                return self._private_key_global
+            except ValueError as e:
+                self.log('!!',e)
+        return None
+
 
     async def append_json(self,key,data):
         sofar=await self.get_json(key)
@@ -364,7 +436,7 @@ class Api(object):
 
         self.log('file_store!?',file_store)
         keys = ['/part/'+x for x in file_store['parts']]
-        pieces = await self.get(keys)
+        time,pieces,pub,sign = await self.get(keys)
         file_store['parts_data']=pieces
         return file_store
 
