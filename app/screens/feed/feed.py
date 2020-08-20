@@ -141,7 +141,7 @@ class PostCard(MDCard):
 
         # self.log('?????',self.cache_img_src, os.path.exists(self.cache_img_src), os.stat(self.cache_img_src).st_size)
         if self.cache_img_src and (not os.path.exists(self.cache_img_src) or not os.stat(self.cache_img_src).st_size):
-            async def do_download():
+            async def do_download_later():
                 self.log('downloading...')
                 await self.app.download(self.img_id, self.cache_img_src)
                 self.image.reload()
@@ -149,7 +149,7 @@ class PostCard(MDCard):
 
             #self.open_dialog('posting')
             #Thread(target=do_download).start()
-            asyncio.create_task(do_download())
+            asyncio.create_task(do_download_later())
 
 
     @property
