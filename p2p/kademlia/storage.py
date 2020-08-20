@@ -138,7 +138,11 @@ class HalfForgetfulStorage(ForgetfulStorage):
         self.set(key,value)
 
     def set(self, key,value):# try:
+        self.log(f'key: {key},\nvalue:{value}')
         time_b=str(time.monotonic()).encode()
+        if type(value)!=bytes:
+            value = str(json.dumps(value)).encode()
+        
         newdat = BSEP_ST.join([time_b, value])
         self.data[key]=newdat
         # return True
