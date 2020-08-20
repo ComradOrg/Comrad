@@ -52,7 +52,7 @@ async def _getdb(self=None,port=PORT_LISTEN):
 
     import os
     if self: self.log(os.getcwd())
-    node = KadServer(storage=HalfForgetfulStorage(fn='../p2p/data.db',log=self.log))
+    node = KadServer(storage=HalfForgetfulStorage(fn='../p2p/data.db',log=(self.log if self else print)))
 
     if self: self.log('listening..')
     await node.listen(port)
