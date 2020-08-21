@@ -120,7 +120,11 @@ class HalfForgetfulStorage(IStorage):
         self.ttl = ttl
         self.log = logger.info
         self.data_root = {} if not os.path.exists(self.fn) else self.load()
-        for x in ['_digest','_plain']: self.data_root[x]=OrderedDict()
+
+        for x in ['_digest','_plain']: 
+            if not x in self.data_root:
+                self.data_root[x]=OrderedDict()
+        
         self.data = self.data_root['_digest']
         self.data_plain = self.data_root['_plain']
 

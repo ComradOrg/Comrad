@@ -49,6 +49,11 @@ class Server:
         self.refresh_loop = None
         self.save_state_loop = None
 
+        ## echo
+        self.re_echo()
+
+    #def re_echo(self):
+    #    return [asyncio.create_task(self.set_digest(k,v)) for k,v in self.storage.items()]
 
     def __repr__(self):
         repr = f"""
@@ -197,15 +202,14 @@ class Server:
         
 
 
-        #dkey = digest(key)
-        return await self.set_digest(key, value)
+        dkey = digest(key)
+        return await self.set_digest(dkey, value)
 
-    async def set_digest(self, key, value, store_anywhere=STORE_ANYWHERE):
+    async def set_digest(self, dkey, value, store_anywhere=STORE_ANYWHERE):
         """
         Set the given SHA1 digest key (bytes) to the given value in the
         network.
         """
-        dkey=digest(key)
 
         node = Node(dkey)
 
@@ -222,14 +226,14 @@ class Server:
 
         # if this node is close too, then store here as well
         if store_anywhere:
-            self.storage.set(dkey,value,undigested_too=key)
+            self.storage.set(dkey,value)
         else:
             biggest = max([n.distance_to(node) for n in nodes])
             if self.node.distance_to(node) < biggest:
-                #self.storage[dkey] = value
-                ## IMPOSSIBLE STORING UNDIGESTED IN LOCAL STORAGE FOR NOW @DEBUG @HACK
-                #self.storage.data_debug[key]=value
-                self.storage.set(dkey,value,undigested_too=key)
+                self.storage[dkey] = value
+        # ## IMPOSSIBLE STORING UNDIGESTED IN LOCAL STORAGE FOR NOW @DEBUG @HACK
+        # #self.storage.data_debug[key]=value
+        # self.storage.set(dkey,value)
 
 
         results = [self.protocol.call_store(n, dkey, value) for n in nodes]
