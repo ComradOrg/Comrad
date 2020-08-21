@@ -1,7 +1,7 @@
 """
 Package for interacting on the network at a high level.
 """
-STORE_ANYWHERE=True
+STORE_ANYWHERE=False
 
 
 import random
