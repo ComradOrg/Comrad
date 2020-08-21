@@ -81,7 +81,8 @@ class MyLayout(MDBoxLayout):
     def change_screen_from_uri(self,uri,*args):
         screen_name = route(uri)
         self.app.screen = screen_name
-        return self.change_screen(screen_name,*args)
+        self.app.log(f'routing to {screen_name}')
+        self.scr_mngr.current = screen_name
     
     def view_post(self,post_id):
         self.post_id=post_id
@@ -173,7 +174,8 @@ def draw_background(widget, img_fn='assets/bg.png'):
 
 
 def route(uri):
-    prefix,channel,rest = uri.split('/',3)
+    if not '/' in uri: return None
+    prefix=uri.split('/')[1] #,channel,rest = uri.split('/',3)
 
     mapd = {
         'inbox':'feed',
@@ -205,6 +207,7 @@ class MainApp(MDApp):
 
     def change_screen_from_uri(self,uri,*args):
         self.uri=uri
+        self.log('CHANGING SCREEN',uri,'??')
         return self.root.change_screen_from_uri(uri,*args)
 
     @property
@@ -291,11 +294,13 @@ class MainApp(MDApp):
         async def do():
             dat = await self.api.register(un)
             if 'success' in dat:
+                self.username=un
                 self.root.ids.login_screen.login_status.text=dat['success']
                 self.root.ids.login_screen.login_status.theme_text_color='Custom'
                 self.root.ids.login_screen.login_status.text_color=rgb(*COLOR_ACCENT)
                 await asyncio.sleep(1)
                 #self.save_login(dat)
+                self.change_screen_from_uri('/inbox/earth')
                 return True
             elif 'error' in dat:
                 self.root.ids.login_screen.login_status.text=dat['error']
@@ -353,7 +358,7 @@ class MainApp(MDApp):
     async def get_post(self,post_id):
         return await self.api.get_post(post_id)
 
-    async def get_posts(self,uri='/channel/earth'):
+    async def get_posts(self,uri='/inbox/earth'):
         self.log(f'app.get_posts(uri={uri} -> ...')
         data = await self.api.get_posts(uri)
         self.log

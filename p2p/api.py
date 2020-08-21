@@ -86,7 +86,7 @@ class Api(object):
             i = 0
             self._node = await self.connect(port=port)
             while True:
-                if not i%10: self.log(f'Node status (tick {i}): {self._node}')
+                if not i%60: self.log(f'Node status (tick {i}): {self._node}')
                 if i and not i%save_every: await self.flush()
                 i += 1
                 await asyncio.sleep(NODE_SLEEP_FOR)
@@ -122,7 +122,7 @@ class Api(object):
 
 
     async def get(self,key_or_keys,decode_data=True):
-        self.log(f'get({key_or_keys}) --> ...')
+        self.log(f'get({key_or_keys},decode_data={decode_data}) --> ...')
         async def _get():
             node=await self.node
             res=None
@@ -140,7 +140,7 @@ class Api(object):
                 val = await node.get(key)
                 res = await self.decode_data(val) if decode_data else val
             
-            # self.log(f'_get({key_or_keys}) --> {res}')
+            self.log(f'_get({key_or_keys}) --> {res}')
             return res
         return await _get()
 
@@ -213,13 +213,19 @@ class Api(object):
 
         return final_packet
 
-    async def decode_data(self,entire_packet,sep=BSEP,private_key=None,sep2=BSEP2):
-        if entire_packet is None: return entire_packet
-        #entire_packet = base64.b64decode(entire_packet)
+    async def decode_data(self,entire_packet_orig,sep=BSEP,private_key=None,sep2=BSEP2):
+        if entire_packet_orig is None: return entire_packet_orig
+        entire_packet = base64.b64decode(entire_packet_orig)
+        self.log('????',type(entire_packet))
+        self.log(entire_packet)
         
         # get data
-        encrypted_payload, decryption_tools = entire_packet.split(sep)
-        decryption_tools=decryption_tools.split(sep2)
+        try:
+            encrypted_payload, decryption_tools = entire_packet.split(sep)
+            decryption_tools=decryption_tools.split(sep2)
+        except ValueError:
+            self.log('!! decode_data() got incorrect format')
+            return entire_packet_orig 
 
         # ### FIRST LINE OF PROTECTION
         # # is the receiver's public id in our list of public IDs?
@@ -311,6 +317,7 @@ class Api(object):
 
     
     async def set(self,key_or_keys,value_or_values,private_signature_key=None,encode_data=True):
+        self.log(f'api.set({key_or_keys}) --> {type(value_or_values)}')
         async def _set():
             # self.log('async _set()',self.node)
             # node=self.node
@@ -496,9 +503,9 @@ class Api(object):
             fnfn = os.path.join(KEYDIR,priv_key_fn)
             print(fnfn)
             priv_key=load_privkey_fn(fnfn)
-            pub_key=priv_key.public_key()
+            #pub_key=priv_key.public_key()
             name_key= '.'.join(priv_key_fn.split('.')[1:-1])
-            res[name_key] = (pub_key, priv_key)
+            res[name_key] = priv_key
             self.log(f'[API] found key {name_key} and added to keychain')
         return res
             
@@ -595,19 +602,21 @@ class Api(object):
         
 
 
-    async def post(self,data,channels = ['earth'], add_profile=True):
+    async def post(self,data,to_inbox,add_to_outbox=True):
         post_id=get_random_id()
         res = await self.set_json('/post/'+post_id, data)
-        self.log('Api.post() got data back from set_json():',res)
+        if not res:
+            self.log('!! error, couldn\'t set post json')
+            return
+        
+        # ## add to inbox
+        self.append_json(f'/inbox/{to_inbox}',post_id)
 
-        # ## add to channels
-        res = await asyncio.gather(*[
-            self.append_json(f'/posts/channel/{channel}',post_id) for channel in channels
-        ])
-
-        # ## add to user
-        un=data.get('author')
-        if un and add_profile: await self.append_json('/posts/author/'+un, post_id)
+        ## add to outbox
+        if add_to_outbox:
+            un=data.get('author')
+            if un:
+                await self.append_json(f'/outbox/{un}', post_id)
 
         if res:
             asyncio.create_task(self.flush())
@@ -627,15 +636,15 @@ class Api(object):
     async def get_post(self,post_id):
         return await self.get_json_val(post_id,decode_data=True)
 
-    async def get_posts(self,uri='/posts/channel/earth'):
+    async def get_posts(self,uri='/inbox/earth'):
         # index = await self.get_json_val('/posts'+uri)
         self.log(f'api.get_posts(uri={uri}) --> ...')
         index = await self.get_json_val(uri,decode_data=True)
-        
+        self.log('got index?',index)
 
         if index is None: return []
         if type(index)!=list: index=[index]
-        self.log('got index?',index)
+        
         index = [x for x in index if x is not None]
 
         ## get full json

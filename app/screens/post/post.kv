@@ -1,5 +1,9 @@
 #:import PostScreen screens.post.post.PostScreen
 #:import COLOR_TEXT main.COLOR_TEXT
+#:import COLOR_CARD main.COLOR_CARD
+#:import COLOR_ACCENT main.COLOR_CARD
+#:import COLOR_INACTIVE main.COLOR_INACTIVE
+#:import COLOR_ACTIVE main.COLOR_ACTIVE
 
 <AddPostTextField>
     id: post_content_input
@@ -30,6 +34,8 @@
     spacing: '10dp'
     pos_hint: {'center_x': .5, 'y':0.05}
     # md_bg_color: 1,1,0,1
+
+
 
 <UploadButton>:
     id: file_chooser_button
@@ -128,14 +134,7 @@
         pos_hint: {'center_x':0.5, 'center_y':0.5}
         # radius:[20,] 
         # border_radius:20
-        canvas:
-            Color:
-                rgb: rgb(*COLOR_TEXT)
-            Line:
-                width: 1
-                rectangle: (self.x, self.y, self.width, self.height)
-                # radius:[20,] 
-                # border_radius:20
+
 
 
         MDLabel:
@@ -155,3 +154,75 @@
 <PostScreen>:
     name: 'post'
     id: post_screen
+
+
+
+<ChannelLayout>:
+    adaptive_width: True
+    adaptive_height: True
+    height: self.minimum_height
+    width: self.minimum_width
+    size_hint: None,None
+    # height:'10sp'
+    # adaptive_height: True
+    size_hint:1,None
+    # md_bg_color: 1,1,0,1
+    spacing:0,0
+    padding:0,0,0,0
+    orientation: 'lr-tb'
+
+
+
+
+<ChannelChip>
+    # size_hint: None,  None
+    height: "26sp"
+    padding: 0, 0, 0, 0
+    # text: ""
+    md_bg_color: rgb(*COLOR_CARD)
+    on_release: self.callback()
+    icon: 'check-box-outline'
+    line_color: rgb(*COLOR_CARD)
+    color: rgb(*COLOR_CARD)
+    theme_text_color: 'Custom'
+    text_color: rgb(*COLOR_TEXT)
+
+    # MDBoxLayout:
+    #     id: box_check
+    #     adaptive_size: True
+    #     pos_hint: {'center_y': .5}
+    #     padding: dp(0)
+    #     size_hint:None,None
+
+    # MDBoxLayout:
+    #     id: chiplayout
+    #     adaptive_width: True
+    #     width: self.minimum_width
+    #     size_hint:None,None
+    #     padding: dp(0)
+
+    #     # MDIconButton:
+    #     #     id: icon
+    #     #     icon: root.icon
+    #     #     size_hint_y: None
+    #     #     height: "26dp"
+    #     #     pos_hint: {"center_y": .5}
+    #     #     user_font_size: "12dp"
+    #     #     disabled: True
+    #     #     md_bg_color_disabled: 0, 0, 0, 0
+    #     #     theme_text_color: "Custom"
+    #     #     text_color: rgb(*COLOR_TEXT)
+    #     #     size_hint:None,None
+    #     #     width: "26dp"
+
+    #     Label:
+    #         id: label
+    #         text: root.label
+    #         size_hint_x: None
+    #         width: self.texture_size[0]
+    #         color: root.text_color if root.text_color else (root.theme_cls.text_color)
+    #         font_name: "assets/font.otf"
+    #         font_size: "12sp"
+    #         halign:"left"
+    #         size_hint:None,None
+    

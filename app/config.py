@@ -132,5 +132,8 @@ else:
     COLOR_CARD = bone
     COLOR_CARD_BORDER = COLOR_CARD
     COLOR_ICON=COLOR_LOGO
-    COLOR_ACCENT = huntergreen
+    COLOR_ACCENT = huntergreen 
 
+
+COLOR_INACTIVE = COLOR_CARD
+COLOR_ACTIVE = russiangreen

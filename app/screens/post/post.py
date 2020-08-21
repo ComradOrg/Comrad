@@ -3,7 +3,8 @@ from plyer import filechooser
 from kivymd.uix.label import MDLabel
 from kivymd.uix.textfield import MDTextField
 from kivymd.uix.boxlayout import MDBoxLayout
-from kivymd.uix.button import MDRectangleFlatButton, MDIconButton, MDRaisedButton
+from kivymd.uix.stacklayout import MDStackLayout
+from kivymd.uix.button import MDRectangleFlatButton, MDIconButton, MDRaisedButton,MDFillRoundFlatButton,MDRoundFlatIconButton
 from kivy.properties import ListProperty,ObjectProperty
 from kivy.app import App
 from screens.feed.feed import *
@@ -11,8 +12,27 @@ import os,time,threading
 from threading import Thread
 from kivymd.uix.dialog import MDDialog
 from kivy.core.image import Image as CoreImage
+from kivymd.uix.gridlayout import MDGridLayout
 import io,shutil,asyncio
-from main import rgb,COLOR_TEXT
+from kivymd.uix.chip import MDChip
+from main import rgb,COLOR_TEXT,COLOR_ACCENT,COLOR_CARD,COLOR_INACTIVE,COLOR_ACTIVE
+from misc import *
+from kivy.animation import Animation
+from kivy.lang import Builder
+from kivy.metrics import dp
+from kivy.properties import (
+    BooleanProperty,
+    ListProperty,
+    NumericProperty,
+    ObjectProperty,
+    StringProperty,
+)
+from kivy.uix.boxlayout import BoxLayout
+
+from kivymd.theming import ThemableBehavior
+from kivymd.uix.button import MDIconButton
+from kivymd.uix.stacklayout import MDStackLayout
+from main import COLOR_TEXT,rgb,COLOR_ICON,COLOR_ACCENT,COLOR_INACTIVE
 
 class ProgressPopup(MDDialog): pass
 class MessagePopup(MDDialog): pass
@@ -53,6 +73,100 @@ class PostButton(MDRectangleFlatButton): pass
 class PostStatus(MDRectangleFlatButton): pass
 
 
+class SelectAddressee(DropDownWidget):
+    def __init__(self, wordlist, **kwargs):
+        super().__init__(**kwargs)
+        self.pos_hint = {'center_x':.5,'center_y':.5}
+        self.size_hint = (None, None)
+        self.size = (600, 60)
+        
+        self.ids.txt_input.word_list = wordlist
+        self.ids.txt_input.starting_no = 1
+
+
+
+
+
+
+
+class ChannelLayout(MDStackLayout):
+    pass
+
+
+
+class ChannelChip(MDRoundFlatIconButton):
+    def callback(self):
+        val=self.check if hasattr(self,'check') else False
+        self.check = not val
+        self.icon='checkbox-blank-outline' if self.check else 'check-box-outline'
+        # self.md_bg_color=rgb(*COLOR_INACTIVE) if not self.check else rgb(*COLOR_ACTIVE)
+        # raise Exception(['GOT VALL',val])
+    pass
+        
+        
+    # def on_icon(self, instance, value):
+    #     self.log('on_icon',instance,value)
+    #     if value == "":
+    #         self.icon = "check-box-outline"
+    #         self.remove_widget(self.ids.icon)
+ 
+
+    # def on_touch_down(self, touch):
+    #     colorobj=self.children[1]
+    #     if not self.check:
+    #         self.check=True
+    #         self.icon="check-box-outline"
+    #         self.color=rgb(*COLOR_ACTIVE)
+    #         self.selected_chip_color=rgb(*COLOR_ACTIVE)
+    #         colorobj.md_bg_color=rgb(*COLOR_ACTIVE)
+    #         self.log(f'check = {self.check} and icon = {self.icon} and color = {self.color}')
+    #     else:
+    #         self.selected_chip_color=rgb(*COLOR_INACTIVE)
+    #         self.check=False
+    #         self.icon="checkbox-blank-outline"
+    #         self.color=rgb(*COLOR_INACTIVE)
+    #         colorobj.md_bg_color=rgb(*COLOR_INACTIVE)
+    #         self.log(f'check = {self.check} and icon = {self.icon} and color = {self.color}')
+    #         self.md_bg_color=rgb(*COLOR_INACTIVE)
+    #     self.parent.parent.to_channels[self.label]=self.check
+
+            # self.color=rgb(*COLOR_ACCENT) if self.check else (rgb(50,50,50))
+            # self.log(md_choose_chip.parent.to_channels)
+            # self.ids.chiplayout.md_bg_color=self.color
+            
+            # if self.selected_chip_color:
+            #     Animation(
+            #         color=self.theme_cls.primary_dark
+            #         if not self.selected_chip_color
+            #         else self.selected_chip_color,
+            #         d=0.3,
+            #     ).start(self)
+            # if issubclass(md_choose_chip.__class__, MDChooseChip):
+            #     for chip in md_choose_chip.children:
+            #         if chip is not self:
+            #             chip.color = self.theme_cls.primary_color
+            # if self.check:
+            #     if not len(self.ids.box_check.children):
+            #         self.ids.box_check.add_widget(
+            #             MDIconButton(
+            #                 icon="check-box-outline",
+            #                 size_hint_y=None,
+            #                 height=dp(20),
+            #                 disabled=True,
+            #                 user_font_size=dp(20),
+            #                 pos_hint={"center_y": 0.5},
+            #             )
+            #         )
+            #     else:
+            #         check = self.ids.box_check.children[0]
+            #         self.ids.box_check.remove_widget(check)
+            # if self.callback:
+            #     self.callback(self, self.label)
+
+
+
+
+
 class PostScreen(ProtectedScreen): 
     post_id = ObjectProperty()
 
@@ -72,7 +186,39 @@ class PostScreen(ProtectedScreen):
         post_TextField.font_name='assets/overpass-mono-regular.otf'
         post_TextField.hint_text='word?'
 
+        #self.addressee = SelectAddressee(list(self.app.keys.keys()))
+        #post.add_widget(self.addressee)
+
         # post.remove_widget(post.scroller)
+        self.channel_layout = ChannelLayout() #MDBoxLayout(size_hint=(1,None),orientation='horizontal',cols=3)
+        # self.channel_layout.orientation='horizontal'
+        # self.channel_layout.cols=1
+        # self.channel_layout.size_hint=(1,None)
+        # self.channel_layout.adaptive_height=True
+        # self.channel_layout.adaptive_=True
+        # self.channel_layout.spacing='20dp'
+        # self.channel_layout.padding='15dp'
+        # self.channel_layout.height='300sp' #self.channel_layout.minimum_height
+        
+        post.add_widget(self.channel_layout,1)
+        self.post_card.to_channels = {}
+        for channel in self.app.keys:
+            chip = ChannelChip()
+            # chip.ids.icon.width='26sp'
+            self.log(f'adding channel {channel}')
+            chip.text = '@'+channel
+            # chip.color=rgb(*COLOR_INACTIVE)
+            # chip.ids.chiplayout.md_bg_color=chip.color
+            # chip.width='100sp'
+            chip.font_name='assets/font.otf'
+            chip.md_bg_color=rgb(*COLOR_INACTIVE)
+            # chip.theme_text_color='Custom'
+            # chip.text_color=rgb(*COLOR_INACTIVE)
+            self.channel_layout.add_widget(chip)
+            self.post_card.to_channels[channel]=False
+
+
+
         post.scroller.remove_widget(post.post_content)
         post.scroller.add_widget(post_TextField)
         post.scroller.size=('300dp','300dp')
