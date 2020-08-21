@@ -36,6 +36,8 @@ class PostImageLayout(MDBoxLayout): pass
 
 class PostAuthorLabel(MDLabel): 
     def __init__(self,**kwargs):
+        stop
+        kwargs['text']='[b]eeeee'+kwargs.get('text','')+'[/b]'
         super().__init__(**kwargs)
         self.bind(width=lambda s, w: s.setter('text_size')(s, (w, None)))
         self.bind(texture_size=self.setter('size'))
@@ -80,7 +82,7 @@ class PostCard(MDCard):
 
         # pieces
         author_section_layout = PostAuthorLayout()
-        author_label = PostAuthorLabel(text=self.author)
+        author_label = PostAuthorLabel(text='[b]'+self.author+'[/b]')
         author_label.font_size = '28dp'
         author_avatar = PostAuthorAvatar(source='avatar.jpg') #self.img_src)
         author_section_layout.add_widget(author_avatar)

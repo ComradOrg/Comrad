@@ -157,83 +157,83 @@ class KadServer(Server):
 
 
 
-    async def get(self, key):
-        """
-        Get a key if the network has it.
+    # async def get(self, key):
+    #     """
+    #     Get a key if the network has it.
 
-        Returns:
-            :class:`None` if not found, the value otherwise.
-        """
-        log.info("Looking up key %s", key)
-        dkey = digest(key)
-        # if this node has it, return it
-        if self.storage.get(dkey) is not None:
-            log.info('I already have this')
-            return self.storage.get(dkey)
-        node = Node(dkey)
-        nearest = self.protocol.router.find_neighbors(node)
-        log.info(f'My nearest nodes are: {nearest}')
-        if not nearest:
-            log.warning("There are no known neighbors to get key %s", key)
-            return None
-        spider = ValueSpiderCrawl(self.protocol, node, nearest,
-                                  self.ksize, self.alpha)
-        found = await spider.find()
+    #     Returns:
+    #         :class:`None` if not found, the value otherwise.
+    #     """
+    #     log.info("Looking up key %s", key)
+    #     dkey = digest(key)
+    #     # if this node has it, return it
+    #     if self.storage.get(dkey) is not None:
+    #         log.info('I already have this')
+    #         return self.storage.get(dkey)
+    #     node = Node(dkey)
+    #     nearest = self.protocol.router.find_neighbors(node)
+    #     log.info(f'My nearest nodes are: {nearest}')
+    #     if not nearest:
+    #         log.warning("There are no known neighbors to get key %s", key)
+    #         return None
+    #     spider = ValueSpiderCrawl(self.protocol, node, nearest,
+    #                               self.ksize, self.alpha)
+    #     found = await spider.find()
 
-        log.info(f'spider done crawling: {spider}')
-        log.info(f'spider found value: {found}')
+    #     log.info(f'spider done crawling: {spider}')
+    #     log.info(f'spider found value: {found}')
 
-        self.storage[dkey]=found
-        return found
+    #     self.storage[dkey]=found
+    #     return found
 
-    async def set(self, key, value):
-        """
-        Set the given string key to the given value in the network.
-        """
-        if not check_dht_value_type(value):
-            raise TypeError(
-                "Value must be of type int, float, bool, str, or bytes"
-            )
-        log.info("setting '%s' = '%s' on network", key, value)
-        dkey = digest(key)
+    # async def set(self, key, value):
+    #     """
+    #     Set the given string key to the given value in the network.
+    #     """
+    #     if not check_dht_value_type(value):
+    #         raise TypeError(
+    #             "Value must be of type int, float, bool, str, or bytes"
+    #         )
+    #     log.info("setting '%s' = '%s' on network", key, value)
+    #     dkey = digest(key)
 
-        print('STORE??',type(self.storage),self.storage)
-        self.storage.set(dkey,value)
-        return await self.set_digest(dkey, value)
+    #     print('STORE??',type(self.storage),self.storage)
+    #     self.storage.set(dkey,value)
+    #     return await self.set_digest(dkey, value)
 
-    async def set_digest(self, dkey, value):
-        """
-        Set the given SHA1 digest key (bytes) to the given value in the
-        network.
-        """
-        node = Node(dkey)
+    # async def set_digest(self, dkey, value):
+    #     """
+    #     Set the given SHA1 digest key (bytes) to the given value in the
+    #     network.
+    #     """
+    #     node = Node(dkey)
 
-        nearest = self.protocol.router.find_neighbors(node)
-        if not nearest:
-            log.warning("There are no known neighbors to set key %s",
-                        dkey.hex())
-            #return False
+    #     nearest = self.protocol.router.find_neighbors(node)
+    #     if not nearest:
+    #         log.warning("There are no known neighbors to set key %s",
+    #                     dkey.hex())
+    #         #return False
 
-        spider = NodeSpiderCrawl(self.protocol, node, nearest,
-                                 self.ksize, self.alpha)
-        nodes = await spider.find()
-        log.info("setting '%s' on %s", dkey.hex(), list(map(str, nodes)))
+    #     spider = NodeSpiderCrawl(self.protocol, node, nearest,
+    #                              self.ksize, self.alpha)
+    #     nodes = await spider.find()
+    #     log.info("setting '%s' on %s", dkey.hex(), list(map(str, nodes)))
 
-        # if this node is close too, then store here as well
-        neighbs=[n.distance_to(node) for n in nodes]
-        log.info('setting on %s neighbors', neighbs)
-        biggest = max(neighbs) if neighbs else 0
-        log.info('my distance to node is %s, biggest distance is %s',
-                 self.node.distance_to(node),biggest)
-        if self.node.distance_to(node) < biggest:
-            self.storage.set(dkey,value)
+    #     # if this node is close too, then store here as well
+    #     neighbs=[n.distance_to(node) for n in nodes]
+    #     log.info('setting on %s neighbors', neighbs)
+    #     biggest = max(neighbs) if neighbs else 0
+    #     log.info('my distance to node is %s, biggest distance is %s',
+    #              self.node.distance_to(node),biggest)
+    #     if self.node.distance_to(node) < biggest:
+    #         self.storage.set(dkey,value)
         
-        log.info('here are the nodes %s' % nodes)
-        results = [self.protocol.call_store(n, dkey, value) for n in nodes]
-        log.info('here are the results')
+    #     log.info('here are the nodes %s' % nodes)
+    #     results = [self.protocol.call_store(n, dkey, value) for n in nodes]
+    #     log.info('here are the results')
 
-        # return true only if at least one store call succeeded
-        return any(await asyncio.gather(*results))
+    #     # return true only if at least one store call succeeded
+    #     return any(await asyncio.gather(*results))
 
 
 
