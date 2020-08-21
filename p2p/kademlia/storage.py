@@ -119,14 +119,7 @@ class HalfForgetfulStorage(IStorage):
         self.fn = fn
         self.ttl = ttl
         self.log = logger.info
-        self.data_root = {} if not os.path.exists(self.fn) else self.load()
-
-        for x in ['_digest','_plain']: 
-            if not x in self.data_root:
-                self.data_root[x]=OrderedDict()
-        
-        self.data = self.data_root['_digest']
-        self.data_plain = self.data_root['_plain']
+        self.data = self.load()
 
         # import pickledb
         # self.data = pickledb.load(self.fn,auto_dump=True)
@@ -142,6 +135,8 @@ class HalfForgetfulStorage(IStorage):
         asyncio.create_task(do())
 
     def load(self):
+        if not os.path.exists(self.fn): return OrderedDict()
+        
         self.log('loading pickle...')
         with open(self.fn,'rb') as of:
             res=pickle.load(of)
@@ -155,7 +150,7 @@ class HalfForgetfulStorage(IStorage):
     def items(self): return [(k,v) for k,v in zip(self.keys(),self.values())]
     def values(self): return [self.data[k] for k in self.keys()]
 
-    def set(self,dkey,value,undigested_too=None):
+    def set(self,dkey,value):
         # log(f'HFS.set({key}) -> {value}')
         newval = (time.monotonic(), value)
         
@@ -164,12 +159,6 @@ class HalfForgetfulStorage(IStorage):
         if dkey in self.data:
             del self.data[dkey]
         self.data[dkey]=newval
-
-        if undigested_too:
-            key=undigested_too
-            if key in self.data:
-                del self.data[key]
-            self.data_plain[key]=newval
 
 
         # save and prune
@@ -200,14 +189,13 @@ class HalfForgetfulStorage(IStorage):
         #self.cull()
         return self.get(key)
 
-    def __repr__(self,lim_eg=20):
+    def __repr__(self,lim_eg=5):
         #self.cull()
         #return repr(self.data)
-        eg = list(sorted(self.data_plain.keys()))[:lim_eg]
+        eg = list(sorted(self.data.keys()))[:lim_eg]
         msg=f"""HalfForgetfulStorage()
-                        # digested keys = {len(self.data)}
-                        # undigested keys = {len(self.data_plain)}
-                            e.g., {eg}
+                # keys = {len(self.data)}
+                    e.g. = {eg}
         """
         return msg
 

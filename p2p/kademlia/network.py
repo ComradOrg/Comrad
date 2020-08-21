@@ -1,7 +1,7 @@
 """
 Package for interacting on the network at a high level.
 """
-STORE_ANYWHERE=True
+STORE_ANYWHERE=False
 
 
 import random
@@ -232,9 +232,6 @@ class Server:
             biggest = max([n.distance_to(node) for n in nodes])
             if self.node.distance_to(node) < biggest:
                 self.storage[dkey] = value
-        # ## IMPOSSIBLE STORING UNDIGESTED IN LOCAL STORAGE FOR NOW @DEBUG @HACK
-        # #self.storage.data_debug[key]=value
-        # self.storage.set(dkey,value)
 
 
         results = [self.protocol.call_store(n, dkey, value) for n in nodes]
