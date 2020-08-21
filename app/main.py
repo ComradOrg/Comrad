@@ -368,8 +368,10 @@ class MainApp(MDApp):
     async def get_post(self,post_id):
         return await self.api.get_post(post_id)
 
-    async def get_posts(self):
-        data = await self.api.get_posts()
+    async def get_posts(self,uri='/posts/channel/earth'):
+        self.log(f'app.get_posts(uri={uri} -> ...')
+        data = await self.api.get_posts(uri)
+        self.log
 
         newdata=[]
         for d in data:
@@ -382,7 +384,8 @@ class MainApp(MDApp):
         return newdata
 
     async def get_my_posts(self):
-        return await self.api.get_posts('/author/'+self.username)
+        self.log(f'get_my_posts({self.username})')
+        return await self.get_posts(uri='/posts/author/'+self.username)
 
 
 

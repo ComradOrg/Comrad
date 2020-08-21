@@ -90,8 +90,8 @@ class LoginScreen(BaseScreen):
         self.label_title.font_size='22sp'
         self.label_password.font_size='18sp'
         self.label_username.font_size='18sp'
-        self.login_button.font_size='18sp'
-        self.register_button.font_size='18sp'
+        self.login_button.font_size='12sp'
+        self.register_button.font_size='12sp'
         
 
 

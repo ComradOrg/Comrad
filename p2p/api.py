@@ -12,6 +12,7 @@ sys.path.append('../p2p')
 BSEP=b'\n\n'
 BSEP2=b'\t\n'
 BSEP3=b'\r\r'
+NODE_SLEEP_FOR=5
 
 try:
     from .crypto import *
@@ -96,7 +97,7 @@ class Api(object):
                     #     self.root.ids.btn1.trigger_action()
 
                 i += 1
-                await asyncio.sleep(1)
+                await asyncio.sleep(NODE_SLEEP_FOR)
                 # pass
         except (asyncio.CancelledError,KeyboardInterrupt) as e:
             self.log('P2P node cancelled', e)
@@ -605,13 +606,12 @@ class Api(object):
 
     async def get_json_val(self,uri,get_last=True):
         res=await self.get_json(uri,get_last=get_last)
-        self.log('get_json_val() got',res)
         r=None
         if type(res) == dict:
             r=res.get('val',None) if res is not None else None
         elif type(res) == list:
             r=[x.get('val',None) for x in res if x is not None]
-        self.log('get_json_val() giving back',r)
+        self.log(f'get_json_val() --> {r}')
         return r
 
     async def get_post(self,post_id):
@@ -619,7 +619,10 @@ class Api(object):
 
     async def get_posts(self,uri='/posts/channel/earth'):
         # index = await self.get_json_val('/posts'+uri)
+        self.log(f'api.get_posts(uri={uri}) --> ...')
         index = await self.get_json_val(uri,get_last=False)
+        
+
         if index is None: return []
         if type(index)!=list: index=[index]
         self.log('got index?',index)

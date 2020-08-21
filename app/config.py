@@ -5,7 +5,7 @@ HORIZONTAL = False #random.choice([True,True,True,False])
 FACTOR=1
 WINDOW_SIZE = (1136*FACTOR,640*FACTOR) if HORIZONTAL else (640*FACTOR,1136*FACTOR)
 
-WINDOW_SIZE=800,800
+WINDOW_SIZE=700,700
 
 BG_IMG='assets/bg-brown.png'
 

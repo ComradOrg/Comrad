@@ -1,10 +1,14 @@
 """
 Package for interacting on the network at a high level.
 """
+STORE_ANYWHERE=True
+
+
 import random
 import pickle
 import asyncio
 import logging
+
 
 from kademlia.protocol import KademliaProtocol
 from kademlia.utils import digest
@@ -153,7 +157,7 @@ class Server:
         result = await self.protocol.ping(addr, self.node.id)
         return Node(result[1], addr[0], addr[1]) if result[0] else None
 
-    async def get(self, key):
+    async def get(self, key, store_anywhere=STORE_ANYWHERE):
         """
         Get a key if the network has it.
 
@@ -175,7 +179,8 @@ class Server:
         found = await spider.find()
 
         # set it locally? @EDIT
-        self.storage.set(dkey,found)
+        if store_anywhere:
+            self.storage.set(dkey,found)
         
         return found
 
@@ -195,7 +200,7 @@ class Server:
         #dkey = digest(key)
         return await self.set_digest(key, value)
 
-    async def set_digest(self, key, value):
+    async def set_digest(self, key, value, store_anywhere=STORE_ANYWHERE):
         """
         Set the given SHA1 digest key (bytes) to the given value in the
         network.
@@ -216,12 +221,17 @@ class Server:
         log.info("setting '%s' on %s", dkey.hex(), list(map(str, nodes)))
 
         # if this node is close too, then store here as well
-        biggest = max([n.distance_to(node) for n in nodes])
-        if self.node.distance_to(node) < biggest:
-            #self.storage[dkey] = value
-            ## IMPOSSIBLE STORING UNDIGESTED IN LOCAL STORAGE FOR NOW @DEBUG @HACK
-            #self.storage.data_debug[key]=value
+        if store_anywhere:
             self.storage.set(dkey,value,undigested_too=key)
+        else:
+            biggest = max([n.distance_to(node) for n in nodes])
+            if self.node.distance_to(node) < biggest:
+                #self.storage[dkey] = value
+                ## IMPOSSIBLE STORING UNDIGESTED IN LOCAL STORAGE FOR NOW @DEBUG @HACK
+                #self.storage.data_debug[key]=value
+                self.storage.set(dkey,value,undigested_too=key)
+
+
         results = [self.protocol.call_store(n, dkey, value) for n in nodes]
         # return true only if at least one store call succeeded
         return any(await asyncio.gather(*results))

@@ -35,7 +35,7 @@
     pos_hint: {'center_x':0.5} #, 'y':0.5}
     # height: '100dp' #self.minimum_height
     # width: '100dp'
-    height: '300dp'
+    height: '300sp'
     # spacing:'100dp'
     # padding:'100dp'
 
@@ -79,15 +79,17 @@
     # pos_hint:(None,None)
     pos_hint: {'center_x':0.5, 'center_y':0}
     # md_bg_color: 1,1,0,1
-    height: '100dp' #self.minimum_height
+    height: '100sp' #self.minimum_height
     # radius:[20,] 
     # border_radius:20
+    # height: self.minimum_height
 
 
     
 <PostAuthorAvatar>:
     size_hint:(None,None)
     pos_hint:{'center_x':1,'x':1}
+    height:'100sp'
     # padding:'10dp'
     # canvas:
     #     Color:
@@ -113,6 +115,7 @@
     padding: ('10dp','0dp')
     bold: True
     markup: True
+    # font_size: '24sp'
     
 <PostTimestampLabel>:
     id: post_timestamp_label
@@ -139,14 +142,15 @@
     id: post_content
     text: ''
     pos_hint: {'center_y':1}
-    font_size:'58dp'
-    font_style:'H5'
+    font_size:'13sp'
+    # font_style:'H5'
     #font_name: "Strengthen"
     # height: '400'
-    size_hint_y: None
+    size_hint_y: 1
     text_color:rgb(*COLOR_TEXT)
     theme_text_color: 'Custom'
     halign: 'left'
+    # adaptive_height: True
 
 <PostScrollView>:
     size_hint: (1,None)
@@ -157,7 +161,10 @@
     id: post
     orientation: "vertical"
     padding: "20dp"
-    size_hint: (0.75, None)
+    size_hint: (None, None)
+    width: '400sp'
+    # size:('400sp','800sp')
+    # adaptive_height: True
     pos_hint: {"center_x": .5, "center_y": .5}
     md_bg_color: rgb(*COLOR_CARD)
     height: self.minimum_height

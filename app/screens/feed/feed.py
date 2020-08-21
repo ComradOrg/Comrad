@@ -80,9 +80,9 @@ class PostCard(MDCard):
 
         # pieces
         author_section_layout = PostAuthorLayout()
-        author_label = PostAuthorLabel(text='[b]'+self.author+'[/b]')
-        author_label.font_size = '28dp'
-        author_avatar = PostAuthorAvatar(source='avatar.jpg') #self.img_src)
+        author_label = PostAuthorLabel(text='@'+self.author)
+        author_label.font_size = '18sp'
+        author_avatar = PostAuthorAvatar(source='assets/avatar.jpg') #self.img_src)
         author_section_layout.add_widget(author_avatar)
         author_section_layout.add_widget(author_label)
 
@@ -100,9 +100,9 @@ class PostCard(MDCard):
         if self.cache_img_src:
             image_layout = PostImageLayout()
             self.image = image = PostImage(source=self.cache_img_src)
-            image.height = '300dp'
+            image.height = '300sp'
             image_layout.add_widget(image)
-            image_layout.height='300dp'
+            image_layout.height='300sp'
             # self.log(image.image_ratio)
 
         self.post_content = PostContent(text=self.content)
@@ -131,10 +131,10 @@ class PostCard(MDCard):
             if height<minlen: height=minlen
             return height
 
-        scroller.size = ('300dp','%sdp' % estimate_height())
+        scroller.size = ('300sp','%ssp' % estimate_height())
         
 
-        # scroller.bind(size=('300dp',scroller.setter('height'))
+        # scroller.bind(size=('300sp',scroller.setter('height'))
         scroller.add_widget(self.post_content)
         self.add_widget(scroller)
         # self.add_widget(post_layout)
