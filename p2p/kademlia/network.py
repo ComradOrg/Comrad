@@ -50,7 +50,7 @@ class Server:
         self.save_state_loop = None
 
         ## echo
-        self.re_echo()
+        #self.re_echo()
 
     #def re_echo(self):
     #    return [asyncio.create_task(self.set_digest(k,v)) for k,v in self.storage.items()]
