@@ -79,14 +79,14 @@ class Api(object):
         #self._node=self.connect()
         pass
 
-    async def connect_forever(self,port=PORT_LISTEN):
+    async def connect_forever(self,port=PORT_LISTEN,save_every=10):
         try:
             i = 0
             self._node = await self.connect(port=port)
             while True:
                 #self.log(i)
                 if not i%10: self.log(f'Node status (tick {i}): {self._node}')
-                if i and not i%60: await self.flush()
+                if i and not i%save_every: await self.flush()
 
                     # # get some sleep
                     # if self.root.ids.btn1.state != 'down' and i >= 2:

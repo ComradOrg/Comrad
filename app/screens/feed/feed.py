@@ -36,8 +36,6 @@ class PostImageLayout(MDBoxLayout): pass
 
 class PostAuthorLabel(MDLabel): 
     def __init__(self,**kwargs):
-        stop
-        kwargs['text']='[b]eeeee'+kwargs.get('text','')+'[/b]'
         super().__init__(**kwargs)
         self.bind(width=lambda s, w: s.setter('text_size')(s, (w, None)))
         self.bind(texture_size=self.setter('size'))
