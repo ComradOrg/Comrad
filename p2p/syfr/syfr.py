@@ -65,6 +65,10 @@ def write_key(key, file_path='mykey.pem'):
     with open(file_path, 'w+') as fh:
         fh.write(key)
 
+def write_key_b(key, file_path='mykey.pem'):
+    with open(file_path, 'wb') as fh:
+        fh.write(key)
+
 
 def sign(message, private_key):
     signature = private_key.sign(

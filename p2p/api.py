@@ -78,6 +78,7 @@ class Api(object):
 
     def private_key(self):
         if self.username:
+            pass
 
     async def connect_forever(self,port=PORT_LISTEN,save_every=10):
         try:
@@ -109,7 +110,7 @@ class Api(object):
 
 
 
-    async def get(self,key_or_keys,get_last=True):
+    async def get(self,key_or_keys,decode_data=True):
         async def _get():
             node=await self.node
             res=None
@@ -119,13 +120,13 @@ class Api(object):
                 tasks=[]
                 for key in keys:
                     val = await node.get(key)
-                    task = self.decode_data(val)
+                    task = self.decode_data(val) if decode_data else val
                     tasks.append(task)
                 res = await asyncio.gather(*tasks)
             else:
                 key=key_or_keys
                 val = await node.get(key)
-                res = await self.decode_data(val)
+                res = await self.decode_data(val) if decode_data else val
             
             # self.log(f'_get({key_or_keys}) --> {res}')
             return res
@@ -297,13 +298,18 @@ class Api(object):
          #,signature
 
     
-    async def set(self,key_or_keys,value_or_values,private_signature_key=None):
+    async def set(self,key_or_keys,value_or_values,private_signature_key=None,encode_data=True):
         async def _set():
             # self.log('async _set()',self.node)
             # node=self.node
             #node=await _getdb(self)
             node=await self.node
-            
+
+            def proc(value):
+                if encode_data:
+                    return self.encode_data(value,private_signature_key=private_signature_key)
+                return value
+
             if type(key_or_keys) in {list,tuple,dict}:
                 keys = key_or_keys
                 values = value_or_values
@@ -311,7 +317,7 @@ class Api(object):
                 tasks=[
                     node.set(
                         key,
-                        self.encode_data(value,private_signature_key=private_signature_key)
+                        proc(value)
                     )
                     for key,value in zip(keys,values)
                 ]
@@ -320,14 +326,14 @@ class Api(object):
             else:
                 key = key_or_keys
                 value = value_or_values
-                res = await node.set(key,self.encode_data(value))
+                res = await node.set(key,proc(value))
 
             #node.stop()
             return res
 
         return await _set()
 
-    async def get_json(self,key_or_keys,get_last=True):
+    async def get_json(self,key_or_keys,decode_data=True):
         
         def jsonize(entry):
             # self.log('jsonize!',entry)
@@ -352,7 +358,7 @@ class Api(object):
                 return jsonize(entry)
 
         # if key_or_keys.startsiwth('/post/'):
-        res = await self.get(key_or_keys,get_last=get_last)
+        res = await self.get(key_or_keys,decode_data=decode_data)
         #self.log('get_json() got',res)
         if not res: return None
         return jsonize_res(res)
@@ -364,10 +370,10 @@ class Api(object):
         
 
 
-    async def set_json(self,key,value):
+    async def set_json(self,key,value,private_signature_key=None,encode_data=False):
         value_json = jsonify(value)
         # self.log('OH NO!',sys.getsizeof(value_json))
-        return await self.set(key,value_json)
+        return await self.set(key,value_json,private_signature_key=None,encode_data=False)
 
     async def has(self,key):
         val=await self.get(key)
@@ -376,13 +382,15 @@ class Api(object):
 
     ## PERSONS
     async def get_person(self,username):
-        return await self.get_json_val('/person/'+username)
+        return await self.get('/person/'+username,decode_data=False)
 
-    async def set_person(self,username,pem_public_key,private_signature_key=None):
+    async def set_person(self,username,pem_public_key):
         # pem_public_key = save_public_key(public_key,return_instead=True)
         #obj = {'name':username, 'public_key':pem_public_key}
         # await self.set_json('/person/'+username,obj)
-        await self.set('/person/'+username,pem_public_key,private_signature_key=None)
+        await self.set('/person/'+username,pem_public_key,
+                        private_signature_key=None,encode_data=False)
+
 
 
 
@@ -400,15 +408,12 @@ class Api(object):
         pem_public_key = serialize_pubkey(public_key)
 
         # save pub key in db
-        await self.set_person(name,pem_public_key,private_signature_key=private_key)
+        await self.set_person(name,pem_public_key)
+        # save priv key on hardware
+        fn_privkey = os.path.join(KEYDIR,f'.{name}.key')
 
-        # save priv (and pub) key on hardware
-        keydir=os.path.join(KEYDIR,'.'+name)
-        if not os.path.exists(keydir): os.makedirs(keydir)
-        fn_pubkey = os.path.join(keydir,f'.public.pem')
-        fn_privkey = os.path.join(keydir,f'.secret.pem')
-        write_key(pem_private_key, fn_privkey)
-        write_key(pem_public_key, fn_pubkey)
+        self.log('priv key =',pem_private_key)
+        write_key_b(pem_private_key, fn_privkey)
 
         # good
         return {'success':'Account created', 'username':name}
@@ -461,21 +466,21 @@ class Api(object):
         
     #@property
     def get_keys(self):
-        res=[]
-        for fldr in os.listdir(KEYDIR):
-            path=os.path.join(KEYDIR,fldr)
-            if fldr.startswith('.') and os.path.isdir(path):
-                keyname = fldr[1:]
-                files = os.path.listdir(path)
-                if '.public.pem' in files and '.private.pem' in files:
-                    fn_pubkey = os.path.join(path,'.public.pem')
-                    fn_privkey = os.path.join(path,'.private.pem')
-                    pubkey = load_pubkey_fn(fn_pubkey)
-                    privkey = load_pubkey_fn(fn_pubkey)
-                    if pubkey is not None and privkey is not None:
-                        keyrow = (keyname, privkey, pubkey)
-                        res.append(keyrow)
+        res={}
+        for priv_key_fn in os.listdir(KEYDIR):
+            if (not priv_key_fn.startswith('.') and priv_key_fn.endswith('.key')): continue
+            fnfn = os.path.join(KEYDIR,priv_key_fn)
+            priv_key=load_privkey_fn(fnfn)
+            pub_key=priv_key.public_key()
+            name_key= priv_key_fn.split('.')[1:-1]
+            res[name_key] = (pub_key, priv_key)
         return res
+            
+
+    @property
+    def keys(): 
+        if not hasattr(self,'_keys'): self._keys = self.get_keys()
+        return self._keys
     
 
 
@@ -583,8 +588,8 @@ class Api(object):
             return {'success':'Posted! %s' % post_id, 'post_id':post_id}
         return {'error':'Post failed'}
 
-    async def get_json_val(self,uri,get_last=True):
-        res=await self.get_json(uri,get_last=get_last)
+    async def get_json_val(self,uri,decode_data=True):
+        res=await self.get_json(uri,decode_data=decode_data)
         r=None
         if type(res) == dict:
             r=res.get('val',None) if res is not None else None
@@ -594,12 +599,12 @@ class Api(object):
         return r
 
     async def get_post(self,post_id):
-        return await self.get_json_val(post_id)
+        return await self.get_json_val(post_id,decode_data=True)
 
     async def get_posts(self,uri='/posts/channel/earth'):
         # index = await self.get_json_val('/posts'+uri)
         self.log(f'api.get_posts(uri={uri}) --> ...')
-        index = await self.get_json_val(uri,get_last=False)
+        index = await self.get_json_val(uri,decode_data=True)
         
 
         if index is None: return []
@@ -743,15 +748,18 @@ def boot_lonely_selfless_node(port=8467):
     asyncio.run(go())
     
 
-def init_entities(self):
+def init_entities():
     ## make global entity called earth
     
     async def go():
-        from api import Api
         API = Api()
-        await API.connect()
+        #await API.connect()
 
+        await API.register('earth')
 
+        print('done')
+
+    asyncio.run(go())
 
 
 
