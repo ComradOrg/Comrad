@@ -97,13 +97,13 @@ class Api(object):
                 i += 1
                 await asyncio.sleep(1)
                 # pass
-        except asyncio.CancelledError as e:
+        except (asyncio.CancelledError,KeyboardInterrupt) as e:
             self.log('P2P node cancelled', e)
             await self.flush()
         finally:
             # when canceled, print that it finished
             self.log('P2P node shutting down')
-
+            pass
     @property
     async def node(self):
         if not hasattr(self,'_node'):
