@@ -211,7 +211,7 @@ class MainApp(MDApp):
         self.load_store()
         
         # connect to API
-        self.api = api.Api(app=self)
+        self.api = api.Api(log=self.log)
 
 
 
@@ -289,16 +289,25 @@ class MainApp(MDApp):
             
         return False
 
-    def save_login(self,un):
+    def save_login(self,dat):
         self.logged_in=True
-        self.username=un
-        # self.store.put('username',un)
-        # self.store.put('user',username=un,logged_in=True,logged_in_when=time.time())
+        self.username=dat.get('username')
+        # self.store.put('username',self.username)
+        privkey = data.get('private_key')
+        pubkey = data.get('public_key')
+        self.store.put('user',
+                    username=un,
+                    private_key = privkey,
+                    public_key = pubkey,
+                    logged_in=True,
+                    logged_in_when=time.time())
         self.root.change_screen('feed')
 
 
     def login(self,un=None,pw=None):
         async def do():
+            # if not self.store.exists('_keys'):
+            #      {'error':'No login keys present on this device'}
             dat = await self.api.login(un,pw)
             self.log(dat)
             if 'success' in dat:
@@ -312,7 +321,7 @@ class MainApp(MDApp):
         async def do():
             dat = await self.api.register(un,pw)
             if 'success' in dat:
-                self.save_login(un)
+                self.save_login(dat)
                 return True
             elif 'error' in dat:
                 self.root.ids.login_screen.login_status.text=dat['error']

@@ -41,11 +41,16 @@ PORT_LISTEN = 5639
 # Api Functions
 from threading import Thread
 
-def start_selfless_thread():
-    async def _go():
-        loop=asyncio.get_event_loop()
-        return boot_selfless_node(port=PORT_SPEAK, loop=loop)
-    return asyncio.run(_go())
+
+NODES_PRIME = [("128.232.229.63",8467), ("68.66.241.111",8467)] 
+#68.66.224.46
+
+from pathlib import Path
+home = str(Path.home())
+KEYDIR = os.path.join(home,'.komrade','.keys')
+if not os.path.exists(KEYDIR): os.makedirs(KEYDIR)
+
+
 
 async def _getdb(self=None,port=PORT_LISTEN):
     from kademlia.network import Server
@@ -63,42 +68,26 @@ async def _getdb(self=None,port=PORT_LISTEN):
     await node.bootstrap(NODES_PRIME)
     return node
 
-def logg(x):
-    print(x)
+def logg(*x):
+    print(*x)
 
 class Api(object):
-    def __init__(self,app = None):
-        self.app=app
-        self.app_storage = self.app.store if app else {}
-        self.log = self.app.log if app else logg
-        
-        # self.log('starting selfless daemon...')
-        # self.selfless = Thread(target=start_selfless_thread)
-        # self.selfless.daemon = True
-        # self.selfless.start()
+    def __init__(self,user=None,log=None):
+        self.log = log if log is not None else logg
+        self.username = user
 
-        # connect?
-        #self._node=self.connect()
-        pass
+    def private_key(self):
+        if self.username:
 
     async def connect_forever(self,port=PORT_LISTEN,save_every=10):
         try:
             i = 0
             self._node = await self.connect(port=port)
             while True:
-                #self.log(i)
                 if not i%10: self.log(f'Node status (tick {i}): {self._node}')
                 if i and not i%save_every: await self.flush()
-
-                    # # get some sleep
-                    # if self.root.ids.btn1.state != 'down' and i >= 2:
-                    #     i = 0
-                    #     self.log('Yawn, getting tired. Going to sleep')
-                    #     self.root.ids.btn1.trigger_action()
-
                 i += 1
                 await asyncio.sleep(NODE_SLEEP_FOR)
-                # pass
         except (asyncio.CancelledError,KeyboardInterrupt) as e:
             self.log('P2P node cancelled', e)
             await self.flush()
@@ -106,6 +95,7 @@ class Api(object):
             # when canceled, print that it finished
             self.log('P2P node shutting down')
             pass
+
     @property
     async def node(self):
         if not hasattr(self,'_node'):
@@ -115,6 +105,8 @@ class Api(object):
     async def connect(self,port=PORT_LISTEN):
         self.log('connecting...')
         return await _getdb(self,port)
+
+
 
 
     async def get(self,key_or_keys,get_last=True):
@@ -139,7 +131,7 @@ class Api(object):
             return res
         return await _get()
 
-    def encode_data(self,val,sep=BSEP,sep2=BSEP2,do_encrypt=True,receiver_pubkey=None):
+    def encode_data(self,val,sep=BSEP,sep2=BSEP2,do_encrypt=True,receiver_pubkey=None,private_signature_key=None):
         """
         What do we want to store with
         
@@ -155,23 +147,29 @@ class Api(object):
         """
         import time
         timestamp=time.time()
+
+        # check input
+        if not receiver_pubkey: 
+            self.log('we need a receiver !!')
+            return None
         
         # convert val to bytes
         if type(val)!=bytes: val = bytes(val,'utf-8')
         value_bytes=base64.b64encode(val)
 
         # sign
-        signature = sign(value_bytes, self.private_key)
-        sender_pubkey_b = serialize_pubkey(self.public_key)
+        private_signature_key = private_signature_key if private_signature_key is not None else self.private_key
+        signature = sign(value_bytes, private_signature_key)
+        public_sender_key = private_signature_key.public_key()
+        sender_pubkey_b = serialize_pubkey(public_sender_key)
 
         # Verify!
-        authentic = verify_signature(signature, value_bytes, self.public_key)
+        authentic = verify_signature(signature, value_bytes, sender_pubkey_b)
         if not authentic:
             self.log('message is inauthentic for set??',authentic)
             return None
 
         # encrypt?
-        if not receiver_pubkey: receiver_pubkey=self.public_key_global
         receiver_pubkey_b = serialize_pubkey(receiver_pubkey)
         time_b=str(timestamp).encode()
         msg=value_bytes
@@ -299,7 +297,7 @@ class Api(object):
          #,signature
 
     
-    async def set(self,key_or_keys,value_or_values):
+    async def set(self,key_or_keys,value_or_values,private_signature_key=None):
         async def _set():
             # self.log('async _set()',self.node)
             # node=self.node
@@ -310,7 +308,14 @@ class Api(object):
                 keys = key_or_keys
                 values = value_or_values
                 assert len(keys)==len(values)
-                res = await asyncio.gather(*[node.set(key,self.encode_data(value)) for key,value in zip(keys,values)])
+                tasks=[
+                    node.set(
+                        key,
+                        self.encode_data(value,private_signature_key=private_signature_key)
+                    )
+                    for key,value in zip(keys,values)
+                ]
+                res = await asyncio.gather(*tasks)
                 # self.log('RES?',res)
             else:
                 key = key_or_keys
@@ -373,40 +378,44 @@ class Api(object):
     async def get_person(self,username):
         return await self.get_json_val('/person/'+username)
 
-    async def set_person(self,username,pem_public_key):
+    async def set_person(self,username,pem_public_key,private_signature_key=None):
         # pem_public_key = save_public_key(public_key,return_instead=True)
-        obj = {'name':username, 'public_key':pem_public_key}
-        await self.set_json('/person/'+username,obj)
+        #obj = {'name':username, 'public_key':pem_public_key}
+        # await self.set_json('/person/'+username,obj)
+        await self.set('/person/'+username,pem_public_key,private_signature_key=None)
 
 
 
 
 
     ## Register
-    async def register(self,name,passkey):
-        if not (name and passkey): return {'error':'Name and password needed'}
+    async def register(self,name,passkey=None):
+        # if not (name and passkey): return {'error':'Name and password needed'}
         person = await self.get_person(name)
-        if person is not None: return {'error':'Username already exists'}
+        if person is not None: return {'error':'Person already exists'}
 
-        self._private_key = private_key = generate_rsa_key()
-        # self._public_key = public_key = self.private_key.public_key()
-        pem_private_key = serialize_privkey(self.private_key, password=passkey)# save_private_key(private_key,password=passkey,return_instead=True)
-        #pem_public_key = save_public_key(public_key,return_instead=True)
-        pem_public_key = serialize_pubkey(self.public_key)
+        private_key = generate_rsa_key()
+        public_key = private_key.public_key()
+        pem_private_key = serialize_privkey(private_key, password=passkey)# save_private_key(private_key,password=passkey,return_instead=True)
+        pem_public_key = serialize_pubkey(public_key)
 
-        await self.set_person(name,pem_public_key.decode())
-        
+        # save pub key in db
+        await self.set_person(name,pem_public_key,private_signature_key=private_key)
 
-        self.app_storage.put('_keys',
-                            private=pem_private_key.decode(),
-                            public=pem_public_key.decode()) #(private_key,password=passkey)
-        return {'success':'Account created', 'username':name} 
+        # save priv (and pub) key on hardware
+        keydir=os.path.join(KEYDIR,'.'+name)
+        if not os.path.exists(keydir): os.makedirs(keydir)
+        fn_pubkey = os.path.join(keydir,f'.public.pem')
+        fn_privkey = os.path.join(keydir,f'.secret.pem')
+        write_key(pem_private_key, fn_privkey)
+        write_key(pem_public_key, fn_pubkey)
 
-
+        # good
+        return {'success':'Account created', 'username':name}
     
 
     def load_private_key(self,password):
-        if not self.app_storage.exists('_keys'): return {'error':'No login keys present on this device'}
+        #if not self.app_storage.exists('_keys'): return {'error':'No login keys present on this device'}
         pem_private_key=self.app_storage.get('_keys').get('private')
         # self.log('my private key ====',pem_private_key)
         try:
@@ -449,55 +458,25 @@ class Api(object):
         if public_key.public_numbers() != real_public_key.public_numbers():
             return {'error':'Keys do not match!'}
         return {'success':'Login successful', 'username':name}
-
-    @property
-    def public_key(self):
-        if not hasattr(self,'_public_key'):
-            if not hasattr(self,'_private_key'):
-                self.app.root.change_screen('login')
-            else:
-                self._public_key=self.private_key.public_key()
-        return self._public_key
-
-    @property
-    def private_key(self):
-        if not hasattr(self,'_private_key'):
-            self.app.root.change_screen('login')
-        return self._private_key
-
-    @property
-    def public_key_global(self):
-        if not hasattr(self,'_public_key_global'):
-            try:
-                pem=self.app.store_global.get('_keys').get('public',None)
-                # self.log('PEM GLOBAL = ',pem)
-                self._public_key_global=load_pubkey(pem.encode())
-                # self.log('PUBKEYGLOBAL =',self._public_key_global)
-                return self._public_key_global
-            except ValueError as e:        
-                self.log('!!',e)
-        else:
-            return self._public_key_global
-        
-    @property
-    def private_key_global(self):
-        if not hasattr(self,'_private_key_global'):
-            try:
-                pem=self.app.store_global.get('_keys').get('private',None)
-                #self.log('PEM PRIVATE GLOBAL',pem)
-                self._private_key_global=load_privkey(pem.encode())
-                return self._private_key_global
-            except ValueError as e:
-                self.log('!!',e)
-        else:
-            return self._private_key_global
         
     #@property
-    def keys(self):
-        keys= [('/channel/global',self.private_key_global,self.public_key_global)]
-        if hasattr(self,'_private_key') and hasattr(self,'_public_key'):
-            keys+=[('/channel/self',self.private_key,self.public_key)]
-        return keys
+    def get_keys(self):
+        res=[]
+        for fldr in os.listdir(KEYDIR):
+            path=os.path.join(KEYDIR,fldr)
+            if fldr.startswith('.') and os.path.isdir(path):
+                keyname = fldr[1:]
+                files = os.path.listdir(path)
+                if '.public.pem' in files and '.private.pem' in files:
+                    fn_pubkey = os.path.join(path,'.public.pem')
+                    fn_privkey = os.path.join(path,'.private.pem')
+                    pubkey = load_pubkey_fn(fn_pubkey)
+                    privkey = load_pubkey_fn(fn_pubkey)
+                    if pubkey is not None and privkey is not None:
+                        keyrow = (keyname, privkey, pubkey)
+                        res.append(keyrow)
+        return res
+    
 
 
     async def append_json(self,key,data):
@@ -750,6 +729,36 @@ def test_provided_eg():
         print(result)
 
     asyncio.run(run())
+
+
+
+
+
+
+def boot_lonely_selfless_node(port=8467):
+    async def go():
+        from api import Api,PORT_LISTEN
+        API = Api()
+        await API.connect_forever(8467)
+    asyncio.run(go())
+    
+
+def init_entities(self):
+    ## make global entity called earth
+    
+    async def go():
+        from api import Api
+        API = Api()
+        await API.connect()
+
+
+
+
+
+
+
+
+
 
 
 if __name__=='__main__':

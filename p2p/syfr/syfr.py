@@ -53,6 +53,14 @@ def load_privkey(privkey_text,password=None):
         backend=default_backend()
     )
 
+def load_privkey_fn(fn_privkey,password=None):
+    with open(fn_privkey,'rb') as f:
+        privkey=load_privkey(f.read(),password=password)
+
+def load_pubkey_fn(fn_pubkey):
+    with open(fn_pubkey,'rb') as f:
+        privkey=load_pubkey(f.read())
+
 def write_key(key, file_path='mykey.pem'):
     with open(file_path, 'w+') as fh:
         fh.write(key)
