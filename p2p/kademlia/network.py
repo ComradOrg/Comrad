@@ -114,7 +114,9 @@ class Server:
         await asyncio.gather(*results)
 
         # now republish keys older than one hour
-        for dkey, value in self.storage.iter_older_than(3600):
+        # repub_every=3600
+        repub_every=3600
+        for dkey, value in self.storage.iter_older_than(repub_every):
             await self.set_digest(dkey, value)
 
     def bootstrappable_neighbors(self):
@@ -170,7 +172,12 @@ class Server:
             return None
         spider = ValueSpiderCrawl(self.protocol, node, nearest,
                                   self.ksize, self.alpha)
-        return await spider.find()
+        found = await spider.find()
+
+        # set it locally? @EDIT
+        self.storage.set(dkey,found)
+        
+        return found
 
     async def set(self, key, value):
         """

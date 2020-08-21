@@ -48,7 +48,7 @@ def start_selfless_thread():
 
 async def _getdb(self=None,port=PORT_LISTEN):
     from kademlia.network import Server
-    
+
     if self: self.log('starting server..')
 
     import os
@@ -285,7 +285,7 @@ class Api(object):
 
         WDV={
             'time':float(time_b.decode()),
-            'val':base64.b64decode(msg).decode(),
+            'val':base64.b64decode(msg),
             'to':receiver_pubkey_b,
             'from':sender_pubkey_b,
             'sign':signature
