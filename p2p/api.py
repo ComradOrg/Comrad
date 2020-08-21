@@ -66,6 +66,7 @@ async def _getdb(self=None,port=PORT_LISTEN):
 
     if self: self.log('bootstrapping server..')
     await node.bootstrap(NODES_PRIME)
+    self.log('NODE:',node)
     return node
 
 def logg(*x):
@@ -88,7 +89,8 @@ class Api(object):
                 if not i%10: self.log(f'Node status (tick {i}): {self._node}')
                 if i and not i%save_every: await self.flush()
                 i += 1
-                await asyncio.sleep(NODE_SLEEP_FOR)
+                #await asyncio.sleep(NODE_SLEEP_FOR)
+                asyncio.sleep(0)
         except (asyncio.CancelledError,KeyboardInterrupt) as e:
             self.log('P2P node cancelled', e)
             await self.flush()
@@ -96,21 +98,31 @@ class Api(object):
             # when canceled, print that it finished
             self.log('P2P node shutting down')
             pass
+        
 
     @property
     async def node(self):
+        # while not hasattr(self,'_node'):
+        #     self.log('[API] waiting forr connection...')
+        #     await asyncio.sleep(1)
+        # return self._node
+        
         if not hasattr(self,'_node'):
-            self._node=await self.connect()
+            await self.connect()
         return self._node
 
     async def connect(self,port=PORT_LISTEN):
         self.log('connecting...')
-        return await _getdb(self,port)
+        node = await _getdb(self,port)
+        self.log(f'connect() has node {node}')
+        self._node = node
+        return node
 
 
 
 
     async def get(self,key_or_keys,decode_data=True):
+        self.log(f'get({key_or_keys}) --> ...')
         async def _get():
             node=await self.node
             res=None
@@ -737,31 +749,32 @@ def test_provided_eg():
 
 
 
-
+async def lonely_selfless_node():
+    from api import Api,PORT_LISTEN
+    API = Api()
+    return await API.connect_forever(8467)
 
 
 def boot_lonely_selfless_node(port=8467):
-    async def go():
-        from api import Api,PORT_LISTEN
-        API = Api()
-        await API.connect_forever(8467)
-    asyncio.run(go())
+    API = Api()
+    asyncio.run(API.connect_forever())
     
 
-def init_entities():
+def init_entities(usernames = ['earth']):
     ## make global entity called earth
     
-    async def go():
-        API = Api()
-        #await API.connect()
+    #loop=asyncio.new_event_loop()
 
-        await API.register('earth')
-
+    async def register(username):
+        API = Api() 
+        #await API.connect_forever()
+        await API.register(username)
         print('done')
 
-    asyncio.run(go())
 
-
+    for un in usernames:
+        asyncio.run(register(un))
+    
 
 
 
@@ -770,4 +783,4 @@ def init_entities():
 
 
 if __name__=='__main__':
-    test_api()
+    init_entities()
