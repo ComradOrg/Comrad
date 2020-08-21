@@ -43,6 +43,7 @@ class Server:
         self.ksize = ksize
         self.alpha = alpha
         self.storage = HalfForgetfulStorage() #storage or ForgetfulStorage()
+        print('[Server] storage loaded with %s keys' % len(self.storage.data))
         self.node = Node(node_id or digest(random.getrandbits(255)))
         self.transport = None
         self.protocol = None
