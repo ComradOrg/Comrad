@@ -56,6 +56,7 @@ def load_privkey(privkey_text,password=None):
 def load_privkey_fn(fn_privkey,password=None):
     with open(fn_privkey,'rb') as f:
         privkey=load_privkey(f.read(),password=password)
+        return privkey
 
 def load_pubkey_fn(fn_pubkey):
     with open(fn_pubkey,'rb') as f:

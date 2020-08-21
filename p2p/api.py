@@ -480,17 +480,19 @@ class Api(object):
     def get_keys(self):
         res={}
         for priv_key_fn in os.listdir(KEYDIR):
-            if (not priv_key_fn.startswith('.') and priv_key_fn.endswith('.key')): continue
+            print(priv_key_fn)
+            if (not priv_key_fn.startswith('.') or not priv_key_fn.endswith('.key')): continue
             fnfn = os.path.join(KEYDIR,priv_key_fn)
+            print(fnfn)
             priv_key=load_privkey_fn(fnfn)
             pub_key=priv_key.public_key()
-            name_key= priv_key_fn.split('.')[1:-1]
+            name_key= '.'.join(priv_key_fn.split('.')[1:-1])
             res[name_key] = (pub_key, priv_key)
         return res
             
 
     @property
-    def keys(): 
+    def keys(self): 
         if not hasattr(self,'_keys'): self._keys = self.get_keys()
         return self._keys
     
@@ -768,7 +770,8 @@ def init_entities(usernames = ['earth']):
     async def register(username):
         API = Api() 
         #await API.connect_forever()
-        await API.register(username)
+        #await API.register(username)
+        print(API.keys)
         print('done')
 
 
