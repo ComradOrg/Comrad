@@ -12,7 +12,7 @@ sys.path.append('../p2p')
 BSEP=b'\n\n'
 BSEP2=b'\t\n'
 BSEP3=b'\r\r'
-NODE_SLEEP_FOR=5
+NODE_SLEEP_FOR=15
 
 try:
     from .crypto import *
