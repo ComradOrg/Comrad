@@ -290,3 +290,6 @@ def aes_rsa_decrypt(aes_ciphertext, rsa_priv, encry_aes_key, iv): #, hmac, hmac_
     #     sender_encr,
     #     signature_encr
     # ])
+
+def simple_lock_test(privkey,pubkey):
+    return privkey.public_key().public_numbers() == pubkey.public_numbers()

@@ -78,9 +78,17 @@ Builder.load_string(
             font_name: "assets/font.otf"
             font_size: "18sp"
     
+
+
+
+    
 """
+
 )
 
+def get_separator(height):
+    from kivymd.uix.boxlayout import MDBoxLayout
+    return MDBoxLayout(height=height,size_hint=(None,None))
 
 class MyChip(BoxLayout, ThemableBehavior):
     label = StringProperty()
@@ -186,3 +194,4 @@ class MDChooseChip(MDStackLayout):
     def add_widget(self, widget, index=0, canvas=None):
         if isinstance(widget, MyChip):
             return super().add_widget(widget)
+

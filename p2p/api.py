@@ -412,7 +412,19 @@ class Api(object):
     async def register(self,name,passkey=None):
         # if not (name and passkey): return {'error':'Name and password needed'}
         person = await self.get_person(name)
-        if person is not None: return {'error':'Person already exists'}
+        if person is not None:
+            # try to log in
+            self.log('my keys',self.keys.keys())
+            if not name in self.keys: 
+                return {'error':'Person already exists'}
+            
+            # test 3 conditions
+            privkey=self.keys[name]
+            pubkey=load_pubkey(person)
+
+            if simple_lock_test(privkey,pubkey):
+                self.username=name
+                return {'success':'Logging back in...'}
 
         private_key = generate_rsa_key()
         public_key = private_key.public_key()
@@ -428,7 +440,7 @@ class Api(object):
         write_key_b(pem_private_key, fn_privkey)
 
         # good
-        return {'success':'Account created', 'username':name}
+        return {'success':'Person created ...', 'username':name}
     
 
     def load_private_key(self,password):
@@ -480,7 +492,6 @@ class Api(object):
     def get_keys(self):
         res={}
         for priv_key_fn in os.listdir(KEYDIR):
-            print(priv_key_fn)
             if (not priv_key_fn.startswith('.') or not priv_key_fn.endswith('.key')): continue
             fnfn = os.path.join(KEYDIR,priv_key_fn)
             print(fnfn)
@@ -488,6 +499,7 @@ class Api(object):
             pub_key=priv_key.public_key()
             name_key= '.'.join(priv_key_fn.split('.')[1:-1])
             res[name_key] = (pub_key, priv_key)
+            self.log(f'[API] found key {name_key} and added to keychain')
         return res
             
 

@@ -21,8 +21,11 @@ class BaseScreen(MDScreen):
     def log(self,*x):
         return self.app.log(*x)
 
+    @property
+    def channel(self):
+        return self.app.channel
+
 class ProtectedScreen(BaseScreen):
     def on_pre_enter(self):
-        if not self.app.is_logged_in():
-            self.root.change_screen('login')
-        
+        if not self.channel in self.app.keys:
+            return

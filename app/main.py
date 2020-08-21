@@ -65,11 +65,23 @@ class MyLayout(MDBoxLayout):
     scr_mngr = ObjectProperty(None)
     post_id = ObjectProperty()
 
+    @property
+    def app(self):
+        if not hasattr(self,'_app'):
+            from kivy.app import App
+            self._app = App.get_running_app()
+        return self._app
+
     def rgb(self,r,g,b,a=1):
         return rgb(r,g,b,a=a)
 
     def change_screen(self, screen, *args):
         self.scr_mngr.current = screen
+
+    def change_screen_from_uri(self,uri,*args):
+        screen_name = route(uri)
+        self.app.screen = screen_name
+        return self.change_screen(screen_name,*args)
     
     def view_post(self,post_id):
         self.post_id=post_id
@@ -160,10 +172,19 @@ def draw_background(widget, img_fn='assets/bg.png'):
 
 
 
+def route(uri):
+    prefix,channel,rest = uri.split('/',3)
+
+    mapd = {
+        'inbox':'feed',
+        'outbox':'feed',
+        'login':'login',
+    }
+    return mapd.get(prefix,None)
 
 
 
-
+# DEFAULT_SCREEN = route(DEFAULT_URI)
 
 class MainApp(MDApp):
     title = 'Komrade'
@@ -177,6 +198,14 @@ class MainApp(MDApp):
     #     # connect to kad?   
     #     self.node = p2p.connect()
     def rgb(self,*_): return rgb(*_)
+
+    def change_screen(self, screen, *args):
+        self.screen=screen
+        self.root.change_screen(screen,*args)
+
+    def change_screen_from_uri(self,uri,*args):
+        self.uri=uri
+        return self.root.change_screen_from_uri(uri,*args)
 
     @property
     def logger(self):
@@ -196,24 +225,20 @@ class MainApp(MDApp):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        # start looping
-
-        # self.log('PATH',sys.path)
-        # sys.path.append('./p2p')
-
-
-
         self.event_loop_worker = None
         self.loop=asyncio.get_event_loop()
         
         # load json storage
         self.username=''
         self.load_store()
-        
+        self.uri=DEFAULT_URI
         # connect to API
         self.api = api.Api(log=self.log)
 
-
+    @property
+    def channel(self):
+        return self.uri.split('/')[1] if self.uri and self.uri.count('/')>=2 else None
+        
 
     
 
@@ -248,11 +273,7 @@ class MainApp(MDApp):
         logo.pos_hint={'center_y':0.43}
         logo.text_color=root.rgb(*COLOR_LOGO)
         
-        # logged in?
-        if not self.is_logged_in():
-            self.root.change_screen('login')
-        else:
-            self.root.change_screen(DEFAULT_SCREEN)
+        self.root.change_screen_from_uri(self.uri if self.uri else DEFAULT_URI)
         
         return self.root
 
@@ -262,69 +283,23 @@ class MainApp(MDApp):
     def load_store(self):
         if not self.store.exists('user'): return
         userd=self.store.get('user')
-        if not userd: userd={}
-        self.logged_in_when = userd.get('logged_in_when')
+        if not userd: return
+
         self.username = userd.get('username','')
-        
-    def is_logged_in(self,just_check_timestamp=True, use_caching=True):
-        # self.username='root'
-        # return True
-        if self.logged_in: return True
-        if not use_caching: return False
-
-        ###
-        if not self.store.exists('user'): return False
-        userd=self.store.get('user')
-        if not userd: userd={}
-        if userd.get('logged_in'):
-            un=userd.get('username')
-            timestamp=userd.get('logged_in_when')
-
-            # just a time check
-            if timestamp and just_check_timestamp:
-                if time.time() - timestamp < self.login_expiry:
-                    self.logged_in=True
-                    #self.username=un
-                    return True
-            
-        return False
-
-    def save_login(self,dat):
-        self.logged_in=True
-        self.username=dat.get('username')
-        # self.store.put('username',self.username)
-        privkey = data.get('private_key')
-        pubkey = data.get('public_key')
-        self.store.put('user',
-                    username=un,
-                    private_key = privkey,
-                    public_key = pubkey,
-                    logged_in=True,
-                    logged_in_when=time.time())
-        self.root.change_screen('feed')
-
-
-    def login(self,un=None,pw=None):
+    
+    def register(self,un):
         async def do():
-            # if not self.store.exists('_keys'):
-            #      {'error':'No login keys present on this device'}
-            dat = await self.api.login(un,pw)
-            self.log(dat)
+            dat = await self.api.register(un)
             if 'success' in dat:
-                self.save_login(un)
-            elif 'error' in dat:
-                self.root.ids.login_screen.login_status.text=dat['error']
-            return False
-        asyncio.create_task(do())
-
-    def register(self,un,pw):
-        async def do():
-            dat = await self.api.register(un,pw)
-            if 'success' in dat:
-                self.save_login(dat)
+                self.root.ids.login_screen.login_status.text=dat['success']
+                self.root.ids.login_screen.login_status.theme_text_color='Custom'
+                self.root.ids.login_screen.login_status.text_color=rgb(*COLOR_ACCENT)
+                await asyncio.sleep(1)
+                #self.save_login(dat)
                 return True
             elif 'error' in dat:
                 self.root.ids.login_screen.login_status.text=dat['error']
+                await asyncio.sleep(1)
                 return False
         asyncio.create_task(do())
 
@@ -371,13 +346,14 @@ class MainApp(MDApp):
             return {'post_id':res['post_id']}
                     
 
-                    
+    @property
+    def keys(self):
+        return self.api.keys
             
-
     async def get_post(self,post_id):
         return await self.api.get_post(post_id)
 
-    async def get_posts(self,uri='/posts/channel/earth'):
+    async def get_posts(self,uri='/channel/earth'):
         self.log(f'app.get_posts(uri={uri} -> ...')
         data = await self.api.get_posts(uri)
         self.log
@@ -392,9 +368,26 @@ class MainApp(MDApp):
         # return index
         return newdata
 
-    async def get_my_posts(self):
+    async def get_channel_posts(self,channel,prefix='inbox'):
+        # am I allowed to?
+        if not channel in self.keys:
+            self.log('!! tsk tsk dont be nosy')
+            return
+        return await self.get_posts(uri=os.path.join(prefix,channel))
+
+    async def get_channel_inbox(self,channel):
+        return await self.get_channel_posts(channel=channel,prefix='inbox')
+    
+    async def get_channel_outbox(self,channel):
+        return await self.get_channel_posts(channel=channel,prefix='outbox')
+
+    async def get_my_posts(self,username=None):
+        if username is None and self.username: username=self.username
+        if not username:
+            self.log(f'!! whose posts?')
+            return
         self.log(f'get_my_posts({self.username})')
-        return await self.get_posts(uri='/posts/author/'+self.username)
+        return await self.get_channel(username)
 
 
 

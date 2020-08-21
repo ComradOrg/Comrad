@@ -1,4 +1,4 @@
-DEFAULT_SCREEN='profile'
+DEFAULT_URI='/login/'
 
 import random
 HORIZONTAL = False #random.choice([True,True,True,False])

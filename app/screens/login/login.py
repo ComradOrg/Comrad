@@ -6,13 +6,22 @@ from kivymd.uix.label import MDLabel
 from kivymd.uix.card import MDSeparator
 from kivy.uix.label import Label
 from main import MyLabel,rgb,COLOR_TEXT,COLOR_ICON,COLOR_ACCENT,COLOR_CARD
+from misc import *
+from kivy.app import App
 
 class LoginBoxLayout(MDBoxLayout): pass
 class LoginButtonLayout(MDBoxLayout): pass
 class UsernameField(MDTextField): pass
 class PasswordField(MDTextField): pass
 class LoginButton(MDRectangleFlatButton): pass
-class RegisterButton(MDRectangleFlatButton): pass
+class RegisterButton(MDRectangleFlatButton):
+    def register(self):
+        un=self.parent.parent.parent.username_field.text
+        app=App.get_running_app()
+        app.register(un)
+        app.change_screen_from_uri(f'/inbox/{un}')
+    
+    pass
 class LoginStatus(MDLabel): pass
 
 class UsernameLayout(MDBoxLayout): pass
@@ -34,14 +43,15 @@ class LoginScreen(BaseScreen):
         self.label_title.bold=True
         self.label_title.markup=True
         self.label_title.color=rgb(*COLOR_TEXT)
+        self.label_title.text='Welcome,'
         # self.label_title.font_size*=1.5
         self.layout.add_widget(self.label_title)
-        self.layout.add_widget(MDSeparator(height='100sp',color=rgb(*COLOR_CARD)))
-        self.label_username = UsernameLabel(text="username:")
+        self.layout.add_widget(get_separator('30sp'))
+        # self.layout.add_widget(MySeparator())
         
 
         self.layout_username = UsernameLayout()
-        self.label_username = UsernameLabel(text="username:")
+        self.label_username = UsernameLabel(text="Komrade")
 
         self.username_field = UsernameField()
         self.username_field.line_color_focus=rgb(*COLOR_TEXT)
@@ -55,27 +65,28 @@ class LoginScreen(BaseScreen):
         #log(self.username_field)
         # self.username_field.text='hello????'
 
-        self.layout_password = UsernameLayout()
-        self.label_password = UsernameLabel(text='password:')
+        # self.layout_password = UsernameLayout()
+        # self.label_password = UsernameLabel(text='password:')
 
-        self.label_password.font_name='assets/font.otf'
+        # self.label_password.font_name='assets/font.otf'
         self.label_username.font_name='assets/font.otf'
 
-        self.password_field = PasswordField()
-        self.password_field.line_color_focus=rgb(*COLOR_TEXT)
-        self.password_field.line_color_normal=rgb(*COLOR_TEXT,a=0.25)
-        self.password_field.font_name='assets/font.otf'
+        # self.password_field = PasswordField()
+        # self.password_field.line_color_focus=rgb(*COLOR_TEXT)
+        # self.password_field.line_color_normal=rgb(*COLOR_TEXT,a=0.25)
+        # self.password_field.font_name='assets/font.otf'
         
-        self.layout_password.add_widget(self.label_password)
-        self.layout_password.add_widget(self.password_field)
-        self.layout.add_widget(self.layout_password)
+        # self.layout_password.add_widget(self.label_password)
+        # self.layout_password.add_widget(self.password_field)
+        # self.layout.add_widget(self.layout_password)
 
         self.layout_buttons = LoginButtonLayout()
+        self.layout.add_widget(get_separator('10sp'))
         self.layout.add_widget(self.layout_buttons)
 
-        self.login_button = LoginButton()
-        self.login_button.font_name='assets/font.otf'
-        self.layout_buttons.add_widget(self.login_button)
+        # self.login_button = LoginButton()
+        # self.login_button.font_name='assets/font.otf'
+        # self.layout_buttons.add_widget(self.login_button)
 
         self.register_button = RegisterButton()
         self.register_button.font_name='assets/font.otf'
@@ -88,10 +99,11 @@ class LoginScreen(BaseScreen):
         self.layout.add_widget(self.login_status)
 
         self.label_title.font_size='22sp'
-        self.label_password.font_size='18sp'
+        # self.label_password.font_size='18sp'
         self.label_username.font_size='18sp'
-        self.login_button.font_size='12sp'
+        # self.login_button.font_size='12sp'
         self.register_button.font_size='12sp'
+        self.register_button.text='enter'
         
 
 

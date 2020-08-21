@@ -43,7 +43,7 @@
     # md_bg_color:1,1,0,1
 
 <WelcomeLabel>:
-    text: 'Enter, Komrade'
+    # text: 'Enter, Komrade'
     halign: 'center'
     size_hint_x: 1
     theme_text_color: 'Custom'
@@ -117,22 +117,9 @@
     size_hint:None,None
     pos_hint: {'center_x': .5}#, 'bottom':1}
 
-<LoginButton>:
-    text: "login"
-    on_release:
-        app.login(self.parent.parent.parent.username_field.text, self.parent.parent.parent.password_field.text)
-        #app.root.change_screen("welcome")
-    theme_text_color: "Custom"
-    text_color: rgb(*COLOR_TEXT)
-    md_bg_color: 0,0,0,1
-    size_hint:None,None
-    # font_size:'24sp'
-    # pos_hint: {'center_x': .5, 'bottom':1}
-
 <RegisterButton>:
-    text: "join"
-    on_release:
-        app.register(self.parent.parent.parent.username_field.text, self.parent.parent.parent.password_field.text)
+    text: ""
+    on_release: self.register()
     theme_text_color: "Custom"
     text_color: rgb(*COLOR_TEXT)
     md_bg_color: 0,0,0,1
