@@ -133,11 +133,6 @@ class HalfForgetfulStorage(IStorage):
     def dump(self,show_keys=100):
         async def do():
             msg='[async!!] dumping %s keys...' % len(self.keys())
-            if show_keys:
-                keystr=list(sorted(self.keys()))[:show_keys]
-                if keystr:
-                    msg+='\n'+', '.join(keystr)
-
             with open(self.fn,'wb') as of:
                 pickle.dump(self.data, of)
         asyncio.create_task(do())
