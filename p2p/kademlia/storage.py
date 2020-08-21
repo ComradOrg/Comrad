@@ -4,7 +4,7 @@ import operator
 from collections import OrderedDict
 from abc import abstractmethod, ABC
 import asyncio
-
+from kademlia.utils import digest
 BSEP_ST = b'||||'
 
 import base64,json
@@ -119,7 +119,10 @@ class HalfForgetfulStorage(IStorage):
         self.fn = fn
         self.ttl = ttl
         self.log = logger.info
-        self.data = OrderedDict() if not os.path.exists(self.fn) else self.load()
+        self.data_root = {} if not os.path.exists(self.fn) else self.load()
+        for x in ['_digest','_plain']: self.data_root[x]=OrderedDict()
+        self.data = self.data_root['_digest']
+        self.data_plain = self.data_root['_plain']
 
         # import pickledb
         # self.data = pickledb.load(self.fn,auto_dump=True)
@@ -127,9 +130,14 @@ class HalfForgetfulStorage(IStorage):
         #self.data = shelve.open(self.fn,flag='cs')
         
 
-    def dump(self):
+    def dump(self,show_keys=100):
         async def do():
-            self.log('[async!!] dumping %s keys...' % len(self.keys()))
+            msg='[async!!] dumping %s keys...' % len(self.keys())
+            if show_keys:
+                keystr=list(sorted(self.keys()))[:show_keys]
+                if keystr:
+                    msg+='\n'+', '.join(keystr)
+
             with open(self.fn,'wb') as of:
                 pickle.dump(self.data, of)
         asyncio.create_task(do())
@@ -146,16 +154,22 @@ class HalfForgetfulStorage(IStorage):
     def items(self): return [(k,v) for k,v in zip(self.keys(),self.values())]
     def values(self): return [self.data[k] for k in self.keys()]
 
-    def set(self,key,value):
+    def set(self,dkey,value,undigested_too=None):
         # log(f'HFS.set({key}) -> {value}')
+        newval = (time.monotonic(), value)
+        
 
         # store
-        if key in self.data:
-            del self.data[key]
-        
-        newval = (time.monotonic(), value)
-        self.data[key] = newval
-        # self.data.set(key,newval)
+        if dkey in self.data:
+            del self.data[dkey]
+        self.data[dkey]=newval
+
+        if undigested_too:
+            key=undigested_too
+            if key in self.data:
+                del self.data[key]
+            self.data_plain[key]=newval
+
 
         # save and prune
         # self.dump()
@@ -185,9 +199,16 @@ class HalfForgetfulStorage(IStorage):
         #self.cull()
         return self.get(key)
 
-    def __repr__(self):
+    def __repr__(self,lim_eg=20):
         #self.cull()
-        return repr(self.data)
+        #return repr(self.data)
+        eg = list(sorted(self.data_plain.keys()))[:lim_eg]
+        msg=f"""HalfForgetfulStorage()
+                        # digested keys = {len(self.data)}
+                        # undigested keys = {len(self.data_plain)}
+                            e.g., {eg}
+        """
+        return msg
 
     def iter_older_than(self, seconds_old):
         min_birthday = time.monotonic() - seconds_old

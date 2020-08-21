@@ -46,6 +46,22 @@ class Server:
         self.save_state_loop = None
 
 
+    def __repr__(self):
+        repr = f"""
+        kademlia.network.Server status:
+            ksize = {self.ksize}
+            alpha = {self.alpha}
+            storage = {self.storage}
+            node = {self.node}
+            transport = {self.transport}
+            protocol = {self.protocol}
+            refresh_loop = {self.refresh_loop}
+            save_state_loop = {self.save_state_loop}
+            bootstrappable_neighbors = {self.bootstrappable_neighbors()}
+        """
+        return repr
+
+
 
     def stop(self):
         if self.transport is not None:
@@ -165,14 +181,20 @@ class Server:
                 "Value must be of type int, float, bool, str, or bytes"
             )
         log.info("setting '%s' = '%s' on network", key, value)
-        dkey = digest(key)
-        return await self.set_digest(dkey, value)
 
-    async def set_digest(self, dkey, value):
+        
+
+
+        #dkey = digest(key)
+        return await self.set_digest(key, value)
+
+    async def set_digest(self, key, value):
         """
         Set the given SHA1 digest key (bytes) to the given value in the
         network.
         """
+        dkey=digest(key)
+
         node = Node(dkey)
 
         nearest = self.protocol.router.find_neighbors(node)
@@ -189,7 +211,10 @@ class Server:
         # if this node is close too, then store here as well
         biggest = max([n.distance_to(node) for n in nodes])
         if self.node.distance_to(node) < biggest:
-            self.storage[dkey] = value
+            #self.storage[dkey] = value
+            ## IMPOSSIBLE STORING UNDIGESTED IN LOCAL STORAGE FOR NOW @DEBUG @HACK
+            #self.storage.data_debug[key]=value
+            self.storage.set(dkey,value,undigested_too=key)
         results = [self.protocol.call_store(n, dkey, value) for n in nodes]
         # return true only if at least one store call succeeded
         return any(await asyncio.gather(*results))

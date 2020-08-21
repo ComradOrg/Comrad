@@ -47,12 +47,13 @@ def start_selfless_thread():
     return asyncio.run(_go())
 
 async def _getdb(self=None,port=PORT_LISTEN):
+    from kademlia.network import Server
     
     if self: self.log('starting server..')
 
     import os
     if self: self.log(os.getcwd())
-    node = KadServer(storage=HalfForgetfulStorage()) #fn='../p2p/data.db',log=(self.log if self else print)))
+    node = Server() #fn='../p2p/data.db',log=(self.log if self else print)))
 
     if self: self.log('listening..')
     await node.listen(port)
