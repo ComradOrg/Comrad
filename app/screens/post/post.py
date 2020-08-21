@@ -72,7 +72,7 @@ class PostScreen(ProtectedScreen):
         post_TextField.font_name='assets/overpass-mono-regular.otf'
         post_TextField.hint_text='word?'
 
-        post.remove_widget(post.scroller)
+        # post.remove_widget(post.scroller)
         post.scroller.remove_widget(post.post_content)
         post.scroller.add_widget(post_TextField)
         post.scroller.size=('300dp','300dp')
