@@ -3,7 +3,7 @@ from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.textfield import MDTextField
 from kivymd.uix.button import MDRectangleFlatButton
 from kivymd.uix.label import MDLabel
-from main import MyLabel,rgb
+from main import MyLabel,rgb,COLOR_TEXT
 
 class LoginBoxLayout(MDBoxLayout): pass
 class LoginButtonLayout(MDBoxLayout): pass
@@ -25,13 +25,20 @@ class LoginScreen(BaseScreen):
         #log(self.ids)
         #log('hello?')
         self.layout = LoginBoxLayout()
+        self.label_title = MDLabel(text='Enter, Komrade',halign='center',size_hint_x=1)
+        self.label_title.font_name='assets/font.otf'
+        self.label_title.font_size='20sp'
+        self.label_title.bold=True
+        self.layout.add_widget(self.label_title)
+
+        self.label_username = UsernameLabel(text="username:")
 
         self.layout_username = UsernameLayout()
         self.label_username = UsernameLabel(text="username:")
 
         self.username_field = UsernameField()
-        self.username_field.line_color_focus=rgb(201,203,163)
-        self.username_field.line_color_normal=rgb(201,203,163,0.25)
+        self.username_field.line_color_focus=rgb(*COLOR_TEXT)
+        self.username_field.line_color_normal=rgb(*COLOR_TEXT,a=0.25)
         self.username_field.font_name='assets/font.otf'
 
         self.layout_username.add_widget(self.label_username)
@@ -48,8 +55,8 @@ class LoginScreen(BaseScreen):
         self.label_username.font_name='assets/font.otf'
 
         self.password_field = PasswordField()
-        self.password_field.line_color_focus=rgb(201,203,163)
-        self.password_field.line_color_normal=rgb(201,203,163,0.25)
+        self.password_field.line_color_focus=rgb(*COLOR_TEXT)
+        self.password_field.line_color_normal=rgb(*COLOR_TEXT,a=0.25)
         self.password_field.font_name='assets/font.otf'
         
         self.layout_password.add_widget(self.label_password)

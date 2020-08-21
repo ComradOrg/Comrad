@@ -623,9 +623,10 @@ class Api(object):
         if type(index)!=list: index=[index]
         self.log('got index?',index)
         index = [x for x in index if x is not None]
-        data = await self.get_json_val(['/post/'+x for x in index])
-        # return index
-        return data
+
+        ## get full json
+        return await self.get_json(['/post/'+x for x in index])
+        
 
 
 

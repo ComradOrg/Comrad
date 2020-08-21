@@ -375,7 +375,17 @@ class MainApp(MDApp):
         return await self.api.get_post(post_id)
 
     async def get_posts(self):
-        return await self.api.get_posts()
+        data = await self.api.get_posts()
+
+        newdata=[]
+        for d in data:
+            if not 'val' in d: continue
+            newdict = dict(d['val'].items())
+            newdict['timestamp']=float(d['time'])
+            newdata.append(newdict)
+        
+        # return index
+        return newdata
 
     async def get_my_posts(self):
         return await self.api.get_posts('/author/'+self.username)
