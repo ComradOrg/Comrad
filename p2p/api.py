@@ -89,8 +89,8 @@ class Api(object):
                 if not i%10: self.log(f'Node status (tick {i}): {self._node}')
                 if i and not i%save_every: await self.flush()
                 i += 1
-                #await asyncio.sleep(NODE_SLEEP_FOR)
-                asyncio.sleep(0)
+                await asyncio.sleep(NODE_SLEEP_FOR)
+                # asyncio.sleep(0)
         except (asyncio.CancelledError,KeyboardInterrupt) as e:
             self.log('P2P node cancelled', e)
             await self.flush()
