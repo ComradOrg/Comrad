@@ -140,7 +140,8 @@ class HalfForgetfulStorage(IStorage):
     def load(self):
         self.log('loading pickle...')
         with open(self.fn,'rb') as of:
-            return pickle.load(of)
+            res=pickle.load(of)
+            self.log(f'>> found {len(res)} keys in pickle...')
 
     def __setitem__(self, key, value):
         self.set(key,value)
