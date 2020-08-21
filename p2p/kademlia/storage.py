@@ -167,7 +167,7 @@ class HalfForgetfulStorage(IStorage):
 
 
         # save and prune
-        # self.dump()
+        self.dump()
         # self.cull()
 
 
