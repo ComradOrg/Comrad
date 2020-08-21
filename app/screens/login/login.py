@@ -3,7 +3,8 @@ from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.textfield import MDTextField
 from kivymd.uix.button import MDRectangleFlatButton
 from kivymd.uix.label import MDLabel
-from main import MyLabel,rgb,COLOR_TEXT
+from kivy.uix.label import Label
+from main import MyLabel,rgb,COLOR_TEXT,COLOR_ICON,COLOR_ACCENT
 
 class LoginBoxLayout(MDBoxLayout): pass
 class LoginButtonLayout(MDBoxLayout): pass
@@ -15,6 +16,7 @@ class LoginStatus(MDLabel): pass
 
 class UsernameLayout(MDBoxLayout): pass
 class UsernameLabel(MDLabel): pass
+class WelcomeLabel(MDLabel): pass
 
 class LoginScreen(BaseScreen): 
     #def on_pre_enter(self):
@@ -25,13 +27,16 @@ class LoginScreen(BaseScreen):
         #log(self.ids)
         #log('hello?')
         self.layout = LoginBoxLayout()
-        self.label_title = MDLabel(text='Enter, Komrade',halign='center',size_hint_x=1)
+        self.label_title = WelcomeLabel()
         self.label_title.font_name='assets/font.otf'
-        self.label_title.font_size='20sp'
+        # self.label_title.font_size='20sp'
         self.label_title.bold=True
+        self.label_title.markup=True
+        self.label_title.color=rgb(*COLOR_TEXT)
+        self.label_title.font_size*=1.5
         self.layout.add_widget(self.label_title)
-
         self.label_username = UsernameLabel(text="username:")
+        
 
         self.layout_username = UsernameLayout()
         self.label_username = UsernameLabel(text="username:")
@@ -80,8 +85,11 @@ class LoginScreen(BaseScreen):
         
         self.layout.add_widget(self.login_status)
 
-        self.label_password.font_size='18sp'
-        self.label_username.font_size='18sp'
+        self.label_password.font_size=32
+        self.label_username.font_size=32
+        self.login_button.font_size=22
+        self.register_button.font_size=22
+        
 
 
         ## add all

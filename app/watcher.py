@@ -13,7 +13,7 @@ def run_command():
     p = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
 
 class Watcher:
-    DIRECTORY_TO_WATCH = os.path.join(os.path.expanduser('~'),"/github/Komrade/")
+    DIRECTORY_TO_WATCH = '.' #os.path.join(os.path.expanduser('~'),"/github/Komrade/")
 
     def __init__(self):
         self.observer = Observer()
@@ -39,6 +39,7 @@ class Handler(FileSystemEventHandler):
         if '/cache/' in str(event.src_path): return None
         if '__pycache__' in str(event.src_path): return None
         if 'sto.dat' in str(event.src_path): return None
+        if '/dbm.' in str(event.src_path): return None
 
         if event.is_directory:
             return None

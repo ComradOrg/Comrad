@@ -4,12 +4,6 @@
 from config import *
 
 
-
-
-
-
-
-
 # monkeypatching the things that asyncio needs
 import subprocess
 subprocess.PIPE = -1  # noqa

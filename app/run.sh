@@ -1,1 +1,2 @@
-python3 watcher.py
+python watcher.py
+#python main.py

@@ -9,3 +9,6 @@ sto.dat
 p2p/kademlia0
 cache.sqlite
 dbm.*
+.DS_Store
+.vscode/
+.vscode/settings.json

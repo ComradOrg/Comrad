@@ -5,7 +5,7 @@ HORIZONTAL = False #random.choice([True,True,True,False])
 FACTOR=1
 WINDOW_SIZE = (1136*FACTOR,640*FACTOR) if HORIZONTAL else (640*FACTOR,1136*FACTOR)
 
-WINDOW_SIZE=1111,1111
+WINDOW_SIZE=800,800
 
 BG_IMG='assets/bg-brown.png'
 
@@ -55,7 +55,7 @@ bone=217, 202, 179
 bronze=188, 128, 52
 shadow=140, 122, 107
 orangered=194, 3, 3
-
+  
 dutchwhite=229,219,181
 # black=(0,0,0)
 black=15, 15, 15 #5, 8, 13
@@ -130,4 +130,5 @@ else:
     COLOR_CARD = bone
     COLOR_CARD_BORDER = COLOR_CARD
     COLOR_ICON=COLOR_LOGO
+    COLOR_ACCENT = huntergreen
 
