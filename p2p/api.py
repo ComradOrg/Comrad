@@ -458,8 +458,12 @@ class Api(object):
             if not res0: return None
             if type(res0)==list:
                 for d in res0:
-                    if 'val' in d and d['val']:
-                        d['val']=jsonize_dat(d['val'])
+                    try:
+                        if 'val' in d and d['val']:
+                            d['val']=jsonize_dat(d['val'])
+                    except (TypeError,ValueError) as e:
+                        self.log('!!!!',e)
+                        pass
                 return res0
             else:
                 return json.loads(base64.b64decode(res0).decode('utf-8'))

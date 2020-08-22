@@ -108,8 +108,13 @@ class PostScreen(ProtectedScreen):
         if hasattr(self,'post_textfield'): self.post_textfield.text=''
 
         post_json = {'author':self.app.username, 'timestamp':time.time()}
-        key=list(self.app.keys.keys())[0]
-        post_json['to_name']='...?'
+        keys=[k for k in self.app.keys if k!=self.app.username]
+        if keys:
+            key=keys[0]
+            post_json['to_name']=key
+            self.recipient=key
+        else:
+            post_json['to_name']='...'
         
         self.post_card = post = PostCard(post_json)
         self.post_card.add_widget(get_separator('15sp'),1)
