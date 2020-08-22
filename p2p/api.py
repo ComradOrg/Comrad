@@ -213,6 +213,7 @@ class Api(object):
             decryption_tools
         ])
 
+        print('FINAL PACKET:',final_packet,type(final_packet))
         return final_packet
 
     
@@ -220,14 +221,9 @@ class Api(object):
     async def decode_data(self,entire_packet_orig,sep=BSEP,private_key=None,sep2=BSEP2):
         if entire_packet_orig is None: return entire_packet_orig
         import binascii
-        # try:
-        #     entire_packet = base64.b64decode(entire_packet_orig)
-        # except binascii.Error as e:
-        #     entire_packet = entire_packet_orig
-        #     self.log('!!',e)
         entire_packet = entire_packet_orig
         
-        self.log('PACKED =',entire_packet)
+        self.log('PACKED =',entire_packet,type(entire_packet))
         
         self.log('????',type(entire_packet))
         self.log(entire_packet)
@@ -404,10 +400,10 @@ class Api(object):
         
 
 
-    async def set_json(self,key,value,private_signature_key=None,encode_data=False):
+    async def set_json(self,key,value,private_signature_key=None,encode_data=True):
         value_json = jsonify(value)
         # self.log('OH NO!',sys.getsizeof(value_json))
-        return await self.set(key,value_json,private_signature_key=None,encode_data=False)
+        return await self.set(key,value_json,private_signature_key=None,encode_data=encode_data)
 
     async def has(self,key):
         val=await self.get(key)
@@ -674,6 +670,8 @@ class Api(object):
         # index = await self.get_json_val('/posts'+uri)
         self.log(f'api.get_posts(uri={uri}) --> ...')
         index = await self.get(uri,decode_data=True)
+        if not index: return []
+
         self.log('first index =',index)
         index = json.loads(index)
         self.log('got index?',index,type(index))
