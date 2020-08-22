@@ -79,12 +79,12 @@ class PostCard(MDCard):
         # self.log('PostCard.cache_img_src =',self.cache_img_src)
 
         # pieces
-        author_section_layout = PostAuthorLayout()
-        author_label = PostAuthorLabel(text='@'+self.author)
-        author_label.font_size = '18sp'
-        author_avatar = PostAuthorAvatar(source='assets/avatar.jpg') #self.img_src)
-        author_section_layout.add_widget(author_avatar)
-        author_section_layout.add_widget(author_label)
+        self.author_section_layout = author_section_layout = PostAuthorLayout()
+        self.author_label = author_label = PostAuthorLabel(text='@'+self.author)
+        self.author_label.font_size = '18sp'
+        self.author_avatar = author_avatar = PostAuthorAvatar(source='assets/avatar.jpg') #self.img_src)
+        self.author_section_layout.add_widget(author_avatar)
+        self.author_section_layout.add_widget(author_label)
 
         # timestamp
         timestr=''

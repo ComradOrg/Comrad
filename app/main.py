@@ -334,7 +334,7 @@ class MainApp(MDApp):
                 if data_piece is not None:
                     of.write(data_piece)
     
-    async def post(self, content='', file_id=None, file_ext=None, anonymous=False):
+    async def post(self, content='', file_id=None, file_ext=None, anonymous=False,channels=['earth']):
         #timestamp=time.time()
         jsond={}
         #jsond['timestamp']=
@@ -343,7 +343,7 @@ class MainApp(MDApp):
         if file_ext: jsond['file_ext']=str(file_ext)
         if not anonymous and self.username:
             jsond['author']=self.username
-        
+        jsond['to_channels']=channels
         self.log('posting:',jsond)
         res=await self.api.post(jsond)
         if 'success' in res:
@@ -358,13 +358,14 @@ class MainApp(MDApp):
     async def get_post(self,post_id):
         return await self.api.get_post(post_id)
 
-    async def get_posts(self,uri='/inbox/earth'):
+    async def get_posts(self,uri='/inbox/aa'):
         self.log(f'app.get_posts(uri={uri} -> ...')
         data = await self.api.get_posts(uri)
-        self.log
+        self.log('app.get_posts() got back from api.get_posts():',data)
 
         newdata=[]
         for d in data:
+            self.log('data d:',d)
             if not 'val' in d: continue
             newdict = dict(d['val'].items())
             newdict['timestamp']=float(d['time'])

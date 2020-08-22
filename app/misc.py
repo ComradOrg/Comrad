@@ -84,9 +84,12 @@ Builder.load_string(
 
 )
 
-def get_separator(height):
+def get_separator(height,width=None,debug=False):
     from kivymd.uix.boxlayout import MDBoxLayout
-    return MDBoxLayout(height=height,size_hint=(None,None))
+    x=MDBoxLayout(height=height,size_hint=(None,None))
+    # if debug: x.md_bg_color=(1,1,0,1)
+    if width: x.width=width
+    return x
 
 
 class MyChip(BoxLayout, ThemableBehavior):

@@ -9,9 +9,9 @@ import asyncio,time
 # logger.setLevel(logging.DEBUG)
 sys.path.append('../p2p')
 # logger.info(os.getcwd(), sys.path)
-BSEP=b'\n\n'
-BSEP2=b'\t\n'
-BSEP3=b'\r\r'
+BSEP=b'\n\n\n\n'
+BSEP2=b'\t\n\t\n'
+BSEP3=b'\r\r\r\r'
 NODE_SLEEP_FOR=1
 
 try:
@@ -139,6 +139,8 @@ class Api(object):
                 key=key_or_keys
                 val = await node.get(key)
                 res = await self.decode_data(val) if decode_data else val
+                self.log('wtf is val =',val)
+                self.log('wtf is res =',val)
             
             self.log(f'_get({key_or_keys}) --> {res}')
             return res
@@ -213,18 +215,30 @@ class Api(object):
 
         return final_packet
 
+    
+
     async def decode_data(self,entire_packet_orig,sep=BSEP,private_key=None,sep2=BSEP2):
         if entire_packet_orig is None: return entire_packet_orig
-        entire_packet = base64.b64decode(entire_packet_orig)
+        import binascii
+        # try:
+        #     entire_packet = base64.b64decode(entire_packet_orig)
+        # except binascii.Error as e:
+        #     entire_packet = entire_packet_orig
+        #     self.log('!!',e)
+        entire_packet = entire_packet_orig
+        
+        self.log('PACKED =',entire_packet)
+        
         self.log('????',type(entire_packet))
         self.log(entire_packet)
         
         # get data
         try:
-            encrypted_payload, decryption_tools = entire_packet.split(sep)
-            decryption_tools=decryption_tools.split(sep2)
-        except ValueError:
-            self.log('!! decode_data() got incorrect format')
+            encrypted_payload, decryption_tools = split_binary(entire_packet, sep=sep)  #entire_packet.split(sep)
+            decryption_tools=split_binary(decryption_tools,sep=sep2)
+        except AssertionError as e:
+
+            self.log('!! decode_data() got incorrect format:',e)
             return entire_packet_orig 
 
         # ### FIRST LINE OF PROTECTION
@@ -378,6 +392,7 @@ class Api(object):
 
         # if key_or_keys.startsiwth('/post/'):
         res = await self.get(key_or_keys,decode_data=decode_data)
+        self.log('get_json() got from get():',res)
         #self.log('get_json() got',res)
         if not res: return None
         return jsonize_res(res)
@@ -518,7 +533,9 @@ class Api(object):
 
 
     async def append_json(self,key,data):
-        sofar=await self.get_json_val(key)
+        self.log(f'appending to uri {key}')
+        sofar=await self.get_json_val(key,decode_data=True)
+        self.log(f'sofar = {sofar}')
         if sofar is None: sofar = []
         if type(sofar)!=list: sofar=[sofar]
         if type(data)!=list: data=[data]
@@ -602,21 +619,34 @@ class Api(object):
         
 
 
-    async def post(self,data,to_inbox,add_to_outbox=True):
+    async def post(self,data,add_to_outbox=True):
         post_id=get_random_id()
-        res = await self.set_json('/post/'+post_id, data)
-        if not res:
-            self.log('!! error, couldn\'t set post json')
-            return
+        tasks = []
+        self.log(f'post() added post {post_id}')
+        task = self.set_json('/post/'+post_id, data)
+        tasks.append(task)
+
+        # res = await
+        # if not res:
+        #     self.log('!! error, couldn\'t set post json')
+        #     return
         
         # ## add to inbox
-        self.append_json(f'/inbox/{to_inbox}',post_id)
+        for channel in data.get('to_channels',[]):
+            self.log('ADDING TO CHANNEL??',channel)
+            task=self.append_json(f'/inbox/{channel}',post_id)
+            tasks.append(task)
 
         ## add to outbox
         if add_to_outbox:
             un=data.get('author')
             if un:
-                await self.append_json(f'/outbox/{un}', post_id)
+                task = self.append_json(f'/outbox/{un}', post_id)
+                tasks.append(task)
+
+        self.log('gathering tasks')
+        res = await asyncio.gather(*tasks)
+        self.log('done with tasks')
 
         if res:
             asyncio.create_task(self.flush())
@@ -625,11 +655,15 @@ class Api(object):
 
     async def get_json_val(self,uri,decode_data=True):
         res=await self.get_json(uri,decode_data=decode_data)
-        r=None
+        self.log('get_json_val() got from get_json():',res)
+        
+        r=res
         if type(res) == dict:
             r=res.get('val',None) if res is not None else None
         elif type(res) == list:
             r=[x.get('val',None) for x in res if x is not None]
+        elif type(res) == str:
+            r=json.loads(res)
         self.log(f'get_json_val() --> {r}')
         return r
 
@@ -639,8 +673,10 @@ class Api(object):
     async def get_posts(self,uri='/inbox/earth'):
         # index = await self.get_json_val('/posts'+uri)
         self.log(f'api.get_posts(uri={uri}) --> ...')
-        index = await self.get_json_val(uri,decode_data=True)
-        self.log('got index?',index)
+        index = await self.get(uri,decode_data=True)
+        self.log('first index =',index)
+        index = json.loads(index)
+        self.log('got index?',index,type(index))
 
         if index is None: return []
         if type(index)!=list: index=[index]
@@ -648,7 +684,8 @@ class Api(object):
         index = [x for x in index if x is not None]
 
         ## get full json
-        return await self.get_json(['/post/'+x for x in index])
+        x = await self.get(['/post/'+x for x in index])
+        return [y for y in x if y is not None]
         
 
 
@@ -800,11 +837,41 @@ def init_entities(usernames = ['earth']):
         asyncio.run(register(un))
     
 
+def split_binary(data, sep=BSEP):
+    seplen = len(BSEP)
+    res=[]
+    stack=None
+    print('!!',data[:4],seplen,sep)
 
+    cutoffs=[]
+    for i in range(0, len(data)):
+        seg=data[i:i+seplen]
+        print(i,seg,sep,stack)
+        if seg==sep:
+            # split_piece = data[:i+seplen]
+            print('!')
+            cutoff_lasttime = cutoffs[-1][-1] if cutoffs and cutoffs else 0
+            cutoff = (cutoff_lasttime-seplen, i)
+            print(cutoff)
+            cutoffs.append(cutoff)
+            stack = data[cutoff[0] if cutoff[0]>0 else 0: cutoff[1]]
+            print(stack)
+            res += [stack]
+            stack = None
+
+    cutoff_lasttime = cutoffs[-1][-1] if cutoffs and cutoffs else 0
+    print(cutoff_lasttime)
+    stack = data[cutoff_lasttime+seplen :]
+    res+=[stack]
+    print('RES:',res)
+    return res
 
 
 
 
 
 if __name__=='__main__':
-    init_entities()
+    #init_entities()
+
+    res = split_binary(b'eeeehey||||whatsueep',b'||||')
+    print(res)

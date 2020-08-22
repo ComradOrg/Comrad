@@ -1,5 +1,6 @@
 from screens.base import ProtectedScreen,BaseScreen
 from plyer import filechooser
+from kivy.uix.button import Button
 from kivymd.uix.label import MDLabel
 from kivymd.uix.textfield import MDTextField
 from kivymd.uix.boxlayout import MDBoxLayout
@@ -20,6 +21,8 @@ from misc import *
 from kivy.animation import Animation
 from kivy.lang import Builder
 from kivy.metrics import dp
+from kivymd.uix.dropdownitem import MDDropDownItem
+from kivymd.uix.menu import MDDropdownMenu
 from kivy.properties import (
     BooleanProperty,
     ListProperty,
@@ -98,7 +101,8 @@ class ChannelChip(MDRoundFlatIconButton):
     def callback(self):
         val=self.check if hasattr(self,'check') else False
         self.check = not val
-        self.icon='checkbox-blank-outline' if self.check else 'check-box-outline'
+        self.icon='check-box-outline' if self.check else 'checkbox-blank-outline'
+        self.parent.parent.parent.parent.to_channels[self.text]=self.check
         # self.md_bg_color=rgb(*COLOR_INACTIVE) if not self.check else rgb(*COLOR_ACTIVE)
         # raise Exception(['GOT VALL',val])
     pass
@@ -164,14 +168,15 @@ class ChannelChip(MDRoundFlatIconButton):
             #     self.callback(self, self.label)
 
 
-
-
+class AuthorDropdown(MDDropdownMenu): pass
+class SenderMenuItem(MDDropDownItem): pass
 
 class PostScreen(ProtectedScreen): 
     post_id = ObjectProperty()
 
     def on_pre_enter(self):
         super().on_pre_enter()
+        self.to_channels = {}
         
         # clear
         if hasattr(self,'post_status'): self.remove_widget(self.post_status)
@@ -179,6 +184,8 @@ class PostScreen(ProtectedScreen):
 
         post_json = {'author':self.app.username, 'timestamp':time.time()}
         self.post_card = post = PostCard(post_json)
+        self.post_card.add_widget(get_separator('15sp'),1)
+        self.post_card.add_widget(get_separator('15sp'),1)
         self.post_textfield = post_TextField = AddPostTextField()
         post_TextField.line_color_focus=rgb(*COLOR_TEXT)
         post_TextField.line_color_normal=rgb(*COLOR_TEXT)
@@ -186,37 +193,90 @@ class PostScreen(ProtectedScreen):
         post_TextField.font_name='assets/overpass-mono-regular.otf'
         post_TextField.hint_text='word?'
 
+        self.post_card.author_label.text=self.app.username
+        # self.post_card.author_section_layout.remove_widget(self.post_card.author_label)
+        # self.post_card.author_dropdown = AuthorDropdown()
+        #[self.post_card.author_dropdown.set_item('@'+key) for key in self.app.keys]
+
+        
+        # for key in self.app.keys:
+            # btn = Ca
+            # self.post_card.author_dropdown.add_widget(btn)
+
+        # self.post_card.author_section_layout.add_widget(self.post_card.author_dropdown)
+        # self.menu.bind(on_release=self.menu_callback)
+        
+        #self.post_card.author_dropdown.items = ['@'+key 
+        # self.post_card.author_dropdown.font_name='assets/font.otf'
+        # self.post_card.author_section_layout.add_widget(self.post_card.author_dropdown,1)
+        # self.post_card.author_label = AuthorDropdown()
+
         #self.addressee = SelectAddressee(list(self.app.keys.keys()))
         #post.add_widget(self.addressee)
 
-        # post.remove_widget(post.scroller)
-        self.channel_layout = ChannelLayout() #MDBoxLayout(size_hint=(1,None),orientation='horizontal',cols=3)
-        # self.channel_layout.orientation='horizontal'
-        # self.channel_layout.cols=1
-        # self.channel_layout.size_hint=(1,None)
-        # self.channel_layout.adaptive_height=True
-        # self.channel_layout.adaptive_=True
-        # self.channel_layout.spacing='20dp'
-        # self.channel_layout.padding='15dp'
-        # self.channel_layout.height='300sp' #self.channel_layout.minimum_height
+        self.fields_values = MDBoxLayout()
         
-        post.add_widget(self.channel_layout,1)
-        self.post_card.to_channels = {}
+        self.fields_values.orientation='horizontal'
+        self.fields_values.cols=2
+        self.fields_values.size_hint=(1,None)
+        # self.fields_values.md_bg_color=1,1,0,1
+
+        
+        post.add_widget(self.fields_values,2)
+        # post.remove_widget(post.scroller)
+        
+        self.to_label = MDLabel(text="To:",size_hint=(None,None))
+        self.to_label.pos_hint={'center_y':0.5}
+        self.fields_values.add_widget(self.to_label)
+        self.channel_layout = ChannelLayout() #MDBoxLayout(size_hint=(1,None),orientation='horizontal',cols=3)
+        self.fields_values.add_widget(self.channel_layout)
+        
+        # self.fields_values.add_widget(get_separator('10sp'))
+        # self.fields_values.add_widget(get_separator('10sp'))
+
+        self.to_label.font_name='assets/font.otf'
+        # self.to_label.padding=(0,0,0,0)
+        # self.to_label.spacing=(10,10)
+        
+        # self.channel_layout.add_widget(self.to_label)
+        # post.add_widget(self.channel_layout,1)
+        
+
+
+        # menu_labels = [
+        #     {"viewclass": "SenderMenuItem",
+        #     "text": "Label1",
+        #     "caller":self.post_card.author_dropdown},
+        #     {"viewclass": "SenderMenuItem",
+        #     "text": "Label2",
+        #     "caller":self.post_card.author_dropdown},
+        # ]
+
         for channel in self.app.keys:
             chip = ChannelChip()
-            # chip.ids.icon.width='26sp'
+            chip.check=False
             self.log(f'adding channel {channel}')
             chip.text = '@'+channel
-            # chip.color=rgb(*COLOR_INACTIVE)
-            # chip.ids.chiplayout.md_bg_color=chip.color
-            # chip.width='100sp'
             chip.font_name='assets/font.otf'
             chip.md_bg_color=rgb(*COLOR_INACTIVE)
+
+            # chip2= SenderMenuItem()
+            # chip2.text = '@'+channel
+            # chip2.font_name='assets/font.otf'
+            # chip2.caller = self.post_card.author_dropdown
+            # chip2.md_bg_color=rgb(*COLOR_INACTIVE)
+            # # self.post_card.author_dropdown.add_widget(chip2)
+            # self.post_card.author_dropdown.add_widget(chip2)
+
+        
             # chip.theme_text_color='Custom'
             # chip.text_color=rgb(*COLOR_INACTIVE)
             self.channel_layout.add_widget(chip)
-            self.post_card.to_channels[channel]=False
+            self.to_channels[channel]=False
 
+        # self.post_card.author_dropdown.items = menu_labels
+        # self.post_card.author_dropdown.width_mult = 4
+                
 
 
         post.scroller.remove_widget(post.post_content)
@@ -334,6 +394,12 @@ class PostScreen(ProtectedScreen):
             self.open_msg_dialog(f'Text is currently {lencontent} words long, which is {lendiff} over the maximum text length of {maxlen} words.\n\n({lencontent}/{maxlen})')
             return
 
+        channels = [k[1:] for k,v in self.to_channels.items() if v]
+        if not channels:
+            self.log('no place was selected')
+            # self.='No place was selected'
+            return
+
         # log('?????????????????'+self.media_uid)
         # if not hasattr(self,'img_id') and self.upload_button.selection:
         #     log('REUPLOADING')
@@ -342,7 +408,7 @@ class PostScreen(ProtectedScreen):
         async def do_post():
             file_id = self.img_id if hasattr(self,'img_id') else None
             file_ext = self.img_ext if hasattr(self,'img_ext') else None
-            await self.app.post(content=content, file_id=file_id, file_ext=file_ext)
+            await self.app.post(content=content, channels = channels, file_id=file_id, file_ext=file_ext)
             import time
             self.close_dialog()
         

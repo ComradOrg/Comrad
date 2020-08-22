@@ -170,12 +170,23 @@
     spacing:0,0
     padding:0,0,0,0
     orientation: 'lr-tb'
+    
+
+<SenderMenuItem>:
+    on_release: self.change_variable(self.text)
 
 
-
+<AuthorDropdown>:
+    id: drop_item
+    pos_hint: {'center_x': .5, 'center_y': .5}
+    # text: 'Item'
+    #items: ['@'+key for key in app.keys]
+    font_name: 'assets/font.otf'
+    #on_release: self.set_item("New Item")
 
 <ChannelChip>
     # size_hint: None,  None
+    id: 'channelchip'
     height: "26sp"
     padding: 0, 0, 0, 0
     # text: ""
@@ -186,6 +197,8 @@
     color: rgb(*COLOR_CARD)
     theme_text_color: 'Custom'
     text_color: rgb(*COLOR_TEXT)
+    # pos_hint: {'center_x':0.5}
+    size_hint: None,None
 
     # MDBoxLayout:
     #     id: box_check
