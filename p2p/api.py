@@ -266,7 +266,7 @@ class Api(object):
 
         # encrypt?
         encrypt_for_pubkey_b = serialize_pubkey(encrypt_for_pubkey)
-        time_b=str(timestamp).encode()
+        time_b=base64.b64encode(str(timestamp).encode('utf-8'))  #.encode()
         msg=value_bytes
 
         # whole binary package
@@ -313,8 +313,8 @@ class Api(object):
         
         # get data
         try:
-            encrypted_payload, decryption_tools = split_binary(entire_packet, sep=sep)  #entire_packet.split(sep)
-            decryption_tools=split_binary(decryption_tools,sep=sep2)
+            encrypted_payload, decryption_tools = entire_packet.split(sep) #split_binary(entire_packet, sep=sep)  #entire_packet.split(sep)
+            decryption_tools=decryption_tools.split(sep2)  #split_binary(decryption_tools,sep=sep2)
         except AssertionError as e:
 
             self.log('!! decode_data() got incorrect format:',e)
@@ -323,7 +323,7 @@ class Api(object):
 
         ### NEW FIRST LINE: Try to decrypt!
         val=None
-        for keyname,privkey,pubkey in self.keys:
+        for keyname,privkey in self.keys.items():
             try:
                 val = aes_rsa_decrypt(encrypted_payload,privkey,*decryption_tools)
                 #self.log('decrypted =',val)
@@ -357,7 +357,7 @@ class Api(object):
         #     private_key=self.private_key_global
 
         WDV={
-            'time':float(time_b.decode()),
+            'time':float(base64.b64decode(time_b).decode()),
             'val':base64.b64decode(msg),
             'to':receiver_pubkey_b,
             'from':sender_pubkey_b,
@@ -440,7 +440,7 @@ class Api(object):
 
         def jsonize_res(res0):
             # parse differently?
-            res=json.loads(res0.decode())
+            res=json.loads(base64.b64decode(res0).decode('utf-8'))
             self.log(f'jsonize_res({res0} [{type(res0)}] --> {res} [{type(res)}')
             return res
 
@@ -465,7 +465,7 @@ class Api(object):
         self.log(f'value_json = {value_json}')
         set_res = await self.set(
             key,
-            value_json.encode('utf-8'),
+            base64.b64encode(value_json.encode('utf-8')),
             private_signature_key=private_signature_key,
             encode_data=encode_data,
             encrypt_for_pubkey=encrypt_for_pubkey)
@@ -719,25 +719,23 @@ class Api(object):
     async def get_posts(self,uri='/inbox/earth'):
         self.log(f'api.get_posts(uri={uri}) --> ...')
         index = await self.get(uri,decode_data=False)
-        self.log('api.get_posts index <-',index)
-        # if not index: return []
+        self.log('api.get_posts index1 <-',index,bool(index))
+        if not index: return []
 
-        index = json.loads(index)
+        index = json.loads(base64.b64decode(index).decode())
         self.log('got index?',index,type(index))
 
-        # if index is None: return []
+        if index is None: return []
         if type(index)!=list: index=[index]
-        self.log('api.get_posts index <-',index)
+        self.log('api.get_posts index2 <-',index)
         index = [x for x in index if x is not None]
-        self.log('api.get_posts index <-',index)
+        self.log('api.get_posts index3 <-',index)
 
 
         ## get full json
         uris = [os.path.join(uri,x) for x in index]
         self.log('URIs:',uris)
         x = await self.get(uris,decode_data=True)
-        stop
-
         self.log('api.get_posts got back from .get() <-',x)
         return [y for y in x if y is not None]
         

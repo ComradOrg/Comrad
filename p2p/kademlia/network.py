@@ -171,8 +171,9 @@ class Server:
         Returns:
             :class:`None` if not found, the value otherwise.
         """
-        self.log("Looking up key %s" % key)
         dkey = digest(key)
+        self.log("Looking up key %s %s" % (key,dkey))
+        
         # if this node has it, return it
         if self.storage.get(dkey) is not None:
             self.log(f'already have {key} ({dkey}) in storage, returning...')
@@ -186,22 +187,22 @@ class Server:
 
 
         found = None
-        while found is None:
-            spider = ValueSpiderCrawl(self.protocol, node, nearest, self.ksize, self.alpha)
-            self.log(f'spider crawling... {spider}')
-            found = await spider.find()
-            self.log('spider found <-',found,'for key',key,'(',dkey,')')
-            await asyncio.sleep(5)
+        #while found is None:
+        spider = ValueSpiderCrawl(self.protocol, node, nearest, self.ksize, self.alpha)
+        self.log(f'spider crawling... {spider}')
+        found = await spider.find()
+        self.log('spider found <-',found,'for key',key,'(',dkey,')')
+        #await asyncio.sleep(5)
 
         self.log(f"Eventually found for key {key} value {found}")
-        if not found:
+        # if not found:
             # return None
-            raise Exception('nothing found!')
+            #raise Exception('nothing found!')
 
-        # set it locally? @EDIT
-        if store_anywhere and found:
-            self.log(f'storing anywhere: {dkey} -> {found}')
-            self.storage[dkey]=found
+        # # set it locally? @EDIT
+        # if store_anywhere and found:
+            # self.log(f'storing anywhere: {dkey} -> {found}')
+        #     self.storage[dkey]=found
         
         return found
 
@@ -240,19 +241,20 @@ class Server:
         self.log(f"setting '%s' on %s" % (dkey.hex(), list(map(str, nodes))))
 
         # if this node is close too, then store here as well
-        if store_anywhere:
-            self.log(f'store_anywhere -> {dkey} --> {value}')
-            self.storage[dkey]=value
-        else:
-            biggest = max([n.distance_to(node) for n in nodes])
-            if self.node.distance_to(node) < biggest:
-                self.log(f'< bigges -> {dkey} --> {value}')
-                self.storage[dkey] = value
+        biggest = max([n.distance_to(node) for n in nodes])
+        if self.node.distance_to(node) < biggest:
+            self.log(f'< bigges -> {dkey} --> {value}')
+            self.storage[dkey] = value
 
 
         results = [self.protocol.call_store(n, dkey, value) for n in nodes]
         results = await asyncio.gather(*results)
         self.log(f'--> set() results --> {results}')
+        
+        if store_anywhere:
+            self.log(f'store_anywhere -> {dkey} --> {value}')
+            self.storage[dkey]=value
+        
         # return true only if at least one store call succeeded
         return any(results)
 
