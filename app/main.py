@@ -295,6 +295,7 @@ class MainApp(MDApp):
             dat = await self.api.register(un)
             if 'success' in dat:
                 self.username=un
+                self.store.get('user',username=un)
                 self.root.ids.login_screen.login_status.text=dat['success']
                 self.root.ids.login_screen.login_status.theme_text_color='Custom'
                 self.root.ids.login_screen.login_status.text_color=rgb(*COLOR_ACCENT)
@@ -341,6 +342,14 @@ class MainApp(MDApp):
         if content: jsond['content']=str(content)
         if file_id: jsond['file_id']=str(file_id)
         if file_ext: jsond['file_ext']=str(file_ext)
+        self.log(f'''app.json(
+            content={content},
+            file_id={file_id},
+            file_ext={file_ext},
+            anonymous={anonymous},
+            channels={channels},
+            [username={self.username}]'''
+        )
         if not anonymous and self.username:
             jsond['author']=self.username
         jsond['to_channels']=channels

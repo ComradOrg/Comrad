@@ -366,7 +366,7 @@ class Api(object):
 
             def proc(key,value):
                 self.log(f'encodeing data for {key} -> {type(value)} ...')
-                if encode_data and encrypt_for_pubkey is not None:
+                if encode_data and encrypt_for_pubkey is not None and type(value)==bytes:
                     x = self.encode_data(
                         val = value,
                         do_encrypt=True,
