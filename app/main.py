@@ -301,11 +301,12 @@ class MainApp(MDApp):
                 self.root.ids.login_screen.login_status.text_color=rgb(*COLOR_ACCENT)
                 await asyncio.sleep(1)
                 #self.save_login(dat)
-                self.change_screen_from_uri('/inbox/earth')
+                self.change_screen_from_uri('/inbox/world')
                 return True
             elif 'error' in dat:
                 self.root.ids.login_screen.login_status.text=dat['error']
-                await asyncio.sleep(1)
+                # await asyncio.sleep(3)
+                # self.change_screen_from_uri('/inbox/world')
                 return False
         asyncio.create_task(do())
 
@@ -335,7 +336,7 @@ class MainApp(MDApp):
                 if data_piece is not None:
                     of.write(data_piece)
     
-    async def post(self, content='', file_id=None, file_ext=None, anonymous=False,channels=['earth']):
+    async def post(self, content='', file_id=None, file_ext=None, anonymous=False,channels=['world']):
         #timestamp=time.time()
         jsond={}
         #jsond['timestamp']=
@@ -367,7 +368,7 @@ class MainApp(MDApp):
     async def get_post(self,post_id):
         return await self.api.get_post(post_id)
 
-    async def get_posts(self,uri='/inbox/eee'):
+    async def get_posts(self,uri='/inbox/world'):
         self.log(f'app.get_posts(uri={uri} -> ...')
         data = await self.api.get_posts(uri)
         self.log('app.get_posts() got back from api.get_posts():',data)

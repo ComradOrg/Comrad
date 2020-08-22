@@ -19,7 +19,7 @@ class RegisterButton(MDRectangleFlatButton):
         un=self.parent.parent.parent.username_field.text
         app=App.get_running_app()
         app.register(un)
-        app.change_screen_from_uri(f'/inbox/{un}')
+        # app.change_screen_from_uri(f'/inbox/{un}')
     
     pass
 class LoginStatus(MDLabel): pass

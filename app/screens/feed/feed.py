@@ -11,6 +11,7 @@ from datetime import datetime
 from kivy.app import App
 from threading import Thread
 import asyncio
+from misc import *
 
 
 
@@ -64,6 +65,7 @@ class PostCard(MDCard):
         super().__init__()
         # self.log('PostCard() got data: '+str(data))
         self.author = data.get('author','[Anonymous]')
+        self.recipient = data.get('to_name','')
         self.img_id = data.get('file_id','')
         self.img_ext = data.get('file_ext','')
         self.img_src=self.img_id[:3]+'/'+self.img_id[3:]+'.'+self.img_ext if self.img_id else ''
@@ -81,10 +83,20 @@ class PostCard(MDCard):
         # pieces
         self.author_section_layout = author_section_layout = PostAuthorLayout()
         self.author_label = author_label = PostAuthorLabel(text='@'+self.author)
+        self.author_label.font_name='assets/overpass-mono-semibold.otf'
+        if self.recipient:
+            self.author_label.text+='\n[size=14sp][i]to @'+self.recipient+'[/i][/size]'
+            self.author_label.markup=True
         self.author_label.font_size = '18sp'
         self.author_avatar = author_avatar = PostAuthorAvatar(source='assets/avatar.jpg') #self.img_src)
         self.author_section_layout.add_widget(author_avatar)
         self.author_section_layout.add_widget(author_label)
+        # self.author_section_layout.add_widget(MDSeparator(height='1sp',size_hint=(None,None)))
+
+        # self.recipient_label = author_label = PostAuthorLabel(text='--> @'+self.recipient)
+        # self.recipient_label.font_size = '14sp'
+        # self.author_label.add_widget(self.recipient_label)
+        
 
         # timestamp
         timestr=''
@@ -92,8 +104,10 @@ class PostCard(MDCard):
         if self.timestamp:
             dt_object = datetime.fromtimestamp(self.timestamp)
             timestr = dt_object.strftime("%-d %b %Y %H:%M") 
-        #log('timestr: '+timestr)
-        author_section_layout.add_widget(PostTimestampLabel(text=timestr))
+            #log('timestr: '+timestr)
+            self.timestamp_label=PostTimestampLabel(text=timestr)
+            self.timestamp_label.font_size='14sp'
+            author_section_layout.add_widget(self.timestamp_label)
         # author_section_layout.add_widget(author_avatar)
         # self.add_widget(author_section_layout)
 

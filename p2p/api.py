@@ -13,6 +13,7 @@ BSEP=b'||||||||||'
 BSEP2=b'@@@@@@@@@@'
 BSEP3=b'##########'
 NODE_SLEEP_FOR=1
+PATH_WORLD_KEY='.world.key'
 
 try:
     from .crypto import *
@@ -141,7 +142,7 @@ class Api(object):
                     self.log('trying again...')
                     val = await node.get(key)
                     self.log('got',val)
-                    asyncio.sleep(1)
+                    #asyncio.sleep(1)
 
                     self.log(f'val for {key} = {val} {type(val)}')
                     if decode_data: 
@@ -315,9 +316,10 @@ class Api(object):
         try:
             encrypted_payload, decryption_tools = entire_packet.split(sep) #split_binary(entire_packet, sep=sep)  #entire_packet.split(sep)
             decryption_tools=decryption_tools.split(sep2)  #split_binary(decryption_tools,sep=sep2)
-        except AssertionError as e:
+        except ValueError as e:
 
             self.log('!! decode_data() got incorrect format:',e)
+            self.log('packet =',entire_packet)
             return entire_packet_orig 
         
 
@@ -403,12 +405,11 @@ class Api(object):
                         private_signature_key=private_signature_key
                     )
                     self.log(f'got back encoded data for {key} -> {x} ...')
+                    return x
                 else:
                     self.log(f'did not encode data for {key} -> {value} ...')
-                    x = value
-                self.log('set encoded data =',x)
-                return x
-
+                    return value
+                
             if type(key_or_keys) in {list,tuple,dict}:
                 keys = key_or_keys
                 values = value_or_values
@@ -416,18 +417,19 @@ class Api(object):
                 res=[]
                 for key,value in zip(keys,values):
                     newval = proc(key,value)
-                    self.log(f'kvv (plural) <- {key}:{value} -> {newval}')
+                    self.log(f'kvv (plural) <- {keys}:{value} -> {newval}')
                     await node.set(key,newval)
                     res+=[newval]
             else:
                 key = key_or_keys
                 value = value_or_values
                 newval = proc(key,value)
-                self.log(f'kvv (plural) <- {key}:{value} -> {newval}')
+                self.log(f'kvv (singular) <- {key}:{value} -> {newval}')
                 res = newval
                 await node.set(key,newval)
 
-            self.log(f'api.set(res = {res})')
+            self.log(f'api.set(key={key_or_keys}, \
+                        res = {res})')
             #node.stop()
             # self.log('reconnecting ...',self._node)
             #await self._node.stop()
@@ -467,7 +469,7 @@ class Api(object):
 
 
     async def set_json(self,key,value,private_signature_key=None,encode_data=True,encrypt_for_pubkey=None):
-        self.log(f'api.self_json({key}, {value} ...)')
+        self.log(f'api.set_json({key}, {value} ...)')
         value_json = jsonify(value)
         self.log(f'value_json = {value_json}')
         set_res = await self.set(
@@ -476,7 +478,7 @@ class Api(object):
             private_signature_key=private_signature_key,
             encode_data=encode_data,
             encrypt_for_pubkey=encrypt_for_pubkey)
-        self.log(f'api.self_json({key},{value} ...) <-- {set_res}')
+        self.log(f'api.set_json({key},{value} ...) --> {set_res}')
         return set_res
 
     async def has(self,key):
@@ -492,8 +494,11 @@ class Api(object):
         # pem_public_key = save_public_key(public_key,return_instead=True)
         #obj = {'name':username, 'public_key':pem_public_key}
         # await self.set_json('/person/'+username,obj)
+        # keystr=base64.b64encode(pem_public_key).decode()
+        # self.log('keystr',type(keystr))
         await self.set('/pubkey/'+username,pem_public_key,encode_data=False)
-        await self.set(b'/name/'+pem_public_key,base64.b64encode(username.encode('utf-8')),encode_data=False)
+        # keystr=pem_public_key
+        # await self.set(b'/name/'+keystr,username,encode_data=False)
 
 
 
@@ -548,11 +553,28 @@ class Api(object):
             self.log('!!',e)
         return {'error':'Incorrect password'}
 
+    def add_world_key(self,fn=PATH_WORLD_KEY):
+        import shutil
+        name='.'.join(os.path.basename(PATH_WORLD_KEY).split('.')[1:-1])
+
+        priv_key=load_privkey_fn(fn)
+        pub_key=priv_key.public_key()
+        pub_key_b=serialize_pubkey(pub_key)
         
+        if self.set_person(name,pub_key_b):
+            ofn=os.path.join(KEYDIR,f'.{name}.key')
+            shutil.copyfile(fn,ofn)
+
     #@property
     def get_keys(self):
         res={}
-        for priv_key_fn in os.listdir(KEYDIR):
+        key_files = os.listdir(KEYDIR)
+        world_key_fn = os.path.basename(PATH_WORLD_KEY)
+        if not world_key_fn in key_files:
+            self.log('[first time?] adding world key')
+            self.add_world_key()
+
+        for priv_key_fn in key_files:
             if (not priv_key_fn.startswith('.') or not priv_key_fn.endswith('.key')): continue
             fnfn = os.path.join(KEYDIR,priv_key_fn)
             print(fnfn)
@@ -672,16 +694,17 @@ class Api(object):
         for channel in channels:
             self.log('ADDING TO CHANNEL??',channel)
             pubkey_channel = self.keys[channel].public_key()
-
+            data_channel = dict(data.items())
+            data_channel['to_name']=channel
 
             ## add per channel
             # encrypt and post
             uri = '/'+os.path.join('inbox',channel,post_id)
-            self.log('setting',uri,'????',type(data),data)
+            self.log('setting',uri,'????',type(data_channel),data_channel)
             
             json_res = await self.set_json(
                 uri, 
-                data, 
+                data_channel, 
                 encode_data=True, 
                 encrypt_for_pubkey=pubkey_channel,
                 private_signature_key=author_privkey
@@ -724,7 +747,7 @@ class Api(object):
     async def get_post(self,post_id):
         return await self.get_json_val(post_id,decode_data=False)
 
-    async def get_posts(self,uri='/inbox/earth'):
+    async def get_posts(self,uri='/inbox/world'):
         self.log(f'api.get_posts(uri={uri}) --> ...')
         index = await self.get(uri,decode_data=False)
         self.log('api.get_posts index1 <-',index,bool(index))
@@ -743,15 +766,32 @@ class Api(object):
         ## get full json
         uris = [os.path.join(uri,x) for x in index]
         self.log('URIs:',uris)
-        x = await self.get_json(uris,decode_data=True)
-        self.log('api.get_posts got back from .get_json() <-',x)
-        res=[y for y in x if y is not None]
+        res = await self.get_json(uris,decode_data=True)
+        self.log('api.get_posts got back from .get_json() <-',res)
+        res=[d for d in res if d is not None]
 
         # fill out
-        for d in res:
-            from_name = self.get(b'/name/'+d['from'])
-            to_name = self.get(b'/name/'+d['to'])
-            raise Exception(from_name+' '+to_name)
+        # for d in res:
+            # self.log(d['from'],type(d['from']),'---->',d['to'],type(d['to']))
+            # # from_st=base64.b64decode(d['from']) #.decode('utf-8')
+            # # to_st=base64.b64decode(d['to']) #.decode('utf-8')
+            # from_st=d['from']
+            # to_st=d['to']
+            # self.log(from_st,'---->',to_st)
+            # from_key=b'/name/'+from_st
+            # to_key=b'/name/'+to_st
+            # self.log('to_key:',to_key)
+            # self.log('from_key:',from_key)
+
+            # from_name = await self.get(from_key)
+            # to_name = await self.get(to_key)
+            # self.log('from_name:',from_name)
+            # self.log('to_name:',to_name)
+            # d['from_name']=from_name
+            # d['to_name']=to_name
+            # raise Exception(from_name+b' '+to_name)
+        
+        return res
         
 
 
@@ -886,15 +926,15 @@ def boot_lonely_selfless_node(port=8467):
     asyncio.run(API.connect_forever())
     
 
-def init_entities(usernames = ['earth']):
-    ## make global entity called earth
+def init_entities(usernames = ['world']):
+    ## make global entity called world
     
     #loop=asyncio.new_event_loop()
 
     async def register(username):
         API = Api() 
         #await API.connect_forever()
-        #await API.register(username)
+        await API.register(username)
         print(API.keys)
         print('done')
 
@@ -937,7 +977,7 @@ def split_binary(data, sep=BSEP):
 
 
 if __name__=='__main__':
-    #init_entities()
+    init_entities()
 
-    res = split_binary(b'eeeehey||||whatsueep',b'||||')
-    print(res)
+    # res = split_binary(b'eeeehey||||whatsueep',b'||||')
+    # print(res)
