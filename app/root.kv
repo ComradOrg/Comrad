@@ -46,6 +46,94 @@
 
 
 
+
+
+<ProgressPopup>:
+    type: "custom"
+    size_hint: (None, None)
+    size: ('200dp','200dp')
+    # md_bg_color: 0,0,0,1
+
+    MDBoxLayout:
+        id: popup_box_layout
+        size_hint:(1,1)
+        orientation: 'vertical'
+        cols:1
+        md_bg_color: rgb(*COLOR_ACCENT)
+        spacing:'0dp'
+        padding:'0dp'
+        # radius:[20,] 
+        # border_radius:20
+        canvas:
+            Color:
+                rgb: rgb(*COLOR_TEXT)
+            Line:
+                width: 1
+                rectangle: (self.x, self.y, self.width, self.height)
+                # radius:[20,] 
+                # border_radius:20
+
+
+        MDLabel:
+            size_hint:(None,None)
+            # id: progress_label
+            text: ''
+            halign: 'center'
+            theme_text_color: 'Custom'
+            text_color: rgb(*COLOR_TEXT)
+            font_size: '18dp'
+            font_name: 'assets/overpass-mono-regular.otf'
+            pos_hint: {'center_x': .5, 'center_y': 0.5}
+
+
+    MDSpinner:
+        size_hint: None, None
+        size: '46dp','46dp'
+        pos_hint: {'center_x': .5, 'center_y': 0.5}
+        active: True
+        color:rgb(*COLOR_TEXT)
+
+<MessagePopup>:
+    type: "custom"
+    size_hint: None,None
+    size: ('300dp','300dp')
+    # md_bg_color: 0,0,0,1
+
+    MDBoxLayout:
+        id: msg_popup_box_layout
+        size_hint:(1,1)
+        orientation: 'vertical'
+        cols:1
+        md_bg_color: 0,0,0,1
+        spacing:'0dp'
+        padding:'0dp'
+        pos_hint: {'center_x':0.5, 'center_y':0.5}
+        # radius:[20,] 
+        # border_radius:20
+
+
+
+        MDLabel:
+            # size_hint:(None,None)
+            id: msg_label
+            text: ''
+            halign: 'center'
+            # valign: 'middle'
+            theme_text_color: 'Custom'
+            text_color: rgb(*COLOR_TEXT)
+            font_size: '18dp'
+            font_name: 'assets/overpass-mono-regular.otf'
+            pos_hint: {'center_x': .5, 'y': 0}
+
+
+
+
+
+
+
+
+
+
 ### LAYOUT
 
 MyLayout:
@@ -75,8 +163,10 @@ MyLayout:
         background_palette: 'Red'
         theme_text_color:'Custom'
         background_hue: '500'
-        right_action_items: [['card-text-outline', partial(root.change_screen, 'feed')], ['pencil-plus-outline', partial(root.change_screen, 'post')], ['message-outline', partial(root.change_screen, 'messages')], ['bell-outline', partial(root.change_screen, 'login')], ['account-circle-outline', partial(root.change_screen, 'profile')]]
+        right_action_items: [['earth', partial(root.change_screen, 'feed')],['email-receive-outline', partial(root.change_screen, 'messages')],['account-tie-voice-outline', partial(root.change_screen, 'profile')],['pencil-plus-outline', partial(root.change_screen, 'post')], ['wardrobe-outline', partial(root.change_screen, 'login')]]
         #left_action_items: [[f"assets/fist2.png", partial(root.change_screen, 'feed')]]
+        
+        # ['bell-outline', partial(root.change_screen, 'login')]
         font_context: None
         font_name: f'assets/Strengthen.ttf'
         # canvas:

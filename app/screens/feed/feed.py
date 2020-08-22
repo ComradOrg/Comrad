@@ -245,7 +245,7 @@ class FeedScreen(BaseScreen):
             
             i=0
             lim=25
-            posts=await self.app.get_posts()
+            posts=await self.app.get_posts(self.app.uri)
             for i,post in enumerate(reversed(posts)):
                 #if ln.startswith('@') or ln.startswith('RT '): continue
                 #i+=1

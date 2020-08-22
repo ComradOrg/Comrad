@@ -329,13 +329,15 @@ class SelectableLabel(RecycleDataViewBehavior, Label):
             except AttributeError:
                 return
             
-            pcard.recipient=newval[1:]
+            recip=pcard.recipient=newval[1:]
             pcard.parent.recipient=newval[1:]
             pcard.parent.close_author_option()
 
             alabel=pcard.author_label
             alabel.text=f'@{pcard.author}\n[size=14sp]to @{pcard.recipient}[/size]'
             
+            pcard.parent.to_whom_btn.ids.txt_input.text = recip
+
             #pcard.remove_widget(pcard.parent.to_whom_btn)
             # pcard.author_section_layout.remove_widget(pcard.author_section_layout.children[2])
             # pcard.remove_widget(pcard.parent.to_whom_btn)
@@ -380,6 +382,17 @@ class MyTextInput(TextInput):
             self.parent.height = 240
         
     def keyboard_on_key_down(self, window, keycode, text, modifiers):
+    
+        pcard = self.parent.parent
+
+        recip = pcard.parent.to_whom_btn.ids.txt_input.text.strip()
+        recip = recip[1:] if recip and recip[0]=='@' else recip
+        pcard.recipient = recip
+        alabel=pcard.author_label
+        alabel.text=f'@{pcard.author}\n[size=14sp]to @{pcard.recipient}'
+        
+
+
         if self.suggestion_text and keycode[1] == 'tab':
             self.insert_text(self.suggestion_text + ' ')
             return True

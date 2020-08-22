@@ -59,7 +59,8 @@ KEYDIR_BUILTIN = '.'
 async def _getdb(self=None,port=PORT_LISTEN):
     from kademlia.network import Server
 
-    if self: self.log('starting server..')
+    if self: 
+        self.log('starting server..')
 
     import os
     if self: self.log(os.getcwd())
@@ -73,15 +74,20 @@ async def _getdb(self=None,port=PORT_LISTEN):
 
     if self: node.log = self.log
     self.log('NODE:',node)
+
+    # if self and self.app:
+        # self.app.close_dialog()
+
     return node
 
 def logg(*x):
     print(*x)
 
 class Api(object):
-    def __init__(self,user=None,log=None):
+    def __init__(self,user=None,log=None,app=None):
         self.log = log if log is not None else logg
         self.username = user
+        self.app=app
 
     def private_key(self):
         if self.username:
@@ -119,6 +125,7 @@ class Api(object):
         return self._node
 
     async def connect(self,port=PORT_LISTEN):
+        if self.app: self.app.open_dialog('hello?')
         self.log('connecting...')
         node = await _getdb(self,port)
         self.log(f'connect() has node {node}')
@@ -305,7 +312,7 @@ class Api(object):
     
 
     async def decode_data(self,entire_packet_orig,sep=BSEP,private_key=None,sep2=BSEP2):
-        #if entire_packet_orig is None: return entire_packet_orig
+        if entire_packet_orig is None: return entire_packet_orig
         self.log(f'decode_data({entire_packet_orig})...')
         import binascii
         entire_packet = entire_packet_orig

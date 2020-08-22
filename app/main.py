@@ -23,6 +23,7 @@ from kivymd.app import MDApp
 from kivymd.uix.button import MDFillRoundFlatButton, MDIconButton
 from kivymd.uix.toolbar import MDToolbar
 from kivymd.uix.screen import MDScreen
+from kivymd.uix.dialog import MDDialog
 from kivy.lang import Builder
 from kivy.uix.boxlayout import BoxLayout
 from kivymd.theming import ThemeManager
@@ -89,7 +90,8 @@ class MyLayout(MDBoxLayout):
         self.post_id=post_id
         self.change_screen('view')
 
-
+class ProgressPopup(MDDialog): pass
+class MessagePopup(MDDialog): pass
 class MyBoxLayout(MDBoxLayout): pass
 class MyLabel(MDLabel): pass
 
@@ -196,6 +198,7 @@ class MainApp(MDApp):
     store_global = JsonStore('../p2p/.keys.global.json')
     login_expiry = 60 * 60 * 24 * 7  # once a week
     texture = ObjectProperty()
+    uri = '/inbox/world'
 
     # def connect(self):
     #     # connect to kad?   
@@ -237,7 +240,7 @@ class MainApp(MDApp):
         self.load_store()
         self.uri=DEFAULT_URI
         # connect to API
-        self.api = api.Api(log=self.log)
+        self.api = api.Api(log=self.log,app=self)
 
     @property
     def channel(self):
@@ -344,6 +347,7 @@ class MainApp(MDApp):
         if content: jsond['content']=str(content)
         if file_id: jsond['file_id']=str(file_id)
         if file_ext: jsond['file_ext']=str(file_ext)
+        if channel and channel[0]=='@': channel=channel[1:]
         self.log(f'''app.json(
             content={content},
             file_id={file_id},
@@ -424,6 +428,33 @@ class MainApp(MDApp):
             self.other_task.cancel()
 
         return asyncio.gather(run_wrapper(), self.other_task)
+
+
+
+
+    def open_dialog(self,msg):
+        if not hasattr(self,'dialog') or not self.dialog:
+            self.dialog = ProgressPopup()
+        
+        # raise Exception(self.dialog, msg)
+        self.dialog.text=msg
+        self.dialog.open()
+        #stop
+
+    def open_msg_dialog(self,msg):
+        from screens.post.post import MessagePopup,ProgressPopup
+        if not hasattr(self,'msg_dialog') or not self.msg_dialog:
+            self.msg_dialog = MessagePopup()
+        self.msg_dialog.ids.msg_label.text=msg
+        self.msg_dialog.open()
+
+    def close_dialog(self):
+        if hasattr(self,'dialog'):
+            self.dialog.dismiss()
+
+    def close_msg_dialog(self):
+        if hasattr(self,'msg_dialog'):
+            self.msg_dialog.dismiss()
 
 
 

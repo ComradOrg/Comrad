@@ -316,7 +316,7 @@ class ProfileScreen(BaseScreen):
         # add posts
         lim=25
         posts=await self.app.get_my_posts()
-        # self.log('POSTS!?',posts)
+        self.log('POSTS!?',posts)
         # stop
         for i,post in enumerate(posts):
             if i>lim: break

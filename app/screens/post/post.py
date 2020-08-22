@@ -307,7 +307,7 @@ class PostScreen(ProtectedScreen):
             import time
             self.close_dialog()
         
-        self.open_dialog('')
+        # self.open_dialog('')
         #Thread(target=do_post).start()
         asyncio.create_task(do_post())        
 
