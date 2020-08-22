@@ -45,6 +45,7 @@ class LoginScreen(BaseScreen):
         self.label_title.color=rgb(*COLOR_TEXT)
         self.label_title.text='Welcome,'
         # self.label_title.font_size*=1.5
+        self.layout.add_widget(get_separator('20sp'))
         self.layout.add_widget(self.label_title)
         self.layout.add_widget(get_separator('30sp'))
         # self.layout.add_widget(MySeparator())
@@ -81,7 +82,7 @@ class LoginScreen(BaseScreen):
         # self.layout.add_widget(self.layout_password)
 
         self.layout_buttons = LoginButtonLayout()
-        self.layout.add_widget(get_separator('10sp'))
+        self.layout.add_widget(get_separator('20sp'))
         self.layout.add_widget(self.layout_buttons)
 
         # self.login_button = LoginButton()

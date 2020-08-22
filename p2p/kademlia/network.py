@@ -61,11 +61,6 @@ class Server:
         neighbs=self.bootstrappable_neighbors()
         neighbors=' '.join(':'.join(str(x) for x in ip_port) for ip_port in neighbs)
         repr = f"""storing {len(self.storage.data)} keys and has {len(neighbs)} neighbors""" #:\n\t{neighbors}"""
-        #         transport = {self.transport}
-        # protocol = {self.protocol}
-        # refresh_loop = {self.refresh_loop}
-        # save_state_loop = {self.save_state_loop}
-
         return repr
 
 

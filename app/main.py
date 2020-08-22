@@ -241,7 +241,7 @@ class MainApp(MDApp):
 
     @property
     def channel(self):
-        return self.uri.split('/')[1] if self.uri and self.uri.count('/')>=2 else None
+        return self.uri.split('/')[2] if self.uri and self.uri.count('/')>=2 else None
         
 
     
@@ -390,7 +390,7 @@ class MainApp(MDApp):
         if not channel in self.keys:
             self.log('!! tsk tsk dont be nosy')
             return
-        return await self.get_posts(uri=os.path.join(prefix,channel))
+        return await self.get_posts(uri='/'+os.path.join(prefix,channel))
 
     async def get_channel_inbox(self,channel):
         return await self.get_channel_posts(channel=channel,prefix='inbox')
@@ -398,13 +398,13 @@ class MainApp(MDApp):
     async def get_channel_outbox(self,channel):
         return await self.get_channel_posts(channel=channel,prefix='outbox')
 
-    async def get_my_posts(self,username=None):
+    async def get_my_posts(self,username=None,prefix='outbox'):
         if username is None and self.username: username=self.username
         if not username:
             self.log(f'!! whose posts?')
             return
         self.log(f'get_my_posts({self.username})')
-        return await self.get_channel(username)
+        return await self.get_channel_outbox(username)
 
 
 

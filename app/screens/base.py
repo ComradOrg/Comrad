@@ -26,11 +26,9 @@ class BaseScreen(MDScreen):
     def channel(self):
         return self.app.channel
 
-class ProtectedScreen(BaseScreen):
-    def on_pre_enter(self):
-        async def guard():
-            keys=await self.app.get_keys()
-            if not self.channel in keys:
-                self.root.change_screen('login')
-                return
-        asyncio.create_task(guard())
+class ProtectedScreen(BaseScreen): pass
+    # def on_pre_enter(self):
+    #     if not self.channel in self.app.api.keys:
+    #         self.root.change_screen('login')
+    #         return
+        

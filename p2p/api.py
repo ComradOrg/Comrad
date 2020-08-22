@@ -709,7 +709,6 @@ class Api(object):
         post_id = get_random_id()
         author_privkey = self.keys[data.get('author')]
         channels = data.get('to_channels',[])
-        del data['to_channels']
         for channel in channels:
             self.log('ADDING TO CHANNEL??',channel)
             pubkey_channel = self.keys[channel].public_key()
