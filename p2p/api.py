@@ -15,6 +15,7 @@ BSEP3=b'##########'
 NODE_SLEEP_FOR=1
 PATH_WORLD_KEY='.world.key'
 
+
 try:
     from .crypto import *
     from .p2p import *
@@ -91,7 +92,7 @@ class Api(object):
             i = 0
             self._node = await self.connect(port=port)
             while True:
-                if not i%30: self.log(f'Node status (tick {i}): {self._node}')
+                if not i%90: self.log(f'Node status (tick {i}): {self._node}')
                 if i and not i%save_every: await self.flush()
                 i += 1
                 await asyncio.sleep(NODE_SLEEP_FOR)
@@ -328,6 +329,7 @@ class Api(object):
         ### NEW FIRST LINE: Try to decrypt!
         val=None
         for keyname,privkey in self.keys.items():
+            self.log(keyname,privkey,'??')
             try:
                 val = aes_rsa_decrypt(encrypted_payload,privkey,*decryption_tools)
                 #self.log('decrypted =',val)
@@ -693,7 +695,7 @@ class Api(object):
         self.log('saving back to db file...')
         node = await self.node
         node.storage.dump()
-        self.log('DONE saving back to db file...')
+        # self.log('DONE saving back to db file...')
         
 
 
