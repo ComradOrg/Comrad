@@ -437,19 +437,26 @@ class Api(object):
         return await _set()
 
     async def get_json(self,key_or_keys,decode_data=False):
-
+        
+        def jsonize_dat(datstr):
+            return json.loads(datstr.decode('utf-8'))
+        
         def jsonize_res(res0):
-            # parse differently?
-            res=json.loads(base64.b64decode(res0).decode('utf-8'))
-            self.log(f'jsonize_res({res0} [{type(res0)}] --> {res} [{type(res)}')
-            return res
+            if not res0: return None
+            if type(res0)==list:
+                for d in res0:
+                    if 'val' in d and d['val']:
+                        d['val']=jsonize_dat(d['val'])
+                return res0
+            else:
+                return json.loads(base64.b64decode(res0).decode('utf-8'))
+            
+            # # parse differently?
+            # self.log(f'jsonize_res({res0} [{type(res0)}] --> {res} [{type(res)}')
+            # return res
 
         res = await self.get(key_or_keys,decode_data=decode_data)
-        self.log('get_json() got from get():',res)
-        #self.log('get_json() got',res)
-        if not res:
-            
-            return None
+        self.log('get_json() got from get():',type(res),res)
         return jsonize_res(res)
            
 
@@ -559,8 +566,9 @@ class Api(object):
 
     @property
     def keys(self): 
-        if not hasattr(self,'_keys'): self._keys = self.get_keys()
-        return self._keys
+        #if not hasattr(self,'_keys'): self._keys = self.get_keys()
+        #return self._keys
+        return self.get_keys()
     
 
 
@@ -735,8 +743,8 @@ class Api(object):
         ## get full json
         uris = [os.path.join(uri,x) for x in index]
         self.log('URIs:',uris)
-        x = await self.get(uris,decode_data=True)
-        self.log('api.get_posts got back from .get() <-',x)
+        x = await self.get_json(uris,decode_data=True)
+        self.log('api.get_posts got back from .get_json() <-',x)
         return [y for y in x if y is not None]
         
 

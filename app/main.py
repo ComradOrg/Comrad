@@ -375,7 +375,10 @@ class MainApp(MDApp):
         newdata=[]
         for d in data:
             self.log('data d:',d)
-            newdata.append(d)
+            if not 'val' in d: continue
+            newdict = dict(d['val'].items())
+            newdict['timestamp']=float(d['time'])
+            newdata.append(newdict)
         
         # return index
         return newdata
