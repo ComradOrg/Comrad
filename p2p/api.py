@@ -325,8 +325,22 @@ class Api(object):
         
          #,signature
 
+    # async def set_on_channel(self,key_or_keys,value_or_values):
+    #     tasks=[]
+    #     if type(channel_or_channels) not in {list,tuple}:
+    #         channels=[channel_or_channels]
+    #     else:
+    #         channels=channel_or_channels
+
+    #     for channel in channels:
+    #         uri = 
+    #         tasks.append(self.set)
+
+    #     if type(channel_or_channels) == str:
+    #         return await self.set(self,key_or_keys,value_or_values,channel_or_channels)
+    #     elif type(channel_or_channels) == 
     
-    async def set(self,key_or_keys,value_or_values,private_signature_key=None,encode_data=True):
+    async def set(self,key_or_keys,value_or_values,private_signature_key=None,encode_data=True,encrypt_for_pubkey=None):
         self.log(f'api.set({key_or_keys}) --> {type(value_or_values)}')
         async def _set():
             # self.log('async _set()',self.node)
@@ -334,10 +348,14 @@ class Api(object):
             #node=await _getdb(self)
             node=await self.node
 
-            def proc(value):
-                if encode_data:
-                    return self.encode_data(value,private_signature_key=private_signature_key)
-                return value
+            def proc(key,value):
+                if encode_data and encrypt_for_pubkey is not None:
+                    x = self.encode_data(value,private_signature_key=private_signature_key,
+                    )
+                else:
+                    x = value
+                self.log('set encoded data =',x)
+                return x
 
             if type(key_or_keys) in {list,tuple,dict}:
                 keys = key_or_keys
@@ -346,7 +364,7 @@ class Api(object):
                 tasks=[
                     node.set(
                         key,
-                        proc(value)
+                        proc(key,value)
                     )
                     for key,value in zip(keys,values)
                 ]
@@ -355,7 +373,7 @@ class Api(object):
             else:
                 key = key_or_keys
                 value = value_or_values
-                res = await node.set(key,proc(value))
+                res = await node.set(key,proc(key,value))
 
             #node.stop()
             return res
@@ -400,10 +418,11 @@ class Api(object):
         
 
 
-    async def set_json(self,key,value,private_signature_key=None,encode_data=True):
+    async def set_json(self,key,value,private_signature_key=None,encode_data=True,encrypt_for_pubkey=None):
         value_json = jsonify(value)
         # self.log('OH NO!',sys.getsizeof(value_json))
-        return await self.set(key,value_json,private_signature_key=None,encode_data=encode_data)
+        return await self.set(key,value_json,private_signature_key=private_signature_key,
+                            encode_data=encode_data,encrypt_for_pubkey=encrypt_for_pubkey)
 
     async def has(self,key):
         val=await self.get(key)
@@ -530,14 +549,18 @@ class Api(object):
 
     async def append_json(self,key,data):
         self.log(f'appending to uri {key}')
-        sofar=await self.get_json_val(key,decode_data=True)
+
+        # get sofar
+        sofar=await self.get_json_val(key, decode_data=False)
         self.log(f'sofar = {sofar}')
         if sofar is None: sofar = []
         if type(sofar)!=list: sofar=[sofar]
         if type(data)!=list: data=[data]
+
         new=sofar + data
-        if await self.set_json(key, new):
+        if await self.set_json(key, new, encode_data=False):
             return {'success':'Length increased to %s' % len(new)}
+        
         return {'error':'Could not append json'}
 
     async def upload(self,filename,file_id=None, uri='/file/',uri_part='/part/'):
@@ -618,8 +641,8 @@ class Api(object):
     async def post(self,data,add_to_outbox=True):
         post_id=get_random_id()
         tasks = []
-        self.log(f'post() added post {post_id}')
-        task = self.set_json('/post/'+post_id, data)
+        #self.log(f'post() added post {post_id}')
+        #task = self.set_json('/post/'+post_id, data, )
         tasks.append(task)
 
         # res = await
@@ -628,17 +651,26 @@ class Api(object):
         #     return
         
         # ## add to inbox
+        post_ids=[]
         for channel in data.get('to_channels',[]):
             self.log('ADDING TO CHANNEL??',channel)
+
+            ## add per channel
+            post_id = get_random_id()
+            post_ids.append(post_ids)
+            uri = '/'+os.path.join('post',channel,post_id)
+            task = self.set_json(uri, data)
+            
+            # add to inbox
             task=self.append_json(f'/inbox/{channel}',post_id)
             tasks.append(task)
 
-        ## add to outbox
-        if add_to_outbox:
-            un=data.get('author')
-            if un:
-                task = self.append_json(f'/outbox/{un}', post_id)
-                tasks.append(task)
+            # add to outbox
+            if add_to_outbox:
+                un=data.get('author')
+                if un:
+                    task = self.append_json(f'/outbox/{un}', post_id)
+                    tasks.append(task)
 
         self.log('gathering tasks')
         res = await asyncio.gather(*tasks)
@@ -646,7 +678,7 @@ class Api(object):
 
         if res:
             asyncio.create_task(self.flush())
-            return {'success':'Posted! %s' % post_id, 'post_id':post_id}
+            return {'success':'Posted! %s' % post_ids, 'post_id':post_ids}
         return {'error':'Post failed'}
 
     async def get_json_val(self,uri,decode_data=True):
