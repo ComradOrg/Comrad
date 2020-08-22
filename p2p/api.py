@@ -511,7 +511,7 @@ class Api(object):
     async def register(self,name,passkey=None,just_return_keys=False):
         # if not (name and passkey): return {'error':'Name and password needed'}
         person = await self.get_person(name)
-        keys = await self.get_keys()
+        keys = self.get_keys()
         if person is not None:
             self.log('register() person <-',person)
             # try to log in

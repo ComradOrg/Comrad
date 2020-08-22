@@ -53,8 +53,9 @@ from p2p import p2p,crypto,api
 from kivy.event import EventDispatcher
 import threading,asyncio,sys
 
-
+# raise Exception(str(Window.size))
 Window.size = WINDOW_SIZE
+# Window.fullscreen = True #'auto'
 
 # with open('log.txt','w') as of:
 #     of.write('### LOG ###\n')

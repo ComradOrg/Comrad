@@ -12,6 +12,7 @@ from kivy.app import App
 from threading import Thread
 import asyncio
 from misc import *
+from kivy.core.window import Window
 
 
 
@@ -74,6 +75,14 @@ class PostCard(MDCard):
         self.content = data.get('content','')
         self.timestamp = data.get('timestamp',None)
         self.bind(minimum_height=self.setter('height'))
+        
+        minwidth = 400
+        maxwidth = 800
+        abouts = int(Window.size[0]/1.5)
+        if abouts < minwidth: self.width=f'{minwidth}sp'
+        if abouts > maxwidth: self.width=f'{maxwidth}sp'
+        self.width=f'{abouts}sp'
+    
 
         # self.log('PostCard.img_id =',self.img_id)
         # self.log('PostCard.img_ext =',self.img_ext)

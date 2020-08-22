@@ -11,7 +11,7 @@ ASPECT_RATIO = PLAYING_CARDS[0]/PLAYING_CARDS[1]
 HEIGHT = 800
 
 if platform.platform().startswith('Linux'):
-    HEIGHT *= 1.5
+    HEIGHT *= 2
 
 
 WINDOW_SIZE=int(HEIGHT * ASPECT_RATIO),int(HEIGHT)
