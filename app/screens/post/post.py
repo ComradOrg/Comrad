@@ -286,11 +286,14 @@ class PostScreen(ProtectedScreen):
             return
 
         #channels = [k[1:] for k,v in self.to_channels.items() if v]
-        if not hasattr(self,'recipient') or not self.recipient or self.app.username==self.recipient:
+        recipient = self.to_whom_btn.ids.txt_input.text
+        self.log('RECIPIENT:',recipient)
+        if not recipient: ##not hasattr(self,'recipient') or not self.recipient or self.app.username==self.recipient:
             self.log('no recipient was selected')
             # self.='No place was selected'
             return
-        channels = [self.recipient]
+        self.recipient = recipient
+        channel = recipient
 
         # log('?????????????????'+self.media_uid)
         # if not hasattr(self,'img_id') and self.upload_button.selection:
@@ -300,11 +303,11 @@ class PostScreen(ProtectedScreen):
         async def do_post():
             file_id = self.img_id if hasattr(self,'img_id') else None
             file_ext = self.img_ext if hasattr(self,'img_ext') else None
-            await self.app.post(content=content, channels = channels, file_id=file_id, file_ext=file_ext)
+            await self.app.post(content=content, channel = channel, file_id=file_id, file_ext=file_ext)
             import time
             self.close_dialog()
         
-        self.open_dialog('posting')
+        self.open_dialog('')
         #Thread(target=do_post).start()
         asyncio.create_task(do_post())        
 

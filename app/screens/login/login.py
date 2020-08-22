@@ -99,12 +99,16 @@ class LoginScreen(BaseScreen):
         
         self.layout.add_widget(self.login_status)
 
-        self.label_title.font_size='22sp'
+        self.label_title.font_size='18sp'
         # self.label_password.font_size='18sp'
-        self.label_username.font_size='18sp'
+        self.label_username.font_size='20sp'
         # self.login_button.font_size='12sp'
-        self.register_button.font_size='12sp'
+        self.register_button.font_size='9sp'
         self.register_button.text='enter'
+        self.username_field.font_size='20sp'
+        self.label_username.padding_x=(10,20)
+        self.username_field.padding_x=(20,10)
+        self.username_field.padding_y=(25,0)
         
 
 

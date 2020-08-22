@@ -337,7 +337,7 @@ class MainApp(MDApp):
                 if data_piece is not None:
                     of.write(data_piece)
     
-    async def post(self, content='', file_id=None, file_ext=None, anonymous=False,channels=['world']):
+    async def post(self, content='', file_id=None, file_ext=None, anonymous=False,channel='world'):
         #timestamp=time.time()
         jsond={}
         #jsond['timestamp']=
@@ -349,12 +349,12 @@ class MainApp(MDApp):
             file_id={file_id},
             file_ext={file_ext},
             anonymous={anonymous},
-            channels={channels},
+            channel={channel},
             [username={self.username}]'''
         )
         if not anonymous and self.username:
             jsond['author']=self.username
-        jsond['to_channels']=channels
+        jsond['channel']=channel
         self.log('posting:',jsond)
         res=await self.api.post(jsond)
         if 'success' in res:
