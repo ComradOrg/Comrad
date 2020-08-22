@@ -188,8 +188,8 @@ class Api(object):
 
         # check input
         if not encrypt_for_pubkey: 
-            self.log('we need a receiver !!')
-            return None
+            raise Exception('we need a receiver !!')
+            # return None
         
         # convert val to bytes
         # if type(val)!=bytes: val = bytes(val,'utf-8')
@@ -413,14 +413,17 @@ class Api(object):
 
 
     async def set_json(self,key,value,private_signature_key=None,encode_data=True,encrypt_for_pubkey=None):
+        self.log(f'api.self_json({key}, {value} ...)')
         value_json = jsonify(value)
-        # self.log('OH NO!',sys.getsizeof(value_json))
-        return await self.set(
+        self.log(f'value_json = {value_json}')
+        set_res = await self.set(
             key,
             value_json.encode('utf-8'),
             private_signature_key=private_signature_key,
             encode_data=encode_data,
             encrypt_for_pubkey=encrypt_for_pubkey)
+        self.log(f'api.self_json({key},{value} ...) <-- {set_res}')
+        return set_res
 
     async def has(self,key):
         val=await self.get(key)
@@ -641,14 +644,16 @@ class Api(object):
 
     async def post(self,data,add_to_outbox=True):
         post_id=get_random_id()
-        tasks = []
+        #tasks = []
 
         self.log(f'api.post({data},add_to_outbox={add_to_outbox}) --> ...')
         
         # ## add to inbox
         post_id = get_random_id()
         author_privkey = self.keys[data.get('author')]
-        for channel in data.get('to_channels',[]):
+        channels = data.get('to_channels',[])
+        del data['to_channels']
+        for channel in channels:
             self.log('ADDING TO CHANNEL??',channel)
             pubkey_channel = self.keys[channel].public_key()
 
@@ -657,34 +662,34 @@ class Api(object):
             # encrypt and post
             uri = '/'+os.path.join('post',channel,post_id)
             self.log('setting',uri,'????',type(data),data)
-            task = self.set_json(
+            
+            json_res = await self.set_json(
                 uri, 
                 data, 
                 encode_data=True, 
                 encrypt_for_pubkey=pubkey_channel,
                 private_signature_key=author_privkey
                 )
-            tasks.append(task)
+                
+            self.log(f'json_res() <- {json_res}')
+            ##tasks.append(task)
             
             # add to inbox
-            task=self.append_json(f'/inbox/{channel}',post_id)
-            tasks.append(task)
+            append_res=await self.append_json(f'/inbox/{channel}',post_id)
+            self.log(f'json_res.append_json({channel}) <- {append_res}')
+            #tasks.append(task)
 
             # add to outbox
             if add_to_outbox:
                 un=data.get('author')
                 if un:
-                    task = self.append_json(f'/outbox/{un}', post_id)
-                    tasks.append(task)
+                    append_res = await self.append_json(f'/outbox/{un}', post_id)
+                    self.log(f'json_res.append_json({un}) <- {append_res}')
+                    #tasks.append(task)
 
-        self.log('gathering tasks')
-        res = await asyncio.gather(*tasks)
-        self.log('done with tasks:',res)
-
-        if res:
-            asyncio.create_task(self.flush())
-            return {'success':'Posted! %s' % post_id, 'post_id':post_id}
-        return {'error':'Post failed'}
+        #asyncio.create_task(self.flush())
+        return {'success':'Posted! %s' % post_id, 'post_id':post_id}
+        #return {'error':'Post failed'}
 
     async def get_json_val(self,uri,decode_data=True):
         res=await self.get_json(uri,decode_data=decode_data)

@@ -180,6 +180,7 @@ class Server:
         node = Node(dkey)
         self.log(f'creating node {node}')
         nearest = self.protocol.router.find_neighbors(node)
+        self.log(f'nearest = {nearest}')
         if not nearest:
             self.log("There are no known neighbors to get key %s" % key)
             return None
@@ -193,7 +194,7 @@ class Server:
         self.log(f"Eventually found for key {key} value {found}")
 
         # set it locally? @EDIT
-        if store_anywhere:
+        if store_anywhere and found:
             self.storage.set(dkey,found)
         
         return found
@@ -206,10 +207,7 @@ class Server:
             raise TypeError(
                 "Value must be of type int, float, bool, str, or bytes"
             )
-        self.log("setting '%s' = '%s' on network", key, value)
-
-        
-
+        self.log(f"setting '{key}' = '{value}' ({type(value)}) on network")
 
         dkey = digest(key)
         return await self.set_digest(dkey, value)
@@ -231,18 +229,21 @@ class Server:
         spider = NodeSpiderCrawl(self.protocol, node, nearest,
                                  self.ksize, self.alpha)
         nodes = await spider.find()
-        self.log("setting '%s' on %s", dkey.hex(), list(map(str, nodes)))
+        self.log(f"setting '%s' on %s" % (dkey.hex(), list(map(str, nodes))))
 
         # if this node is close too, then store here as well
         if store_anywhere:
+            self.log(f'store_anywhere -> {dkey} --> {value}')
             self.storage.set(dkey,value)
         else:
             biggest = max([n.distance_to(node) for n in nodes])
             if self.node.distance_to(node) < biggest:
+                self.log(f'< bigges -> {dkey} --> {value}')
                 self.storage[dkey] = value
 
 
         results = [self.protocol.call_store(n, dkey, value) for n in nodes]
+        self.log(f'--> set() results --> {results}')
         # return true only if at least one store call succeeded
         return any(await asyncio.gather(*results))
 
