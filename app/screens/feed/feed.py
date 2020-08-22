@@ -57,12 +57,13 @@ class PostAuthorLabel(MDLabel):
             of the widget tree.
         '''
         #if not self.to_changeable: return
-        try:
-            self.parent.parent.author_dialog.open()
-            #for item in self.parent.parent.author_dialog.items:
-            #    raise Exception([item.disabled, item.text])
-        except AttributeError:
-            pass
+        # try:
+        #     self.parent.parent.author_dialog.open()
+        #     #for item in self.parent.parent.author_dialog.items:
+        #     #    raise Exception([item.disabled, item.text])
+        # except AttributeError:
+        #     pass
+        self.parent.parent.parent.open_author_option()
 
         #raise Exception(self.text)
         # self.text = '!!!'

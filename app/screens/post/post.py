@@ -79,75 +79,18 @@ class ButtonLayout(MDBoxLayout): pass
 class PostButton(MDRectangleFlatButton): pass
 class PostStatus(MDRectangleFlatButton): pass
 
-class InvisibleButton(Button):
-    pass
-
-
-def on_touch_down(self, touch):
-    '''Receive a touch down event.
-    :Parameters:
-        `touch`: :class:`~kivy.input.motionevent.MotionEvent` class
-            Touch received. The touch is in parent coordinates. See
-            :mod:`~kivy.uix.relativelayout` for a discussion on
-            coordinate systems.
-    :Returns: bool
-        If True, the dispatching of the touch event will stop.
-        If False, the event will continue to be dispatched to the rest
-        of the widget tree.
-    '''
-    if self.disabled and self.collide_point(*touch.pos):
-        return True
-    for child in self.children[:]:
-        if child.dispatch('on_touch_down', touch):
-            return True
-
-
-
-class AuthorDialog(MDDialog): pass
-    # def on_touch_down(self, touch):
-    #     for item in self.items:
-    #         logg(item.text, item.disabled)
-
-        
-        # author=self.screen.post_card.author
-        # recip=self.screen.post_card.recipient
-        # self.screen.post_card.author_label.text=f'@{author}\n[size=14sp]to @{recip}[/size]'
-        
-        # for item in self.screen.post_card.author_dialog.items:
-        #     item.disabled=True
-        # self.disabled=False
-
-        # if self.disabled and self.collide_point(*touch.pos):
-        #     return True
-        # for child in self.children[:]:
-        #     if child.dispatch('on_touch_down', touch):
-        #         return True
-
-
-from kivymd.uix.list import OneLineAvatarListItem,OneLineListItem
-class Item(OneLineListItem):
-    divider = None
-    source = StringProperty()
-
-    def on_release(self):
-        raise Exception(self.text+'!')
-
-    def change_title(self,new_recip):
-        post=self.screen.post_card
-        author=post.author
-        post.recipient=recip=new_recip[1:]
-        # raise Exception(recip+'???')
-        newtitle=f'@{author}\n[size=14sp]to @{recip}!!![/size]'
-        self.screen.post_card.author_label.text=newtitle
-        
-
-class AddresseeButton(MDRectangleFlatButton):
-    pass
-    def on_release(self):
-        raise Exception(self.text+'!!!!!!!')
 
 class PostScreen(ProtectedScreen): 
     post_id = ObjectProperty()
+
+    def open_author_option(self):
+        self.to_whom_btn.height='100dp'
+        self.to_whom_btn.size_hint_y=None
+    
+    def close_author_option(self):
+        self.to_whom_btn.height='0dp'
+        self.to_whom_btn.size_hint_y=None
+
 
 
     def on_pre_enter(self):
@@ -160,7 +103,7 @@ class PostScreen(ProtectedScreen):
 
         post_json = {'author':self.app.username, 'timestamp':time.time()}
         key=list(self.app.keys.keys())[0]
-        post_json['to_name']=key
+        # post_json['to_name']=key
         
         self.post_card = post = PostCard(post_json)
         self.post_card.add_widget(get_separator('15sp'),1)
@@ -172,61 +115,41 @@ class PostScreen(ProtectedScreen):
         post_TextField.font_name='assets/overpass-mono-regular.otf'
         post_TextField.hint_text='word?'
 
-        # add recipient changer dialog widget
-        
-        self.to_whom_btn = InvisibleButton()
-        self.to_whom_btn.background_color=0,0,0,0
-        # self.post_card.author_section_layout.remove_widget()
-        
-        # self.to_whom_btn.add_widget(self.post_card.author_label)
-        # self.post_card.author_section_layout.add_widget(self.to_whom_btn)
+        self.to_whom_btn = DropDownWidget(
+            pos_hint = {'x':0,'center_y':.5},
+            size_hint = (None, None),
+        )
+        inp_towhom = self.to_whom_btn.ids.txt_input
+        inp_towhom.size_hint=(None,None)
+        # inp_towhom.width = '100sp'
+        # inp_towhom.height = '75sp'
+        inp_towhom.adaptive_height=True
+        inp_towhom.md_bg_color=rgb(*COLOR_CARD)
+        # self.post_card.author_section_layout.md_bg_color=1,0,0,1
+        self.to_whom_layo = MDBoxLayout()
+        self.to_whom_layo.cols=1
+        self.to_whom_layo.size_hint=(None,None)
+        # self.to_whom_layo.width='200sp'
+        # self.to_whom_layo.md_bg_color=1,1,0,1
+        # self.post_card.author_section_layout.add_widget(MDLabel(text='-->'),1)
+        self.post_card.author_section_layout.add_widget(self.to_whom_btn,1)
+        self.to_whom_btn.ids.txt_input.text = '@'
+        #self.to_whom_btn.adaptive_height = True
+        self.to_whom_btn.ids.txt_input.word_list = ['@'+k for k in self.app.keys if k != self.app.username]
+        self.to_whom_btn.ids.txt_input.starting_no = 1
+        # self.post_card.author_section_layout.add_widget(get_separator('1sp'))
+        #self.post_card.author_section_layout.add_widget(self.to_whom_btn,3)
 
-        # self.post_card.author_label.to_changeable=True
-        # self.author_dialog_items = []
-        # for key in self.app.keys:
-        #     if key==self.app.username: continue
-        #     item = Item(text="@"+key), source="assets/avatar.jpg")
-        #     item.screen = self
-        #     self.author_dialog_items += [item]
+        # close for now
+        self.close_author_option()        
 
-        buttons = [AddresseeButton(text=key) for key in self.app.keys if key!=self.app.username]
-        for button in buttons:
-            button.font_name='assets/font.otf'
-            button.font_size='12sp'
-            button.size_hint=(None,None)
-            button.text_color=rgb(*COLOR_TEXT)
-            # button.md_bg_color=1,1,0,1
-        
-        dial = self.post_card.author_dialog = MDDialog(
-                title="to @whom",
-                type="confirmation"
-            )
-        dial.cols=1
-        dial.size_hint=(None,None)
-        layo=MDBoxLayout()
-        layo.font_size='12sp'
-        # layo.md_bg_color=1,1,0,1
-        layo.cols=1
-        layo.orientation='vertical'
-        layo.size_hint=(1,None)
-        layo.adaptive_height=True
-
-        dial.ids.container.add_widget(layo)
-        dial.ids.container.size_hint=(1,None)
-        dial.ids.container.height=layo.minimum_height
-        for button in buttons:
-            layo.add_widget(button)
-        dial.height = layo.height
-        self.post_card.author_dialog.pos_hint={'center_x':0.5}
-        self.post_card.author_dialog.width='300sp'
-        self.post_card.author_dialog.size_hint=(None,None)
-        self.post_card.author_dialog.screen = self
-        self.post_card.author_dialog.post_card = self.post_card
-
-
-        
         # remove content, add text input
         post.scroller.remove_widget(post.post_content)
+        # self.post_card.author_section_layout.add_widget(get_separator('1dp'))
+        # self.post_card.author_section_layout.add_widget(self.to_whom_layo,1)
+
+
+
         post.scroller.add_widget(post_TextField)
         post.scroller.size=('300dp','300dp')
         self.add_widget(post)

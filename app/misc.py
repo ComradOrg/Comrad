@@ -319,8 +319,25 @@ class SelectableLabel(RecycleDataViewBehavior, Label):
     def apply_selection(self, rv, index, is_selected):
         ''' Respond to the selection of items in the view. '''
         self.selected = is_selected
+        # raise Exception(str([is_selected, rv.data[index]]))
         if is_selected:
-            print("selection changed to {0}".format(rv.data[index]))
+            # raise Exception(str([is_selected, rv.data[index]]))
+            newval=rv.data[index]['text']
+            try:
+                pcard=self.parent.parent.parent.parent.parent
+            except AttributeError:
+                return
+            pcard.recipient=newval[1:]
+            alabel=pcard.author_label
+            alabel.text=f'@{pcard.author}\n[size=14sp]to @{pcard.recipient}[/size]'
+            pcard.author_section_layout.remove_widget(pcard.parent.to_whom_btn)
+            # pcard.author_section_layout.remove_widget(pcard.author_section_layout.children[2])
+            # pcard.remove_widget(pcard.parent.to_whom_btn)
+            # pcard.remove_widget(self.parent.parent.parent)
+            #raise Exception(type())
+            # self.parent.parent.parent.children[1].text = rv.data[index]['text']
+            #raise Exception(type(=self.te))
+            #print("selection changed to {0}".format(rv.data[index]))
 
 class RV(RecycleView):
     def __init__(self, **kwargs):
