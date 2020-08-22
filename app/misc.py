@@ -259,6 +259,7 @@ Builder.load_string('''
 <MyTextInput>:
     readonly: False
     multiline: False
+    size_hint:1,None
     
 
 <SelectableLabel>:
@@ -324,13 +325,18 @@ class SelectableLabel(RecycleDataViewBehavior, Label):
             # raise Exception(str([is_selected, rv.data[index]]))
             newval=rv.data[index]['text']
             try:
-                pcard=self.parent.parent.parent.parent.parent
+                pcard=self.parent.parent.parent.parent
             except AttributeError:
                 return
+            
             pcard.recipient=newval[1:]
+            pcard.parent.recipient=newval[1:]
+            pcard.parent.close_author_option()
+
             alabel=pcard.author_label
             alabel.text=f'@{pcard.author}\n[size=14sp]to @{pcard.recipient}[/size]'
-            pcard.author_section_layout.remove_widget(pcard.parent.to_whom_btn)
+            
+            #pcard.remove_widget(pcard.parent.to_whom_btn)
             # pcard.author_section_layout.remove_widget(pcard.author_section_layout.children[2])
             # pcard.remove_widget(pcard.parent.to_whom_btn)
             # pcard.remove_widget(self.parent.parent.parent)

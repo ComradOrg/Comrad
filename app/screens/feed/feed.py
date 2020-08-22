@@ -132,7 +132,9 @@ class PostCard(MDCard):
         self.author_label = author_label = PostAuthorLabel(text='@'+self.author)
         self.author_label.font_name='assets/overpass-mono-semibold.otf'
         if self.recipient:
-            self.author_label.text+='\n[size=14sp]to @'+self.recipient+'[/size]'
+            recip=self.recipient
+            recip='@'+recip if recip and recip[0].isalpha() else recip
+            self.author_label.text+='\n[size=14sp]to '+recip+'[/size]'
             self.author_label.markup=True
         self.author_label.font_size = '18sp'
         self.author_avatar = author_avatar = PostAuthorAvatar(source='assets/avatar.jpg') #self.img_src)

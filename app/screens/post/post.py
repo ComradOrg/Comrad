@@ -84,10 +84,16 @@ class PostScreen(ProtectedScreen):
     post_id = ObjectProperty()
 
     def open_author_option(self):
-        self.to_whom_btn.height='100dp'
-        self.to_whom_btn.size_hint_y=None
+        import kivy
+        try:
+            self.post_card.add_widget(self.to_whom_btn,1)
+            self.to_whom_btn.height='100dp'
+            self.to_whom_btn.size_hint_y=None
+        except kivy.uix.widget.WidgetException:
+            return
     
     def close_author_option(self):
+        self.post_card.remove_widget(self.to_whom_btn)
         self.to_whom_btn.height='0dp'
         self.to_whom_btn.size_hint_y=None
 
@@ -103,7 +109,7 @@ class PostScreen(ProtectedScreen):
 
         post_json = {'author':self.app.username, 'timestamp':time.time()}
         key=list(self.app.keys.keys())[0]
-        # post_json['to_name']=key
+        post_json['to_name']='...?'
         
         self.post_card = post = PostCard(post_json)
         self.post_card.add_widget(get_separator('15sp'),1)
@@ -121,18 +127,27 @@ class PostScreen(ProtectedScreen):
         )
         inp_towhom = self.to_whom_btn.ids.txt_input
         inp_towhom.size_hint=(None,None)
-        # inp_towhom.width = '100sp'
+        inp_towhom.width = '100sp'
+        inp_towhom.font_name='assets/font.otf'
         # inp_towhom.height = '75sp'
         inp_towhom.adaptive_height=True
         inp_towhom.md_bg_color=rgb(*COLOR_CARD)
         # self.post_card.author_section_layout.md_bg_color=1,0,0,1
         self.to_whom_layo = MDBoxLayout()
         self.to_whom_layo.cols=1
-        self.to_whom_layo.size_hint=(None,None)
-        # self.to_whom_layo.width='200sp'
-        # self.to_whom_layo.md_bg_color=1,1,0,1
+        # self.to_whom_layo.size_hint=(None,None)
+        self.to_whom_layo.width='300sp'
+        self.to_whom_layo.height='2000sp'
+        self.to_whom_layo.md_bg_color=1,1,0,1
         # self.post_card.author_section_layout.add_widget(MDLabel(text='-->'),1)
-        self.post_card.author_section_layout.add_widget(self.to_whom_btn,1)
+        # self.post_card.author_section_layout.add_widget(self.to_whom_btn)
+
+
+        # self.to_whom_layo.add_widget(self.to_whom_btn)
+        # self.tmp_msg = MDLabel(text='-->')
+        self.post_card.add_widget(self.to_whom_btn,1)
+        
+        
         self.to_whom_btn.ids.txt_input.text = '@'
         #self.to_whom_btn.adaptive_height = True
         self.to_whom_btn.ids.txt_input.word_list = ['@'+k for k in self.app.keys if k != self.app.username]
@@ -141,7 +156,10 @@ class PostScreen(ProtectedScreen):
         #self.post_card.author_section_layout.add_widget(self.to_whom_btn,3)
 
         # close for now
-        self.close_author_option()        
+        # self.close_author_option()        
+        # self.post_card.remove_widget(self.to_whom_btn)
+        # self.to_whom_btn.height='0dp'
+        # self.to_whom_btn.size_hint_y=None
 
         # remove content, add text input
         post.scroller.remove_widget(post.post_content)
@@ -164,11 +182,14 @@ class PostScreen(ProtectedScreen):
 
         self.button_layout.add_widget(self.upload_button)
         self.button_layout.add_widget(self.post_button)
+
+        self.upload_button.font_size='12sp'
+        self.post_button.font_size='12sp'
        
 
-        self.post_button.md_bg_color=(0,0,0,1)
-        self.upload_button.md_bg_color=(0,0,0,1)
-        self.post_status.md_bg_color=(0,0,0,1)
+        self.post_button.md_bg_color=rgb(*COLOR_ACTIVE)
+        self.upload_button.md_bg_color=rgb(*COLOR_ACTIVE)
+        self.post_status.md_bg_color=rgb(*COLOR_CARD)
         
         self.add_widget(self.button_layout)
         # self.add_widget(self.post_status)
@@ -264,11 +285,12 @@ class PostScreen(ProtectedScreen):
             self.open_msg_dialog(f'Text is currently {lencontent} words long, which is {lendiff} over the maximum text length of {maxlen} words.\n\n({lencontent}/{maxlen})')
             return
 
-        channels = [k[1:] for k,v in self.to_channels.items() if v]
-        if not channels:
-            self.log('no place was selected')
+        #channels = [k[1:] for k,v in self.to_channels.items() if v]
+        if not hasattr(self,'recipient') or not self.recipient or self.app.username==self.recipient:
+            self.log('no recipient was selected')
             # self.='No place was selected'
             return
+        channels = [self.recipient]
 
         # log('?????????????????'+self.media_uid)
         # if not hasattr(self,'img_id') and self.upload_button.selection:
@@ -291,3 +313,6 @@ class PostScreen(ProtectedScreen):
 def get_random_id():
     import uuid
     return uuid.uuid4().hex
+
+
+class MessagePopup(MDDialog): pass
