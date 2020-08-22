@@ -58,18 +58,14 @@ class Server:
     #    return [asyncio.create_task(self.set_digest(k,v)) for k,v in self.storage.items()]
 
     def __repr__(self):
-        repr = f"""
-        kademlia.network.Server status:
-            ksize = {self.ksize}
-            alpha = {self.alpha}
-            storage = {self.storage}
-            node = {self.node}
-            transport = {self.transport}
-            protocol = {self.protocol}
-            refresh_loop = {self.refresh_loop}
-            save_state_loop = {self.save_state_loop}
-            bootstrappable_neighbors = {self.bootstrappable_neighbors()}
-        """
+        neighbs=self.bootstrappable_neighbors()
+        neighbors=' '.join(':'.join(str(x) for x in ip_port) for ip_port in neighbs)
+        repr = f"""storing {len(self.storage.data)} keys and has {len(neighbs)} neighbors""" #:\n\t{neighbors}"""
+        #         transport = {self.transport}
+        # protocol = {self.protocol}
+        # refresh_loop = {self.refresh_loop}
+        # save_state_loop = {self.save_state_loop}
+
         return repr
 
 
@@ -85,7 +81,7 @@ class Server:
             self.save_state_loop.cancel()
 
     def _create_protocol(self):
-        return self.protocol_class(self.node, self.storage, self.ksize)
+        return self.protocol_class(self.node, self.storage, self.ksize, self.log)
 
     async def listen(self, port, interface='0.0.0.0'):
         """
@@ -96,8 +92,7 @@ class Server:
         loop = asyncio.get_event_loop()
         listen = loop.create_datagram_endpoint(self._create_protocol,
                                                local_addr=(interface, port))
-        self.log("Node %i listening on %s:%i",
-                 self.node.long_id, interface, port)
+        self.log("Node %i listening on %s:%i" % (self.node.long_id, interface, port))
         self.transport, self.protocol = await listen
         # finally, schedule refreshing table
         self.refresh_table()
@@ -119,6 +114,7 @@ class Server:
             nearest = self.protocol.router.find_neighbors(node, self.alpha)
             spider = NodeSpiderCrawl(self.protocol, node, nearest,
                                      self.ksize, self.alpha)
+            spider.log=self.log
             results.append(spider.find())
 
         # do our crawling
@@ -158,6 +154,7 @@ class Server:
         nodes = [node for node in gathered if node is not None]
         spider = NodeSpiderCrawl(self.protocol, self.node, nodes,
                                  self.ksize, self.alpha)
+        spider.log=self.log
         return await spider.find()
 
     async def bootstrap_node(self, addr):
@@ -188,7 +185,7 @@ class Server:
 
         found = None
         #while found is None:
-        spider = ValueSpiderCrawl(self.protocol, node, nearest, self.ksize, self.alpha)
+        spider = ValueSpiderCrawl(self.protocol, node, nearest, self.ksize, self.alpha, log=self.log)
         self.log(f'spider crawling... {spider}')
         found = await spider.find()
         self.log('spider found <-',found,'for key',key,'(',dkey,')')
@@ -231,12 +228,12 @@ class Server:
         nearest = self.protocol.router.find_neighbors(node)
         self.log('set_digest() nearest -->',nearest)
         if not nearest:
-            self.log("There are no known neighbors to set key %s",
-                        dkey.hex())
+            self.log("There are no known neighbors to set key %s" % dkey.hex())
             return False
 
         spider = NodeSpiderCrawl(self.protocol, node, nearest,
-                                 self.ksize, self.alpha)
+                                 self.ksize, self.alpha, log=self.log)
+
         nodes = await spider.find()
         self.log(f"setting '%s' on %s" % (dkey.hex(), list(map(str, nodes))))
 
@@ -263,7 +260,7 @@ class Server:
         Save the state of this node (the alpha/ksize/id/immediate neighbors)
         to a cache file with the given fname.
         """
-        self.log("Saving state to %s", fname)
+        self.log("Saving state to %s" % fname)
         data = {
             'ksize': self.ksize,
             'alpha': self.alpha,
@@ -283,7 +280,7 @@ class Server:
         from a cache file with the given fname and then bootstrap the node
         (using the given port/interface to start listening/bootstrapping).
         """
-        self.log("Loading state from %s", fname)
+        self.log("Loading state from %s" % fname)
         with open(fname, 'rb') as file:
             data = pickle.load(file)
         svr = Server(data['ksize'], data['alpha'], data['id'])

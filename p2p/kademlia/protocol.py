@@ -62,11 +62,12 @@ log = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
 class KademliaProtocol(RPCProtocol):
-    def __init__(self, source_node, storage, ksize):
+    def __init__(self, source_node, storage, ksize, log=print):
         RPCProtocol.__init__(self)
         self.router = RoutingTable(self, ksize, source_node)
         self.storage = storage
         self.source_node = source_node
+        self.log=print
 
     def get_refresh_ids(self):
         """
@@ -89,13 +90,13 @@ class KademliaProtocol(RPCProtocol):
     def rpc_store(self, sender, nodeid, key, value):
         source = Node(nodeid, sender[0], sender[1])
         self.welcome_if_new(source)
-        log.debug("got a store request from %s, storing '%s' -> %s (binary keys)'",
-                  sender, key.hex(), len(value))
+        self.log("got a store request from %s, storing '%s' -> %s (binary keys)'" %
+                  (sender, key.hex(), len(value)))
         self.storage[key] = value
         return True
 
     def rpc_find_node(self, sender, nodeid, key):
-        log.info("finding neighbors of %i in local table",
+        self.log("finding neighbors of %i in local table" %
                  int(nodeid.hex(), 16))
         source = Node(nodeid, sender[0], sender[1])
         self.welcome_if_new(source)
@@ -150,7 +151,7 @@ class KademliaProtocol(RPCProtocol):
         if not self.router.is_new_node(node):
             return
 
-        log.info("never seen %s before, adding to router", node)
+        self.log("never seen %s before, adding to router" % node)
         #for key, value in self.storage:
         for key in self.storage.keys():
             value = self.storage[key]
@@ -175,6 +176,6 @@ class KademliaProtocol(RPCProtocol):
             self.router.remove_contact(node)
             return result
 
-        log.info("got successful response from %s", node)
+        self.log("got successful response from %s" % node)
         self.welcome_if_new(node)
         return result

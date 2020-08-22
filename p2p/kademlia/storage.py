@@ -192,11 +192,8 @@ class HalfForgetfulStorage(IStorage):
     def __repr__(self,lim_eg=5):
         #self.cull()
         #return repr(self.data)
-        eg = list(sorted(self.data.keys()))[:lim_eg]
-        msg=f"""HalfForgetfulStorage()
-                # keys = {len(self.data)}
-                    e.g. = {eg}
-        """
+        #eg = list(sorted(self.data.keys()))[:lim_eg]
+        msg=f"""HFS() # keys = {len(self.data)}"""
         return msg
 
     def iter_older_than(self, seconds_old):

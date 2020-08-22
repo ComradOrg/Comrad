@@ -7,6 +7,15 @@ import pickle,os
 NODES_PRIME = [("128.232.229.63",8467), ("68.66.241.111",8467)] 
 #68.66.224.46
 
+def logger():
+    import logging
+    handler = logging.StreamHandler()
+    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    logger = logging.getLogger(__file__)
+    logger.addHandler(handler)
+    logger.setLevel(logging.DEBUG)
+    return logger
 
 def boot_lonely_selfless_node(port=8467):
     async def go():

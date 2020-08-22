@@ -13,7 +13,7 @@ class SpiderCrawl:
     """
     Crawl the network and look for given 160-bit keys.
     """
-    def __init__(self, protocol, node, peers, ksize, alpha):
+    def __init__(self, protocol, node, peers, ksize, alpha, log = print):
         """
         Create a new C{SpiderCrawl}er.
 
@@ -32,8 +32,9 @@ class SpiderCrawl:
         self.node = node
         self.nearest = NodeHeap(self.node, self.ksize)
         self.last_ids_crawled = []
-        log.info("creating spider with peers: %s", peers)
+        self.log("creating spider with peers: %s" % peers)
         self.nearest.push(peers)
+        self.log = log
 
     async def _find(self, rpcmethod):
         """
@@ -51,7 +52,7 @@ class SpiderCrawl:
              yet queried
           4. repeat, unless nearest list has all been queried, then ur done
         """
-        log.info("crawling network with nearest: %s", str(tuple(self.nearest)))
+        self.log("crawling network with nearest: %s" % str(tuple(self.nearest)))
         count = self.alpha
         if self.nearest.get_ids() == self.last_ids_crawled:
             count = len(self.nearest)
@@ -69,8 +70,9 @@ class SpiderCrawl:
 
 
 class ValueSpiderCrawl(SpiderCrawl):
-    def __init__(self, protocol, node, peers, ksize, alpha):
-        SpiderCrawl.__init__(self, protocol, node, peers, ksize, alpha)
+    def __init__(self, protocol, node, peers, ksize, alpha, log=print):
+        self.log = log
+        SpiderCrawl.__init__(self, protocol, node, peers, ksize, alpha, log = log)
         # keep track of the single nearest node without value - per
         # section 2.3 so we can set the key there if found
         self.nearest_without_value = NodeHeap(self.node, 1)
@@ -115,8 +117,8 @@ class ValueSpiderCrawl(SpiderCrawl):
         """
         value_counts = Counter(values)
         if len(value_counts) != 1:
-            log.warning("Got multiple values for key %i: %s",
-                        self.node.long_id, str(values))
+            self.log("Got multiple values for key %i: %s" %
+                        (self.node.long_id, str(values)) )
         value = value_counts.most_common(1)[0][0]
 
         peer = self.nearest_without_value.popleft()
@@ -126,6 +128,11 @@ class ValueSpiderCrawl(SpiderCrawl):
 
 
 class NodeSpiderCrawl(SpiderCrawl):
+    def __init__(self,*x,**y):
+        self.log=y.get('log',print)
+        super().__init__(*x)
+        
+
     async def find(self):
         """
         Find the closest nodes.

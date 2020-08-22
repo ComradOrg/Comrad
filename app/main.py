@@ -225,7 +225,7 @@ class MainApp(MDApp):
 
     def log(self,*args):
         line = ' '.join(str(x) for x in args)
-        self.logger.debug(line)
+        self.logger.debug(line+'\n')
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
