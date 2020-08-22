@@ -486,14 +486,14 @@ class Api(object):
 
     ## PERSONS
     async def get_person(self,username):
-        return await self.get('/person/'+username,decode_data=False)
+        return await self.get('/pubkey/'+username,decode_data=False)
 
     async def set_person(self,username,pem_public_key):
         # pem_public_key = save_public_key(public_key,return_instead=True)
         #obj = {'name':username, 'public_key':pem_public_key}
         # await self.set_json('/person/'+username,obj)
-        await self.set('/person/'+username,pem_public_key,
-                        private_signature_key=None,encode_data=False)
+        await self.set('/pubkey/'+username,pem_public_key,encode_data=False)
+        await self.set(b'/name/'+pem_public_key,base64.b64encode(username.encode('utf-8')),encode_data=False)
 
 
 
@@ -745,7 +745,13 @@ class Api(object):
         self.log('URIs:',uris)
         x = await self.get_json(uris,decode_data=True)
         self.log('api.get_posts got back from .get_json() <-',x)
-        return [y for y in x if y is not None]
+        res=[y for y in x if y is not None]
+
+        # fill out
+        for d in res:
+            from_name = self.get(b'/name/'+d['from'])
+            to_name = self.get(b'/name/'+d['to'])
+            raise Exception(from_name+' '+to_name)
         
 
 

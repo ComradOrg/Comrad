@@ -367,7 +367,7 @@ class MainApp(MDApp):
     async def get_post(self,post_id):
         return await self.api.get_post(post_id)
 
-    async def get_posts(self,uri='/inbox/aa'):
+    async def get_posts(self,uri='/inbox/eee'):
         self.log(f'app.get_posts(uri={uri} -> ...')
         data = await self.api.get_posts(uri)
         self.log('app.get_posts() got back from api.get_posts():',data)
