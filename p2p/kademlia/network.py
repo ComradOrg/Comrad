@@ -231,7 +231,7 @@ class Server:
         nearest = self.protocol.router.find_neighbors(node)
         self.log('set_digest() nearest -->',nearest)
         if not nearest:
-            self.log.warning("There are no known neighbors to set key %s",
+            self.log("There are no known neighbors to set key %s",
                         dkey.hex())
             return False
 
@@ -271,7 +271,7 @@ class Server:
             'neighbors': self.bootstrappable_neighbors()
         }
         if not data['neighbors']:
-            self.log.warning("No known neighbors, so not writing to cache.")
+            self.log("No known neighbors, so not writing to cache.")
             return
         with open(fname, 'wb') as file:
             pickle.dump(data, file)

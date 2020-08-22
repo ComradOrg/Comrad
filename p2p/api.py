@@ -48,9 +48,11 @@ NODES_PRIME = [("128.232.229.63",8467), ("68.66.241.111",8467)]
 
 from pathlib import Path
 home = str(Path.home())
+
 KEYDIR = os.path.join(home,'.komrade','.keys')
 if not os.path.exists(KEYDIR): os.makedirs(KEYDIR)
 
+KEYDIR_BUILTIN = '.'
 
 
 async def _getdb(self=None,port=PORT_LISTEN):
@@ -84,12 +86,12 @@ class Api(object):
         if self.username:
             pass
 
-    async def connect_forever(self,port=PORT_LISTEN,save_every=10):
+    async def connect_forever(self,port=PORT_LISTEN,save_every=60):
         try:
             i = 0
             self._node = await self.connect(port=port)
             while True:
-                if not i%60: self.log(f'Node status (tick {i}): {self._node}')
+                if not i%30: self.log(f'Node status (tick {i}): {self._node}')
                 if i and not i%save_every: await self.flush()
                 i += 1
                 await asyncio.sleep(NODE_SLEEP_FOR)
@@ -506,19 +508,21 @@ class Api(object):
 
 
     ## Register
-    async def register(self,name,passkey=None):
+    async def register(self,name,passkey=None,just_return_keys=False):
         # if not (name and passkey): return {'error':'Name and password needed'}
         person = await self.get_person(name)
+        keys = await self.get_keys()
         if person is not None:
             self.log('register() person <-',person)
             # try to log in
-            self.log('my keys',self.keys.keys())
-            if not name in self.keys: 
+            
+            self.log('my keys',keys)
+            if not name in keys: 
                 self.log('!! person already exists')
                 return {'error':'Person already exists'}
             
             # test 3 conditions
-            privkey=self.keys[name]
+            privkey=keys[name]
             pubkey=load_pubkey(person)
 
             if simple_lock_test(privkey,pubkey):
@@ -530,6 +534,9 @@ class Api(object):
         public_key = private_key.public_key()
         pem_private_key = serialize_privkey(private_key, password=passkey)# save_private_key(private_key,password=passkey,return_instead=True)
         pem_public_key = serialize_pubkey(public_key)
+
+        if just_return_keys:
+            return (pem_private_key,pem_public_key)
 
         # save pub key in db
         await self.set_person(name,pem_public_key)
@@ -553,7 +560,7 @@ class Api(object):
             self.log('!!',e)
         return {'error':'Incorrect password'}
 
-    def add_world_key(self,fn=PATH_WORLD_KEY):
+    async def add_world_key(self,fn=PATH_WORLD_KEY):
         import shutil
         name='.'.join(os.path.basename(PATH_WORLD_KEY).split('.')[1:-1])
 
@@ -561,18 +568,18 @@ class Api(object):
         pub_key=priv_key.public_key()
         pub_key_b=serialize_pubkey(pub_key)
         
-        if self.set_person(name,pub_key_b):
+        if await self.set_person(name,pub_key_b):
             ofn=os.path.join(KEYDIR,f'.{name}.key')
             shutil.copyfile(fn,ofn)
 
     #@property
-    def get_keys(self):
+    async def get_keys(self):
         res={}
         key_files = os.listdir(KEYDIR)
         world_key_fn = os.path.basename(PATH_WORLD_KEY)
         if not world_key_fn in key_files:
             self.log('[first time?] adding world key')
-            self.add_world_key()
+            await self.add_world_key()
 
         for priv_key_fn in key_files:
             if (not priv_key_fn.startswith('.') or not priv_key_fn.endswith('.key')): continue
@@ -587,10 +594,10 @@ class Api(object):
             
 
     @property
-    def keys(self): 
+    async def keys(self): 
         #if not hasattr(self,'_keys'): self._keys = self.get_keys()
         #return self._keys
-        return self.get_keys()
+        return await self.get_keys()
     
 
 
@@ -934,8 +941,21 @@ def init_entities(usernames = ['world']):
     async def register(username):
         API = Api() 
         #await API.connect_forever()
-        await API.register(username)
-        print(API.keys)
+        #privkey,pubkey = await API.register(username,just_return_keys=True)
+
+        private_key = generate_rsa_key()
+        public_key = private_key.public_key()
+        pem_private_key = serialize_privkey(private_key)
+        pem_public_key = serialize_pubkey(public_key)
+
+
+        privkey_fn = os.path.join(KEYDIR_BUILTIN,f'.{username}.key.priv')
+        pubkey_fn = os.path.join(KEYDIR_BUILTIN,f'.{username}.key.pub')
+        with open(privkey_fn,'wb') as of: of.write(pem_private_key)
+        with open(pubkey_fn,'wb') as of: of.write(pem_public_key)
+        # print(API.keys)
+
+        await API.set_person(username,pem_public_key)
         print('done')
 
 
