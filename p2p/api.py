@@ -59,13 +59,15 @@ async def _getdb(self=None,port=PORT_LISTEN):
 
     import os
     if self: self.log(os.getcwd())
-    node = Server() #fn='../p2p/data.db',log=(self.log if self else print)))
+    node = Server(log=self.log if self else print) #fn='../p2p/data.db',log=(self.log if self else print)))
 
     if self: self.log('listening..')
     await node.listen(port)
 
     if self: self.log('bootstrapping server..')
     await node.bootstrap(NODES_PRIME)
+
+    if self: node.log = self.log
     self.log('NODE:',node)
     return node
 
@@ -109,6 +111,7 @@ class Api(object):
         
         if not hasattr(self,'_node'):
             await self.connect()
+            self._node.log=self.log
         return self._node
 
     async def connect(self,port=PORT_LISTEN):
@@ -130,18 +133,26 @@ class Api(object):
             if type(key_or_keys) in {list,tuple,dict}:
                 keys = key_or_keys
                 self.log('keys is plural',keys)
-                tasks=[]
+                res =[]
                 for key in keys:
                     val = await node.get(key)
-                    task = self.decode_data(val) if decode_data else val
-                    tasks.append(task)
-                res = await asyncio.gather(*tasks)
+                    self.log(f'val for {key} = {val} {type(val)}')
+                    if decode_data: 
+                        self.log(f'api._get() decoding data {keys} -> {val} {type(val)}')
+                        val = await self.decode_data(val)
+                        self.log(f'api._get() got back decodied data {keys} -> {val} {type(val)}')
+                    res+=[val]
+                #res = await asyncio.gather(*tasks)
             else:
                 key=key_or_keys
                 self.log('keys is singular',key)
                 val = await node.get(key)
-                res = await self.decode_data(val) if decode_data else val
+                if decode_data:
+                    self.log(f'api._get() decoding data {key} -> {val} {type(val)}')
+                    val = await self.decode_data(val)
+                    self.log(f'api._get() got back decodied data {key} -> {val} {type(val)}')
                 self.log('wtf is val =',val)
+                res=val
             
             self.log('wtf is res =',res)
             
@@ -150,6 +161,7 @@ class Api(object):
         return await _get()
 
     def encode_data(self,val,sep=BSEP,sep2=BSEP2,do_encrypt=True,encrypt_for_pubkey=None,private_signature_key=None):
+        assert type(val)==bytes
         """
         What do we want to store with
         
@@ -180,8 +192,9 @@ class Api(object):
             return None
         
         # convert val to bytes
-        if type(val)!=bytes: val = bytes(val,'utf-8')
-        value_bytes=base64.b64encode(val)
+        # if type(val)!=bytes: val = bytes(val,'utf-8')
+        # value_bytes=base64.b64encode(val)
+        value_bytes = val
 
         # sign
         private_signature_key = private_signature_key if private_signature_key is not None else self.private_key
@@ -235,7 +248,8 @@ class Api(object):
     
 
     async def decode_data(self,entire_packet_orig,sep=BSEP,private_key=None,sep2=BSEP2):
-        if entire_packet_orig is None: return entire_packet_orig
+        #if entire_packet_orig is None: return entire_packet_orig
+        self.log(f'decode_data({entire_packet_orig})...')
         import binascii
         entire_packet = entire_packet_orig
         
@@ -252,37 +266,11 @@ class Api(object):
 
             self.log('!! decode_data() got incorrect format:',e)
             return entire_packet_orig 
-
-        # ### FIRST LINE OF PROTECTION
-        # # is the receiver's public id in our list of public IDs?
-        # to_pub = load_pubkey(to_pub_b)
-        # oktogo=False
-        # CORRECT_PUB_KEY=None
-        # CORRECT_PRIV_KEY=None
-        # for privkey,pubkey in self.keys():
-        #     if pubkey.public_numbers() == to_pub.public_numbers():
-        #         oktogo=True
-        #         CORRECT_PUB_KEY = pubkey
-        #         CORRECT_PRIV_KEY = privkey
-        #         break
-        # if not oktogo: return None
-
-        
-
-        ### SECOND LINE OF PROTECTION
-        # first try to decrypt sender to see if we have access to this
-        # def _decrypt_aes_rsa(args):
-        #     val_encr,val_encr_key,iv = args
-        #     val = aes_rsa_decrypt(val_encr,val_encr_key,iv,CORRECT_PRIV_KEY)
-        #     return val
-        # from_pub_decr = _decrypt_rsa(*sender_encr)
-        # if not from_pub_decr: return None
-        # from_pub = load_pubkey(from_pub_b)
         
 
         ### NEW FIRST LINE: Try to decrypt!
         val=None
-        for keyname,privkey,pubkey in self.keys():
+        for keyname,privkey,pubkey in self.keys:
             try:
                 val = aes_rsa_decrypt(encrypted_payload,privkey,*decryption_tools)
                 #self.log('decrypted =',val)
@@ -299,7 +287,7 @@ class Api(object):
         ### THIRD LINE: SIGNATURE VERIFICATION
         # can we decrypt signature?
         val_array = val.split(sep2)
-        # self.log('val_array =',val_array)
+        self.log('val_array =',val_array)
         time_b,sender_pubkey_b,receiver_pubkey_b,msg,signature = val_array
         if not signature: return None
         sender_pubkey=load_pubkey(sender_pubkey_b)
@@ -312,20 +300,6 @@ class Api(object):
         # ### FOURTH LINE: CONTENT ENCRYPTION
         # if private_key is None:
         #     private_key=self.private_key_global
-        
-        # val_encr = base64.b64decode(val_encr)
-        # val_encr_key = base64.b64decode(val_encr_key)
-        # self.log(f"""decrypting
-        # val_encr = {val_encr}
-        # val_encr_key = {val_encr_key}
-        # iv = {iv}
-        # private_key = {private_key}
-        # """)
-
-        
-        # val = _decrypt_aes()
-        # self.log('val after decryption = ',val)
-        # valdec = base64.b64decode(val)
 
         WDV={
             'time':float(time_b.decode()),
@@ -335,7 +309,7 @@ class Api(object):
             'sign':signature
         }
 
-        # self.log('GOT WDV:',WDV)
+        self.log('GOT WDV:',WDV)
         return WDV
         
         
@@ -406,7 +380,7 @@ class Api(object):
     async def get_json(self,key_or_keys,decode_data=True):
         
         def jsonize(entry):
-            # self.log('jsonize!',entry)
+            self.log('jsonize!',type(entry),entry)
             if not entry: return entry
             if not 'val' in entry: return entry
             val=entry['val']
@@ -418,14 +392,11 @@ class Api(object):
             entry['val']=dat
             return entry
 
-        def jsonize_res(res):
+        def jsonize_res(res0):
             # parse differently?
-            if type(res)==list:
-                jsonl=[jsonize(entry) for entry in res]
-                return jsonl
-            else:
-                entry = res
-                return jsonize(entry)
+            res=json.loads(res0.decode())
+            self.log(f'jsonize_res({res0} [{type(res0)}] --> {res} [{type(res)}')
+            return res
 
         # if key_or_keys.startsiwth('/post/'):
         res = await self.get(key_or_keys,decode_data=decode_data)
@@ -446,7 +417,7 @@ class Api(object):
         # self.log('OH NO!',sys.getsizeof(value_json))
         return await self.set(
             key,
-            value_json,
+            value_json.encode('utf-8'),
             private_signature_key=private_signature_key,
             encode_data=encode_data,
             encrypt_for_pubkey=encrypt_for_pubkey)
@@ -717,16 +688,16 @@ class Api(object):
 
     async def get_json_val(self,uri,decode_data=True):
         res=await self.get_json(uri,decode_data=decode_data)
-        self.log('get_json_val() got from get_json():',res)
+        self.log('get_json_val() got from get_json():',res,type(res))
         
         r=res
         if type(res) == dict:
-            r=res.get('val',None) if res is not None else None
+            r=res.get('val',None) if res is not None else res
         elif type(res) == list:
-            r=[x.get('val',None) for x in res if x is not None]
+            r=[(x.get('val') if type(x)==dict else x) for x in res if x is not None]
         elif type(res) == str:
             r=json.loads(res)
-        self.log(f'get_json_val() --> {r}')
+        self.log(f'get_json_val() --> {r} {type(r)}')
         return r
 
     async def get_post(self,post_id):

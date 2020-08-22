@@ -29,7 +29,7 @@ class Server:
 
     protocol_class = KademliaProtocol
 
-    def __init__(self, ksize=20, alpha=3, node_id=None, storage=None):
+    def __init__(self, ksize=20, alpha=3, node_id=None, storage=None,log=print):
         """
         Create a server instance.  This will start listening on the given port.
 
@@ -42,6 +42,7 @@ class Server:
         """
         self.ksize = ksize
         self.alpha = alpha
+        self.log = log
         self.storage = HalfForgetfulStorage() #storage or ForgetfulStorage()
         print('[Server] storage loaded with %s keys' % len(self.storage.data))
         self.node = Node(node_id or digest(random.getrandbits(255)))
@@ -95,14 +96,14 @@ class Server:
         loop = asyncio.get_event_loop()
         listen = loop.create_datagram_endpoint(self._create_protocol,
                                                local_addr=(interface, port))
-        log.info("Node %i listening on %s:%i",
+        self.log("Node %i listening on %s:%i",
                  self.node.long_id, interface, port)
         self.transport, self.protocol = await listen
         # finally, schedule refreshing table
         self.refresh_table()
 
     def refresh_table(self):
-        log.debug("Refreshing routing table")
+        self.log("Refreshing routing table")
         asyncio.ensure_future(self._refresh_table())
         loop = asyncio.get_event_loop()
         self.refresh_loop = loop.call_later(3600, self.refresh_table)
@@ -150,7 +151,7 @@ class Server:
             addrs: A `list` of (ip, port) `tuple` pairs.  Note that only IP
                    addresses are acceptable - hostnames will cause an error.
         """
-        log.debug("Attempting to bootstrap node with %i initial contacts",
+        self.log("Attempting to bootstrap node with %i initial contacts",
                   len(addrs))
         cos = list(map(self.bootstrap_node, addrs))
         gathered = await asyncio.gather(*cos)
@@ -170,19 +171,26 @@ class Server:
         Returns:
             :class:`None` if not found, the value otherwise.
         """
-        log.info("Looking up key %s", key)
+        self.log("Looking up key %s" % key)
         dkey = digest(key)
         # if this node has it, return it
         if self.storage.get(dkey) is not None:
+            self.log(f'already have {key} ({dkey}) in storage, returning...')
             return self.storage.get(dkey)
         node = Node(dkey)
+        self.log(f'creating node {node}')
         nearest = self.protocol.router.find_neighbors(node)
         if not nearest:
-            log.warning("There are no known neighbors to get key %s", key)
+            self.log("There are no known neighbors to get key %s" % key)
             return None
+
+
         spider = ValueSpiderCrawl(self.protocol, node, nearest,
                                   self.ksize, self.alpha)
+        self.log(f'spider crawling... {spider}')
+        
         found = await spider.find()
+        self.log(f"Eventually found for key {key} value {found}")
 
         # set it locally? @EDIT
         if store_anywhere:
@@ -198,7 +206,7 @@ class Server:
             raise TypeError(
                 "Value must be of type int, float, bool, str, or bytes"
             )
-        log.info("setting '%s' = '%s' on network", key, value)
+        self.log("setting '%s' = '%s' on network", key, value)
 
         
 
@@ -216,14 +224,14 @@ class Server:
 
         nearest = self.protocol.router.find_neighbors(node)
         if not nearest:
-            log.warning("There are no known neighbors to set key %s",
+            self.log.warning("There are no known neighbors to set key %s",
                         dkey.hex())
             return False
 
         spider = NodeSpiderCrawl(self.protocol, node, nearest,
                                  self.ksize, self.alpha)
         nodes = await spider.find()
-        log.info("setting '%s' on %s", dkey.hex(), list(map(str, nodes)))
+        self.log("setting '%s' on %s", dkey.hex(), list(map(str, nodes)))
 
         # if this node is close too, then store here as well
         if store_anywhere:
@@ -243,7 +251,7 @@ class Server:
         Save the state of this node (the alpha/ksize/id/immediate neighbors)
         to a cache file with the given fname.
         """
-        log.info("Saving state to %s", fname)
+        self.log("Saving state to %s", fname)
         data = {
             'ksize': self.ksize,
             'alpha': self.alpha,
@@ -251,7 +259,7 @@ class Server:
             'neighbors': self.bootstrappable_neighbors()
         }
         if not data['neighbors']:
-            log.warning("No known neighbors, so not writing to cache.")
+            self.log.warning("No known neighbors, so not writing to cache.")
             return
         with open(fname, 'wb') as file:
             pickle.dump(data, file)
@@ -263,7 +271,7 @@ class Server:
         from a cache file with the given fname and then bootstrap the node
         (using the given port/interface to start listening/bootstrapping).
         """
-        log.info("Loading state from %s", fname)
+        self.log("Loading state from %s", fname)
         with open(fname, 'rb') as file:
             data = pickle.load(file)
         svr = Server(data['ksize'], data['alpha'], data['id'])

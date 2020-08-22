@@ -295,7 +295,7 @@ class MainApp(MDApp):
             dat = await self.api.register(un)
             if 'success' in dat:
                 self.username=un
-                self.store.get('user',username=un)
+                self.store.put('user',username=un)
                 self.root.ids.login_screen.login_status.text=dat['success']
                 self.root.ids.login_screen.login_status.theme_text_color='Custom'
                 self.root.ids.login_screen.login_status.text_color=rgb(*COLOR_ACCENT)
