@@ -296,7 +296,6 @@ class Api(object):
         ])
 
         self.log('FINAL PACKET:',final_packet,type(final_packet))
-        stop
         return final_packet
 
     
@@ -333,7 +332,7 @@ class Api(object):
                 self.log(keyname,'did not work!') #,privkey,pubkey)
                 pass
         if not val:
-            self.log('Content not intended for us')
+            raise Exception('Content not intended for us')
             return None
 
         #stop
@@ -343,11 +342,13 @@ class Api(object):
         val_array = val.split(sep2)
         self.log('val_array =',val_array)
         time_b,sender_pubkey_b,receiver_pubkey_b,msg,signature = val_array
-        if not signature: return None
+        if not signature: 
+            raise Exception('no signature!')
+            return None
         sender_pubkey=load_pubkey(sender_pubkey_b)
         authentic = verify_signature(signature,msg,sender_pubkey)
         if not authentic: 
-            self.log('inauthentic message!')
+            raise Exception('inauthentic message')
             return None
 
 
@@ -412,22 +413,23 @@ class Api(object):
                 keys = key_or_keys
                 values = value_or_values
                 assert len(keys)==len(values)
-                tasks=[
-                    node.set(
-                        key,
-                        proc(key,value)
-                    )
-                    for key,value in zip(keys,values)
-                ]
-                res = await asyncio.gather(*tasks)
-                # self.log('RES?',res)
+                res=[]
+                for key,value in zip(keys,values):
+                    newval = proc(key,value)
+                    self.log(f'kvv (plural) <- {key}:{value} -> {newval}')
+                    await node.set(key,newval)
+                    res+=[newval]
             else:
                 key = key_or_keys
                 value = value_or_values
-                res = await node.set(key,proc(key,value))
+                newval = proc(key,value)
+                self.log(f'kvv (plural) <- {key}:{value} -> {newval}')
+                res = newval
+                await node.set(key,newval)
 
+            self.log(f'api.set(res = {res})')
             #node.stop()
-            self.log('reconnecting ...',self._node)
+            # self.log('reconnecting ...',self._node)
             #await self._node.stop()
             #await self.connect()
             return res
@@ -445,7 +447,9 @@ class Api(object):
         res = await self.get(key_or_keys,decode_data=decode_data)
         self.log('get_json() got from get():',res)
         #self.log('get_json() got',res)
-        if not res: return None
+        if not res:
+            
+            return None
         return jsonize_res(res)
            
 

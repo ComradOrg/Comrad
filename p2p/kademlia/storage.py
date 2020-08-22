@@ -5,7 +5,7 @@ from collections import OrderedDict
 from abc import abstractmethod, ABC
 import asyncio
 from kademlia.utils import digest
-BSEP_ST = b'||||'
+#BSEP_ST = b'||||'
 
 import base64,json
 def xprint(*xx):
