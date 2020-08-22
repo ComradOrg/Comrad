@@ -560,26 +560,34 @@ class Api(object):
             self.log('!!',e)
         return {'error':'Incorrect password'}
 
-    async def add_world_key(self,fn=PATH_WORLD_KEY):
+    def add_world_key(self,fn=PATH_WORLD_KEY):
         import shutil
-        name='.'.join(os.path.basename(PATH_WORLD_KEY).split('.')[1:-1])
+        thisdir=os.path.dirname(__file__)
+        fnfn=os.path.join(thisdir,fn)
+        self.log('getting',fnfn)
+        name='.'.join(os.path.basename(fn).split('.')[1:-1])
 
-        priv_key=load_privkey_fn(fn)
+        priv_key=load_privkey_fn(fnfn)
         pub_key=priv_key.public_key()
         pub_key_b=serialize_pubkey(pub_key)
-        
-        if await self.set_person(name,pub_key_b):
-            ofn=os.path.join(KEYDIR,f'.{name}.key')
-            shutil.copyfile(fn,ofn)
 
+        ofn=os.path.join(KEYDIR,f'.{name}.key')
+        shutil.copyfile(fnfn,ofn)
+
+        asyncio.create_task(self.add_world_key_to_net(name,pub_key_b))
+        
+    async def add_world_key_to_net(self,name,pub_key_b):
+        await self.set_person(name,pub_key_b)
+            
     #@property
-    async def get_keys(self):
+    def get_keys(self):
         res={}
         key_files = os.listdir(KEYDIR)
         world_key_fn = os.path.basename(PATH_WORLD_KEY)
         if not world_key_fn in key_files:
-            self.log('[first time?] adding world key')
-            await self.add_world_key()
+            self.log('[first time?] adding world key:',world_key_fn)
+            self.add_world_key()
+            
 
         for priv_key_fn in key_files:
             if (not priv_key_fn.startswith('.') or not priv_key_fn.endswith('.key')): continue
@@ -594,11 +602,13 @@ class Api(object):
             
 
     @property
-    async def keys(self): 
-        #if not hasattr(self,'_keys'): self._keys = self.get_keys()
-        #return self._keys
-        return await self.get_keys()
-    
+    def keys(self):
+        self.load_keys()
+        return self._keys
+
+    def load_keys(self):
+        self._keys = self.get_keys()        
+        
 
 
     async def append_json(self,key,data):

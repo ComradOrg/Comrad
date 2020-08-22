@@ -1,13 +1,20 @@
 DEFAULT_URI='/login/'
 
-import random
+import random,platform
 HORIZONTAL = False #random.choice([True,True,True,False])
 FACTOR=1
 WINDOW_SIZE = (1136*FACTOR,640*FACTOR) if HORIZONTAL else (640*FACTOR,1136*FACTOR)
 
 
+PLAYING_CARDS = (2.5,3.5)
+ASPECT_RATIO = PLAYING_CARDS[0]/PLAYING_CARDS[1]
+HEIGHT = 800
 
-WINDOW_SIZE=700,700
+if platform.platform().startswith('Linux'):
+    HEIGHT *= 1.5
+
+
+WINDOW_SIZE=int(HEIGHT * ASPECT_RATIO),int(HEIGHT)
 
 BG_IMG='assets/bg-brown.png'
 
