@@ -9,9 +9,9 @@ import asyncio,time
 # logger.setLevel(logging.DEBUG)
 sys.path.append('../p2p')
 # logger.info(os.getcwd(), sys.path)
-BSEP=b'\n\n\n\n'
-BSEP2=b'\t\n\t\n'
-BSEP3=b'\r\r\r\r'
+BSEP=b'||||||||||'
+BSEP2=b'@@@@@@@@@@'
+BSEP3=b'##########'
 NODE_SLEEP_FOR=1
 
 try:
@@ -211,7 +211,7 @@ class Api(object):
     #         return res
     #     return await _get()
 
-    def encode_data(self,val,sep=BSEP,sep2=BSEP2,do_encrypt=True,encrypt_for_pubkey=None,private_signature_key=None):
+    def encode_data(self,val,sep=BSEP,sep2=BSEP2,do_encrypt=False,encrypt_for_pubkey=None,private_signature_key=None):
         assert type(val)==bytes
         """
         What do we want to store with
@@ -295,7 +295,8 @@ class Api(object):
             decryption_tools
         ])
 
-        print('FINAL PACKET:',final_packet,type(final_packet))
+        self.log('FINAL PACKET:',final_packet,type(final_packet))
+        stop
         return final_packet
 
     
@@ -396,7 +397,7 @@ class Api(object):
                 if encode_data and encrypt_for_pubkey is not None and type(value)==bytes:
                     x = self.encode_data(
                         val = value,
-                        do_encrypt=True,
+                        do_encrypt=False,
                         encrypt_for_pubkey=encrypt_for_pubkey,
                         private_signature_key=private_signature_key
                     )
@@ -433,7 +434,7 @@ class Api(object):
 
         return await _set()
 
-    async def get_json(self,key_or_keys,decode_data=True):
+    async def get_json(self,key_or_keys,decode_data=False):
 
         def jsonize_res(res0):
             # parse differently?
@@ -709,7 +710,7 @@ class Api(object):
         return r
 
     async def get_post(self,post_id):
-        return await self.get_json_val(post_id,decode_data=True)
+        return await self.get_json_val(post_id,decode_data=False)
 
     async def get_posts(self,uri='/inbox/earth'):
         self.log(f'api.get_posts(uri={uri}) --> ...')

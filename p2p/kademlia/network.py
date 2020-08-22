@@ -190,7 +190,7 @@ class Server:
             spider = ValueSpiderCrawl(self.protocol, node, nearest, self.ksize, self.alpha)
             self.log(f'spider crawling... {spider}')
             found = await spider.find()
-            self.log('spider found <-',found,'for key',key)
+            self.log('spider found <-',found,'for key',key,'(',dkey,')')
             await asyncio.sleep(5)
 
         self.log(f"Eventually found for key {key} value {found}")
