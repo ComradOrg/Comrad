@@ -210,7 +210,7 @@ class Api(object):
         authentic = verify_signature(signature, value_bytes, public_sender_key)
         
         if not authentic:
-            self.log('message is inauthentic for set??',authentic)
+            raise Exception('message is inauthentic for set??' +str(authentic))
             return None
 
         # encrypt?
@@ -229,7 +229,9 @@ class Api(object):
         payload = sep2.join(WDV)
         
         res = aes_rsa_encrypt(payload,encrypt_for_pubkey)
-        if res is None: return None
+        if res is None:
+            raise Exception('encryption result does not exist')
+            return None
         payload_encr_aes, payload_encr_aes_key, payload_encr_aes_iv = res
         
         decryption_tools = sep2.join([
@@ -373,6 +375,9 @@ class Api(object):
                 res = await node.set(key,proc(key,value))
 
             #node.stop()
+            self.log('reconnecting ...',self._node)
+            #await self._node.stop()
+            #await self.connect()
             return res
 
         return await _set()
@@ -398,7 +403,6 @@ class Api(object):
             self.log(f'jsonize_res({res0} [{type(res0)}] --> {res} [{type(res)}')
             return res
 
-        # if key_or_keys.startsiwth('/post/'):
         res = await self.get(key_or_keys,decode_data=decode_data)
         self.log('get_json() got from get():',res)
         #self.log('get_json() got',res)
@@ -451,9 +455,11 @@ class Api(object):
         # if not (name and passkey): return {'error':'Name and password needed'}
         person = await self.get_person(name)
         if person is not None:
+            self.log('register() person <-',person)
             # try to log in
             self.log('my keys',self.keys.keys())
             if not name in self.keys: 
+                self.log('!! person already exists')
                 return {'error':'Person already exists'}
             
             # test 3 conditions
@@ -462,6 +468,7 @@ class Api(object):
 
             if simple_lock_test(privkey,pubkey):
                 self.username=name
+                self.log('!! logging into',name)
                 return {'success':'Logging back in...'}
 
         private_key = generate_rsa_key()
@@ -491,40 +498,6 @@ class Api(object):
             self.log('!!',e)
         return {'error':'Incorrect password'}
 
-
-
-    ## LOGIN
-    async def login(self,name,passkey):
-        # verify input
-        if not (name and passkey):
-            return {'error':'Name and password required'}
-
-        # try to load private key
-        private_key_dat = self.load_private_key(passkey)
-        if 'error' in private_key_dat:
-            return {'error':private_key_dat['error']}
-        if not 'success' in private_key_dat:
-            return {'error':'Incorrect password?'}
-        self._private_key = private_key = private_key_dat['success']
-
-        # see if user exists
-        person = await self.get_person(name)
-        # self.log(person)
-        if person is None:
-            return {'error':'Login failed'}
-
-        # verify keys
-        # self.log('got person =',person)
-        person_public_key_pem = person['public_key']
-        public_key = load_pubkey(person_public_key_pem) #load_public_key(person_public_key_pem.encode())
-        self._public_key = real_public_key = private_key.public_key()
-
-        #log('PUBLIC',public_key.public_numbers())
-        #log('REAL PUBLIC',real_public_key.public_numbers())
-
-        if public_key.public_numbers() != real_public_key.public_numbers():
-            return {'error':'Keys do not match!'}
-        return {'success':'Login successful', 'username':name}
         
     #@property
     def get_keys(self):
@@ -625,14 +598,6 @@ class Api(object):
         self.log('pieces = ',pieces)
         file_store['parts_data']=pieces
         return file_store
-
-    #def get_current_event_id(self):
-    #    return self.get_json_val(self,'/current/event/id')
-
-    # def get_uri(self):
-    #     event_id = self.get_current_event_id()
-    #     event_id=1 if event_id is None else int(event_id) 
-    #     return f'/post/{event_id}'
 
     async def flush(self):
         self.log('saving back to db file...')

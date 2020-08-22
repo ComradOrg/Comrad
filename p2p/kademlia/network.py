@@ -182,8 +182,8 @@ class Server:
         nearest = self.protocol.router.find_neighbors(node)
         self.log(f'nearest = {nearest}')
         if not nearest:
-            self.log("There are no known neighbors to get key %s" % key)
-            return None
+            raise Exception("There are no known neighbors to get key %s" % key)
+
 
 
         spider = ValueSpiderCrawl(self.protocol, node, nearest,
@@ -192,10 +192,14 @@ class Server:
         
         found = await spider.find()
         self.log(f"Eventually found for key {key} value {found}")
+        if not found:
+            return None
+            raise Exception('nothing found!')
 
         # set it locally? @EDIT
         if store_anywhere and found:
-            self.storage.set(dkey,found)
+            self.log(f'storing anywhere: {dkey} -> {found}')
+            self.storage[dkey]=found
         
         return found
 
@@ -219,8 +223,10 @@ class Server:
         """
 
         node = Node(dkey)
+        self.log('set_digest()',node)
 
         nearest = self.protocol.router.find_neighbors(node)
+        self.log('set_digest() nearest -->',nearest)
         if not nearest:
             self.log.warning("There are no known neighbors to set key %s",
                         dkey.hex())
@@ -234,7 +240,7 @@ class Server:
         # if this node is close too, then store here as well
         if store_anywhere:
             self.log(f'store_anywhere -> {dkey} --> {value}')
-            self.storage.set(dkey,value)
+            self.storage[dkey]=value
         else:
             biggest = max([n.distance_to(node) for n in nodes])
             if self.node.distance_to(node) < biggest:
@@ -243,9 +249,10 @@ class Server:
 
 
         results = [self.protocol.call_store(n, dkey, value) for n in nodes]
+        results = await asyncio.gather(*results)
         self.log(f'--> set() results --> {results}')
         # return true only if at least one store call succeeded
-        return any(await asyncio.gather(*results))
+        return any(results)
 
     def save_state(self, fname):
         """
