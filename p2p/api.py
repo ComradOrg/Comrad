@@ -123,19 +123,26 @@ class Api(object):
 
 
 
-
     async def get(self,key_or_keys,decode_data=True):
         self.log(f'api.get({key_or_keys},decode_data={decode_data}) --> ...')
         async def _get():
             self.log(f'api._get({key_or_keys},decode_data={decode_data}) --> ...')
             node=await self.node
             res=None
+
             if type(key_or_keys) in {list,tuple,dict}:
                 keys = key_or_keys
                 self.log('keys is plural',keys)
                 res =[]
                 for key in keys:
+                    val = None
+                    
+                    # while not val:
+                    self.log('trying again...')
                     val = await node.get(key)
+                    self.log('got',val)
+                    asyncio.sleep(1)
+
                     self.log(f'val for {key} = {val} {type(val)}')
                     if decode_data: 
                         self.log(f'api._get() decoding data {keys} -> {val} {type(val)}')
@@ -159,6 +166,50 @@ class Api(object):
             self.log(f'_get({key_or_keys}) --> {res}')
             return res
         return await _get()
+
+    # async def get(self,key_or_keys,decode_data=True):
+    #     self.log(f'api.get({key_or_keys},decode_data={decode_data}) --> ...')
+    #     async def _get():
+    #         self.log(f'api._get({key_or_keys},decode_data={decode_data}) --> ...')
+    #         node=await self.node
+    #         res=None
+
+    #         if type(key_or_keys) in {list,tuple,dict}:
+    #             keys = key_or_keys
+    #             self.log('keys is plural',keys)
+    #             res =[]
+    #             for key in keys:
+    #                 val = None
+                    
+    #                 # while not val:
+    #                 self.log('trying again...')
+    #                 val = await node.get(key)
+    #                 self.log('got',val)
+    #                 asyncio.sleep(1)
+
+    #                 self.log(f'val for {key} = {val} {type(val)}')
+    #                 if decode_data: 
+    #                     self.log(f'api._get() decoding data {keys} -> {val} {type(val)}')
+    #                     val = await self.decode_data(val)
+    #                     self.log(f'api._get() got back decodied data {keys} -> {val} {type(val)}')
+    #                 res+=[val]
+    #             #res = await asyncio.gather(*tasks)
+    #         else:
+    #             key=key_or_keys
+    #             self.log('keys is singular',key)
+    #             val = await node.get(key)
+    #             if decode_data:
+    #                 self.log(f'api._get() decoding data {key} -> {val} {type(val)}')
+    #                 val = await self.decode_data(val)
+    #                 self.log(f'api._get() got back decodied data {key} -> {val} {type(val)}')
+    #             self.log('wtf is val =',val)
+    #             res=val
+            
+    #         self.log('wtf is res =',res)
+            
+    #         self.log(f'_get({key_or_keys}) --> {res}')
+    #         return res
+    #     return await _get()
 
     def encode_data(self,val,sep=BSEP,sep2=BSEP2,do_encrypt=True,encrypt_for_pubkey=None,private_signature_key=None):
         assert type(val)==bytes
@@ -383,19 +434,6 @@ class Api(object):
         return await _set()
 
     async def get_json(self,key_or_keys,decode_data=True):
-        
-        def jsonize(entry):
-            self.log('jsonize!',type(entry),entry)
-            if not entry: return entry
-            if not 'val' in entry: return entry
-            val=entry['val']
-            try:
-                dat=json.loads(val) if val else val
-            except UnicodeDecodeError:
-                dat=val
-            # self.log('dat??',dat)
-            entry['val']=dat
-            return entry
 
         def jsonize_res(res0):
             # parse differently?
@@ -625,7 +663,7 @@ class Api(object):
 
             ## add per channel
             # encrypt and post
-            uri = '/'+os.path.join('post',channel,post_id)
+            uri = '/'+os.path.join('inbox',channel,post_id)
             self.log('setting',uri,'????',type(data),data)
             
             json_res = await self.set_json(
@@ -674,24 +712,28 @@ class Api(object):
         return await self.get_json_val(post_id,decode_data=True)
 
     async def get_posts(self,uri='/inbox/earth'):
-        # index = await self.get_json_val('/posts'+uri)
         self.log(f'api.get_posts(uri={uri}) --> ...')
         index = await self.get(uri,decode_data=False)
-        if not index: return []
+        self.log('api.get_posts index <-',index)
+        # if not index: return []
 
-        self.log('first index =',index)
         index = json.loads(index)
         self.log('got index?',index,type(index))
 
-        if index is None: return []
+        # if index is None: return []
         if type(index)!=list: index=[index]
-        
+        self.log('api.get_posts index <-',index)
         index = [x for x in index if x is not None]
+        self.log('api.get_posts index <-',index)
+
 
         ## get full json
         uris = [os.path.join(uri,x) for x in index]
         self.log('URIs:',uris)
         x = await self.get(uris,decode_data=True)
+        stop
+
+        self.log('api.get_posts got back from .get() <-',x)
         return [y for y in x if y is not None]
         
 

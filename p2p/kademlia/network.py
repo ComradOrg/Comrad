@@ -1,7 +1,7 @@
 """
 Package for interacting on the network at a high level.
 """
-STORE_ANYWHERE=False
+STORE_ANYWHERE=True
 
 
 import random
@@ -185,15 +185,17 @@ class Server:
             raise Exception("There are no known neighbors to get key %s" % key)
 
 
+        found = None
+        while found is None:
+            spider = ValueSpiderCrawl(self.protocol, node, nearest, self.ksize, self.alpha)
+            self.log(f'spider crawling... {spider}')
+            found = await spider.find()
+            self.log('spider found <-',found,'for key',key)
+            await asyncio.sleep(5)
 
-        spider = ValueSpiderCrawl(self.protocol, node, nearest,
-                                  self.ksize, self.alpha)
-        self.log(f'spider crawling... {spider}')
-        
-        found = await spider.find()
         self.log(f"Eventually found for key {key} value {found}")
         if not found:
-            return None
+            # return None
             raise Exception('nothing found!')
 
         # set it locally? @EDIT
