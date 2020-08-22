@@ -122,13 +122,14 @@ class Api(object):
 
 
     async def get(self,key_or_keys,decode_data=True):
-        self.log(f'get({key_or_keys},decode_data={decode_data}) --> ...')
+        self.log(f'api.get({key_or_keys},decode_data={decode_data}) --> ...')
         async def _get():
+            self.log(f'api._get({key_or_keys},decode_data={decode_data}) --> ...')
             node=await self.node
             res=None
             if type(key_or_keys) in {list,tuple,dict}:
                 keys = key_or_keys
-
+                self.log('keys is plural',keys)
                 tasks=[]
                 for key in keys:
                     val = await node.get(key)
@@ -137,16 +138,18 @@ class Api(object):
                 res = await asyncio.gather(*tasks)
             else:
                 key=key_or_keys
+                self.log('keys is singular',key)
                 val = await node.get(key)
                 res = await self.decode_data(val) if decode_data else val
                 self.log('wtf is val =',val)
-                self.log('wtf is res =',val)
+            
+            self.log('wtf is res =',res)
             
             self.log(f'_get({key_or_keys}) --> {res}')
             return res
         return await _get()
 
-    def encode_data(self,val,sep=BSEP,sep2=BSEP2,do_encrypt=True,receiver_pubkey=None,private_signature_key=None):
+    def encode_data(self,val,sep=BSEP,sep2=BSEP2,do_encrypt=True,encrypt_for_pubkey=None,private_signature_key=None):
         """
         What do we want to store with
         
@@ -163,8 +166,16 @@ class Api(object):
         import time
         timestamp=time.time()
 
+        self.log(f"""api.encode_data(
+            val={val},
+            sep={sep},
+            sep2={sep2},
+            do_encrypt={do_encrypt},
+            encrypt_for_pubkey={encrypt_for_pubkey},
+            private_signature_key={private_signature_key})""")
+
         # check input
-        if not receiver_pubkey: 
+        if not encrypt_for_pubkey: 
             self.log('we need a receiver !!')
             return None
         
@@ -179,13 +190,18 @@ class Api(object):
         sender_pubkey_b = serialize_pubkey(public_sender_key)
 
         # Verify!
-        authentic = verify_signature(signature, value_bytes, sender_pubkey_b)
+        self.log(f'''encode_data().verify_signature(
+            signature={signature}
+            value={value_bytes}
+            sender_pubkey={sender_pubkey_b}''')
+        authentic = verify_signature(signature, value_bytes, public_sender_key)
+        
         if not authentic:
             self.log('message is inauthentic for set??',authentic)
             return None
 
         # encrypt?
-        receiver_pubkey_b = serialize_pubkey(receiver_pubkey)
+        encrypt_for_pubkey_b = serialize_pubkey(encrypt_for_pubkey)
         time_b=str(timestamp).encode()
         msg=value_bytes
 
@@ -193,13 +209,13 @@ class Api(object):
         WDV = [
             time_b,
             sender_pubkey_b,
-            receiver_pubkey_b,
+            encrypt_for_pubkey_b,
             msg,
             signature
         ]
         payload = sep2.join(WDV)
         
-        res = aes_rsa_encrypt(payload,receiver_pubkey)
+        res = aes_rsa_encrypt(payload,encrypt_for_pubkey)
         if res is None: return None
         payload_encr_aes, payload_encr_aes_key, payload_encr_aes_iv = res
         
@@ -349,10 +365,17 @@ class Api(object):
             node=await self.node
 
             def proc(key,value):
+                self.log(f'encodeing data for {key} -> {type(value)} ...')
                 if encode_data and encrypt_for_pubkey is not None:
-                    x = self.encode_data(value,private_signature_key=private_signature_key,
+                    x = self.encode_data(
+                        val = value,
+                        do_encrypt=True,
+                        encrypt_for_pubkey=encrypt_for_pubkey,
+                        private_signature_key=private_signature_key
                     )
+                    self.log(f'got back encoded data for {key} -> {x} ...')
                 else:
+                    self.log(f'did not encode data for {key} -> {value} ...')
                     x = value
                 self.log('set encoded data =',x)
                 return x
@@ -421,8 +444,12 @@ class Api(object):
     async def set_json(self,key,value,private_signature_key=None,encode_data=True,encrypt_for_pubkey=None):
         value_json = jsonify(value)
         # self.log('OH NO!',sys.getsizeof(value_json))
-        return await self.set(key,value_json,private_signature_key=private_signature_key,
-                            encode_data=encode_data,encrypt_for_pubkey=encrypt_for_pubkey)
+        return await self.set(
+            key,
+            value_json,
+            private_signature_key=private_signature_key,
+            encode_data=encode_data,
+            encrypt_for_pubkey=encrypt_for_pubkey)
 
     async def has(self,key):
         val=await self.get(key)
@@ -558,7 +585,10 @@ class Api(object):
         if type(data)!=list: data=[data]
 
         new=sofar + data
-        if await self.set_json(key, new, encode_data=False):
+        if await self.set_json(
+                key, 
+                new, 
+                encode_data=False):
             return {'success':'Length increased to %s' % len(new)}
         
         return {'error':'Could not append json'}
@@ -641,25 +671,29 @@ class Api(object):
     async def post(self,data,add_to_outbox=True):
         post_id=get_random_id()
         tasks = []
-        #self.log(f'post() added post {post_id}')
-        #task = self.set_json('/post/'+post_id, data, )
-        tasks.append(task)
 
-        # res = await
-        # if not res:
-        #     self.log('!! error, couldn\'t set post json')
-        #     return
+        self.log(f'api.post({data},add_to_outbox={add_to_outbox}) --> ...')
         
         # ## add to inbox
-        post_ids=[]
+        post_id = get_random_id()
+        author_privkey = self.keys[data.get('author')]
         for channel in data.get('to_channels',[]):
             self.log('ADDING TO CHANNEL??',channel)
+            pubkey_channel = self.keys[channel].public_key()
+
 
             ## add per channel
-            post_id = get_random_id()
-            post_ids.append(post_ids)
+            # encrypt and post
             uri = '/'+os.path.join('post',channel,post_id)
-            task = self.set_json(uri, data)
+            self.log('setting',uri,'????',type(data),data)
+            task = self.set_json(
+                uri, 
+                data, 
+                encode_data=True, 
+                encrypt_for_pubkey=pubkey_channel,
+                private_signature_key=author_privkey
+                )
+            tasks.append(task)
             
             # add to inbox
             task=self.append_json(f'/inbox/{channel}',post_id)
@@ -674,11 +708,11 @@ class Api(object):
 
         self.log('gathering tasks')
         res = await asyncio.gather(*tasks)
-        self.log('done with tasks')
+        self.log('done with tasks:',res)
 
         if res:
             asyncio.create_task(self.flush())
-            return {'success':'Posted! %s' % post_ids, 'post_id':post_ids}
+            return {'success':'Posted! %s' % post_id, 'post_id':post_id}
         return {'error':'Post failed'}
 
     async def get_json_val(self,uri,decode_data=True):
@@ -701,7 +735,7 @@ class Api(object):
     async def get_posts(self,uri='/inbox/earth'):
         # index = await self.get_json_val('/posts'+uri)
         self.log(f'api.get_posts(uri={uri}) --> ...')
-        index = await self.get(uri,decode_data=True)
+        index = await self.get(uri,decode_data=False)
         if not index: return []
 
         self.log('first index =',index)
@@ -714,7 +748,9 @@ class Api(object):
         index = [x for x in index if x is not None]
 
         ## get full json
-        x = await self.get(['/post/'+x for x in index])
+        uris = [os.path.join(uri,x) for x in index]
+        self.log('URIs:',uris)
+        x = await self.get(uris,decode_data=True)
         return [y for y in x if y is not None]
         
 
