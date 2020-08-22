@@ -1,6 +1,7 @@
 from screens.base import ProtectedScreen,BaseScreen
 from plyer import filechooser
 from kivy.uix.button import Button
+from kivymd.uix.button import *
 from kivymd.uix.label import MDLabel
 from kivymd.uix.textfield import MDTextField
 from kivymd.uix.boxlayout import MDBoxLayout
@@ -36,6 +37,9 @@ from kivymd.theming import ThemableBehavior
 from kivymd.uix.button import MDIconButton
 from kivymd.uix.stacklayout import MDStackLayout
 from main import COLOR_TEXT,rgb,COLOR_ICON,COLOR_ACCENT,COLOR_INACTIVE
+
+def logg(*x):
+    with open('log.txt','a+') as of: of.write(' '.join(str(y) for y in x)+'\n')
 
 class ProgressPopup(MDDialog): pass
 class MessagePopup(MDDialog): pass
@@ -75,104 +79,76 @@ class ButtonLayout(MDBoxLayout): pass
 class PostButton(MDRectangleFlatButton): pass
 class PostStatus(MDRectangleFlatButton): pass
 
-
-class SelectAddressee(DropDownWidget):
-    def __init__(self, wordlist, **kwargs):
-        super().__init__(**kwargs)
-        self.pos_hint = {'center_x':.5,'center_y':.5}
-        self.size_hint = (None, None)
-        self.size = (600, 60)
-        
-        self.ids.txt_input.word_list = wordlist
-        self.ids.txt_input.starting_no = 1
-
-
-
-
-
-
-
-class ChannelLayout(MDStackLayout):
+class InvisibleButton(Button):
     pass
 
 
+def on_touch_down(self, touch):
+    '''Receive a touch down event.
+    :Parameters:
+        `touch`: :class:`~kivy.input.motionevent.MotionEvent` class
+            Touch received. The touch is in parent coordinates. See
+            :mod:`~kivy.uix.relativelayout` for a discussion on
+            coordinate systems.
+    :Returns: bool
+        If True, the dispatching of the touch event will stop.
+        If False, the event will continue to be dispatched to the rest
+        of the widget tree.
+    '''
+    if self.disabled and self.collide_point(*touch.pos):
+        return True
+    for child in self.children[:]:
+        if child.dispatch('on_touch_down', touch):
+            return True
 
-class ChannelChip(MDRoundFlatIconButton):
-    def callback(self):
-        val=self.check if hasattr(self,'check') else False
-        self.check = not val
-        self.icon='check-box-outline' if self.check else 'checkbox-blank-outline'
-        self.parent.parent.parent.parent.to_channels[self.text]=self.check
-        # self.md_bg_color=rgb(*COLOR_INACTIVE) if not self.check else rgb(*COLOR_ACTIVE)
-        # raise Exception(['GOT VALL',val])
-    pass
-        
-        
-    # def on_icon(self, instance, value):
-    #     self.log('on_icon',instance,value)
-    #     if value == "":
-    #         self.icon = "check-box-outline"
-    #         self.remove_widget(self.ids.icon)
- 
 
+
+class AuthorDialog(MDDialog): pass
     # def on_touch_down(self, touch):
-    #     colorobj=self.children[1]
-    #     if not self.check:
-    #         self.check=True
-    #         self.icon="check-box-outline"
-    #         self.color=rgb(*COLOR_ACTIVE)
-    #         self.selected_chip_color=rgb(*COLOR_ACTIVE)
-    #         colorobj.md_bg_color=rgb(*COLOR_ACTIVE)
-    #         self.log(f'check = {self.check} and icon = {self.icon} and color = {self.color}')
-    #     else:
-    #         self.selected_chip_color=rgb(*COLOR_INACTIVE)
-    #         self.check=False
-    #         self.icon="checkbox-blank-outline"
-    #         self.color=rgb(*COLOR_INACTIVE)
-    #         colorobj.md_bg_color=rgb(*COLOR_INACTIVE)
-    #         self.log(f'check = {self.check} and icon = {self.icon} and color = {self.color}')
-    #         self.md_bg_color=rgb(*COLOR_INACTIVE)
-    #     self.parent.parent.to_channels[self.label]=self.check
+    #     for item in self.items:
+    #         logg(item.text, item.disabled)
 
-            # self.color=rgb(*COLOR_ACCENT) if self.check else (rgb(50,50,50))
-            # self.log(md_choose_chip.parent.to_channels)
-            # self.ids.chiplayout.md_bg_color=self.color
-            
-            # if self.selected_chip_color:
-            #     Animation(
-            #         color=self.theme_cls.primary_dark
-            #         if not self.selected_chip_color
-            #         else self.selected_chip_color,
-            #         d=0.3,
-            #     ).start(self)
-            # if issubclass(md_choose_chip.__class__, MDChooseChip):
-            #     for chip in md_choose_chip.children:
-            #         if chip is not self:
-            #             chip.color = self.theme_cls.primary_color
-            # if self.check:
-            #     if not len(self.ids.box_check.children):
-            #         self.ids.box_check.add_widget(
-            #             MDIconButton(
-            #                 icon="check-box-outline",
-            #                 size_hint_y=None,
-            #                 height=dp(20),
-            #                 disabled=True,
-            #                 user_font_size=dp(20),
-            #                 pos_hint={"center_y": 0.5},
-            #             )
-            #         )
-            #     else:
-            #         check = self.ids.box_check.children[0]
-            #         self.ids.box_check.remove_widget(check)
-            # if self.callback:
-            #     self.callback(self, self.label)
+        
+        # author=self.screen.post_card.author
+        # recip=self.screen.post_card.recipient
+        # self.screen.post_card.author_label.text=f'@{author}\n[size=14sp]to @{recip}[/size]'
+        
+        # for item in self.screen.post_card.author_dialog.items:
+        #     item.disabled=True
+        # self.disabled=False
+
+        # if self.disabled and self.collide_point(*touch.pos):
+        #     return True
+        # for child in self.children[:]:
+        #     if child.dispatch('on_touch_down', touch):
+        #         return True
 
 
-class AuthorDropdown(MDDropdownMenu): pass
-class SenderMenuItem(MDDropDownItem): pass
+from kivymd.uix.list import OneLineAvatarListItem,OneLineListItem
+class Item(OneLineListItem):
+    divider = None
+    source = StringProperty()
+
+    def on_release(self):
+        raise Exception(self.text+'!')
+
+    def change_title(self,new_recip):
+        post=self.screen.post_card
+        author=post.author
+        post.recipient=recip=new_recip[1:]
+        # raise Exception(recip+'???')
+        newtitle=f'@{author}\n[size=14sp]to @{recip}!!![/size]'
+        self.screen.post_card.author_label.text=newtitle
+        
+
+class AddresseeButton(MDRectangleFlatButton):
+    pass
+    def on_release(self):
+        raise Exception(self.text+'!!!!!!!')
 
 class PostScreen(ProtectedScreen): 
     post_id = ObjectProperty()
+
 
     def on_pre_enter(self):
         super().on_pre_enter()
@@ -183,6 +159,9 @@ class PostScreen(ProtectedScreen):
         if hasattr(self,'post_textfield'): self.post_textfield.text=''
 
         post_json = {'author':self.app.username, 'timestamp':time.time()}
+        key=list(self.app.keys.keys())[0]
+        post_json['to_name']=key
+        
         self.post_card = post = PostCard(post_json)
         self.post_card.add_widget(get_separator('15sp'),1)
         self.post_card.add_widget(get_separator('15sp'),1)
@@ -193,92 +172,60 @@ class PostScreen(ProtectedScreen):
         post_TextField.font_name='assets/overpass-mono-regular.otf'
         post_TextField.hint_text='word?'
 
-        self.post_card.author_label.text=self.app.username
-        # self.post_card.author_section_layout.remove_widget(self.post_card.author_label)
-        # self.post_card.author_dropdown = AuthorDropdown()
-        #[self.post_card.author_dropdown.set_item('@'+key) for key in self.app.keys]
-
+        # add recipient changer dialog widget
         
+        self.to_whom_btn = InvisibleButton()
+        self.to_whom_btn.background_color=0,0,0,0
+        # self.post_card.author_section_layout.remove_widget()
+        
+        # self.to_whom_btn.add_widget(self.post_card.author_label)
+        # self.post_card.author_section_layout.add_widget(self.to_whom_btn)
+
+        # self.post_card.author_label.to_changeable=True
+        # self.author_dialog_items = []
         # for key in self.app.keys:
-            # btn = Ca
-            # self.post_card.author_dropdown.add_widget(btn)
+        #     if key==self.app.username: continue
+        #     item = Item(text="@"+key), source="assets/avatar.jpg")
+        #     item.screen = self
+        #     self.author_dialog_items += [item]
 
-        # self.post_card.author_section_layout.add_widget(self.post_card.author_dropdown)
-        # self.menu.bind(on_release=self.menu_callback)
+        buttons = [AddresseeButton(text=key) for key in self.app.keys if key!=self.app.username]
+        for button in buttons:
+            button.font_name='assets/font.otf'
+            button.font_size='12sp'
+            button.size_hint=(None,None)
+            button.text_color=rgb(*COLOR_TEXT)
+            # button.md_bg_color=1,1,0,1
         
-        #self.post_card.author_dropdown.items = ['@'+key 
-        # self.post_card.author_dropdown.font_name='assets/font.otf'
-        # self.post_card.author_section_layout.add_widget(self.post_card.author_dropdown,1)
-        # self.post_card.author_label = AuthorDropdown()
+        dial = self.post_card.author_dialog = MDDialog(
+                title="to @whom",
+                type="confirmation"
+            )
+        dial.cols=1
+        dial.size_hint=(None,None)
+        layo=MDBoxLayout()
+        layo.font_size='12sp'
+        # layo.md_bg_color=1,1,0,1
+        layo.cols=1
+        layo.orientation='vertical'
+        layo.size_hint=(1,None)
+        layo.adaptive_height=True
 
-        #self.addressee = SelectAddressee(list(self.app.keys.keys()))
-        #post.add_widget(self.addressee)
+        dial.ids.container.add_widget(layo)
+        dial.ids.container.size_hint=(1,None)
+        dial.ids.container.height=layo.minimum_height
+        for button in buttons:
+            layo.add_widget(button)
+        dial.height = layo.height
+        self.post_card.author_dialog.pos_hint={'center_x':0.5}
+        self.post_card.author_dialog.width='300sp'
+        self.post_card.author_dialog.size_hint=(None,None)
+        self.post_card.author_dialog.screen = self
+        self.post_card.author_dialog.post_card = self.post_card
 
-        self.fields_values = MDBoxLayout()
-        
-        self.fields_values.orientation='horizontal'
-        self.fields_values.cols=2
-        self.fields_values.size_hint=(1,None)
-        # self.fields_values.md_bg_color=1,1,0,1
-
-        
-        post.add_widget(self.fields_values,2)
-        # post.remove_widget(post.scroller)
-        
-        self.to_label = MDLabel(text="To:",size_hint=(None,None))
-        self.to_label.pos_hint={'center_y':0.5}
-        self.fields_values.add_widget(self.to_label)
-        self.channel_layout = ChannelLayout() #MDBoxLayout(size_hint=(1,None),orientation='horizontal',cols=3)
-        self.fields_values.add_widget(self.channel_layout)
-        
-        # self.fields_values.add_widget(get_separator('10sp'))
-        # self.fields_values.add_widget(get_separator('10sp'))
-
-        self.to_label.font_name='assets/font.otf'
-        # self.to_label.padding=(0,0,0,0)
-        # self.to_label.spacing=(10,10)
-        
-        # self.channel_layout.add_widget(self.to_label)
-        # post.add_widget(self.channel_layout,1)
-        
-
-
-        # menu_labels = [
-        #     {"viewclass": "SenderMenuItem",
-        #     "text": "Label1",
-        #     "caller":self.post_card.author_dropdown},
-        #     {"viewclass": "SenderMenuItem",
-        #     "text": "Label2",
-        #     "caller":self.post_card.author_dropdown},
-        # ]
-
-        for channel in self.app.keys:
-            chip = ChannelChip()
-            chip.check=False
-            self.log(f'adding channel {channel}')
-            chip.text = '@'+channel
-            chip.font_name='assets/font.otf'
-            chip.md_bg_color=rgb(*COLOR_INACTIVE)
-
-            # chip2= SenderMenuItem()
-            # chip2.text = '@'+channel
-            # chip2.font_name='assets/font.otf'
-            # chip2.caller = self.post_card.author_dropdown
-            # chip2.md_bg_color=rgb(*COLOR_INACTIVE)
-            # # self.post_card.author_dropdown.add_widget(chip2)
-            # self.post_card.author_dropdown.add_widget(chip2)
 
         
-            # chip.theme_text_color='Custom'
-            # chip.text_color=rgb(*COLOR_INACTIVE)
-            self.channel_layout.add_widget(chip)
-            self.to_channels[channel]=False
-
-        # self.post_card.author_dropdown.items = menu_labels
-        # self.post_card.author_dropdown.width_mult = 4
-                
-
-
+        # remove content, add text input
         post.scroller.remove_widget(post.post_content)
         post.scroller.add_widget(post_TextField)
         post.scroller.size=('300dp','300dp')
@@ -416,24 +363,6 @@ class PostScreen(ProtectedScreen):
         #Thread(target=do_post).start()
         asyncio.create_task(do_post())        
 
-# class ViewPostScreen(ProtectedScreen): 
-#     post_id = ObjectProperty()
-
-#     def on_pre_enter(self):
-#         for child in self.children:
-#             log('child: '+str(child))
-#             self.remove_widget(child)
-        
-#         post_json = self.app.get_post(self.root.post_id)
-#         post = PostCard(post_json)
-#         self.add_widget(post)
-
-#     def on_enter(self):
-#         for child in self.children: child.load_image()
-        
-    
-#     pass
- 
 
 
 def get_random_id():

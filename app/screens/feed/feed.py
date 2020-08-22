@@ -42,6 +42,42 @@ class PostAuthorLabel(MDLabel):
         self.bind(width=lambda s, w: s.setter('text_size')(s, (w, None)))
         self.bind(texture_size=self.setter('size'))
         self.font_name='assets/overpass-mono-regular.otf'
+        #self.to_changeable=False
+
+    def on_touch_down(self, touch):
+        '''Receive a touch down event.
+        :Parameters:
+            `touch`: :class:`~kivy.input.motionevent.MotionEvent` class
+                Touch received. The touch is in parent coordinates. See
+                :mod:`~kivy.uix.relativelayout` for a discussion on
+                coordinate systems.
+        :Returns: bool
+            If True, the dispatching of the touch event will stop.
+            If False, the event will continue to be dispatched to the rest
+            of the widget tree.
+        '''
+        #if not self.to_changeable: return
+        try:
+            self.parent.parent.author_dialog.open()
+            #for item in self.parent.parent.author_dialog.items:
+            #    raise Exception([item.disabled, item.text])
+        except AttributeError:
+            pass
+
+        #raise Exception(self.text)
+        # self.text = '!!!'
+        
+        #self.parent.parent.recipient
+        #return
+        #raise Exception(self.parent.parent.recipient)
+
+
+        if self.disabled and self.collide_point(*touch.pos):
+            return True
+        for child in self.children[:]:
+            if child.dispatch('on_touch_down', touch):
+                return True
+
     pass
 
 class PostTimestampLabel(MDLabel): 
@@ -95,7 +131,7 @@ class PostCard(MDCard):
         self.author_label = author_label = PostAuthorLabel(text='@'+self.author)
         self.author_label.font_name='assets/overpass-mono-semibold.otf'
         if self.recipient:
-            self.author_label.text+='\n[size=14sp][i]to @'+self.recipient+'[/i][/size]'
+            self.author_label.text+='\n[size=14sp]to @'+self.recipient+'[/size]'
             self.author_label.markup=True
         self.author_label.font_size = '18sp'
         self.author_avatar = author_avatar = PostAuthorAvatar(source='assets/avatar.jpg') #self.img_src)

@@ -605,7 +605,8 @@ class Api(object):
 
     @property
     def keys(self):
-        self.load_keys()
+        if not hasattr(self,'_keys'):
+            self.load_keys()
         return self._keys
 
     def load_keys(self):

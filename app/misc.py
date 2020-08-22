@@ -244,6 +244,8 @@ Builder.load_string('''
             
     orientation: 'vertical'
     spacing: 2
+    size_hint:None,None
+    # width:self.minimum_width
     txt_input: txt_input
     rv: rv
 
@@ -257,10 +259,12 @@ Builder.load_string('''
 <MyTextInput>:
     readonly: False
     multiline: False
+    
 
 <SelectableLabel>:
     # Draw a background to indicate selection
     color: 0,0,0,1
+    
     canvas.before:
         Color:
             rgba: (0, 0, 1, .5) if self.selected else (1, 1, 1, 1)
@@ -284,6 +288,7 @@ Builder.load_string('''
         size_hint_y: None
         height: self.minimum_height
         orientation: 'vertical'
+        size_hint:None,None
         multiselect: False
         ''')
 

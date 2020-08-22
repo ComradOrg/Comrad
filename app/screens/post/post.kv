@@ -26,6 +26,19 @@
     font_size:'23dp'
     # font_style:'H5'
 
+<Item>:
+    # on_release: self.change_title(self.text)
+    size_hint:1,None
+    height:'100sp'
+
+    ImageLeftWidget:
+        source: root.source
+    
+<AddresseeButton>:
+    size_hint: 1,None
+    height:'100sp'
+
+
 <ButtonLayout>:
     id: buttonbox
     # size_hint_y: None
@@ -239,3 +252,11 @@
     #         halign:"left"
     #         size_hint:None,None
     
+
+
+# FloatLayout:
+
+#     MDFlatButton:
+#         text: "ALERT DIALOG"
+#         pos_hint: {'center_x': .5, 'center_y': .5}
+#         on_release: app.show_simple_dialog()
