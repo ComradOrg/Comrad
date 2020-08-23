@@ -359,9 +359,10 @@ class MainApp(MDApp):
         )
         if not anonymous and self.username:
             jsond['author']=self.username
-        jsond['channel']=channel
+        
+        #jsond['channel']=channel
         self.log('posting:',jsond)
-        res=await self.api.post(jsond)
+        res=await self.api.post(jsond,channel = channel)
         if 'success' in res:
             self.root.change_screen('feed')
             return {'post_id':res['post_id']}
@@ -378,7 +379,7 @@ class MainApp(MDApp):
         if uri.count('/')<2: raise Exception('not a URI: '+uri)
         self.log(f'app.get_posts(uri={uri} -> ...')
         data = await self.api.get_posts(uri)
-        self.log(f'app.get_posts() got back from api.get_posts() a {type(data)} of length {len(data)}')
+        self.log(f'app.get_posts() got back from api.get_posts() a {type(data)}')
 
         newdata=[]
         for d in data:

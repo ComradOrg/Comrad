@@ -456,29 +456,23 @@ class Api(object):
 
     async def get_json(self,key_or_keys,decode_data=False):
         
-        def jsonize_dat(datstr):
-            return json.loads(datstr.decode('utf-8'))
-        
-        def jsonize_res(res0):
-            if not res0: return None
-            if type(res0)==list:
-                for d in res0:
-                    try:
-                        if 'val' in d and d['val']:
-                            d['val']=jsonize_dat(d['val'])
-                    except (TypeError,ValueError) as e:
-                        self.log('!!!!',e)
-                        pass
-                return res0
+        def jsonize_dat(dat_dict):
+            if type(dat_dict)==dict and 'val' in dat_dict:
+                self.log('is this json???',dat_dict['val'],'???')
+                dat_dict['val']=json.loads(dat_dict['val'].decode('utf-8'))
+                #dat_dict['val']=json.loads(base64.b64decode(dat_dict['val']).decode('utf-8'))
+            return dat_dict
+
+        def jsonize_res(res):
+            if not res:
+                return None
+            if type(res)==list:
+                return [jsonize_dat(d) for d in res]
             else:
-                return json.loads(base64.b64decode(res0).decode('utf-8'))
-            
-            # # parse differently?
-            # self.log(f'jsonize_res({res0} [{type(res0)}] --> {res} [{type(res)}')
-            # return res
+                return jsonize_dat(res)
 
         res = await self.get(key_or_keys,decode_data=decode_data)
-        self.log('get_json() got from get() a',type(res),'of length',len(res))
+        self.log('get_json() got from get() a',type(res))
         return jsonize_res(res)
            
 
@@ -489,16 +483,29 @@ class Api(object):
 
 
     async def set_json(self,key,value,private_signature_key=None,encode_data=True,encrypt_for_pubkey=None):
+        #def jsonize_dat(dat_dict):
+            #if type(dat_dict)==dict and 'val' in dat_dict:
+            #    self.log('is this json???',dat_dict['val'],'???')
+            #    dat_dict['val']=json.loads(dat_dict['val'].decode('utf-8'))
+            #    #dat_dict['val']=json.loads(base64.b64decode(dat_dict['val']).decode('utf-8'))
+        #    return dat_dict
+
+        def prep_json(val):
+            if type(val)!=str:
+                val=json.dumps(value)
+            bval=val.encode('utf-8')
+            
+        
         self.log(f'api.set_json({key}, {value} ...)')
-        value_json = jsonify(value)
-        self.log(f'value_json = {value_json}')
+        json_b = prep_json(value)
+        self.log(f'bjson -> {json_b}')
         set_res = await self.set(
             key,
-            base64.b64encode(value_json.encode('utf-8')),
+            json_b,
             private_signature_key=private_signature_key,
             encode_data=encode_data,
             encrypt_for_pubkey=encrypt_for_pubkey)
-        self.log(f'api.set_json({key},{value} ...) --> {set_res}')
+        self.log(f'api.set_json() <-- {set_res}')
         return set_res
 
     async def has(self,key):
@@ -637,24 +644,22 @@ class Api(object):
         
 
 
-    async def append_json(self,key,data):
-        self.log(f'appending to uri {key}')
+    async def append_data(self,uri,bdata):
+        self.log(f'appending to uri {uri}')
+
+        # get blob so far
+        sofar = await self.get(uri,decode_data=False)
 
         # get sofar
-        sofar=await self.get_json_val(key, decode_data=False)
         self.log(f'sofar = {sofar}')
-        if sofar is None: sofar = []
-        if type(sofar)!=list: sofar=[sofar]
-        if type(data)!=list: data=[data]
-
-        new=sofar + data
-        if await self.set_json(
-                key, 
-                new, 
-                encode_data=False):
-            return {'success':'Length increased to %s' % len(new)}
         
-        return {'error':'Could not append json'}
+        newval = sofar+BSEP+sofar
+
+        res = await self.set(key,new,encode_data=False)
+        if res:
+            length = newval.count(BSEP)+1
+            return {'success':'Length increased to %s' % length}
+        return {'error':'Could not append data'}
 
     async def upload(self,filename,file_id=None, uri='/file/',uri_part='/part/'):
         import sys
@@ -723,7 +728,7 @@ class Api(object):
         
 
 
-    async def post(self,data,add_to_outbox=True):
+    async def post(self,data,channel,add_to_outbox=True):
         post_id=get_random_id()
         #tasks = []
 
@@ -733,23 +738,14 @@ class Api(object):
         # ## add to inbox
         post_id = get_random_id()
         author_privkey = self.keys[data.get('author')]
-        channel = data.get('channel')
-        if not channel:
-            raise Exception('channel not given')
             
         self.log('ADDING TO CHANNEL??',channel)
         pubkey_channel = self.keys[channel].public_key()
-        #data_channel = dict(data.items())
-        #data_channel['to_name']=channel  # we don't even need this
-
-        ## add per channel
-        # encrypt and post
 
         ## 1) STORE ACTUAL CONTENT OF POST UNDER CENTRAL POST URI
         # HAS NO CHANNEL: just one post/msg in a sea of many
         # e.g. /post/5e4a355873194399a5b356def5f40ff9
         # does not reveal who cand decrypt it
-
         uri = '/post/'+post_id
         json_res = await self.set_json(
             uri,
@@ -758,26 +754,23 @@ class Api(object):
             encrypt_for_pubkey=pubkey_channel,
             private_signature_key=author_privkey
             )
-            
         self.log(f'json_res() <- {json_res}')
         
         
         ## 2) Store under the channels a reference to the post,
         # as a hint they may be able to decrypt it with one of their keys
-        
         add_post_id_as_hint_to_channels = [f'/inbox/{channel}']
         if add_to_outbox:
             un=data.get('author')
             if un:
                 add_post_id_as_hint_to_channels += [f'/outbox/{un}']
-        
         tasks = [
-            self.append_json(uri,post_id) for uri in add_post_id_as_hint_to_channels
+            self.append_data(uri,post_id) for uri in add_post_id_as_hint_to_channels
         ]
-
         res = await asyncio.gather(*tasks)
         if res and all([(d and 'success' in d) for d in res]):
             return {'success':'Posted! %s' % post_id, 'post_id':post_id}
+        
         return {'error':'Post unsuccessful'}
 
         # append_res=await self.append_json(f'/inbox/{channel}',post_id)
