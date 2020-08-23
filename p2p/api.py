@@ -55,6 +55,7 @@ if not os.path.exists(KEYDIR): os.makedirs(KEYDIR)
 
 KEYDIR_BUILTIN = '.'
 
+class NetworkStillConnectingError(OSError): pass
 
 async def _getdb(self=None,port=PORT_LISTEN):
     from kademlia.network import Server
@@ -66,8 +67,12 @@ async def _getdb(self=None,port=PORT_LISTEN):
     if self: self.log(os.getcwd())
     node = Server(log=self.log if self else print) #fn='../p2p/data.db',log=(self.log if self else print)))
 
-    if self: self.log('listening..')
-    await node.listen(port)
+    try:
+        if self: self.log('listening..')
+        await node.listen(port)
+    except OSError:
+        raise NetworkStillConnectingError('Still connecting...')
+        #await asyncio.sleep(3)
 
     if self: self.log('bootstrapping server..')
     await node.bootstrap(NODES_PRIME)
@@ -523,7 +528,14 @@ class Api(object):
     ## Register
     async def register(self,name,passkey=None,just_return_keys=False):
         # if not (name and passkey): return {'error':'Name and password needed'}
-        person = await self.get_person(name)
+        import kademlia
+        try:
+            person = await self.get_person(name)
+        except kademlia.network.CannotReachNetworkError:
+            return {'error':'Network disconnected'}
+        except NetworkStillConnectingError:
+            return {'error':'Network still connecting...'}
+
         keys = self.get_keys()
         if person is not None:
             self.log('register() person <-',person)
@@ -704,7 +716,7 @@ class Api(object):
         return file_store
 
     async def flush(self):
-        self.log('saving back to db file...')
+        #self.log('saving back to db file...')
         node = await self.node
         node.storage.dump()
         # self.log('DONE saving back to db file...')

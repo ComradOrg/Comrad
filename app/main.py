@@ -348,7 +348,7 @@ class MainApp(MDApp):
         if file_id: jsond['file_id']=str(file_id)
         if file_ext: jsond['file_ext']=str(file_ext)
         if channel and channel[0]=='@': channel=channel[1:]
-        self.log(f'''app.json(
+        self.log(f'''app.post(
             content={content},
             file_id={file_id},
             file_ext={file_ext},
@@ -374,6 +374,7 @@ class MainApp(MDApp):
         return await self.api.get_post(post_id)
 
     async def get_posts(self,uri='/inbox/world'):
+        if uri.count('/')<2: raise Exception('not a URI: '+uri)
         self.log(f'app.get_posts(uri={uri} -> ...')
         data = await self.api.get_posts(uri)
         self.log('app.get_posts() got back from api.get_posts():',data)

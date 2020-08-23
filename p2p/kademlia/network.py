@@ -9,6 +9,7 @@ import pickle
 import asyncio
 import logging
 
+class CannotReachNetworkError(Exception): pass
 
 from kademlia.protocol import KademliaProtocol
 from kademlia.utils import digest
@@ -175,7 +176,7 @@ class Server:
         nearest = self.protocol.router.find_neighbors(node)
         self.log(f'nearest = {nearest}')
         if not nearest:
-            raise Exception("There are no known neighbors to get key %s" % key)
+            raise CannotReachNetworkError("There are no known neighbors to get key %s" % key)
 
 
         found = None

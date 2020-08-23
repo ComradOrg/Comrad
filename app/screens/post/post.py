@@ -109,7 +109,7 @@ class PostScreen(ProtectedScreen):
 
         post_json = {'author':self.app.username, 'timestamp':time.time()}
         keys=[k for k in self.app.keys if k!=self.app.username]
-        if keys:
+        if False: # ??
             key=keys[0]
             post_json['to_name']=key
             self.recipient=key
