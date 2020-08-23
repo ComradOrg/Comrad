@@ -220,9 +220,9 @@ class MainApp(MDApp):
         if not hasattr(self,'_logger'):
             import logging
             handler = logging.StreamHandler()
-            formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+            formatter = logging.Formatter('[%(asctime)s]\n%(message)s\n')
             handler.setFormatter(formatter)
-            self._logger = logger = logging.getLogger(self.title)
+            self._logger = logger = logging.getLogger(__file__)
             logger.addHandler(handler)
             logger.setLevel(logging.DEBUG)
         return self._logger

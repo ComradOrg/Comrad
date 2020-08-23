@@ -174,10 +174,10 @@ class Api(object):
                     self.log(f'api._get() decoding data {key} -> {val} {type(val)}')
                     val = await self.decode_data(val)
                     self.log(f'api._get() got back decodied data {key} -> {val} {type(val)}')
-                self.log('wtf is val =',val)
+                # self.log('wtf is val =',val)
                 res=val
             
-            self.log('wtf is res =',res)
+            # self.log('wtf is res =',res)
             
             self.log(f'_get({key_or_keys}) --> {res}')
             return res
