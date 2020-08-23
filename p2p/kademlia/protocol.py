@@ -89,7 +89,7 @@ class KademliaProtocol(RPCProtocol):
         source = Node(nodeid, sender[0], sender[1])
         self.welcome_if_new(source)
         self.log("got a store request from %s, storing '%s' -> %s'" %
-                  (sender, key.hex(), value))
+                  (sender, key.hex(), value[:10]))
         self.storage[key] = value
         return True
 

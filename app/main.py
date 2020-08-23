@@ -227,9 +227,9 @@ class MainApp(MDApp):
             logger.setLevel(logging.DEBUG)
         return self._logger
 
-    def log(self,*args):
+    def log(self,*args,**msgs):
         line = ' '.join(str(x) for x in args)
-        self.logger.debug(line+'\n')
+        self.logger.debug(line)
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -378,11 +378,11 @@ class MainApp(MDApp):
         if uri.count('/')<2: raise Exception('not a URI: '+uri)
         self.log(f'app.get_posts(uri={uri} -> ...')
         data = await self.api.get_posts(uri)
-        self.log('app.get_posts() got back from api.get_posts():',data)
+        self.log(f'app.get_posts() got back from api.get_posts() a {type(data)} of length {len(data)}')
 
         newdata=[]
         for d in data:
-            self.log('data d:',d)
+            # self.log('data d:',d)
             if not 'val' in d: continue
             newdict = dict(d['val'].items())
             newdict['timestamp']=float(d['time'])

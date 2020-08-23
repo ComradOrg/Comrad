@@ -252,7 +252,7 @@ class FeedScreen(BaseScreen):
                 if i>lim: break
                 
                 #post = Post(title=f'Marx Zuckerberg', content=ln.strip())
-                self.log('???')
+                #self.log('???')
                 post_obj = PostCard(post)
                 self.posts.append(post_obj)
                 self.ids.post_carousel.add_widget(post_obj)

@@ -168,7 +168,7 @@ class Api(object):
                 #res = await asyncio.gather(*tasks)
             else:
                 key=key_or_keys
-                self.log('keys is singular',key)
+                # self.log('keys is singular',key)
                 val = await node.get(key)
                 if decode_data:
                     self.log(f'api._get() decoding data {key} -> {val} {type(val)}')
@@ -322,10 +322,10 @@ class Api(object):
         import binascii
         entire_packet = entire_packet_orig
         
-        self.log('PACKED =',entire_packet,type(entire_packet))
+        #self.log('PACKED =',entire_packet,type(entire_packet))
         
-        self.log('????',type(entire_packet))
-        self.log(entire_packet)
+        #self.log('????',type(entire_packet))
+        #self.log(entire_packet)
         
         # get data
         try:
@@ -358,7 +358,7 @@ class Api(object):
         ### THIRD LINE: SIGNATURE VERIFICATION
         # can we decrypt signature?
         val_array = val.split(sep2)
-        self.log('val_array =',val_array)
+        # self.log('val_array =',val_array)
         time_b,sender_pubkey_b,receiver_pubkey_b,msg,signature = val_array
         if not signature: 
             raise Exception('no signature!')
@@ -377,9 +377,9 @@ class Api(object):
         WDV={
             'time':float(base64.b64decode(time_b).decode()),
             'val':base64.b64decode(msg),
-            'to':receiver_pubkey_b,
-            'from':sender_pubkey_b,
-            'sign':signature
+            # 'to':receiver_pubkey_b,
+            # 'from':sender_pubkey_b,
+            # 'sign':signature
         }
 
         self.log('GOT WDV:',WDV)
@@ -478,7 +478,7 @@ class Api(object):
             # return res
 
         res = await self.get(key_or_keys,decode_data=decode_data)
-        self.log('get_json() got from get():',type(res),res)
+        self.log('get_json() got from get() a',type(res),'of length',len(res))
         return jsonize_res(res)
            
 
@@ -728,6 +728,7 @@ class Api(object):
         #tasks = []
 
         self.log(f'api.post({data},add_to_outbox={add_to_outbox}) --> ...')
+        # stop
         
         # ## add to inbox
         post_id = get_random_id()
@@ -738,40 +739,61 @@ class Api(object):
             
         self.log('ADDING TO CHANNEL??',channel)
         pubkey_channel = self.keys[channel].public_key()
-        data_channel = dict(data.items())
-        data_channel['to_name']=channel
+        #data_channel = dict(data.items())
+        #data_channel['to_name']=channel  # we don't even need this
 
         ## add per channel
         # encrypt and post
-        uri = '/'+os.path.join('inbox',channel,post_id)
-        self.log('setting',uri,'????',type(data_channel),data_channel)
-        
+
+        ## 1) STORE ACTUAL CONTENT OF POST UNDER CENTRAL POST URI
+        # HAS NO CHANNEL: just one post/msg in a sea of many
+        # e.g. /post/5e4a355873194399a5b356def5f40ff9
+        # does not reveal who cand decrypt it
+
+        uri = '/post/'+post_id
         json_res = await self.set_json(
-            uri, 
-            data_channel, 
+            uri,
+            data, #data_channel, 
             encode_data=True, 
             encrypt_for_pubkey=pubkey_channel,
             private_signature_key=author_privkey
             )
             
         self.log(f'json_res() <- {json_res}')
-        ##tasks.append(task)
         
-        # add to inbox
-        append_res=await self.append_json(f'/inbox/{channel}',post_id)
-        self.log(f'json_res.append_json({channel}) <- {append_res}')
-        #tasks.append(task)
-
-        # add to outbox
+        
+        ## 2) Store under the channels a reference to the post,
+        # as a hint they may be able to decrypt it with one of their keys
+        
+        add_post_id_as_hint_to_channels = [f'/inbox/{channel}']
         if add_to_outbox:
             un=data.get('author')
             if un:
-                append_res = await self.append_json(f'/outbox/{un}', post_id)
-                self.log(f'json_res.append_json({un}) <- {append_res}')
-                #tasks.append(task)
+                add_post_id_as_hint_to_channels += [f'/outbox/{un}']
+        
+        tasks = [
+            self.append_json(uri,post_id) for uri in add_post_id_as_hint_to_channels
+        ]
+
+        res = await asyncio.gather(*tasks)
+        if res and all([(d and 'success' in d) for d in res]):
+            return {'success':'Posted! %s' % post_id, 'post_id':post_id}
+        return {'error':'Post unsuccessful'}
+
+        # append_res=await self.append_json(f'/inbox/{channel}',post_id)
+        # self.log(f'json_res.append_json({channel}) <- {append_res}')
+        # #tasks.append(task)
+
+        # # add to outbox
+        # if add_to_outbox:
+        #     un=data.get('author')
+        #     if un:
+        #         append_res = await self.append_json(f'/outbox/{un}', post_id)
+        #         self.log(f'json_res.append_json({un}) <- {append_res}')
+        #         #tasks.append(task)
 
         #asyncio.create_task(self.flush())
-        return {'success':'Posted! %s' % post_id, 'post_id':post_id}
+        # return {'success':'Posted! %s' % post_id, 'post_id':post_id}
         #return {'error':'Post failed'}
 
     async def get_json_val(self,uri,decode_data=True):
@@ -789,53 +811,34 @@ class Api(object):
         return r
 
     async def get_post(self,post_id):
-        return await self.get_json_val(post_id,decode_data=False)
+        self.log(f'api.get_post({post_id}) ?')
+        post_json = await self.get_json('/post/'+post_id, decode_data=True)
+        self.log(f'api.get_post({post_id}) --> {post_json}')
+        return post_json
 
-    async def get_posts(self,uri='/inbox/world'):
-        self.log(f'api.get_posts(uri={uri}) --> ...')
+    async def get_post_ids(self,uri='/inbox/world'):
+        ## GET POST IDS
+        self.log(f'api.get_post_ids(uri={uri}) ?')
         index = await self.get(uri,decode_data=False)
-        self.log('api.get_posts index1 <-',index,bool(index))
+        self.log(f'api.get_post_ids(uri={uri}) <-- api.get()',index)
         if not index: return []
-
         index = json.loads(base64.b64decode(index).decode())
-        self.log('got index?',index,type(index))
-
+        
         if index is None: return []
         if type(index)!=list: index=[index]
-        self.log('api.get_posts index2 <-',index)
         index = [x for x in index if x is not None]
-        self.log('api.get_posts index3 <-',index)
-
-
-        ## get full json
-        uris = [os.path.join(uri,x) for x in index]
-        self.log('URIs:',uris)
-        res = await self.get_json(uris,decode_data=True)
-        self.log('api.get_posts got back from .get_json() <-',res)
-        res=[d for d in res if d is not None]
-
-        # fill out
-        # for d in res:
-            # self.log(d['from'],type(d['from']),'---->',d['to'],type(d['to']))
-            # # from_st=base64.b64decode(d['from']) #.decode('utf-8')
-            # # to_st=base64.b64decode(d['to']) #.decode('utf-8')
-            # from_st=d['from']
-            # to_st=d['to']
-            # self.log(from_st,'---->',to_st)
-            # from_key=b'/name/'+from_st
-            # to_key=b'/name/'+to_st
-            # self.log('to_key:',to_key)
-            # self.log('from_key:',from_key)
-
-            # from_name = await self.get(from_key)
-            # to_name = await self.get(to_key)
-            # self.log('from_name:',from_name)
-            # self.log('to_name:',to_name)
-            # d['from_name']=from_name
-            # d['to_name']=to_name
-            # raise Exception(from_name+b' '+to_name)
         
-        return res
+        self.log(f'api.get_post_ids({uri}) --> {index}')
+        return index
+
+    async def get_posts(self,uri='/inbox/world'):
+
+        # get IDs
+        post_ids = await self.get_post_ids(uri)
+        
+        # get posts
+        posts = [self.get_post(post_id) for post_id in post_ids]
+        return await asyncio.gather(*posts)
         
 
 
