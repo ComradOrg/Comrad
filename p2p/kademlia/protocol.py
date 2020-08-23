@@ -11,8 +11,6 @@ from kademlia.utils import digest
 log = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
-
-
 #### PROXY PROTOCOL
 class ProxyDatagramProtocol(asyncio.DatagramProtocol):
 
@@ -62,12 +60,12 @@ log = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
 class KademliaProtocol(RPCProtocol):
-    def __init__(self, source_node, storage, ksize, log=print):
+    def __init__(self, source_node, storage, ksize, log=None):
         RPCProtocol.__init__(self)
         self.router = RoutingTable(self, ksize, source_node)
         self.storage = storage
         self.source_node = source_node
-        self.log=print
+        self.log=log.debug if log is None else log
 
     def get_refresh_ids(self):
         """
@@ -90,8 +88,8 @@ class KademliaProtocol(RPCProtocol):
     def rpc_store(self, sender, nodeid, key, value):
         source = Node(nodeid, sender[0], sender[1])
         self.welcome_if_new(source)
-        self.log("got a store request from %s, storing '%s' -> %s (binary keys)'" %
-                  (sender, key.hex(), len(value)))
+        self.log("got a store request from %s, storing '%s' -> %s'" %
+                  (sender, key.hex(), value))
         self.storage[key] = value
         return True
 
@@ -172,7 +170,7 @@ class KademliaProtocol(RPCProtocol):
         we get no response, make sure it's removed from the routing table.
         """
         if not result[0]:
-            log.warning("no response from %s, removing from router", node)
+            self.log("!! no response from %s, removing from router", node)
             self.router.remove_contact(node)
             return result
 
