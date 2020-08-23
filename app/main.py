@@ -194,8 +194,9 @@ def route(uri):
 class MainApp(MDApp):
     title = 'Komrade'
     logged_in=False
-    store = JsonStore('../p2p/.keys.json')
-    store_global = JsonStore('../p2p/.keys.global.json')
+    # store = JsonStore('../p2p/.keys.json')
+    # store_global = JsonStore('../p2p/.keys.global.json')
+    store = JsonStore('app.json')
     login_expiry = 60 * 60 * 24 * 7  # once a week
     texture = ObjectProperty()
     uri = '/inbox/world'
