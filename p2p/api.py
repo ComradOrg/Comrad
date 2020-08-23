@@ -602,7 +602,7 @@ class Api(object):
     def add_world_key(self,fn=PATH_WORLD_KEY):
         import shutil
         thisdir=os.path.dirname(__file__)
-        fnfn=os.path.join(thisdir,fn)
+        fnfn=os.path.join(thisdir,fn+'.priv')
         self.log('getting',fnfn)
         name='.'.join(os.path.basename(fn).split('.')[1:-1])
 

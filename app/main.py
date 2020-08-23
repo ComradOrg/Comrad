@@ -313,7 +313,8 @@ class MainApp(MDApp):
                 self.root.ids.login_screen.login_status.text_color=rgb(*COLOR_ACCENT)
                 await asyncio.sleep(1)
                 #self.save_login(dat)
-                self.change_screen_from_uri('/inbox/world')
+                # self.change_screen_from_uri('/inbox/world')
+                self.change_screen('profile')
                 return True
             elif 'error' in dat:
                 self.root.ids.login_screen.login_status.text=dat['error']
@@ -384,6 +385,9 @@ class MainApp(MDApp):
 
     async def get_posts(self,uri='/inbox/world'):
         if uri.count('/')<2: raise Exception('not a URI: '+uri)
+        if 'login' in uri:
+            raise Exception('!!!! '+uri)
+
         self.log(f'app.get_posts(uri={uri} -> ...')
         data = await self.api.get_posts(uri)
         self.log(f'app.get_posts() got back from api.get_posts() a {type(data)}')

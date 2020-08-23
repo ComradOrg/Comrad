@@ -225,10 +225,13 @@ from kivy.uix.behaviors import FocusBehavior
 from kivy.uix.recycleview.layout import LayoutSelectionBehavior
            
 Builder.load_string('''
+#:import COLOR_CARD main.COLOR_CARD
+#:import rgb main.rgb
+
 <Body>:
     canvas:
         Color:
-            rgba:(1, 1, 1, 1)
+            rgba:rgb(*COLOR_CARD)
         Rectangle:
             pos: self.pos
             size: self.size
@@ -237,7 +240,7 @@ Builder.load_string('''
 <DropDownWidget>:
     canvas:
         Color:
-            rgba:(1, 1, 1, 1)
+            rgba:rgb(*COLOR_CARD)
         Rectangle:
             pos: self.pos
             size: self.size
@@ -265,22 +268,24 @@ Builder.load_string('''
 <SelectableLabel>:
     # Draw a background to indicate selection
     color: 0,0,0,1
+    font_name: 'assets/font.otf'
     
     canvas.before:
         Color:
-            rgba: (0, 0, 1, .5) if self.selected else (1, 1, 1, 1)
+            rgba: (0, 0, 8, .5) if self.selected else rgb(*COLOR_CARD)
         Rectangle:
             pos: self.pos
             size: self.size
 <RV>:
+    # height:'400sp'
     canvas:
         Color:
-            rgba: 0,0,0,.2
+            rgba: 0,0,0,0
 
         Line:
             rectangle: self.x +1 , self.y, self.width - 2, self.height -2
          
-    bar_width: 10
+    bar_width: 0
     scroll_type:['bars']
     viewclass: 'SelectableLabel'
     SelectableRecycleBoxLayout:
@@ -325,7 +330,7 @@ class SelectableLabel(RecycleDataViewBehavior, Label):
             # raise Exception(str([is_selected, rv.data[index]]))
             newval=rv.data[index]['text']
             try:
-                pcard=self.parent.parent.parent.parent
+                pcard=self.parent.parent.parent.parent.parent
             except AttributeError:
                 return
             
@@ -334,11 +339,11 @@ class SelectableLabel(RecycleDataViewBehavior, Label):
             pcard.parent.close_author_option()
 
             alabel=pcard.author_label
-            alabel.text=f'@{pcard.author}\n[size=14sp]to @{pcard.recipient}[/size]'
+            #alabel.text=f'@{pcard.author}\n[size=14sp]to @{pcard.recipient}[/size]'
             
-            pcard.parent.to_whom_btn.ids.txt_input.text = recip
+            pcard.parent.to_whom_btn.ids.txt_input.text = '@'+recip
 
-            #pcard.remove_widget(pcard.parent.to_whom_btn)
+            pcard.parent.remove_widget(pcard.parent.to_whom_btn)
             # pcard.author_section_layout.remove_widget(pcard.author_section_layout.children[2])
             # pcard.remove_widget(pcard.parent.to_whom_btn)
             # pcard.remove_widget(self.parent.parent.parent)
@@ -376,20 +381,21 @@ class MyTextInput(TextInput):
             display_data.append({'text':i})
         self.parent.ids.rv.data = display_data
         #ensure the size is okay
-        if len(matches) <= 10:
-            self.parent.height = (50 + (len(matches)*20))
+        if len(matches) <= 10*2:
+            self.parent.height = (50*2 + (len(matches)*20*2))
         else:
-            self.parent.height = 240
+            self.parent.height = 240*2
         
     def keyboard_on_key_down(self, window, keycode, text, modifiers):
     
-        pcard = self.parent.parent
+        # pcard = self.parent.parent.parent
+        # # raise Exception(type(pcard))
 
-        recip = pcard.parent.to_whom_btn.ids.txt_input.text.strip()
-        recip = recip[1:] if recip and recip[0]=='@' else recip
-        pcard.recipient = recip
-        alabel=pcard.author_label
-        alabel.text=f'@{pcard.author}\n[size=14sp]to @{pcard.recipient}'
+        # recip = pcard.parent.to_whom_btn.ids.txt_input.text.strip()
+        # recip = recip[1:] if recip and recip[0]=='@' else recip
+        # pcard.recipient = recip
+        # alabel=pcard.author_label
+        # #alabel.text=f'@{pcard.author}\n[size=14sp]to @{pcard.recipient}'
         
 
 

@@ -126,17 +126,23 @@ class PostScreen(ProtectedScreen):
         post_TextField.font_name='assets/overpass-mono-regular.otf'
         post_TextField.hint_text='word?'
 
-        self.to_whom_btn = DropDownWidget(
-            pos_hint = {'x':0,'center_y':.5},
+        self.post_card.to_whom_btn = self.to_whom_btn = DropDownWidget(
+            pos_hint = {'center_x':0.5,'center_y':0.5},
             size_hint = (None, None),
+            height='200sp',
+            width='100sp'
         )
         inp_towhom = self.to_whom_btn.ids.txt_input
         inp_towhom.size_hint=(None,None)
         inp_towhom.width = '100sp'
         inp_towhom.font_name='assets/font.otf'
         # inp_towhom.height = '75sp'
+        
         inp_towhom.adaptive_height=True
-        inp_towhom.md_bg_color=rgb(*COLOR_CARD)
+        inp_towhom.background_color=rgb(*COLOR_CARD)
+        inp_towhom.color=rgb(*COLOR_CARD)
+        inp_towhom.text_color=rgb(*COLOR_CARD)
+        inp_towhom.theme_text_color='Custom'
         # self.post_card.author_section_layout.md_bg_color=1,0,0,1
         self.to_whom_layo = MDBoxLayout()
         self.to_whom_layo.cols=1
@@ -149,8 +155,9 @@ class PostScreen(ProtectedScreen):
 
 
         # self.to_whom_layo.add_widget(self.to_whom_btn)
-        # self.tmp_msg = MDLabel(text='-->')
-        self.post_card.add_widget(self.to_whom_btn,1)
+        # self.tmp_msg = MDLabel(text='to')
+        # self.post_card.author_section_layout.add_widget(self.tmp_msg,1)
+        self.post_card.author_section_layout.add_widget(self.to_whom_btn,1)
         
         
         self.to_whom_btn.ids.txt_input.text = '@'
@@ -184,19 +191,20 @@ class PostScreen(ProtectedScreen):
         self.post_button.screen = self
         self.post_status = PostStatus()
         self.post_status_added = False
+        
 
         self.button_layout.add_widget(self.upload_button)
         self.button_layout.add_widget(self.post_button)
 
-        self.upload_button.font_size='12sp'
-        self.post_button.font_size='12sp'
+        self.upload_button.font_size='8sp'
+        self.post_button.font_size='8sp'
        
 
-        self.post_button.md_bg_color=rgb(*COLOR_ACTIVE)
-        self.upload_button.md_bg_color=rgb(*COLOR_ACTIVE)
+        self.post_button.md_bg_color=rgb(*COLOR_CARD)
+        self.upload_button.md_bg_color=rgb(*COLOR_CARD)
         self.post_status.md_bg_color=rgb(*COLOR_CARD)
         
-        self.add_widget(self.button_layout)
+        post.add_widget(self.button_layout)
         # self.add_widget(self.post_status)
 
     
@@ -297,6 +305,8 @@ class PostScreen(ProtectedScreen):
             self.log('no recipient was selected')
             # self.='No place was selected'
             return
+
+        if recipient.startswith('@'): recipient=recipient[1:]
         self.recipient = recipient
         channel = recipient
 
@@ -311,6 +321,7 @@ class PostScreen(ProtectedScreen):
             await self.app.post(content=content, channel = channel, file_id=file_id, file_ext=file_ext)
             import time
             self.close_dialog()
+            self.app.change_screen_from_uri('/inbox/'+channel)
         
         # self.open_dialog('')
         #Thread(target=do_post).start()

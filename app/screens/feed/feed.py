@@ -192,7 +192,7 @@ class PostCard(MDCard):
         #log('img_src ' + str(bool(self.img_src)))
         if self.img_src: self.add_widget(image_layout)
 
-        def estimate_height(minlen=100,maxlen=500):
+        def estimate_height(minlen=100,maxlen=300):
             num_chars = len(self.content)
             # num_lines = num_chars
             height = num_chars*1.1
@@ -253,6 +253,7 @@ class FeedScreen(BaseScreen):
             lim=25
             posts=await self.app.get_posts(self.app.uri)
             for i,post in enumerate(reversed(posts)):
+            # for i,post in enumerate(posts)):
                 #if ln.startswith('@') or ln.startswith('RT '): continue
                 #i+=1
                 if i>lim: break
