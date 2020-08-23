@@ -228,8 +228,9 @@ class MainApp(MDApp):
         return self._logger
 
     def log(self,*args):
-        line = ' '.join(str(x) for x in args)
-        self.logger.debug(line+'\n')
+        #line = ' '.join(str(x) for x in args)
+        #self.logger.debug(line+'\n')
+        self.logger.debug('what?')
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
