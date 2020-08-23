@@ -17,11 +17,13 @@ All of your data is strongly encrypted, and only you and those you choose will b
 
 ### Decentralized
 
-Komrade doesn't live on a server, but rather in the ether between all the devices curently running Komrade. Rather than the hierarchical server/client relationship, which exposes the entire network to attacks on a central server, Komrade uses peer-to-peer networking to store its data and communicate across the network.
+Komrade doesn't live on a server, but rather in the ether between all the devices curently running Komrade. Rather than the hierarchical server/client relationship, which exposes the entire network to attacks on a central server, and expose the anonymity on both parties, Komrade uses peer-to-peer networking to store its data and communicate across the network. By "flooding" the network redundant copies of (strongly encrypted) information, Komrade improves both the privacy, security, and longevity of that information.
 
-### Untraceable
+### Anonymous
 
-All traffic is routed via [I2P](https://geti2p.net/en/) (the "Invisible Internet Project"), an anonymous global maze of computers so dense that even the FBI can't trace your footsteps.
+It's literally impossible to tell who or sent what to anyone. (Some encryption methods can supposedly withstand quantum computers.) All peers in the network share all data randomly; but only the intended recipients have the right decryption key to unlock it. Anonymity is created by creating a different kind of cloud: more like a 'dust storm' of strongly encrypted information. 
+
+For an extra layer of anonymity, ideally we can route all communication over Tor, although this seems to be incompatible with the UDP connections required by the P2P network. (Need help on this.)
 
 ### Unmonetizable
 
@@ -29,7 +31,7 @@ What's untraceable is also unmonetizable: your data can't be harvested by techno
 
 ### Open-source
 
-Not just non-profit, we're anti-profit.
+Not just non-profit, we're anti-profit. 
 
 ## Social media features
 
