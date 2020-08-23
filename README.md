@@ -65,24 +65,7 @@ We present a simplified set of social media features drawn from everything that'
 
 #### Preview animation
 
-<img src="client/assets/komrade-peek-2.gif" height="600" alt="GIF animation" />
-
-#### Login screen
-
-Got this working on front and backend.
-
-<img src="client/assets/screen-login.png" height="600" alt="Login screen" />
-
-
-
-
-#### Post
-
-Experimenting with posts as 'cards', kind of like Tinder, which you can swipe up to up-vote or amplify, swipe down to down-vote or dampen, swipe left to see the next card and swipe right to see the previous. A horizontal feed basically. One image or video allowed; up to 1000? words allowed; maybe a title?
-
-
-<img src="client/assets/screen-feed.png" height="600" alt="Post screen" />
-
+<img src="client/assets/komrade-screen-preview-2020-08-23.gif" height="600" alt="GIF animation" />
 
 
 ## Technical details
