@@ -21,7 +21,7 @@ Komrade doesn't live on a server, but rather in the ether between all the device
 
 ### Anonymous
 
-It's impossible to tell who or sent what to anyone. All peers in the network share data randomly, but only the intended recipients have the right decryption key to unlock it. This is a different kind a different kind of cloud: more like a 'dust storm' of strongly encrypted information. Ideally, for extra anonymity, all network traffic is also routed through Tor (a global maze of computers which hides your footprints), though this currently faces some serious technical challenges.
+It's impossible to tell who or sent what to anyone. All peers in the network share data randomly, but only the intended recipients have the right decryption key to unlock it. This is a different kind  of cloud: a 'dust cloud' of strongly encrypted information. Ideally, for extra anonymity, all network traffic will be routed through Tor (a global maze of computers which hides your footprints), though this currently faces some serious technical challenges.
 
 ### Unmonetizable
 
@@ -61,9 +61,10 @@ We present a simplified set of social media features drawn from everything that'
 
 ## Progress
 
-### Screens
 
-#### Preview animation
+### Preview animation
+
+As of the 23rd of August.
 
 <img src="app/assets/komrade-screen-preview-2020-08-23.gif" height="600" alt="GIF animation" />
 
