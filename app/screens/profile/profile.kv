@@ -1,5 +1,7 @@
 #:import ProfileScreen screens.profile.profile.ProfileScreen
 #:import COLOR_TEXT main.COLOR_TEXT
+#:import COLOR_LOGO main.COLOR_LOGO
+#:import COLOR_CARD main.COLOR_CARD
 #:import rgb main.rgb
 
 <ProfileScreen>:
@@ -23,17 +25,17 @@
     adaptive_height: True
     # height:'200dp'
     # width:'300dp'
-    # md_bg_color:0,0,0,1
+    # md_bg_color:rgb(*COLOR_CARD)
     pos_hint: {'center_x':0.5, 'y':0} #,'top':0.25}
     # radius:[20,] 
     # border_radius:20
-    canvas:
-        Color:
-            rgb: 0,0,0,1
-        Line:
-            width: 2
-            # rectangle: (self.x, self.y, self.width, self.height)
-            circle: (self.center_x, self.center_y, min(self.width, self.height) / 2) #(self.x, self.x, self.width)
+    # canvas:
+    #     Color:
+    #         rgb: rgb(*COLOR_BG)
+    #     Line:
+    #         width: 2
+    #         # rectangle: (self.x, self.y, self.width, self.height)
+    #         circle: (self.center_x, self.center_y, min(self.width, self.height) / 2) #(self.x, self.x, self.width)
 
 <LayoutCover>:
     cols:1
@@ -41,7 +43,7 @@
     size_hint:None,None
     # height:'200dp'
     # width:'300dp'
-    md_bg_color:0,0,0,1
+    md_bg_color:rgb(*COLOR_CARD)
     # height: '500dp'
     pos_hint: {'center_x':0.5,'center_y':0.5} #,'y':0.8}
     # radius:[20,] 
@@ -53,7 +55,7 @@
         #     size: self.size
         #     # source: self.source
         Color:
-            rgb: 0,0,0,1
+            rgb: rgb(*COLOR_CARD)
         Line:
             width: 2
             rectangle: (self.x, self.y, self.width, self.height)
@@ -62,10 +64,11 @@
 <AuthorInfoLayout>:
     cols:1
     orientation:'vertical'
-    size_hint:0.6666,None
-    md_bg_color:0,0,0,1
+    size_hint:None,None
+    md_bg_color:rgb(*COLOR_CARD)
     # width: '300dp'
     height: self.minimum_height
+    width: '500sp'
     pos_hint: {'center_x':0.5,'center_y':0.5}
     spacing:'10sp'
     radius:[20,] 

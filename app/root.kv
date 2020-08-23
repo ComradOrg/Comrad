@@ -16,6 +16,7 @@
 #:import rgb main.rgb
 #:import COLOR_BG main.COLOR_BG
 #:import BG_IMG main.BG_IMG
+#:import COLOR_TEXT main.COLOR_TEXT
 
 
 ## CLASS DEFS
@@ -36,7 +37,7 @@
 
 <MyLabel>:
     theme_text_color: 'Custom'
-    text_color: rgb(201,203,163)
+    text_color: rgb(*COLOR_TEXT)
     # pos_hint: {'center_y': 0.5}
     halign: 'center'
     height: self.texture_size[1]
@@ -163,7 +164,7 @@ MyLayout:
         background_palette: 'Red'
         theme_text_color:'Custom'
         background_hue: '500'
-        right_action_items: [['earth', partial(root.change_screen, 'feed')],['email-receive-outline', partial(root.change_screen, 'messages')],['account-tie-voice-outline', partial(root.change_screen, 'profile')],['pencil-plus-outline', partial(root.change_screen, 'post')], ['wardrobe-outline', partial(root.change_screen, 'login')]]
+        right_action_items: [['card-text', partial(root.change_screen_from_uri, '/inbox/world')],['pencil-plus-outline', partial(root.change_screen, 'post')],['message-outline', partial(root.change_screen, 'messages')],['account-circle-outline', partial(root.change_screen, 'profile')],['exit-run', partial(root.change_screen, 'login')]]
         #left_action_items: [[f"assets/fist2.png", partial(root.change_screen, 'feed')]]
         
         # ['bell-outline', partial(root.change_screen, 'login')]

@@ -21,9 +21,6 @@ from misc import *
 
 
 
-img_src = 'assets/avatar.jpg' #cache/img/1e6/587e880344d1e88cec8fda65b1148.jpeg'
-# img_src = '/home/ryan/Pictures/Harrier.jpeg'
-cover_img_src='assets/cover.jpg' #cache/img/60d/9de00e52e4758ade5969c50dc053f.jpg'
 
 class ProfileAvatar(Image):
     def on_touch_down(self, touch):
@@ -201,6 +198,7 @@ class ProfileScreen(BaseScreen):
 
     def make_profile_img(self,width,do_crop=True,circ_img=None,bw=False,circularize=True):
 
+        img_src = f'assets/avatars/{self.app.username}.png'
         circ_img = circularize_img(img_src,width,do_crop=do_crop,bw=bw,circularize=circularize)
 
         
@@ -216,10 +214,10 @@ class ProfileScreen(BaseScreen):
         avatar_layout.add_widget(avatar)
         return (circ_img,byte,avatar,avatar_layout) 
 
-    def on_pre_enter(self, width=200):
+    def on_pre_enter(self, width=300):
 
         # query author info
-        if not self.username: self.username=self.app.username
+        #if not self.username: self.username=self.app.username
         # @TODO
 
         if not self.clock_scheduled:
@@ -248,21 +246,23 @@ class ProfileScreen(BaseScreen):
 
         ## author info
         self.author_info_layout = AuthorInfoLayout()
-        self.app.name_irl = 'Marx Zuckerberg'
+        #self.app.name_irl = 'Marx Zuckerberg'
+        self.app.name_irl = 'Komrade @'+self.app.username
+        
         if hasattr(self.app,'name_irl'):
             self.author_name_irl = AuthorName(text=self.app.name_irl)
             self.author_name_irl.font_name = 'assets/font.otf'
             self.author_name_irl.font_size = '28sp'
             self.author_info_layout.add_widget(self.author_name_irl)
         
-        self.author_name = AuthorUsername(text='@'+self.username)
+        self.author_name = AuthorUsername(text='@'+self.app.username)
         self.author_name.font_name = 'assets/font.otf'
         self.author_name.font_size = '20sp'
-        self.author_info_layout.add_widget(self.author_name)
+        # self.author_info_layout.add_widget(self.author_name)
 
 
         ## AUTHOR DESCRIPTION
-        self.author_desc = AuthorDesc(text='Blogging bad takes since 1999. Writing on abstraction as literary & capitalist form')
+        self.author_desc = AuthorDesc(text='... etc ...')
         self.author_desc.font_name='assets/font.otf'
         self.author_desc.font_size='18sp'
         # self.author_desc.halign='left'
@@ -271,26 +271,26 @@ class ProfileScreen(BaseScreen):
         self.author_pronouns = AuthorPronouns(label='he/him',icon='gender-transgender')
 
         ## AUTHOR PLACE
-        self.author_place = AuthorPlace(label='UK',icon='map-marker-outline')
+        self.author_place = AuthorPlace(label='Earth',icon='map-marker-outline')
 
         ## Website
-        self.author_website = AuthorWebsite(label='ryanheuser.org', icon='link-variant')
+        self.author_website = AuthorWebsite(label='website.org', icon='link-variant')
 
 
         ## Followers
         self.follower_layout = FollowerLayout()
-        self.author_followers = AuthorFollowers(label='13 followers',icon='account-arrow-left')
-        self.author_following = AuthorFollowing(label='777 following',icon='account-arrow-right')
+        # self.author_followers = AuthorFollowers(label='13 followers',icon='account-arrow-left')
+        self.author_following = AuthorFollowing(label='13 komrades',icon='account-multiple')
 
 
         ## add to layout
         self.author_info_layout.add_widget(self.author_desc)
         self.author_info_layout.add_widget(self.author_pronouns)
         self.author_info_layout.add_widget(self.author_place)
-        self.author_info_layout.add_widget(self.author_website)
+        # self.author_info_layout.add_widget(self.author_website)
                
         self.follower_layout.add_widget(self.author_following)
-        self.follower_layout.add_widget(self.author_followers) 
+        # self.follower_layout.add_widget(self.author_followers) 
         self.author_info_layout.add_widget(self.follower_layout)
 
         # class AuthorPlace(MDLabel): pass

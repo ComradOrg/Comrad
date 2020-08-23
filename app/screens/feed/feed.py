@@ -63,7 +63,10 @@ class PostAuthorLabel(MDLabel):
         #     #    raise Exception([item.disabled, item.text])
         # except AttributeError:
         #     pass
-        self.parent.parent.parent.open_author_option()
+        try:
+            self.parent.parent.parent.open_author_option()
+        except AttributeError:
+            pass
 
         #raise Exception(self.text)
         # self.text = '!!!'
@@ -104,6 +107,9 @@ class PostCard(MDCard):
         # self.log('PostCard() got data: '+str(data))
         self.author = data.get('author','[Anonymous]')
         self.recipient = data.get('to_name','')
+        if not self.recipient:
+            self.recipient=self.app.channel
+
         self.img_id = data.get('file_id','')
         self.img_ext = data.get('file_ext','')
         self.img_src=self.img_id[:3]+'/'+self.img_id[3:]+'.'+self.img_ext if self.img_id else ''
@@ -137,7 +143,7 @@ class PostCard(MDCard):
             self.author_label.text+='\n[size=14sp]to '+recip+'[/size]'
             self.author_label.markup=True
         self.author_label.font_size = '18sp'
-        self.author_avatar = author_avatar = PostAuthorAvatar(source='assets/avatar.jpg') #self.img_src)
+        self.author_avatar = author_avatar = PostAuthorAvatar(source=f'assets/avatars/{self.author}.png') #self.img_src)
         self.author_section_layout.add_widget(author_avatar)
         self.author_section_layout.add_widget(author_label)
         # self.author_section_layout.add_widget(MDSeparator(height='1sp',size_hint=(None,None)))
@@ -258,22 +264,3 @@ class FeedScreen(BaseScreen):
                 self.ids.post_carousel.add_widget(post_obj)
         asyncio.create_task(go())
 
-    def on_pre_enter_test(self):
-        i=0
-        lim=5
-        with open('tweets.txt') as f:
-            for ln in f:
-                if ln.startswith('@') or ln.startswith('RT '): continue
-                i+=1
-                if i>lim: break
-                
-                #post = Post(title=f'Marx Zuckerberg', content=ln.strip())
-                post = PostCard(
-                    author='Marx Zuckerberg',
-                    title='',
-                    img_src='avatar.jpg',
-                    content=ln.strip())
-                print(post)
-                self.ids.post_carousel.add_widget(post)
-
-    

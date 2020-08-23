@@ -81,6 +81,7 @@ class MyLayout(MDBoxLayout):
         self.scr_mngr.current = screen
 
     def change_screen_from_uri(self,uri,*args):
+        self.app.uri=uri
         screen_name = route(uri)
         self.app.screen = screen_name
         self.app.log(f'routing to {screen_name}')
@@ -209,6 +210,12 @@ class MainApp(MDApp):
     def change_screen(self, screen, *args):
         self.screen=screen
         self.root.change_screen(screen,*args)
+
+    @property
+    def channel(self):
+        if not hasattr(self,'uri'): return None
+        if self.uri.count('/')<2: return None
+        return self.uri.split('/')[2]
 
     def change_screen_from_uri(self,uri,*args):
         self.uri=uri
@@ -387,6 +394,7 @@ class MainApp(MDApp):
             if not 'val' in d: continue
             newdict = dict(d['val'].items())
             newdict['timestamp']=float(d['time'])
+            newdict['to_name']=d['channel']
             newdata.append(newdict)
         
         # return index

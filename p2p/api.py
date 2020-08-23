@@ -282,7 +282,8 @@ class Api(object):
 
         # encrypt?
         encrypt_for_pubkey_b = serialize_pubkey(encrypt_for_pubkey)
-        time_b=base64.b64encode(str(timestamp).encode('utf-8'))  #.encode()
+        #time_b=base64.b64encode(str(timestamp).encode('utf-8'))  #.encode()
+        time_b=str(timestamp).encode('utf-8')
         msg=value_bytes
 
         # whole binary package
@@ -340,11 +341,15 @@ class Api(object):
 
         ### NEW FIRST LINE: Try to decrypt!
         val=None
+        key_used=None
         for keyname,privkey in self.keys.items():
             self.log(keyname,privkey,'??')
             try:
+                # clicked!
                 val = aes_rsa_decrypt(encrypted_payload,privkey,*decryption_tools)
-                #self.log('decrypted =',val)
+                key_used=keyname
+                # this must mean this was the recipient
+                self.log(f'unlocked using key {keyname}!')
                 break
             except ValueError as e:
                 self.log(keyname,'did not work!') #,privkey,pubkey)
@@ -375,8 +380,9 @@ class Api(object):
         #     private_key=self.private_key_global
 
         WDV={
-            'time':float(base64.b64decode(time_b).decode()),
-            'val':base64.b64decode(msg),
+            'time':float(time_b.decode('utf-8')),
+            'val':msg.decode('utf-8'),
+            'channel':key_used
             # 'to':receiver_pubkey_b,
             # 'from':sender_pubkey_b,
             # 'sign':signature
@@ -459,7 +465,7 @@ class Api(object):
         def jsonize_dat(dat_dict):
             if type(dat_dict)==dict and 'val' in dat_dict:
                 self.log('is this json???',dat_dict['val'],'???')
-                dat_dict['val']=json.loads(dat_dict['val'].decode('utf-8'))
+                dat_dict['val']=json.loads(dat_dict['val'])
                 #dat_dict['val']=json.loads(base64.b64decode(dat_dict['val']).decode('utf-8'))
             return dat_dict
 
@@ -494,6 +500,7 @@ class Api(object):
             if type(val)!=str:
                 val=json.dumps(value)
             bval=val.encode('utf-8')
+            return bval
             
         
         self.log(f'api.set_json({key}, {value} ...)')
@@ -645,7 +652,10 @@ class Api(object):
 
 
     async def append_data(self,uri,bdata):
-        self.log(f'appending to uri {uri}')
+        self.log(f'appending to uri {uri}, data {bdata}')
+        if type(bdata)!=bytes and type(bdata)==str:
+            bdata=bdata.encode('utf-8')
+            self.log(f'--> encoded bdata to {bdata}')
 
         # get blob so far
         sofar = await self.get(uri,decode_data=False)
@@ -653,9 +663,10 @@ class Api(object):
         # get sofar
         self.log(f'sofar = {sofar}')
         
-        newval = sofar+BSEP+sofar
+        newval = bdata if sofar is None else sofar+BSEP+bdata
+        self.log(f'newval = {newval}')
 
-        res = await self.set(key,new,encode_data=False)
+        res = await self.set(uri,newval,encode_data=False)
         if res:
             length = newval.count(BSEP)+1
             return {'success':'Length increased to %s' % length}
@@ -737,6 +748,7 @@ class Api(object):
         
         # ## add to inbox
         post_id = get_random_id()
+        self.load_keys()
         author_privkey = self.keys[data.get('author')]
             
         self.log('ADDING TO CHANNEL??',channel)
@@ -815,7 +827,9 @@ class Api(object):
         index = await self.get(uri,decode_data=False)
         self.log(f'api.get_post_ids(uri={uri}) <-- api.get()',index)
         if not index: return []
-        index = json.loads(base64.b64decode(index).decode())
+
+        #index = json.loads(base64.b64decode(index).decode())
+        index = [x.decode('utf-8') for x in index.split(BSEP)]
         
         if index is None: return []
         if type(index)!=list: index=[index]
