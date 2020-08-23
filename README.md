@@ -65,7 +65,7 @@ We present a simplified set of social media features drawn from everything that'
 
 #### Preview animation
 
-<img src="client/assets/komrade-screen-preview-2020-08-23.gif" height="600" alt="GIF animation" />
+<img src="app/assets/komrade-screen-preview-2020-08-23.gif" height="600" alt="GIF animation" />
 
 
 ## Technical details
