@@ -125,6 +125,7 @@ class PostScreen(ProtectedScreen):
         post_TextField.current_hint_text_color=rgb(*COLOR_TEXT)
         post_TextField.font_name='assets/overpass-mono-regular.otf'
         post_TextField.hint_text='word?'
+        post_TextField.font_size='20sp'
 
         self.post_card.to_whom_btn = self.to_whom_btn = DropDownWidget(
             pos_hint = {'center_x':0.5,'center_y':0.5},
