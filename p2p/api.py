@@ -65,7 +65,7 @@ async def _getdb(self=None,port=PORT_LISTEN):
 
     import os
     if self: self.log(os.getcwd())
-    node = Server(log=self.log if self else print) #fn='../p2p/data.db',log=(self.log if self else print)))
+    node = Server(log=self.log if self else None) #fn='../p2p/data.db',log=(self.log if self else print)))
 
     try:
         if self: self.log('listening..')

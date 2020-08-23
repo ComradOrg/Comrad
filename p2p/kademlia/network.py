@@ -30,7 +30,19 @@ class Server:
 
     protocol_class = KademliaProtocol
 
-    def __init__(self, ksize=20, alpha=3, node_id=None, storage=None,log=print):
+    @property
+    def logger(self):
+        if not hasattr(self,'_logger'):
+            import logging
+            handler = logging.StreamHandler()
+            formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+            handler.setFormatter(formatter)
+            self._logger = logger = logging.getLogger(self.title)
+            logger.addHandler(handler)
+            logger.setLevel(logging.DEBUG)
+        return self._logger
+
+    def __init__(self, ksize=20, alpha=3, node_id=None, storage=None,log=None):
         """
         Create a server instance.  This will start listening on the given port.
 
@@ -43,7 +55,8 @@ class Server:
         """
         self.ksize = ksize
         self.alpha = alpha
-        self.log = log
+        self.log = log if log is not None else self.logger.debug
+
         self.storage = HalfForgetfulStorage() #storage or ForgetfulStorage()
         print('[Server] storage loaded with %s keys' % len(self.storage.data))
         self.node = Node(node_id or digest(random.getrandbits(255)))
