@@ -91,7 +91,7 @@ The usual installation:
 ```
 git clone https://github.com/quadrismegistus/Komrade.git
 cd Komrade
-pip install -r requirements.txt
+. script/bootstrap
 ```
 
 Then run the client:
