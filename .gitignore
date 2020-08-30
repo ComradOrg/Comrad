@@ -13,3 +13,4 @@ dbm.*
 .vscode/
 .vscode/settings.json
 lib
+*.venv
