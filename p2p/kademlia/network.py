@@ -247,11 +247,13 @@ class Server:
         self.log(f"setting '%s' on %s" % (dkey.hex(), list(map(str, nodes))))
 
         # if this node is close too, then store here as well
-        biggest = max([n.distance_to(node) for n in nodes])
-        if self.node.distance_to(node) < biggest:
-            self.log(f'< bigges -> {dkey} --> {value}')
-            self.storage[dkey] = value
-
+        try:
+            biggest = max([n.distance_to(node) for n in nodes])
+            if self.node.distance_to(node) < biggest:
+                self.log(f'< bigges -> {dkey} --> {value}')
+                self.storage[dkey] = value
+        except ValueError as e:
+            pass # !?!?
 
         results = [self.protocol.call_store(n, dkey, value) for n in nodes]
         results = await asyncio.gather(*results)

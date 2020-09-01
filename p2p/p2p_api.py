@@ -1,6 +1,7 @@
 import os,time,sys,logging
 from pathlib import Path
 import asyncio,time
+from base64 import b64encode,b64decode
 # handler = logging.StreamHandler()
 # formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 # handler.setFormatter(formatter)
@@ -15,13 +16,23 @@ BSEP3=b'##########'
 NODE_SLEEP_FOR=1
 PATH_WORLD_KEY='.world.key'
 
+
+P2P_PREFIX=b64encode(b'/persona/')
+P2P_PREFIX_POST=b64encode(b'/msg/')
+P2P_PREFIX_INBOX=b64encode(b'/inbox/')
+P2P_PREFIX_OUTBOX=b64encode(b'/outbox/')
+
+
+
 import logging
 import asyncio
 import shelve
 from collections import OrderedDict
 import pickle,os
 
-NODES_PRIME = [("128.232.229.63",8467), ("68.66.241.111",8467)] 
+# NODES_PRIME = [("128.232.229.63",8467), ("68.66.241.111",8467)] 
+NODES_PRIME = [("128.232.229.63",8467)] 
+
 #68.66.224.46
 
 def logger():
@@ -45,9 +56,8 @@ def log(*x):
 
 def boot_lonely_selfless_node(port=8467):
     async def go():
-        from api import Api,PORT_LISTEN
-        API = Api(log=log)
-        await API.connect_forever(8467)
+        api = Api(log=log, port=port)
+        await api.connect_forever()
     asyncio.run(go())
     
 
@@ -68,15 +78,8 @@ PORT_LISTEN = 5639
 # Api Functions
 from threading import Thread
 
-
-NODES_PRIME = [("128.232.229.63",8467), ("68.66.241.111",8467)] 
-#68.66.224.46
-
 from pathlib import Path
 home = str(Path.home())
-
-KEYDIR = os.path.join(home,'.komrade','.keys')
-if not os.path.exists(KEYDIR): os.makedirs(KEYDIR)
 
 KEYDIR_BUILTIN = '.'
 
@@ -86,14 +89,14 @@ async def _getdb(self=None,port=PORT_LISTEN):
     from kademlia.network import Server
 
     if self: 
-        self.log('starting server..')
+        self.log('starting server on port %s..' % port)
 
     import os
     if self: self.log(os.getcwd())
     node = Server(log=self.log if self else None) #fn='../p2p/data.db',log=(self.log if self else print)))
 
     try:
-        if self: self.log('listening..')
+        if self: self.log('listening on port %s...' % format(port))
         await node.listen(port)
     except OSError:
         raise NetworkStillConnectingError('Still connecting...')
@@ -114,19 +117,16 @@ def logg(*x):
     print(*x)
 
 class Api(object):
-    def __init__(self,user=None,log=None,app=None):
+    def __init__(self,user=None,log=None,app=None,port=PORT_LISTEN):
         self.log = log if log is not None else logg
         self.username = user
         self.app=app
+        self.port=port
 
-    def private_key(self):
-        if self.username:
-            pass
-
-    async def connect_forever(self,port=PORT_LISTEN,save_every=60):
+    async def connect_forever(self,save_every=60):
         try:
             i = 0
-            self._node = await self.connect(port=port)
+            self._node = await self.connect()
             while True:
                 if not i%90: self.log(f'Node status (tick {i}): {self._node}')
                 if i and not i%save_every: await self.flush()
@@ -154,9 +154,10 @@ class Api(object):
             self._node.log=self.log
         return self._node
 
-    async def connect(self,port=PORT_LISTEN):
-        if self.app: self.app.open_dialog('hello?')
-        self.log('connecting...')
+    async def connect(self):
+        port=self.port
+        # if self.app: self.app.open_dialog('hello?')
+        self.log('connecting on port %s...' % port)
         node = await _getdb(self,port)
         self.log(f'connect() has node {node}')
         self._node = node
@@ -812,6 +813,10 @@ def get_random_id():
     import uuid
     return uuid.uuid4().hex
 
+def get_random_binary_id():
+    import base64
+    idstr = get_random_id()
+    return base64.b64encode(idstr.encode())
 
 
 
@@ -922,10 +927,6 @@ async def lonely_selfless_node():
     return await API.connect_forever(8467)
 
 
-def boot_lonely_selfless_node(port=8467):
-    API = Api()
-    asyncio.run(API.connect_forever())
-    
 
 def init_entities(usernames = ['world']):
     ## make global entity called world
