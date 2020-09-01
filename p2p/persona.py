@@ -4,7 +4,7 @@ from pythemis.skeygen import KEY_PAIR_TYPE, GenerateKeyPair
 from pythemis.smessage import SMessage, ssign, sverify
 from pythemis.exception import ThemisError
 from base64 import b64decode,b64encode
-from kademlia.network import Server
+# from kademlia.network import Server
 import os,time,sys,logging
 from pathlib import Path
 
@@ -54,11 +54,6 @@ def check_world_keys():
     
 check_world_keys()
 
-#from p2p_api import 
-PORT_LISTEN = 5969
-
-# NODES_PRIME = [("128.232.229.63",8467), ("68.66.241.111",8467)] 
-NODES_PRIME = [("128.232.229.63",8467)] 
 
 ## CONNECTING
 
@@ -123,40 +118,8 @@ class Persona(object):
 
     @property
     async def node(self):
-        if not hasattr(self,'_node'):
-            await self.connect()
-            self._node.log=self.log
         return self._node
 
-    async def connect(self,port=PORT_LISTEN):
-        self.log('connecting on port %s...' % port)
-        node = await self._getdb(port)
-        self.log(f'connect() has node {node}')
-        self._node = node
-        return node
-
-    async def _getdb(self,port=PORT_LISTEN):
-        self.log('starting server on port %s..' % port)
-        
-        node = Server(log=self.log)
-
-        try:
-            if self: self.log('listening on port %s...' % format(port))
-            await node.listen(port)
-        except OSError:
-            return await self._getdb(port=port+1)
-            raise NetworkStillConnectingError('Still connecting...')
-            #await asyncio.sleep(3)
-
-        if self: self.log('bootstrapping server..')
-        await node.bootstrap(NODES_PRIME)
-
-        self.log('NODE:',node)
-
-        return node
-
-
-    
 
     async def boot(self):
         self.log(f'>> Persona.boot()')
@@ -165,6 +128,11 @@ class Persona(object):
         if self.pubkey is None and self.create_if_missing:
             self.gen_keys()
             await self.set_pubkey_p2p()
+
+        if self.privkey and self.pubkey:
+            return {'success':'Logged in...'}
+        return {'error':'Login failed'}
+
 
     @property
     def key_path_pub(self):
@@ -406,6 +374,13 @@ class Persona(object):
             msgs_toread = [self.read_msg(msg_id) for msg_id in inbox_ids]
             msgs =  await asyncio.gather(*msgs_toread)
             self.log('read_inbox() msgs = ',msgs)
+            return msgs
+        return []
+
+    async def read_outbox(self,uri_outbox=None):
+        if uri_outbox is None: uri_outbox = P2P_PREFIX_OUTBOX+self.name.encode()
+        return await self.read_inbox(uri_outbox)
+
 
     async def read_msg(self,msg_id):
         self.log(f'Persona.read_msg({msg_id}) ?')
@@ -455,11 +430,18 @@ def run_multiple_tasks(tasks):
         return res
     return asyncio.get_event_loop().run_until_complete(_go(tasks))
 
-async def main(port=PORT_LISTEN):
+async def main():
 
     # start node
+    from kademlia.network import Server
+    #from p2p_api import 
+    PORT_LISTEN = 5969
+
+    # NODES_PRIME = [("128.232.229.63",8467), ("68.66.241.111",8467)] 
+    NODES_PRIME = [("128.232.229.63",8467)] 
+
     node = Server(log=log)
-    await node.listen(port)
+    await node.listen(PORT_LISTEN)
     await node.bootstrap(NODES_PRIME)
     
     marx = Persona('marx',node=node)

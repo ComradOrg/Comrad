@@ -1,3 +1,19 @@
+#from p2p_api import 
+PORT_LISTEN = 5969
+
+# NODES_PRIME = [("128.232.229.63",8467), ("68.66.241.111",8467)] 
+NODES_PRIME = [("128.232.229.63",8467)] 
+
+
+
+
+
+
+
+
+
+
+
 DEFAULT_URI='/login/'
 
 import random,platform

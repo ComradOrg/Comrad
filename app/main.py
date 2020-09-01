@@ -4,6 +4,8 @@
 from config import *
 
 
+
+
 # monkeypatching the things that asyncio needs
 import subprocess
 subprocess.PIPE = -1  # noqa
@@ -50,7 +52,10 @@ import shutil,sys
 from kivy.uix.image import Image
 import sys
 sys.path.append("..") # Adds higher directory to python modules path.
-from p2p import p2p,crypto,api
+
+from p2p.p2p_api import *
+from p2p.persona import *
+
 from kivy.event import EventDispatcher
 import threading,asyncio,sys
 
@@ -247,27 +252,20 @@ class MainApp(MDApp):
         self.username=''
         self.load_store()
         self.uri=DEFAULT_URI
+        
         # connect to API
-        self.api = api.Api(log=self.log,app=self)
+        self.api = Api(log=self.log,app=self)
 
     @property
-    def channel(self):
-        return self.uri.split('/')[2] if self.uri and self.uri.count('/')>=2 else None
-        
-
-    
-
-
-    def get_session(self):
-        # return get_async_tor_proxy_session()
-        return get_tor_proxy_session()
-        #return get_tor_python_session()
+    async def node(self):
+        return await self.api.node
 
     def get_username(self):
         if hasattr(self,'username'): return self.username
         self.load_store()
         if hasattr(self,'username'): return self.username
         return ''
+
 
     def build(self):
         # bind 
@@ -302,9 +300,15 @@ class MainApp(MDApp):
 
         self.username = userd.get('username','')
     
+
+
     def register(self,un):
         async def do():
-            dat = await self.api.register(un)
+            self.persona = persona = Persona(un,node=await self.node)
+            
+            dat = await persona.boot()
+            
+            #dat = await self.api.register(un)
             if 'success' in dat:
                 self.username=un
                 self.store.put('user',username=un)
@@ -383,26 +387,29 @@ class MainApp(MDApp):
     async def get_post(self,post_id):
         return await self.api.get_post(post_id)
 
-    async def get_posts(self,uri='/inbox/world'):
-        if uri.count('/')<2: raise Exception('not a URI: '+uri)
-        if 'login' in uri:
-            raise Exception('!!!! '+uri)
-
-        self.log(f'app.get_posts(uri={uri} -> ...')
-        data = await self.api.get_posts(uri)
-        self.log(f'app.get_posts() got back from api.get_posts() a {type(data)}')
-
-        newdata=[]
-        for d in data:
-            # self.log('data d:',d)
-            if not 'val' in d: continue
-            newdict = dict(d['val'].items())
-            newdict['timestamp']=float(d['time'])
-            newdict['to_name']=d['channel']
-            newdata.append(newdict)
+    async def get_posts(self,uri=b'/inbox/world'):
+        return await self.persona.read_inbox(uri)
         
-        # return index
-        return newdata
+
+        # if uri.count('/')<2: raise Exception('not a URI: '+uri)
+        # if 'login' in uri:
+        #     raise Exception('!!!! '+uri)
+
+        # self.log(f'app.get_posts(uri={uri} -> ...')
+        # data = await self.api.get_posts(uri)
+        # self.log(f'app.get_posts() got back from api.get_posts() a {type(data)}')
+
+        # newdata=[]
+        # for d in data:
+        #     # self.log('data d:',d)
+        #     if not 'val' in d: continue
+        #     newdict = dict(d['val'].items())
+        #     newdict['timestamp']=float(d['time'])
+        #     newdict['to_name']=d['channel']
+        #     newdata.append(newdict)
+        
+        # # return index
+        # return newdata
 
     async def get_channel_posts(self,channel,prefix='inbox'):
         # am I allowed to?
@@ -417,13 +424,8 @@ class MainApp(MDApp):
     async def get_channel_outbox(self,channel):
         return await self.get_channel_posts(channel=channel,prefix='outbox')
 
-    async def get_my_posts(self,username=None,prefix='outbox'):
-        if username is None and self.username: username=self.username
-        if not username:
-            self.log(f'!! whose posts?')
-            return
-        self.log(f'get_my_posts({self.username})')
-        return await self.get_channel_outbox(username)
+    async def get_my_posts(self):
+        return await self.persona.read_outbox()
 
 
 
