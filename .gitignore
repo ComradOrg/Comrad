@@ -15,3 +15,4 @@ dbm.*
 lib
 *.venv
 .vscode
+*.key
