@@ -1,1 +1,1 @@
-python -c "import p2p_api; p2p_api.boot_lonely_selfless_node()"
+python -c "import api; api.boot_lonely_selfless_node()"

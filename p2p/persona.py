@@ -25,14 +25,27 @@ WORLD_PRIV_KEY = b'UkVDMgAAAC26HXeGACxZUoKYKlZ7sDmVoLwffNj3CrdqoPrE94+2ysfhufmP'
 KOMRADE_PUB_KEY = b'VUVDMgAAAC09uo+wAgu/V9xyvMkMDbOQEk1ssOrFADaiyTzfwVjE6o8FHoil'
 KOMRADE_PRIV_KEY = b'UkVDMgAAAC33fFiaAIpmQewjkYndzMcMkj1mLy/lE4RXJQzIlUN94tyC5g29'
 
+DEBUG = True
+UPLOAD_DIR = 'uploads/'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+PORT_LISTEN = 5639
+NODE_SLEEP_FOR=1
+NODES_PRIME = [("128.232.229.63",8467)] 
+
+
 
 KEY_PATH = os.path.join(os.path.expanduser('~'),'.komrade')
-if not os.path.exists(KEY_PATH): os.makedirs(KEY_PATH)
+KEY_PATH_PUB = os.path.join(KEY_PATH,'.locs')
+KEY_PATH_PRIV = os.path.join(KEY_PATH,'.keys')
 
-WORLD_PRIV_KEY_FN = os.path.join(KEY_PATH,'.world.key')
-WORLD_PUB_KEY_FN = os.path.join(KEY_PATH,'.world.kom')
-KOMRADE_PRIV_KEY_FN = os.path.join(KEY_PATH,'.komrade.key')
-KOMRADE_PUB_KEY_FN = os.path.join(KEY_PATH,'.komrade.kom')
+for x in [KEY_PATH,KEY_PATH_PUB,KEY_PATH_PRIV]:
+    if not os.path.exists(x): os.makedirs(x)
+
+WORLD_PRIV_KEY_FN = os.path.join(KEY_PATH_PRIV,'.world.key')
+WORLD_PUB_KEY_FN = os.path.join(KEY_PATH_PUB,'.world.loc')
+KOMRADE_PRIV_KEY_FN = os.path.join(KEY_PATH_PRIV,'.komrade.key')
+KOMRADE_PUB_KEY_FN = os.path.join(KEY_PATH_PUB,'.komrade.loc')
 
 
 def check_world_keys():
@@ -103,22 +116,41 @@ class NetworkStillConnectingError(OSError): pass
 
 class Persona(object):
 
-    def __init__(self,name,node=None,create_if_missing=True):
+    def __init__(self,name,api=None,node=None,create_if_missing=True):
         self.name=name
         self.log=log
         self.privkey=None
         self.pubkey=None
-        self._node=node
+        self.api=api
+        # self._node=node
         self.create_if_missing=create_if_missing
         self.log(f'>> Persona.__init__(name={name},create_if_missing={create_if_missing})')
 
-        #loop=asyncio.get_event_loop()
-        #loop.run_until_complete(self.boot())
-        # asyncio.run(self.boot())
+        # load at least any local keys (non-async)
+        self.find_keys_local()
+
+    
+
+    def __repr__(self):
+        #pkeystr = '+loc' if self.has_public_key() else ''
+        #privkeystr = ' +key' if self.has_private_key() else ''
+        # ptypestr='acccount' if self.has_private_key() else 'contact'
+        ptypestr='loc' if not self.has_private_key() else 'keyloc'
+
+        return f'{self.name} ({ptypestr})'
+
+    
+    def has_private_key(self):
+        return self.privkey is not None
+    
+    def has_public_key(self):
+        return self.pubkey is not None
+    
 
     @property
     async def node(self):
-        return self._node
+        node = await self.api.node
+        return node
 
 
     async def boot(self):
@@ -136,12 +168,11 @@ class Persona(object):
 
     @property
     def key_path_pub(self):
-        return os.path.join(KEY_PATH,'.'+self.name+'.kom')
+        return os.path.join(KEY_PATH_PUB,'.'+self.name+'.loc')
 
     @property
     def key_path_priv(self):
-        return os.path.join(KEY_PATH,'.'+self.name+'.key')
-
+        return os.path.join(KEY_PATH_PRIV,'.'+self.name+'.key')
     
     @property
     def name_b64(self):
@@ -212,10 +243,20 @@ class Persona(object):
                 self.name = b64decode(name).decode()
                 print('>> found pubkey!',self.pubkey_b64,'and name',self.name)
 
+                ## save back to cache?
+                self.save_pubkey(pubkey_b64)
+
     async def find_keys(self):
-        self.find_keys_local()
+        #self.find_keys_local()   # <- now doing this, which is not async, in __init__()
         if self.pubkey is None:
             await self.find_keys_p2p()
+            # if self.pubkey is not None:
+            #     # save back to local cache?
+
+    def save_pubkey(self,pubkey_b64):
+        with open(self.key_path_pub, "wb") as public_key_file:
+           public_key_file.write(pubkey_b64)
+           self.log('>> saved:',self.key_path_pub)
 
     async def set_pubkey_p2p(self):
         # signed_name = self.sign(b64encode(self.name.encode()))
@@ -249,7 +290,7 @@ class Persona(object):
         from_pubkey = b64decode(from_pubkey_b64)
         encrypted_msg = b64decode(encrypted_msg_b64)
         decrypted_msg = SMessage(self.privkey, from_pubkey).unwrap(encrypted_msg)
-        return b64decode(decrypted_msg)
+        return decrypted_msg
 
     def sign(self,msg):
         signed_msg = b64encode(ssign(self.privkey, msg))
@@ -269,99 +310,87 @@ class Persona(object):
     ## EVEN HIGHER LEVEL STUFF: person 2 person
 
     @property
-    async def world(self):
-        if not hasattr(self,'_world'):
-            self._world = Persona('world')
-            await self._world.boot()
-        return self._world
+    async def world(self): return self.api.keys['world']
 
     @property
-    async def komrade(self):
-        if not hasattr(self,'_komrade'):
-            self._komrade = Persona('komrade')
-            await self._komrade.boot()
-        return self._komrade
+    async def komrade(self): return self.api.keys['komrade']
 
 
     async def send(self,msg_b,to):
-        """
-        1) [Encrypted payload:]
-            1) Timestamp
-            2) Public key of sender
-            3) Public key of recipient
-            4) AES-encrypted Value
-        2) [Decryption tools]
-            1) AES-decryption key
-            2) AES decryption IV value
-        5) Signature of value by author
-        """
-        to_person=to
-        if type(msg_b)==str: msg_b=msg_b.encode()
-        msg_b64=b64encode(msg_b)
-
-        # encrypt and sign
-        encrypted_payload = self.encrypt(msg_b64, to_person.pubkey_b64)
-        signed_encrypted_payload = self.sign(encrypted_payload)
+        return await self.api.send(msg_b,self,to)
 
 
-        # # package
-        time_b64 = b64encode(str(time.time()).encode())
-        # signed_msg_b64 = self.sign(msg_b64)
-        # WDV = [
-        #     time_b64,
-        #     self.pubkey_b64,
-        #     to_person.pubkey_b64,
-        #     signed_msg_b64
-        # ]
-        # payload_b64 = b64encode(BSEP.join(WDV))
+    @property
+    def uri_inbox(self):
+        return P2P_PREFIX_INBOX+self.name.encode()
 
-        WDV_b64 = b64encode(BSEP.join([signed_encrypted_payload,self.pubkey_b64,self.name_b64,time_b64]))
-        self.log('WDV_b64 =',WDV_b64)
+    @property
+    def uri_outbox(self):
+        return P2P_PREFIX_OUTBOX+self.name.encode()
 
-        # doublewrapped
-        komrade = await self.komrade
-        double_encrypted_payload = komrade.encrypt(WDV_b64, to_person.pubkey_b64)
-        self.log('double_encrypted_payload =',double_encrypted_payload)
+    @property
+    def app_person(self):
+        return self.api.keys['komrade']
 
+    @property
+    def app_pubkey_b64(self):
+        return self.app_person.pubkey_b64
 
-        # send!
-        post_id = get_random_id().encode()
-        uri_post = P2P_PREFIX_POST + post_id
-        uri_inbox = P2P_PREFIX_INBOX + to_person.name.encode()
-        uri_outbox = P2P_PREFIX_OUTBOX + self.name.encode()
-
-        # send post to net
+    async def load_inbox(self,decrypt_msg_uri=False,last=None):
         node = await self.node
-        await node.set(uri_post, double_encrypted_payload)
-
-    
-        # add to indices
-        sofar_inbox = await node.get(uri_inbox)
-        sofar_outbox = await node.get(uri_outbox)
-
-        self.log(f'sofar_inbox = {sofar_inbox}')
-        self.log(f'sofar_outbox = {sofar_outbox}')
-    
-        newval_inbox = post_id if sofar_inbox is None else sofar_inbox+BSEP+post_id
-        newval_outbox = post_id if sofar_outbox is None else sofar_outbox+BSEP+post_id
-    
-        self.log(f'newval_inbox = {newval_inbox}')
-        self.log(f'newval_outbox = {newval_outbox}')
-    
-        res_inbox = await node.set(uri_inbox,newval_inbox)
-        res_outbox = await node.set(uri_outbox,newval_outbox)
+        encrypted_inbox_idstr_b64 = await node.get(self.uri_inbox)
+        self.log('encrypted_inbox_idstr_b64 =',encrypted_inbox_idstr_b64)
+        if encrypted_inbox_idstr_b64 is None: return []
         
-        if res_inbox is not None and res_outbox is not None:
-            length_inbox = newval_inbox.count(BSEP)+1
-            length_outbox = newval_outbox.count(BSEP)+1
+        # inbox_idstr = self.decrypt(encrypted_inbox_idstr_b64, self.app_pubkey_b64)
+        # self.log('decrypted inbox_idstr =',inbox_idstr)
+        # decrypt!
 
-            return {
-                'success':'Inbox length increased to %s, outbox to %s' % (length_inbox,length_outbox),
-                'post_id':post_id,
-                'post':encrypted_payload,
-            }
-        return {'error':'Could not append data'}
+        encrypted_inbox_idstr = b64decode(encrypted_inbox_idstr_b64)
+        self.log('encrypted_inbox_idstr =',encrypted_inbox_idstr)
 
+        inbox_ids = encrypted_inbox_idstr.split(BSEP) if encrypted_inbox_idstr is not None else []
+        self.log('inbox_ids =',inbox_ids)
+        
+        if decrypt_msg_uri:
+            inbox_ids = [self.decrypt(enc_msg_id_b64,self.app_person.pubkey_b64) for enc_msg_id_b64 in inbox_ids]
+            self.log('inbox_ids decrypted =',inbox_ids)
+
+        return inbox_ids[:last]
+
+    async def add_to_inbox(self,msg_uri,inbox_sofar=None):
+        # encrypt msg id so only inbox owner can resolve the pointer
+        self.log('unencrypted msg uri:',msg_uri)
+        encrypted_msg_uri = self.app_person.encrypt(msg_uri, self.pubkey_b64)
+        self.log('encrypted msg uri:',encrypted_msg_uri)
+
+        # get current inbox
+        if inbox_sofar is None: inbox_sofar=await self.load_inbox()
+        self.log('inbox_sofar:',inbox_sofar)
+
+        # add new value
+        new_inbox = inbox_sofar + [encrypted_msg_uri]
+        new_inbox_b = BSEP.join(new_inbox)
+        self.log('new_inbox_b:',new_inbox_b)
+
+        new_inbox_b64 = b64encode(new_inbox_b)
+
+        self.log('new_inbox_b64:',new_inbox_b64)
+
+        # set on net
+        node = await self.node
+        await node.set(self.uri_inbox,new_inbox_b64)
+
+        new_length = len(new_inbox)
+        return {'success':'Inbox length increased to %s' % new_length}
+        #return {'error':'Could not append data'}
+
+
+    async def add_to_outbox(self):
+        """
+        Do not store on server!
+        """
+        pass
 
     async def read_inbox(self,uri_inbox=None):
         if uri_inbox is None: uri_inbox = P2P_PREFIX_INBOX+self.name.encode()

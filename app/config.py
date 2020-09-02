@@ -17,17 +17,18 @@ NODES_PRIME = [("128.232.229.63",8467)]
 DEFAULT_URI='/login/'
 
 import random,platform
-HORIZONTAL = False #random.choice([True,True,True,False])
+HORIZONTAL = True # random.choice([True,True,True,False])
 FACTOR=1
 WINDOW_SIZE = (1136*FACTOR,640*FACTOR) if HORIZONTAL else (640*FACTOR,1136*FACTOR)
 
 
 PLAYING_CARDS = (2.5,3.5)
 ASPECT_RATIO = PLAYING_CARDS[0]/PLAYING_CARDS[1]
+ASPECT_RATIO = 1/ASPECT_RATIO
 HEIGHT = 850
 
 if platform.platform().startswith('Linux'):
-    HEIGHT *= 2
+    HEIGHT *= 1.25
 
 
 WINDOW_SIZE=int(HEIGHT * ASPECT_RATIO),int(HEIGHT)

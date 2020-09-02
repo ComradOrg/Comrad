@@ -53,7 +53,7 @@ from kivy.uix.image import Image
 import sys
 sys.path.append("..") # Adds higher directory to python modules path.
 
-from p2p.p2p_api import *
+from p2p.api import *
 from p2p.persona import *
 
 from kivy.event import EventDispatcher
@@ -254,7 +254,7 @@ class MainApp(MDApp):
         self.uri=DEFAULT_URI
         
         # connect to API
-        self.api = Api(log=self.log,app=self)
+        self.api = Api(log=self.log)
 
     @property
     async def node(self):
