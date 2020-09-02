@@ -67,7 +67,7 @@ def check_world_keys():
         with open(KOMRADE_PUB_KEY_FN,'wb') as of:
             of.write(KOMRADE_PUB_KEY)
     
-check_world_keys()
+# check_world_keys()
 
 
 ## CONNECTING
@@ -146,21 +146,33 @@ class Persona(object):
         Q=f'http://{KEYSERVER_ADDR}:{KEYSERVER_PORT}/pub'
         self.log('Q:',Q)
         r = requests.get(Q)
-        self.log('r =',r,b64encode(r.content))
-        pubkey_b64 = b64encode(r.content)
-        return pubkey_b64
+        return r.content
+        # self.log('r =',r,b64encode(r.content))
+        # pubkey_b64 = b64encode(r.content)
+        # return pubkey_b64
 
     def get_externally_signed_pubkey(self):
         Q=f'http://{KEYSERVER_ADDR}:{KEYSERVER_PORT}/get/{self.name}'
         self.log('Q:',Q)
         r = requests.get(Q)
-        signed_pubkey = b64encode(r.content)
-        return signed_pubkey
+        package_b64 = r.content
+        package = b64decode(package_b64)
+        self.log('package <--',package)
+        if not package: return (b'',b'',b'')
+        return package.split(BSEP)
+        # pubkey_b64, signed_pubkey_b64, server_signed_pubkey_b64 = package.split(BSEP)
+        
+        # signed_pubkey = b64encode(r.content)
+        # return (b64encode(pubkey), b64encode(signed_pubkey))
 
     def set_externally_signed_pubkey(self):
         import requests
-        Q=f'http://{KEYSERVER_ADDR}:{KEYSERVER_PORT}/add/{self.name}' #/{name}/{key}'
-        r = requests.post(Q, data=self.pubkey_b64) #{'name':self.name,'key':self.pubkey_b64})
+        Q=f'http://{KEYSERVER_ADDR}:{KEYSERVER_PORT}/add/{self.name}' #/{name}/{key}
+        
+        package = self.pubkey_b64 + BSEP + self.signed_pubkey_b64
+        self.log('set_externally_signed_pubkey package -->',package)
+
+        r = requests.post(Q, data=package) #{'name':self.name,'key':self.pubkey_b64})
         return r
     
     def has_private_key(self):
@@ -182,12 +194,14 @@ class Persona(object):
         if keyserver_pubkey is None: return {'error':'Cannot conntact keyserver'}
         
 
-        signed_pubkey_ext_b64 = self.get_externally_signed_pubkey()
-        signed_pubkey_ext = b64decode(signed_pubkey_ext_b64)
-        self.log('signed_pubkey_ext =',signed_pubkey_ext)
+        pubkey_ext_b64, signed_pubkey_ext_b64, server_signed_pubkey_ext_b64 = self.get_externally_signed_pubkey()
+        
+        self.log('pubkey_ext_b64 =',pubkey_ext_b64)
+        self.log('signed_pubkey_ext_b64 =',signed_pubkey_ext_b64)
+        self.log('server_signed_pubkey_ext_b64 =',server_signed_pubkey_ext_b64)
 
         # does not exist
-        if signed_pubkey_ext is b'':
+        if pubkey_ext_b64 is b'' or signed_pubkey_ext_b64 is b'' or server_signed_pubkey_ext_b64 is b'':
             # register
             if self.create_if_missing:
                 self.gen_keys()
@@ -200,23 +214,61 @@ class Persona(object):
             else:
                 return {'error':'No public key externally, but create_if_missing==False'}
         else:
-            # get signed version of pubkey on server
-            pubkey_ext = sverify(keyserver_pubkey, signed_pubkey_ext)
-            self.log('pubkey_ext =',pubkey_ext)
+            # check keyserver is telling truth
+            
+            keyserver_verified = self.verify(server_signed_pubkey_ext_b64, keyserver_pubkey_b64)
+            if keyserver_verified is None: 
+                return {'error':'Keyserver verification failed'}
 
             # do I have local copies?
             self.find_keys_local()
 
-            self.log('self.pubkey on disk is',self.pubkey)
-            if self.pubkey:
-                # I claim to have this person's public key on my hardware
-                # we both have public keys. oh yeah? prove they match. (login)
-                
-                if self.pubkey == pubkey_ext:
-                    return {'success':'Logging back in'}
-                else:
-                    return {'error':'Keys did not match'}
-            else: 
+            self.log('self.pubkey_b64 on disk is',self.pubkey_b64)
+            self.log('pubkey_ext_b64 on server is',pubkey_ext_b64)
+            self.log('signed_pubkey_ext_b64 =',signed_pubkey_ext_b64)
+            # self.log('self.signed_pubkey_b64',self.signed_pubkey_b64)
+            self.log('keyserver_verified',keyserver_verified)
+            #pubkeys_match = self.verify(signed_pubkey_ext_b64, self.pubkey_b64)
+            
+            # pubkeys_match = (self.pubkey_b64 == pubkey_ext_b64) and (self.pubkey_b64 == keyserver_verified)
+            
+            # pubkey_ext = b64decode(pubkey_ext_b64)
+            pubkey_b64 = b64encode(self.pubkey)
+            # self.log('pubkey_ext =',pubkey_ext)
+            # me_verified = self.verify(signed_pubkey_ext_b64, pubkey_b64)
+            # self.log('me_verified =',me_verified)
+            me_verified = True
+            
+            # pubkeys_match = pubkey_b64 == pubkey_ext_b64
+            pubkeys_match = True
+            self.log('pubkeys_match',pubkeys_match)
+            ok_to_load_as_acquaintance = bool(keyserver_verified)
+            
+            enc_match = False
+            if os.path.exists(self.key_path_pub_enc):
+                with open(self.key_path_pub_enc,'rb') as f:
+                    key_pub_enc=f.read()
+                    self.log('key_pub_enc =',key_pub_enc)
+                    decr_pub_key = self.decrypt(key_pub_enc, KOMRADE_PUB_KEY, self.privkey_b64)
+                    self.log('decr_pub_key',decr_pub_key)
+                    self.log('keyserver_verified',keyserver_verified)
+                    enc_match = decr_pub_key == keyserver_verified
+
+            ok_to_login = enc_match
+            
+            
+            
+            # self.log('my_server_signed_pubkey_b64 on disk is',my_server_signed_pubkey_b64)
+            # self.log('server_signed_pubkey_ext_b64 on server is',server_signed_pubkey_ext_b64)
+            
+
+            if ok_to_login:
+                # I CLAIM TO *BE* THIS PERSON
+                return {'success':'Logging back in'}
+            # elif ok_to_load_as_contact:
+            #     return {'success':'Loaded as contact'}
+            # elif ok_to_load_as_acquaintance:
+            else:
                 # just meeting this person as a contact
                 self.pubkey=pubkey_ext
                 self.log('setting self.pubkey to external value:',self.pubkey)
@@ -245,6 +297,11 @@ class Persona(object):
         return os.path.join(KEY_PATH_PUB,'.'+self.name+'.loc')
 
     @property
+    def key_path_pub_enc(self):
+        return os.path.join(KEY_PATH_PUB,'.'+self.name+'.loc.enc')
+
+
+    @property
     def key_path_priv(self):
         return os.path.join(KEY_PATH_PRIV,'.'+self.name+'.key')
     
@@ -259,7 +316,21 @@ class Persona(object):
 
     @property
     def pubkey_b64(self):
-        return b64encode(self.pubkey)
+        return b64encode(self.pubkey) if self.pubkey else b''
+    
+    @property
+    def signed_pubkey_b64(self):
+        return self.sign(self.pubkey_b64)
+        # return self.encrypt(self.pubkey_b64, self.pubkey_b64)
+
+    # @property
+    # def encrypted_pubkey_b64(self):
+    #     self.log('encrypting!',self.pubkey_b64, KOMRADE_PRIV_KEY)
+    #     res = self.encrypt(self.pubkey_b64, self.pubkey_b64, self.app_person.privkey_b64)
+    #     self.log('RES!?',res)
+    #     return res
+
+    
     ## genearating keys
     
     def gen_keys(self):
@@ -272,8 +343,20 @@ class Persona(object):
         with open(self.key_path_priv, "wb") as private_key_file:
             private_key_file.write(self.privkey_b64)
 
-        with open(self.key_path_pub, "wb") as public_key_file:
-           public_key_file.write(self.pubkey_b64)
+        # with open(self.key_path_pub, "wb") as public_key_file:
+        #     # save SIGNED public key
+        #     public_key_file.write(self.pubkey_b64)
+        
+        with open(self.key_path_pub_enc,'wb') as signed_public_key_file:
+            # self.log('encrypted_pubkey_b64 -->',self.encrypted_pubkey_b64)
+            pubkey_b64 = b64encode(self.pubkey)
+            self.log('pubkey',self.pubkey)
+            self.log('pubkey_b64',pubkey_b64)
+            
+            encrypted_pubkey_b64 = self.encrypt(pubkey_b64, pubkey_b64, KOMRADE_PRIV_KEY)
+            self.log('encrypted_pubkey_b64 -->',encrypted_pubkey_b64)
+            
+            signed_public_key_file.write(encrypted_pubkey_b64)
         
 
     ## loading keys from disk
@@ -281,13 +364,20 @@ class Persona(object):
     def find_keys_local(self):
         self.log(f'find_keys_local(path_pub={self.key_path_pub}, path_priv={self.key_path_priv})')
 
-        if os.path.exists(self.key_path_pub):
-            with open(self.key_path_pub) as pub_f:
-                self.pubkey=b64decode(pub_f.read())
-
         if os.path.exists(self.key_path_priv):
             with open(self.key_path_priv) as priv_f:
                 self.privkey=b64decode(priv_f.read())
+
+        # if os.path.exists(self.key_path_pub):
+        #     with open(self.key_path_pub) as pub_f:
+        #         self.pubkey=b64decode(pub_f.read())
+        
+        if os.path.exists(self.key_path_pub_enc) and self.privkey:
+            with open(self.key_path_pub_enc) as pub_f:
+                self.pubkey=self.decrypt(pub_f.read(), KOMRADE_PUB_KEY)
+                self.log('loaded self.pubkey',self.pubkey)
+
+        
  
     ## finding on p2p net
     async def find_keys_p2p(self,name=None):
@@ -332,47 +422,61 @@ class Persona(object):
            public_key_file.write(pubkey_b64)
            self.log('>> saved:',self.key_path_pub)
 
-    async def set_pubkey_p2p(self):
-        # signed_name = self.sign(b64encode(self.name.encode()))
-        # signed_pubkey_b64 = self.sign(self.pubkey_b64)
+    # async def set_pubkey_p2p(self):
+    #     # signed_name = self.sign(b64encode(self.name.encode()))
+    #     # signed_pubkey_b64 = self.sign(self.pubkey_b64)
         
-        self.log(f'set_pubkey_p2p()...')
+    #     self.log(f'set_pubkey_p2p()...')
         
-        signed_msg = self.sign(self.name_b64 + BSEP2 + self.pubkey_b64)
-        package = b64encode(signed_msg + BSEP +self.pubkey_b64)
-        #await self.api.set('/pubkey/'+self.name,package,encode_data=False)
+    #     signed_msg = self.sign(self.name_b64 + BSEP2 + self.pubkey_b64)
+    #     package = b64encode(signed_msg + BSEP +self.pubkey_b64)
+    #     #await self.api.set('/pubkey/'+self.name,package,encode_data=False)
 
-        key=P2P_PREFIX+self.name.encode()
-        newval=package
-        self.log('set_pubkey()',key,'-->',newval)
-        node = await self.node
-        return await node.set(key,newval)
+    #     key=P2P_PREFIX+self.name.encode()
+    #     newval=package
+    #     self.log('set_pubkey()',key,'-->',newval)
+    #     node = await self.node
+    #     return await node.set(key,newval)
 
 
 
 
     ## E/D/S/V
 
-    def encrypt(self,msg_b64,for_pubkey_b64):
+    def encrypt(self,msg_b64,for_pubkey_b64, privkey_b64=None):
+        self.log('encrypt()',msg_b64,for_pubkey_b64,privkey_b64)
+        
+        privkey = b64decode(privkey_b64) if privkey_b64 else self.privkey
         # handle verification failure
         for_pubkey = b64decode(for_pubkey_b64)
-        encrypted_msg = SMessage(self.privkey, for_pubkey).wrap(msg_b64)
+        encrypted_msg = SMessage(privkey, for_pubkey).wrap(msg_b64)
         return b64encode(encrypted_msg)
 
-    def decrypt(self,encrypted_msg_b64,from_pubkey_b64):
+    def decrypt(self,encrypted_msg_b64,from_pubkey_b64, privkey_b64=None):
+        privkey = b64decode(privkey_b64) if privkey_b64 else self.privkey
+
         # handle verification failure
         from_pubkey = b64decode(from_pubkey_b64)
         encrypted_msg = b64decode(encrypted_msg_b64)
-        decrypted_msg = SMessage(self.privkey, from_pubkey).unwrap(encrypted_msg)
+        decrypted_msg = SMessage(privkey, from_pubkey).unwrap(encrypted_msg)
         return decrypted_msg
 
-    def sign(self,msg):
-        signed_msg = b64encode(ssign(self.privkey, msg))
+    def sign(self,msg_b64, privkey=None):
+        if not privkey: privkey=self.privkey
+        signed_msg = b64encode(ssign(privkey, msg_b64))
         return signed_msg
 
-    def verify(self,signed_msg_b64,pubkey_b64):
+    def verify(self,signed_msg_b64,pubkey_b64=None):
+        if pubkey_b64 is None: pubkey_b64=self.pubkey_b64
+        
+        self.log('verify() signed_msg_b64 =',signed_msg_b64)
+        self.log('verify() pubkey_b64 =',pubkey_b64)
         signed_msg = b64decode(signed_msg_b64)
         public_key = b64decode(pubkey_b64)
+
+        self.log('verify() signed_msg =',signed_msg)
+        self.log('verify() public_key =',public_key)
+
         try:
             verified_msg = sverify(public_key, signed_msg)
             return verified_msg

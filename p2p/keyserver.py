@@ -10,6 +10,9 @@ from pythemis.skeygen import KEY_PAIR_TYPE, GenerateKeyPair
 from pythemis.smessage import SMessage, ssign, sverify
 from pythemis.exception import ThemisError
 from base64 import b64encode,b64decode
+BSEP=b'||||||||||'
+BSEP2=b'@@@@@@@@@@'
+BSEP3=b'##########'
 
 keyhome = os.path.join(os.path.expanduser('~'),'.komrade','.keyserver')
 if not os.path.exists(keyhome): os.makedirs(keyhome)
@@ -47,17 +50,21 @@ with open(PATH_PRIVKEY) as f:
 
 @app.route('/pub')
 def pubkey():
-    return PUBKEY
+    return PUBKEY_b64
 
 @app.route('/add/<name>',methods=['POST'])
 def add(name):
-    key=request.data
     key_fn = os.path.join(keyhome,name+'.loc')
     if not os.path.exists(key_fn):
         with open(key_fn,'wb') as of:
-            signed_key = ssign(PRIVKEY, key)
-            of.write(signed_key)
-            return signed_key
+            pubkey,signed_pubkey=request.data.split(BSEP)
+            server_signed_pubkey = b64encode(ssign(PRIVKEY,pubkey))
+            package = pubkey + BSEP + signed_pubkey + BSEP + server_signed_pubkey
+            package_b64 = b64encode(package)
+            print('add package -->',package)     
+            print('add package_b64 -->',package_b64)
+            of.write(package_b64)
+            return package_b64
     return None
 
 @app.route('/get/<name>')

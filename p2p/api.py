@@ -510,6 +510,9 @@ async def test_keyserver():
     api = Api()
     marx = await api.personate('marx')
     elon = await api.personate('elon')
+
+
+    zuck = await api.personate('zuck')
     #marx = await api.personate(marx)
     #res = await api.get_externally_signed_pubkey('marx')
     #res = await api.get_externally_signed_pubkey('marx')
