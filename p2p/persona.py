@@ -7,6 +7,7 @@ from base64 import b64decode,b64encode
 # from kademlia.network import Server
 import os,time,sys,logging
 from pathlib import Path
+import requests
 
 sys.path.append('../p2p')
 BSEP=b'||||||||||'
@@ -32,7 +33,8 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 PORT_LISTEN = 5639
 NODE_SLEEP_FOR=1
 NODES_PRIME = [("128.232.229.63",8467)] 
-
+KEYSERVER_ADDR = '128.232.229.63'
+KEYSERVER_PORT = 5566
 
 
 KEY_PATH = os.path.join(os.path.expanduser('~'),'.komrade')
@@ -124,10 +126,11 @@ class Persona(object):
         self.api=api
         # self._node=node
         self.create_if_missing=create_if_missing
-        self.log(f'>> Persona.__init__(name={name},create_if_missing={create_if_missing})')
+        # self.log(f'>> Persona.__init__(name={name},create_if_missing={create_if_missing})')
 
         # load at least any local keys (non-async)
-        self.find_keys_local()
+        # self.find_keys_local()
+        # self.login_or_register()
 
     
 
@@ -139,6 +142,26 @@ class Persona(object):
 
         return f'{self.name} ({ptypestr})'
 
+    def get_keyserver_pubkey(self):
+        Q=f'http://{KEYSERVER_ADDR}:{KEYSERVER_PORT}/pub'
+        self.log('Q:',Q)
+        r = requests.get(Q)
+        self.log('r =',r,b64encode(r.content))
+        pubkey_b64 = b64encode(r.content)
+        return pubkey_b64
+
+    def get_externally_signed_pubkey(self):
+        Q=f'http://{KEYSERVER_ADDR}:{KEYSERVER_PORT}/get/{self.name}'
+        self.log('Q:',Q)
+        r = requests.get(Q)
+        signed_pubkey = b64encode(r.content)
+        return signed_pubkey
+
+    def set_externally_signed_pubkey(self):
+        import requests
+        Q=f'http://{KEYSERVER_ADDR}:{KEYSERVER_PORT}/add/{self.name}' #/{name}/{key}'
+        r = requests.post(Q, data=self.pubkey_b64) #{'name':self.name,'key':self.pubkey_b64})
+        return r
     
     def has_private_key(self):
         return self.privkey is not None
@@ -152,8 +175,59 @@ class Persona(object):
         node = await self.api.node
         return node
 
+    def login_or_register(self):
+        keyserver_pubkey_b64 = self.get_keyserver_pubkey()
+        keyserver_pubkey = b64decode(keyserver_pubkey_b64)
+        self.log('keyserver_pubkey =',keyserver_pubkey)
+        if keyserver_pubkey is None: return {'error':'Cannot conntact keyserver'}
+        
 
+        signed_pubkey_ext_b64 = self.get_externally_signed_pubkey()
+        signed_pubkey_ext = b64decode(signed_pubkey_ext_b64)
+        self.log('signed_pubkey_ext =',signed_pubkey_ext)
+
+        # does not exist
+        if signed_pubkey_ext is b'':
+            # register
+            if self.create_if_missing:
+                self.gen_keys()
+                res = self.set_externally_signed_pubkey()
+                self.log('set_externally_signed_pubkey res =',res)
+                if res is None:
+                    return {'error':'Could not set externally signed pubkey'}
+                else:
+                    return {'success':'Created new pubkey'}
+            else:
+                return {'error':'No public key externally, but create_if_missing==False'}
+        else:
+            # get signed version of pubkey on server
+            pubkey_ext = sverify(keyserver_pubkey, signed_pubkey_ext)
+            self.log('pubkey_ext =',pubkey_ext)
+
+            # do I have local copies?
+            self.find_keys_local()
+
+            self.log('self.pubkey on disk is',self.pubkey)
+            if self.pubkey:
+                # I claim to have this person's public key on my hardware
+                # we both have public keys. oh yeah? prove they match. (login)
+                
+                if self.pubkey == pubkey_ext:
+                    return {'success':'Logging back in'}
+                else:
+                    return {'error':'Keys did not match'}
+            else: 
+                # just meeting this person as a contact
+                self.pubkey=pubkey_ext
+                self.log('setting self.pubkey to external value:',self.pubkey)
+                return {'success':'Met person as acquaintance'}
+        
     async def boot(self):
+        res = self.login_or_register()
+        self.log('boot -->',res)
+        return res
+
+    async def boot1(self):
         self.log(f'>> Persona.boot()')
         # self.load_or_gen()
         await self.find_keys()

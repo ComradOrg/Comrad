@@ -18,6 +18,7 @@
 # NODES_PRIME = [("128.232.229.63",8467)] 
 LAST_N_IN_INBOX = 10
 
+
 ### Imports
 
 import os,time,sys,logging
@@ -177,7 +178,7 @@ class Api(object):
         self.log(f'connect() has node {node}')
         self._node = node
         return node
-
+    
 
     #@property
     def load_keys(self):
@@ -209,11 +210,15 @@ class Api(object):
         return self._keys
 
     async def personate(self,persona_name,create_if_missing=True):
-        persona = self.keys[persona_name] if persona_name in self.keys else None
-        if persona is None and create_if_missing:
-            self.keys[persona_name] = persona = Persona(persona_name, api=self, create_if_missing=True) 
-            await persona.boot()
+        persona = Persona(persona_name,api=self,create_if_missing=create_if_missing)
+        await persona.boot()
         return persona
+        # persona = self.keys[persona_name] if persona_name in self.keys else None
+        # if persona is None and create_if_missing:
+        #     self.keys[persona_name] = persona = Persona(persona_name, api=self, create_if_missing=create_if_missing) 
+        #     res = await persona.boot()
+        #     self.log('BOOT RESULT:',res)
+        # return persona
 
 
     async def upload(self,filename,file_id=None, uri='/file/',uri_part='/part/'):
@@ -501,5 +506,15 @@ async def test():
         api.log(key,'-->',val)
         # stop
 
+async def test_keyserver():
+    api = Api()
+    marx = await api.personate('marx')
+    elon = await api.personate('elon')
+    #marx = await api.personate(marx)
+    #res = await api.get_externally_signed_pubkey('marx')
+    #res = await api.get_externally_signed_pubkey('marx')
+    #return res
+
+
 if __name__=='__main__':
-    asyncio.run(test())
+    asyncio.run(test_keyserver())
