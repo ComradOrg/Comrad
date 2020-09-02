@@ -141,10 +141,7 @@ class Api(object):
         # load file-based keys
         self.load_keys()
 
-    @property
-    def app_person(self):
-        return self.keys['komrade']
-
+    
     async def connect_forever(self,save_every=60):
         try:
             i = 0
@@ -200,6 +197,7 @@ class Api(object):
         # break into types
         self.accounts = [self._keys[name] for name in priv_key_names]
         self.contacts = [self._keys[name] for name in pub_key_names]
+
         
         self.log('get_keys() loaded accounts:',self.accounts)
         self.log('get_keys() loaded contacts:',self.contacts)
@@ -300,61 +298,7 @@ class Api(object):
         
 
 
-    ## POSTING/SENDING MSGS
-
-    async def post(self,encrypted_payload_b64,to_person):
-        # double wrap
-        double_encrypted_payload = self.app_person.encrypt(encrypted_payload_b64, to_person.pubkey_b64)
-        self.log('double_encrypted_payload =',double_encrypted_payload)
-
-        post_id = get_random_binary_id() #get_random_id().encode()
-        node = await self.node
-
-        uri_post = P2P_PREFIX_POST + post_id
-        res = await node.set(uri_post, double_encrypted_payload)
-        self.log('result of post() =',res)
-
-        return uri_post
-
-    async def send(self,msg_b,from_person,to_person):
-        """
-        1) [Encrypted payload:]
-            1) Timestamp
-            2) Public key of sender
-            3) Public key of recipient
-            4) AES-encrypted Value
-        2) [Decryption tools]
-            1) AES-decryption key
-            2) AES decryption IV value
-        5) Signature of value by author
-        """
-        
-        if type(msg_b)==str: msg_b=msg_b.encode()
-        msg_b64=b64encode(msg_b)
-
-        # encrypt and sign
-        encrypted_payload = from_person.encrypt(msg_b64, to_person.pubkey_b64)
-        signed_encrypted_payload = from_person.sign(encrypted_payload)
-
-        # package
-        time_b64 = b64encode(str(time.time()).encode())
-        WDV_b64 = b64encode(BSEP.join([
-            signed_encrypted_payload,
-            from_person.pubkey_b64,
-            from_person.name_b64,
-            time_b64]))
-        self.log('WDV_b64 =',WDV_b64)
-
-        # post
-        post_id = await self.post(WDV_b64, to_person)
-        self.log('post_id <-',post_id)
-
-        # add to inbox
-        res = await to_person.add_to_inbox(post_id)
-        self.log('add_to_inbox <-',res)
-
-        # add to outbox?
-        # pass
+    
 
 
     async def read_inbox(self,uri_inbox=None):
@@ -509,18 +453,30 @@ async def test():
         # stop
 
 #async 
-def test_keyserver():
+async def test_keyserver():
     api = Api()
     marx = api.personate('marx')
     elon = api.personate('elon')
 
 
+
+
     zuck = api.personate('zuck')
+
+    print('marx',marx.pubkey_b64)
+
+    print('elon',elon.pubkey_b64)
+
+    print('zuck',zuck.pubkey_b64)
+
+
     #marx = await api.personate(marx)
     #res = await api.get_externally_signed_pubkey('marx')
     #res = await api.get_externally_signed_pubkey('marx')
     #return res
 
+    await elon.send(b'oh no',to=marx)
+
 
 if __name__=='__main__':
-    test_keyserver()
+    asyncio.run(test_keyserver())

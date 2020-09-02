@@ -224,7 +224,7 @@ class Persona(object):
         self.pubkey=pubkey_ext
         self.log('setting self.pubkey to external value:',self.pubkey)
         self.log('self.pubkey_64',self.pubkey_b64)
-        self.log('keyserver_verified',keyserver_verified)
+        self.log('keyserver_verified',self.pubkey_keyserver_verified)
         return {'success':'Met person as acquaintance'}
 
     def register(self):
@@ -251,35 +251,25 @@ class Persona(object):
         # load external keys
         self.load_external_keys()
 
-        # try to login?
-        if self.keyserver_name_exists() and self.has_private_key:
-            return self.login()
+        # user exists...
+        if self.keyserver_name_exists():
 
-        # otherwise, try to meet
-        elif self.keyserver_name_exists():
-            return self.meet()
+            # if I claim to be this person
+            if self.privkey and self.pubkey_decr:
+                attempt = self.login()
+                self.log('login attempt ->',attempt)
+                return attempt
 
-        # otherwise, try to login
-        else:
-            return self.register()
-        
+            # otherwise just meet them
+            attempt = self.meet()
+            self.log('meet attempt ->',attempt)
+            return attempt
 
-
-        
-
-    async def boot1(self):
-        self.log(f'>> Persona.boot()')
-        # self.load_or_gen()
-        await self.find_keys()
-        if self.pubkey is None and self.create_if_missing:
-            self.gen_keys()
-            await self.set_pubkey_p2p()
-
-        if self.privkey and self.pubkey:
-            return {'success':'Logged in...'}
-        return {'error':'Login failed'}
-
-
+        # user does not exist
+        attempt = self.register()
+        self.log('register attempt -->',attempt)
+        return attempt
+    
     @property
     def key_path_pub(self):
         return os.path.join(KEY_PATH_PUB,'.'+self.name+'.loc')
@@ -310,14 +300,6 @@ class Persona(object):
     def signed_pubkey_b64(self):
         return self.sign(self.pubkey_b64)
         # return self.encrypt(self.pubkey_b64, self.pubkey_b64)
-
-    # @property
-    # def encrypted_pubkey_b64(self):
-    #     self.log('encrypting!',self.pubkey_b64, KOMRADE_PRIV_KEY)
-    #     res = self.encrypt(self.pubkey_b64, self.pubkey_b64, self.app_person.privkey_b64)
-    #     self.log('RES!?',res)
-    #     return res
-
     
     ## genearating keys
     
@@ -403,66 +385,7 @@ class Persona(object):
         return {'error':'Keys did not match'}
 
         
- 
-    ## finding on p2p net
-    async def find_keys_p2p(self,name=None):
-        await self.node
-        
-        if not name: name=self.name
-        self.log(f'find_keys_p2p(name={name})')
-        name_b64=b64encode(name.encode())
-        
-
-        node = await self.node
-        key=P2P_PREFIX+name.encode()
-
-        self.log(f'LOOKING FOR: {key}')
-        res = await node.get(key)
-        self.log(f'FOUND: {res}')
-
-        if res is not None:
-            signed_msg,pubkey_b64 = b64decode(res).split(BSEP)
-            self.log('!!!!!',signed_msg,pubkey_b64)
-            verified_msg = self.verify(signed_msg,pubkey_b64)
-
-            if verified_msg is not None:
-                self.log('verified message!',verified_msg)
-                name,pubkey_b64 = verified_msg.split(BSEP2)
-                self.pubkey = b64decode(pubkey_b64)
-                self.name = b64decode(name).decode()
-                print('>> found pubkey!',self.pubkey_b64,'and name',self.name)
-
-                ## save back to cache?
-                self.save_pubkey(pubkey_b64)
-
-    async def find_keys(self):
-        #self.find_keys_local()   # <- now doing this, which is not async, in __init__()
-        if self.pubkey is None:
-            await self.find_keys_p2p()
-            # if self.pubkey is not None:
-            #     # save back to local cache?
-
-    def save_pubkey(self,pubkey_b64):
-        with open(self.key_path_pub, "wb") as public_key_file:
-           public_key_file.write(pubkey_b64)
-           self.log('>> saved:',self.key_path_pub)
-
-    # async def set_pubkey_p2p(self):
-    #     # signed_name = self.sign(b64encode(self.name.encode()))
-    #     # signed_pubkey_b64 = self.sign(self.pubkey_b64)
-        
-    #     self.log(f'set_pubkey_p2p()...')
-        
-    #     signed_msg = self.sign(self.name_b64 + BSEP2 + self.pubkey_b64)
-    #     package = b64encode(signed_msg + BSEP +self.pubkey_b64)
-    #     #await self.api.set('/pubkey/'+self.name,package,encode_data=False)
-
-    #     key=P2P_PREFIX+self.name.encode()
-    #     newval=package
-    #     self.log('set_pubkey()',key,'-->',newval)
-    #     node = await self.node
-    #     return await node.set(key,newval)
-
+    
 
 
 
@@ -510,17 +433,6 @@ class Persona(object):
             return None
     
 
-    ## EVEN HIGHER LEVEL STUFF: person 2 person
-
-    @property
-    async def world(self): return self.api.keys['world']
-
-    @property
-    async def komrade(self): return self.api.keys['komrade']
-
-
-    async def send(self,msg_b,to):
-        return await self.api.send(msg_b,self,to)
 
 
     @property
@@ -532,12 +444,78 @@ class Persona(object):
         return P2P_PREFIX_OUTBOX+self.name.encode()
 
     @property
-    def app_person(self):
-        return self.api.keys['komrade']
-
-    @property
     def app_pubkey_b64(self):
-        return self.app_person.pubkey_b64
+        return KOMRADE_PUB_KEY
+
+
+
+
+    ## POSTING/SENDING MSGS
+
+    async def post(self,encrypted_payload_b64,to_person):
+        # double wrap
+        double_encrypted_payload = self.encrypt(encrypted_payload_b64, to_person.pubkey_b64, KOMRADE_PRIV_KEY) 
+        self.log('double_encrypted_payload =',double_encrypted_payload)
+
+        post_id = get_random_binary_id() #get_random_id().encode()
+        node = await self.node
+
+        uri_post = P2P_PREFIX_POST + post_id
+        res = await node.set(uri_post, double_encrypted_payload)
+        self.log('result of post() =',res)
+
+        return uri_post
+
+    async def send(self,msg_b,to,from_person=None):
+        """
+        1) [Encrypted payload:]
+            1) Timestamp
+            2) Public key of sender
+            3) Public key of recipient
+            4) AES-encrypted Value
+        2) [Decryption tools]
+            1) AES-decryption key
+            2) AES decryption IV value
+        5) Signature of value by author
+        """
+        
+        if type(msg_b)==str: msg_b=msg_b.encode()
+        msg_b64=b64encode(msg_b)
+
+        # encrypt and sign
+        to_person = to
+        if from_person is None: from_person = self
+        encrypted_payload = from_person.encrypt(msg_b64, to_person.pubkey_b64)
+        signed_encrypted_payload = from_person.sign(encrypted_payload)
+
+        # package
+        time_b64 = b64encode(str(time.time()).encode())
+        WDV_b64 = b64encode(BSEP.join([
+            signed_encrypted_payload,
+            from_person.pubkey_b64,
+            from_person.name_b64,
+            time_b64]))
+        self.log('WDV_b64 =',WDV_b64)
+
+        # post
+        post_id = await self.post(WDV_b64, to_person)
+        self.log('post_id <-',post_id)
+
+        # add to inbox
+        res = await to_person.add_to_inbox(post_id)
+        self.log('add_to_inbox <-',res)
+
+        # add to outbox?
+        # pass
+
+
+
+
+
+
+
+
+
 
     async def load_inbox(self,decrypt_msg_uri=False,last=None):
         node = await self.node
@@ -556,7 +534,7 @@ class Persona(object):
         self.log('inbox_ids =',inbox_ids)
         
         if decrypt_msg_uri:
-            inbox_ids = [self.decrypt(enc_msg_id_b64,self.app_person.pubkey_b64) for enc_msg_id_b64 in inbox_ids]
+            inbox_ids = [self.decrypt(enc_msg_id_b64,KOMRADE_PUB_KEY) for enc_msg_id_b64 in inbox_ids]
             self.log('inbox_ids decrypted =',inbox_ids)
 
         return inbox_ids[:last]
@@ -564,7 +542,7 @@ class Persona(object):
     async def add_to_inbox(self,msg_uri,inbox_sofar=None):
         # encrypt msg id so only inbox owner can resolve the pointer
         self.log('unencrypted msg uri:',msg_uri)
-        encrypted_msg_uri = self.app_person.encrypt(msg_uri, self.pubkey_b64)
+        encrypted_msg_uri = self.encrypt(msg_uri, self.pubkey_b64, KOMRADE_PRIV_KEY)
         self.log('encrypted msg uri:',encrypted_msg_uri)
 
         # get current inbox
@@ -618,13 +596,12 @@ class Persona(object):
         self.log(f'Persona.read_msg({msg_id}) ?')
         uri_msg=P2P_PREFIX_POST+msg_id
         node = await self.node
-        komrade = await self.komrade
             
         res = await node.get(uri_msg)
         self.log('res = ',res)
         if res is not None:
             double_encrypted_payload_b64 = res
-            single_encrypted_payload = self.decrypt(double_encrypted_payload_b64, komrade.pubkey_b64)
+            single_encrypted_payload = self.decrypt(double_encrypted_payload_b64, KOMRADE_PUB_KEY)
             self.log('GOT ENRYPTED PAYLOAD:',single_encrypted_payload)
 
             signed_encrypted_payload_b64,from_pubkey_b64,name_b64,time_b64 = single_encrypted_payload.split(BSEP)
@@ -681,9 +658,6 @@ async def main():
     world = Persona('world',node=node)
     await world.boot()
 
-    # komrade = Persona('komrade')
-    # await komrade.boot()
-    
 
     await marx.boot()
     await elon.boot()
