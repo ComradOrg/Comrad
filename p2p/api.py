@@ -175,6 +175,52 @@ class Api(object):
         self.log(f'connect() has node {node}')
         self._node = node
         return node
+
+    def get_tor_python_session(self):
+        # from torpy.http.requests import TorRequests
+        # with TorRequests() as tor_requests:
+        #     with tor_requests.get_session() as s:
+        # #         return s
+        # from torpy.http.requests import tor_requests_session
+        # with tor_requests_session() as s:  # returns requests.Session() object
+        #     return s
+        pass
+
+            
+
+    def get_tor_proxy_session(self):
+        session = requests.session()
+        # Tor uses the 9050 port as the default socks port
+        session.proxies = {'http':  'socks5://127.0.0.1:9050',
+                        'https': 'socks5://127.0.0.1:9050'}
+        return session    
+
+    def get_async_tor_proxy_session(self):
+        from requests_futures.sessions import FuturesSession
+        session = FuturesSession()
+        # Tor uses the 9050 port as the default socks port
+        session.proxies = {'http':  'socks5://127.0.0.1:9050',
+                        'https': 'socks5://127.0.0.1:9050'}
+        return session    
+
+
+
+
+    def tor_request(self,url,method='get',data=None):
+        with self.get_tor_proxy_session() as s:
+            if method=='get':
+                return s.get(url)
+            elif method=='post':
+                self.log('data',data)
+                return s.post(url,data=data)
+
+
+    def request(self,Q,**kwargs):
+        self.log('request() Q:',Q)
+        res = self.tor_request(Q,**kwargs)
+        self.log('reqeust() <-',res)
+        return res
+        
     
 
     #@property

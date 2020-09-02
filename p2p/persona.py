@@ -154,8 +154,8 @@ class Persona(object):
 
     def get_keyserver_pubkey(self):
         Q=f'http://{KEYSERVER_ADDR}:{KEYSERVER_PORT}/pub'
-        self.log('Q:',Q)
-        r = requests.get(Q)
+        
+        r = self.api.request(Q)
         return r.content
         # self.log('r =',r,b64encode(r.content))
         # pubkey_b64 = b64encode(r.content)
@@ -164,7 +164,7 @@ class Persona(object):
     def get_externally_signed_pubkey(self):
         Q=f'http://{KEYSERVER_ADDR}:{KEYSERVER_PORT}/get/{self.name}'
         self.log('Q:',Q)
-        r = requests.get(Q)
+        r = self.api.request(Q)
         package_b64 = r.content
         package = b64decode(package_b64)
         self.log('package <--',package)
@@ -218,13 +218,17 @@ class Persona(object):
         return not user_missing
 
 
-    def meet(self):
+    def meet(self,save_loc=True):
         pubkey_ext = b64decode(self.pubkey_keyserver_verified)
         self.log('pubkey_ext',pubkey_ext)
         self.pubkey=pubkey_ext
         self.log('setting self.pubkey to external value:',self.pubkey)
         self.log('self.pubkey_64',self.pubkey_b64)
         self.log('keyserver_verified',self.pubkey_keyserver_verified)
+        
+        with open(self.key_path_pub,'wb') as of:
+            of.write(self.pubkey_keyserver_verified)
+        
         return {'success':'Met person as acquaintance'}
 
     def register(self):
