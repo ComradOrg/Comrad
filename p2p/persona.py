@@ -124,12 +124,22 @@ class Persona(object):
         self.privkey=None
         self.pubkey=None
         self.api=api
+
+        self.can_receive = False
+        self.can_send = False
+        # self.can_login = False
+        self.external_keys_loaded = False
+
+
+        self.pubkey_enc = None
+        self.pubkey_decr = None
+
         # self._node=node
         self.create_if_missing=create_if_missing
         # self.log(f'>> Persona.__init__(name={name},create_if_missing={create_if_missing})')
 
         # load at least any local keys (non-async)
-        # self.find_keys_local()
+        self.find_keys_local()
         # self.login_or_register()
 
     
@@ -187,97 +197,75 @@ class Persona(object):
         node = await self.api.node
         return node
 
-    def login_or_register(self):
-        keyserver_pubkey_b64 = self.get_keyserver_pubkey()
-        keyserver_pubkey = b64decode(keyserver_pubkey_b64)
-        self.log('keyserver_pubkey =',keyserver_pubkey)
-        if keyserver_pubkey is None: return {'error':'Cannot conntact keyserver'}
-        
 
-        pubkey_ext_b64, signed_pubkey_ext_b64, server_signed_pubkey_ext_b64 = self.get_externally_signed_pubkey()
-        
-        self.log('pubkey_ext_b64 =',pubkey_ext_b64)
-        self.log('signed_pubkey_ext_b64 =',signed_pubkey_ext_b64)
-        self.log('server_signed_pubkey_ext_b64 =',server_signed_pubkey_ext_b64)
+    def load_keyserver_pubkey(self):
+        self.keyserver_pubkey_b64 = self.get_keyserver_pubkey()
+        self.keyserver_pubkey = b64decode(self.keyserver_pubkey_b64)
+        self.log('keyserver_pubkey =',self.keyserver_pubkey)
+        return self.keyserver_pubkey
 
-        # does not exist
-        if pubkey_ext_b64 is b'' or signed_pubkey_ext_b64 is b'' or server_signed_pubkey_ext_b64 is b'':
-            # register
-            if self.create_if_missing:
-                self.gen_keys()
-                res = self.set_externally_signed_pubkey()
-                self.log('set_externally_signed_pubkey res =',res)
-                if res is None:
-                    return {'error':'Could not set externally signed pubkey'}
-                else:
-                    return {'success':'Created new pubkey'}
+    def load_external_keys(self):
+        if self.external_keys_loaded: return
+
+        self.pubkey_ext_b64, self.signed_pubkey_ext_b64, self.server_signed_pubkey_ext_b64 = self.get_externally_signed_pubkey()
+        self.log('pubkey_ext_b64 =',self.pubkey_ext_b64)
+        self.log('signed_pubkey_ext_b64 =',self.signed_pubkey_ext_b64)
+        self.log('server_signed_pubkey_ext_b64 =',self.server_signed_pubkey_ext_b64)
+        self.external_keys_loaded = True
+
+    def keyserver_name_exists(self):
+        user_missing = (self.pubkey_ext_b64 is b'' or self.signed_pubkey_ext_b64 is b'' or self.server_signed_pubkey_ext_b64 is b'')
+        return not user_missing
+
+
+    def meet(self):
+        pubkey_ext = b64decode(self.pubkey_keyserver_verified)
+        self.log('pubkey_ext',pubkey_ext)
+        self.pubkey=pubkey_ext
+        self.log('setting self.pubkey to external value:',self.pubkey)
+        self.log('self.pubkey_64',self.pubkey_b64)
+        self.log('keyserver_verified',keyserver_verified)
+        return {'success':'Met person as acquaintance'}
+
+    def register(self):
+        # register
+        if self.create_if_missing:
+            self.gen_keys()
+            res = self.set_externally_signed_pubkey()
+            self.log('set_externally_signed_pubkey res =',res)
+            if res is None:
+                return {'error':'Could not set externally signed pubkey'}
             else:
-                return {'error':'No public key externally, but create_if_missing==False'}
+                return {'success':'Created new pubkey'}
         else:
-            # check keyserver is telling truth
-            
-            keyserver_verified = self.verify(server_signed_pubkey_ext_b64, keyserver_pubkey_b64)
-            if keyserver_verified is None: 
-                return {'error':'Keyserver verification failed'}
+            return {'error':'No public key externally, but create_if_missing==False'}
 
-            # do I have local copies?
-            self.find_keys_local()
 
-            self.log('self.pubkey_b64 on disk is',self.pubkey_b64)
-            self.log('pubkey_ext_b64 on server is',pubkey_ext_b64)
-            self.log('signed_pubkey_ext_b64 =',signed_pubkey_ext_b64)
-            # self.log('self.signed_pubkey_b64',self.signed_pubkey_b64)
-            self.log('keyserver_verified',keyserver_verified)
-            #pubkeys_match = self.verify(signed_pubkey_ext_b64, self.pubkey_b64)
-            
-            # pubkeys_match = (self.pubkey_b64 == pubkey_ext_b64) and (self.pubkey_b64 == keyserver_verified)
-            
-            # pubkey_ext = b64decode(pubkey_ext_b64)
-            pubkey_b64 = b64encode(self.pubkey)
-            # self.log('pubkey_ext =',pubkey_ext)
-            # me_verified = self.verify(signed_pubkey_ext_b64, pubkey_b64)
-            # self.log('me_verified =',me_verified)
-            me_verified = True
-            
-            # pubkeys_match = pubkey_b64 == pubkey_ext_b64
-            pubkeys_match = True
-            self.log('pubkeys_match',pubkeys_match)
-            ok_to_load_as_acquaintance = bool(keyserver_verified)
-            
-            enc_match = False
-            if os.path.exists(self.key_path_pub_enc):
-                with open(self.key_path_pub_enc,'rb') as f:
-                    key_pub_enc=f.read()
-                    self.log('key_pub_enc =',key_pub_enc)
-                    decr_pub_key = self.decrypt(key_pub_enc, KOMRADE_PUB_KEY, self.privkey_b64)
-                    self.log('decr_pub_key',decr_pub_key)
-                    self.log('keyserver_verified',keyserver_verified)
-                    enc_match = decr_pub_key == keyserver_verified
-
-            ok_to_login = enc_match
-            
-            
-            
-            # self.log('my_server_signed_pubkey_b64 on disk is',my_server_signed_pubkey_b64)
-            # self.log('server_signed_pubkey_ext_b64 on server is',server_signed_pubkey_ext_b64)
-            
-
-            if ok_to_login:
-                # I CLAIM TO *BE* THIS PERSON
-                return {'success':'Logging back in'}
-            # elif ok_to_load_as_contact:
-            #     return {'success':'Loaded as contact'}
-            # elif ok_to_load_as_acquaintance:
-            else:
-                # just meeting this person as a contact
-                self.pubkey=pubkey_ext
-                self.log('setting self.pubkey to external value:',self.pubkey)
-                return {'success':'Met person as acquaintance'}
+    # login, meet, or register
+    def boot(self):
+        # keyserver active?
+        keyserver_pubkey = self.keyserver_pubkey = self.load_keyserver_pubkey()
+        if keyserver_pubkey is None:
+            return {'error':'Cannot conntact keyserver'}
         
-    async def boot(self):
-        res = self.login_or_register()
-        self.log('boot -->',res)
-        return res
+        # load external keys
+        self.load_external_keys()
+
+        # try to login?
+        if self.keyserver_name_exists() and self.has_private_key:
+            return self.login()
+
+        # otherwise, try to meet
+        elif self.keyserver_name_exists():
+            return self.meet()
+
+        # otherwise, try to login
+        else:
+            return self.register()
+        
+
+
+        
 
     async def boot1(self):
         self.log(f'>> Persona.boot()')
@@ -298,7 +286,7 @@ class Persona(object):
 
     @property
     def key_path_pub_enc(self):
-        return os.path.join(KEY_PATH_PUB,'.'+self.name+'.loc.enc')
+        return os.path.join(KEY_PATH_PUB,'.'+self.name+'.loc.box')
 
 
     @property
@@ -343,9 +331,9 @@ class Persona(object):
         with open(self.key_path_priv, "wb") as private_key_file:
             private_key_file.write(self.privkey_b64)
 
-        # with open(self.key_path_pub, "wb") as public_key_file:
-        #     # save SIGNED public key
-        #     public_key_file.write(self.pubkey_b64)
+        with open(self.key_path_pub, "wb") as public_key_file:
+            # save SIGNED public key
+            public_key_file.write(self.pubkey_b64)
         
         with open(self.key_path_pub_enc,'wb') as signed_public_key_file:
             # self.log('encrypted_pubkey_b64 -->',self.encrypted_pubkey_b64)
@@ -368,14 +356,51 @@ class Persona(object):
             with open(self.key_path_priv) as priv_f:
                 self.privkey=b64decode(priv_f.read())
 
-        # if os.path.exists(self.key_path_pub):
-        #     with open(self.key_path_pub) as pub_f:
-        #         self.pubkey=b64decode(pub_f.read())
-        
+        # Load from encrypted?
         if os.path.exists(self.key_path_pub_enc) and self.privkey:
             with open(self.key_path_pub_enc) as pub_f:
-                self.pubkey=self.decrypt(pub_f.read(), KOMRADE_PUB_KEY)
-                self.log('loaded self.pubkey',self.pubkey)
+                self.pubkey_enc=pub_f.read()
+                self.pubkey_decr=self.decrypt(self.pubkey_enc, KOMRADE_PUB_KEY)
+                # self.pubkey=self.pubkey_decr
+                self.log('loaded self.pubkey from enc',self.pubkey)
+                self.can_receive = True
+                self.can_send = True
+        
+        # load from nonencrypted pubkey?
+        if os.path.exists(self.key_path_pub):
+            with open(self.key_path_pub) as pub_f:
+                self.pubkey=b64decode(pub_f.read())
+                self.log('loaded self.pubkey from UNenc',self.pubkey)
+                self.can_receive = True
+
+    @property
+    def pubkey_keyserver_verified(self):
+        # test if remote data agrees
+        if not hasattr(self,'_keyserver_verified'):
+            self._keyserver_verified = self.verify(self.server_signed_pubkey_ext_b64, self.keyserver_pubkey_b64)
+        return self._keyserver_verified
+            
+    def login(self):
+        # test if local data present
+        if not self.pubkey or not self.pubkey_decr:
+            return {'error':'Public keys not present'}
+
+        # test if local data agrees
+        self.log('self.pubkey',self.pubkey_b64)
+        self.log('self.pubkey_decr',self.pubkey_decr)
+        if self.pubkey_b64 != self.pubkey_decr:
+            return {'error':'Public keys do not match'}
+
+        # test if remote data agrees
+        keyserver_verified = self.pubkey_keyserver_verified
+        if keyserver_verified is None: 
+            return {'error':'Keyserver verification failed'}
+
+        # test if pubkey match
+        enc_match = self.pubkey_decr == keyserver_verified
+        if enc_match:
+            return {'success':'Keys matched'}
+        return {'error':'Keys did not match'}
 
         
  

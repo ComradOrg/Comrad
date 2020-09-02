@@ -209,9 +209,11 @@ class Api(object):
         if not hasattr(self,'_keys'): self.load_keys()
         return self._keys
 
-    async def personate(self,persona_name,create_if_missing=True):
+    #async 
+    def personate(self,persona_name,create_if_missing=True):
         persona = Persona(persona_name,api=self,create_if_missing=create_if_missing)
-        await persona.boot()
+        res = persona.boot()
+        self.log('personate() res =',res)
         return persona
         # persona = self.keys[persona_name] if persona_name in self.keys else None
         # if persona is None and create_if_missing:
@@ -506,13 +508,14 @@ async def test():
         api.log(key,'-->',val)
         # stop
 
-async def test_keyserver():
+#async 
+def test_keyserver():
     api = Api()
-    marx = await api.personate('marx')
-    elon = await api.personate('elon')
+    marx = api.personate('marx')
+    elon = api.personate('elon')
 
 
-    zuck = await api.personate('zuck')
+    zuck = api.personate('zuck')
     #marx = await api.personate(marx)
     #res = await api.get_externally_signed_pubkey('marx')
     #res = await api.get_externally_signed_pubkey('marx')
@@ -520,4 +523,4 @@ async def test_keyserver():
 
 
 if __name__=='__main__':
-    asyncio.run(test_keyserver())
+    test_keyserver()
