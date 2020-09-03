@@ -1,6 +1,6 @@
-<mxfile host="app.diagrams.net" modified="2020-09-03T10:07:06.002Z" agent="5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36" etag="0QaRk_xoEv-CGnJDhgsz" version="13.6.6" type="github">
+<mxfile host="app.diagrams.net" modified="2020-09-03T10:11:25.334Z" agent="5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36" etag="kXGJ0ukojSbf5BuG_5_n" version="13.6.6" type="github" pages="3">
   <diagram id="C5RBs43oDa-KdzZeNtuy" name="Login/Register">
-    <mxGraphModel dx="1066" dy="845" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1066" dy="2014" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="WIyWlLk6GJQsqaUBKTNV-0" />
         <mxCell id="WIyWlLk6GJQsqaUBKTNV-1" parent="WIyWlLk6GJQsqaUBKTNV-0" />
@@ -12,7 +12,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="WIyWlLk6GJQsqaUBKTNV-3" value="I try to login/register with username &quot;marx&quot;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+        <mxCell id="WIyWlLk6GJQsqaUBKTNV-3" value="I try to meet/login as/register username &quot;marx&quot;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
           <mxGeometry x="380.462962962963" width="120" height="40" as="geometry" />
         </mxCell>
         <mxCell id="WIyWlLk6GJQsqaUBKTNV-4" value="Yes" style="rounded=0;html=1;jettySize=auto;orthogonalLoop=1;fontSize=11;endArrow=block;endFill=0;endSize=8;strokeWidth=1;shadow=0;labelBackgroundColor=none;edgeStyle=orthogonalEdgeStyle;noEdgeStyle=1;orthogonal=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="WIyWlLk6GJQsqaUBKTNV-6" target="UarGHlLd0uthddKlq-wd-3" edge="1">
@@ -48,7 +48,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="UarGHlLd0uthddKlq-wd-3" value="Download its public key, which is encrypted for Komrade, from Keyserver&lt;br&gt;&lt;br&gt;Decrypt Keyserver&#39;s public key" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+        <mxCell id="UarGHlLd0uthddKlq-wd-3" value="Download Keyserver&#39;s public key, which is encrypted for Komrade, from Keyserver&lt;br&gt;&lt;br&gt;Decrypt Keyserver&#39;s public key" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
           <mxGeometry x="242.5" y="320" width="205" height="80" as="geometry" />
         </mxCell>
         <mxCell id="UarGHlLd0uthddKlq-wd-9" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;noEdgeStyle=1;orthogonal=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="UarGHlLd0uthddKlq-wd-5" target="UarGHlLd0uthddKlq-wd-27" edge="1">
@@ -80,8 +80,9 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="pqJTde5UYUQTvpoNPmt8-1" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;noEdgeStyle=1;orthogonal=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="UarGHlLd0uthddKlq-wd-14" target="pqJTde5UYUQTvpoNPmt8-0">
+        <mxCell id="pqJTde5UYUQTvpoNPmt8-1" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;noEdgeStyle=1;orthogonal=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="UarGHlLd0uthddKlq-wd-14" target="LL1DRk6oRKZlNUp4qJ55-0">
           <mxGeometry relative="1" as="geometry">
+            <mxPoint x="625.625" y="1245" as="targetPoint" />
             <Array as="points">
               <mxPoint x="562.4100000000001" y="1092" />
               <mxPoint x="625.625" y="1168" />
@@ -277,9 +278,6 @@
         <mxCell id="UarGHlLd0uthddKlq-wd-123" value="Login successful" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;fillColor=#d5e8d4;strokeColor=#82b366;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
           <mxGeometry x="640" y="2702.5" width="175" height="50" as="geometry" />
         </mxCell>
-        <mxCell id="pqJTde5UYUQTvpoNPmt8-0" value="Login failed. You claim to be marx but do not have his private key." style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
-          <mxGeometry x="561.63" y="1245" width="127.99" height="50" as="geometry" />
-        </mxCell>
         <mxCell id="pqJTde5UYUQTvpoNPmt8-3" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;noEdgeStyle=1;orthogonal=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="pqJTde5UYUQTvpoNPmt8-2" target="pqJTde5UYUQTvpoNPmt8-4">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="60" y="530" as="targetPoint" />
@@ -303,6 +301,25 @@
         <mxCell id="pqJTde5UYUQTvpoNPmt8-4" value="Login/register failed. Keyserver may be inauthentic." style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
           <mxGeometry x="268.595" y="782.5" width="135.62" height="55" as="geometry" />
         </mxCell>
+        <mxCell id="LL1DRk6oRKZlNUp4qJ55-0" value="Attempt meet" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="610" y="1270" width="120" height="40" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="389PNDcMlEOF428ntzAT" name="Initialize Keyserver">
+    <mxGraphModel dx="906" dy="718" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="rmWX_bm3A8y1wPHU716J-0" />
+        <mxCell id="rmWX_bm3A8y1wPHU716J-1" parent="rmWX_bm3A8y1wPHU716J-0" />
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="NBmGajsKU7DFJceESM1I" name="Meeting contact">
+    <mxGraphModel dx="906" dy="718" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="PqcPHuyIlmMLEQzt4gBB-0" />
+        <mxCell id="PqcPHuyIlmMLEQzt4gBB-1" parent="PqcPHuyIlmMLEQzt4gBB-0" />
       </root>
     </mxGraphModel>
   </diagram>
