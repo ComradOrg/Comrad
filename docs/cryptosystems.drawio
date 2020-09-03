@@ -1,6 +1,6 @@
-<mxfile host="app.diagrams.net" modified="2020-09-03T11:05:59.303Z" agent="5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36" etag="QpzFsQnyyAThAdIeYzCp" version="13.6.6" type="github" pages="3">
+<mxfile host="app.diagrams.net" modified="2020-09-03T11:12:14.139Z" agent="5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36" etag="370wp7n6MphRSGGjts0S" version="13.6.6" type="github" pages="3">
   <diagram id="C5RBs43oDa-KdzZeNtuy" name="Login/Register">
-    <mxGraphModel dx="906" dy="718" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="2265" dy="1795" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="WIyWlLk6GJQsqaUBKTNV-0" />
         <mxCell id="WIyWlLk6GJQsqaUBKTNV-1" parent="WIyWlLk6GJQsqaUBKTNV-0" />
@@ -257,7 +257,7 @@
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="727.5" y="2712.25" />
-              <mxPoint x="727.5" y="2788.25" />
+              <mxPoint x="538.7049999999999" y="2788.25" />
             </Array>
           </mxGeometry>
         </mxCell>
@@ -276,7 +276,7 @@
           <mxGeometry x="74.11509259259259" y="2359" width="225" height="70" as="geometry" />
         </mxCell>
         <mxCell id="UarGHlLd0uthddKlq-wd-123" value="Login successful" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;fillColor=#d5e8d4;strokeColor=#82b366;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
-          <mxGeometry x="640" y="2800.25" width="175" height="50" as="geometry" />
+          <mxGeometry x="451.2049999999999" y="2840.25" width="175" height="50" as="geometry" />
         </mxCell>
         <mxCell id="pqJTde5UYUQTvpoNPmt8-3" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;noEdgeStyle=1;orthogonal=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="pqJTde5UYUQTvpoNPmt8-2" target="pqJTde5UYUQTvpoNPmt8-4">
           <mxGeometry relative="1" as="geometry">
@@ -380,14 +380,64 @@
         <mxCell id="LL1DRk6oRKZlNUp4qJ55-10" value="Meet failed. You say you are elon, but your request was indecipherable in elon-ese." style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
           <mxGeometry x="870" y="2605.25" width="160" height="70" as="geometry" />
         </mxCell>
-        <mxCell id="LL1DRk6oRKZlNUp4qJ55-16" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="LL1DRk6oRKZlNUp4qJ55-13" target="LL1DRk6oRKZlNUp4qJ55-15">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="LL1DRk6oRKZlNUp4qJ55-16" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;noEdgeStyle=1;orthogonal=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="LL1DRk6oRKZlNUp4qJ55-13" target="LL1DRk6oRKZlNUp4qJ55-15">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1148.705" y="2712.25" />
+              <mxPoint x="962.8672455464828" y="2788.25" />
+            </Array>
+          </mxGeometry>
         </mxCell>
         <mxCell id="LL1DRk6oRKZlNUp4qJ55-13" value="&lt;div&gt;&lt;span&gt;[Server]&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Encrypt marx&#39;s public key&lt;/div&gt;&lt;div&gt;(to elon, from Keyserver)&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Send marx&#39;s encrypted public key back to client&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;align=center;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
           <mxGeometry x="1060" y="2580.25" width="177.41" height="120" as="geometry" />
         </mxCell>
+        <mxCell id="LL1DRk6oRKZlNUp4qJ55-18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;noEdgeStyle=1;orthogonal=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="LL1DRk6oRKZlNUp4qJ55-15" target="LL1DRk6oRKZlNUp4qJ55-17">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="962.8672455464828" y="2942.25" />
+              <mxPoint x="778.4703488087521" y="3018.25" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
         <mxCell id="LL1DRk6oRKZlNUp4qJ55-15" value="&lt;div&gt;[Client]&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Receive marx&#39;s encrypted public key&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Try to decrypt it (to me, from: Keyserver)&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;align=center;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
-          <mxGeometry x="1060" y="2780" width="130" height="130" as="geometry" />
+          <mxGeometry x="897.8672455464828" y="2800.25" width="130" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="LL1DRk6oRKZlNUp4qJ55-20" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;noEdgeStyle=1;orthogonal=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="LL1DRk6oRKZlNUp4qJ55-17" target="LL1DRk6oRKZlNUp4qJ55-19">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="740.9703488087521" y="3192.25" />
+              <mxPoint x="598.1910973242464" y="3268.25" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="LL1DRk6oRKZlNUp4qJ55-24" value="Yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;noEdgeStyle=1;orthogonal=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="LL1DRk6oRKZlNUp4qJ55-17" target="LL1DRk6oRKZlNUp4qJ55-23">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="815.9703488087521" y="3192.25" />
+              <mxPoint x="777.0807230664992" y="3268.25" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="LL1DRk6oRKZlNUp4qJ55-17" value="Can I (elon) decrypt the sever&#39;s response of marx&#39;s encrypted pubkey?" style="rhombus;whiteSpace=wrap;html=1;shadow=0;fontFamily=Helvetica;fontSize=12;align=center;strokeWidth=1;spacing=6;spacingTop=-4;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="698.4703488087521" y="3030.25" width="160" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="LL1DRk6oRKZlNUp4qJ55-19" value="Meet failed. Either Keysever not authentic according to me, or I&#39;m not authentic according to Keysever." style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="520.6910973242464" y="3280.25" width="155" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="LL1DRk6oRKZlNUp4qJ55-25" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;noEdgeStyle=1;orthogonal=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="LL1DRk6oRKZlNUp4qJ55-23" target="LL1DRk6oRKZlNUp4qJ55-26">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1350" y="3440" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="777.0807230664992" y="3382.25" />
+              <mxPoint x="777.0807230664992" y="3458.25" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="LL1DRk6oRKZlNUp4qJ55-23" value="Meet succeeded. I now have marx&#39;s pubic key." style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="707.0807230664992" y="3290.25" width="140" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="LL1DRk6oRKZlNUp4qJ55-26" value="&lt;div&gt;[Client] (optional)&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Encrypt marx&#39;s public key with my passphrase-key&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Store marx&#39;s symmetric-encrypted public key on disk (.marx.loc)&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;align=center;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="687.0807230664992" y="3470.25" width="180" height="130" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
