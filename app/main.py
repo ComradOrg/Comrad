@@ -302,31 +302,6 @@ class MainApp(MDApp):
     
 
 
-    def register(self,un):
-        async def do():
-            self.persona = persona = Persona(un,node=await self.node)
-            
-            dat = await persona.boot()
-            
-            #dat = await self.api.register(un)
-            if 'success' in dat:
-                self.username=un
-                self.store.put('user',username=un)
-                self.root.ids.login_screen.login_status.text=dat['success']
-                self.root.ids.login_screen.login_status.theme_text_color='Custom'
-                self.root.ids.login_screen.login_status.text_color=rgb(*COLOR_ACCENT)
-                await asyncio.sleep(1)
-                #self.save_login(dat)
-                # self.change_screen_from_uri('/inbox/world')
-                self.change_screen('profile')
-                return True
-            elif 'error' in dat:
-                self.root.ids.login_screen.login_status.text=dat['error']
-                # await asyncio.sleep(3)
-                # self.change_screen_from_uri('/inbox/world')
-                return False
-        asyncio.create_task(do())
-
     async def upload(self,filename,file_id=None):
         self.log('uploading filename:',filename)
         rdata=await self.api.upload(filename,file_id=file_id)
