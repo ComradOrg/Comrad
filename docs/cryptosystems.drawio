@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2020-09-03T12:05:25.481Z" agent="5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36" etag="K_It-IlfWQcnMJIetKng" version="13.6.6" type="github" pages="2">
+<mxfile host="app.diagrams.net" modified="2020-09-03T12:39:35.582Z" agent="5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36" etag="if4ZmFWnWqMQ3JVI1wa1" version="13.6.6" type="github" pages="2">
   <diagram id="C5RBs43oDa-KdzZeNtuy" name="Login/Register">
     <mxGraphModel dx="2205" dy="860" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -114,14 +114,6 @@
         </mxCell>
         <mxCell id="UarGHlLd0uthddKlq-wd-29" value="Attempt login" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
           <mxGeometry x="563.5070318930042" y="1280" width="120" height="40" as="geometry" />
-        </mxCell>
-        <mxCell id="vqK7_8CrzfybD09zykYy-32" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;noEdgeStyle=1;orthogonal=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="UarGHlLd0uthddKlq-wd-35" target="vqK7_8CrzfybD09zykYy-31">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="193.70500000000004" y="1893" />
-              <mxPoint x="219.41803840877915" y="1969" />
-            </Array>
-          </mxGeometry>
         </mxCell>
         <mxCell id="UarGHlLd0uthddKlq-wd-35" value="&lt;div&gt;&lt;span&gt;[Client]&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;br&gt;&lt;/span&gt;&lt;/div&gt;&lt;span&gt;Generate pub/private key pair&lt;br&gt;(Themis, GenerateKeyPair, EC)&lt;br&gt;&lt;/span&gt;&lt;br&gt;&lt;span&gt;Encrypt pub/private key pair with passphrase or symmetric key&amp;nbsp;&lt;/span&gt;&lt;span&gt;(Themis, SecureCell)&lt;br&gt;&lt;/span&gt;&lt;br&gt;&lt;span&gt;Save in:&amp;nbsp;&lt;/span&gt;&lt;span&gt;~/.komrade/.keys/.marx.key&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;align=center;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
           <mxGeometry x="78.08000000000004" y="1701" width="231.25" height="180" as="geometry" />
@@ -525,27 +517,6 @@
         </mxCell>
         <mxCell id="vqK7_8CrzfybD09zykYy-29" value="Send to Keyclient my public key" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;align=center;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
           <mxGeometry x="184.61" y="2582.06" width="130" height="75.38" as="geometry" />
-        </mxCell>
-        <mxCell id="vqK7_8CrzfybD09zykYy-33" value="Group" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;noEdgeStyle=1;orthogonal=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="vqK7_8CrzfybD09zykYy-31" target="vqK7_8CrzfybD09zykYy-10">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="187.62053840877917" y="2201.75" />
-              <mxPoint x="182.97705761316874" y="2277.75" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="vqK7_8CrzfybD09zykYy-35" value="Individual" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;noEdgeStyle=1;orthogonal=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="vqK7_8CrzfybD09zykYy-31" target="vqK7_8CrzfybD09zykYy-29">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="251.21553840877917" y="2201.75" />
-              <mxPoint x="281.57205761316874" y="2239.75" />
-              <mxPoint x="281.57205761316874" y="2509.75" />
-              <mxPoint x="279.61" y="2547.75" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="vqK7_8CrzfybD09zykYy-31" value="Is this account a group or personal account? (Already given)." style="rhombus;whiteSpace=wrap;html=1;shadow=0;fontFamily=Helvetica;fontSize=12;align=center;strokeWidth=1;spacing=6;spacingTop=-4;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
-          <mxGeometry x="150.82303840877915" y="2015.375" width="137.19" height="140" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
