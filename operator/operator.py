@@ -17,6 +17,7 @@ BSEP3=b'##########'
 HOME_OPERATOR = os.path.abspath(__file__)
 PATH_DB_KEYS = os.path.join(HOME_OPERATOR, '.keydb')
 
+
 keyhome = os.path.join(os.path.expanduser('~'),'.komrade','.keyserver')
 if not os.path.exists(keyhome): os.makedirs(keyhome)
 
