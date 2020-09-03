@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2020-09-03T08:21:20.965Z" agent="5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36" etag="W2JLeI-iaXpiBHGWvDOJ" version="13.6.6" type="github">
+<mxfile host="app.diagrams.net" modified="2020-09-03T08:24:49.308Z" agent="5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36" etag="GdK6S3Z0hemI9YlVRzf7" version="13.6.6" type="github">
   <diagram id="C5RBs43oDa-KdzZeNtuy" name="Page-1">
     <mxGraphModel dx="1733" dy="752" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -179,8 +179,17 @@
         <mxCell id="UarGHlLd0uthddKlq-wd-45" value="Store public key on server" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
           <mxGeometry x="215" y="1150" width="175" height="50" as="geometry" />
         </mxCell>
-        <mxCell id="UarGHlLd0uthddKlq-wd-49" value="Save in ~/.komrade/.keys/.marx.key:&lt;br&gt;encrypted(privkey|pubkey)" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+        <mxCell id="UarGHlLd0uthddKlq-wd-49" value="Save in ~/.komrade/.keys/.marx.key:&lt;br&gt;encrypted(privkey||pubkey)" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
           <mxGeometry x="19.54" y="1470" width="175" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="UarGHlLd0uthddKlq-wd-52" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="UarGHlLd0uthddKlq-wd-50" target="UarGHlLd0uthddKlq-wd-51">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UarGHlLd0uthddKlq-wd-50" value="Generate random inbox address; encrypt this FOR user&#39;s public key, FROM keyserver private key" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="252.5" y="1330" width="175" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="UarGHlLd0uthddKlq-wd-51" value="Save in ~/.komrade/.keyserver/.marx.loc:&lt;br&gt;pubkey||encryped(address)" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="260" y="1470" width="175" height="50" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
