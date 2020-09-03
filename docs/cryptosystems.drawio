@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2020-09-03T11:56:06.598Z" agent="5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36" etag="-Q0wzgWEn9TCcuHcLgGK" version="13.6.6" type="github" pages="2">
+<mxfile host="app.diagrams.net" modified="2020-09-03T12:00:03.742Z" agent="5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36" etag="EZgBTk8M5R4S5n7BOLGY" version="13.6.6" type="github" pages="2">
   <diagram id="C5RBs43oDa-KdzZeNtuy" name="Login/Register">
     <mxGraphModel dx="2205" dy="860" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -119,7 +119,7 @@
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="142.2800000000001" y="1893" />
-              <mxPoint x="130.55583984375005" y="1969" />
+              <mxPoint x="178.43820987654325" y="1969" />
             </Array>
           </mxGeometry>
         </mxCell>
@@ -482,30 +482,40 @@
         <mxCell id="vqK7_8CrzfybD09zykYy-5" value="Generate non-passworded symmetric key" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;align=center;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
           <mxGeometry x="351.98972222222227" y="1497.875" width="105" height="75.25" as="geometry" />
         </mxCell>
-        <mxCell id="vqK7_8CrzfybD09zykYy-14" value="Anyone" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;noEdgeStyle=1;orthogonal=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="vqK7_8CrzfybD09zykYy-10" target="vqK7_8CrzfybD09zykYy-12">
+        <mxCell id="vqK7_8CrzfybD09zykYy-23" value="Members only" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;noEdgeStyle=1;orthogonal=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="vqK7_8CrzfybD09zykYy-10" target="vqK7_8CrzfybD09zykYy-20">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="130.55583984375005" y="2201.75" />
-              <mxPoint x="118.83167968750003" y="2277.75" />
+              <mxPoint x="146.64070987654327" y="2201.75" />
+              <mxPoint x="142.86481481481485" y="2277.75" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="vqK7_8CrzfybD09zykYy-26" value="Anyone" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;noEdgeStyle=1;orthogonal=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="vqK7_8CrzfybD09zykYy-10" target="UarGHlLd0uthddKlq-wd-97">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="210.23570987654327" y="2201.75" />
+              <mxPoint x="250.16981481481486" y="2239.75" />
+              <mxPoint x="250.16981481481486" y="2509.75" />
+              <mxPoint x="156.32" y="2547.75" />
             </Array>
           </mxGeometry>
         </mxCell>
         <mxCell id="vqK7_8CrzfybD09zykYy-10" value="[App] Ask user: who can find and send messages to this account?" style="rhombus;whiteSpace=wrap;html=1;shadow=0;fontFamily=Helvetica;fontSize=12;align=center;strokeWidth=1;spacing=6;spacingTop=-4;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
-          <mxGeometry x="61.96083984375005" y="2015.375" width="137.19" height="140" as="geometry" />
-        </mxCell>
-        <mxCell id="vqK7_8CrzfybD09zykYy-18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;noEdgeStyle=1;orthogonal=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="vqK7_8CrzfybD09zykYy-12" target="UarGHlLd0uthddKlq-wd-97">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="118.83167968750003" y="2471.75" />
-              <mxPoint x="105.88" y="2547.75" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="vqK7_8CrzfybD09zykYy-12" value="Encrypt my publlic key,&lt;br&gt;to: Keysever, from: Komrade" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;align=center;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
-          <mxGeometry x="41.52667968750002" y="2334.625" width="154.61" height="80.25" as="geometry" />
+          <mxGeometry x="109.84320987654326" y="2015.375" width="137.19" height="140" as="geometry" />
         </mxCell>
         <mxCell id="vqK7_8CrzfybD09zykYy-13" value="Restricted effect" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;align=center;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
           <mxGeometry x="1129.17" width="127.79" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="vqK7_8CrzfybD09zykYy-25" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;noEdgeStyle=1;orthogonal=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="vqK7_8CrzfybD09zykYy-20" target="UarGHlLd0uthddKlq-wd-97">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="142.86481481481485" y="2471.75" />
+              <mxPoint x="55.44" y="2547.75" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="vqK7_8CrzfybD09zykYy-20" value="Encypt my public key with my symmetric key" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;align=center;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="65.55981481481484" y="2334.625" width="154.61" height="80.25" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
