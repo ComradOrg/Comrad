@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2020-09-03T11:04:33.499Z" agent="5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36" etag="ePDSGbShcbj9Oa7pB__E" version="13.6.6" type="github" pages="3">
+<mxfile host="app.diagrams.net" modified="2020-09-03T11:05:59.303Z" agent="5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36" etag="QpzFsQnyyAThAdIeYzCp" version="13.6.6" type="github" pages="3">
   <diagram id="C5RBs43oDa-KdzZeNtuy" name="Login/Register">
     <mxGraphModel dx="906" dy="718" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -380,8 +380,14 @@
         <mxCell id="LL1DRk6oRKZlNUp4qJ55-10" value="Meet failed. You say you are elon, but your request was indecipherable in elon-ese." style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
           <mxGeometry x="870" y="2605.25" width="160" height="70" as="geometry" />
         </mxCell>
+        <mxCell id="LL1DRk6oRKZlNUp4qJ55-16" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="LL1DRk6oRKZlNUp4qJ55-13" target="LL1DRk6oRKZlNUp4qJ55-15">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
         <mxCell id="LL1DRk6oRKZlNUp4qJ55-13" value="&lt;div&gt;&lt;span&gt;[Server]&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Encrypt marx&#39;s public key&lt;/div&gt;&lt;div&gt;(to elon, from Keyserver)&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Send marx&#39;s encrypted public key back to client&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;align=center;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
           <mxGeometry x="1060" y="2580.25" width="177.41" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="LL1DRk6oRKZlNUp4qJ55-15" value="&lt;div&gt;[Client]&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Receive marx&#39;s encrypted public key&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Try to decrypt it (to me, from: Keyserver)&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;align=center;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="1060" y="2780" width="130" height="130" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
