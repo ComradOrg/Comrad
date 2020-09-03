@@ -3,6 +3,8 @@ import asyncio
 from pythemis.skeygen import KEY_PAIR_TYPE, GenerateKeyPair
 from pythemis.smessage import SMessage, ssign, sverify
 from pythemis.exception import ThemisError
+from pythemis.scell import SCellSeal
+
 from base64 import b64decode,b64encode
 # from kademlia.network import Server
 import os,time,sys,logging
@@ -307,11 +309,50 @@ class Persona(object):
     
     ## genearating keys
     
-    def gen_keys(self):
+    # def gen_keys1(self):
+    #     self.log('gen_keys()')
+    #     keypair = GenerateKeyPair(KEY_PAIR_TYPE.EC)
+    #     self.privkey = keypair.export_private_key()
+    #     self.pubkey = keypair.export_public_key()
+
+    #     self.log(f'priv_key saved to {self.key_path_priv}')
+    #     with open(self.key_path_priv, "wb") as private_key_file:
+    #         private_key_file.write(self.privkey_b64)
+
+    #     with open(self.key_path_pub, "wb") as public_key_file:
+    #         # save SIGNED public key
+    #         public_key_file.write(self.pubkey_b64)
+        
+    #     with open(self.key_path_pub_enc,'wb') as signed_public_key_file:
+    #         # self.log('encrypted_pubkey_b64 -->',self.encrypted_pubkey_b64)
+    #         pubkey_b64 = b64encode(self.pubkey)
+    #         self.log('pubkey',self.pubkey)
+    #         self.log('pubkey_b64',pubkey_b64)
+            
+    #         encrypted_pubkey_b64 = self.encrypt(pubkey_b64, pubkey_b64, KOMRADE_PRIV_KEY)
+    #         self.log('encrypted_pubkey_b64 -->',encrypted_pubkey_b64)
+            
+    #         signed_public_key_file.write(encrypted_pubkey_b64)
+
+    def gen_keys(self,passphrase=None):
+        """
+        Generate private/public key pair
+        Secure that with passphrase
+        """
+
+        ## Generate key pair
         self.log('gen_keys()')
         keypair = GenerateKeyPair(KEY_PAIR_TYPE.EC)
         self.privkey = keypair.export_private_key()
         self.pubkey = keypair.export_public_key()
+
+        ## Secure with passphrase
+        if passphrase is None: passphrase=input('Please protect account with passphrase:\n')
+        cell = SCellSeal(passphrase=passphrase)
+        keypair_b = self.privkey + BSEP + self.pubkey
+        
+        keypair_b_encr = cell.encrypt(keypair_b)
+
 
         self.log(f'priv_key saved to {self.key_path_priv}')
         with open(self.key_path_priv, "wb") as private_key_file:
