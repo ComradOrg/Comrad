@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2020-09-03T07:26:13.204Z" agent="5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36" etag="Xeo1upwXSyNTkMsTz-Z-" version="13.6.6" type="github">
+<mxfile host="app.diagrams.net" modified="2020-09-03T07:27:36.912Z" agent="5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36" etag="4-wmHriL-HjHyxy11wU2" version="13.6.6" type="github">
   <diagram id="C5RBs43oDa-KdzZeNtuy" name="Page-1">
     <mxGraphModel dx="1733" dy="752" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -99,14 +99,18 @@
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="40" y="790" as="targetPoint" />
             <Array as="points">
-              <mxPoint x="50" y="912" />
+              <mxPoint x="27.5" y="912" />
               <mxPoint x="50" y="988" />
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="UarGHlLd0uthddKlq-wd-32" value="Yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="UarGHlLd0uthddKlq-wd-21" target="UarGHlLd0uthddKlq-wd-33">
+        <mxCell id="UarGHlLd0uthddKlq-wd-32" value="Yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;noEdgeStyle=1;orthogonal=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="UarGHlLd0uthddKlq-wd-21" target="UarGHlLd0uthddKlq-wd-33">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="220" y="1040" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="72.5" y="912" />
+              <mxPoint x="200" y="988" />
+            </Array>
           </mxGeometry>
         </mxCell>
         <mxCell id="UarGHlLd0uthddKlq-wd-21" value="&quot;Create if missing&quot; flag is True?" style="rhombus;whiteSpace=wrap;html=1;shadow=0;fontFamily=Helvetica;fontSize=12;align=center;strokeWidth=1;spacing=6;spacingTop=-4;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
@@ -129,8 +133,16 @@
         <mxCell id="UarGHlLd0uthddKlq-wd-29" value="Attempt login" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
           <mxGeometry x="280" y="840" width="120" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="UarGHlLd0uthddKlq-wd-33" value="Generate pub/private key pair (PyThemis)" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
-          <mxGeometry x="184.99703703703705" y="1080" width="120" height="40" as="geometry" />
+        <mxCell id="UarGHlLd0uthddKlq-wd-34" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="UarGHlLd0uthddKlq-wd-33" target="UarGHlLd0uthddKlq-wd-35">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="200" y="1130" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="UarGHlLd0uthddKlq-wd-33" value="Generate pub/private key pair (PyThemis, using EC)" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="140" y="1000" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="UarGHlLd0uthddKlq-wd-35" value="Save private key to disk: ~/.komrade/.keys/.marx.key" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="90" y="1140" width="170" height="50" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
