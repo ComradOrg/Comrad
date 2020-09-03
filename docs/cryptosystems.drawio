@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2020-09-03T10:51:18.679Z" agent="5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36" etag="VzkBSvYFVsnzrVYLA4QX" version="13.6.6" type="github" pages="3">
+<mxfile host="app.diagrams.net" modified="2020-09-03T10:52:20.048Z" agent="5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36" etag="xnX6HlMfwgSfOABX-583" version="13.6.6" type="github" pages="3">
   <diagram id="C5RBs43oDa-KdzZeNtuy" name="Login/Register">
     <mxGraphModel dx="1066" dy="845" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -347,8 +347,8 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="LL1DRk6oRKZlNUp4qJ55-6" value="&lt;div&gt;&lt;span&gt;[Client]&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;Encrypt a request for marx&#39;s public key (to: Keyserver, from: elon)&lt;/span&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;Send request to keyserver:&lt;/div&gt;&lt;div&gt;&lt;i&gt;i_am:&lt;/i&gt;&lt;span&gt;&amp;nbsp;elon&lt;/span&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;i&gt;my_req&lt;/i&gt;: encrypted(whois marx?)&lt;/div&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;align=center;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
-          <mxGeometry x="789.7299999999999" y="1742.5" width="200" height="137" as="geometry" />
+        <mxCell id="LL1DRk6oRKZlNUp4qJ55-6" value="&lt;div&gt;&lt;span&gt;[Client]&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;Encrypt a request for marx&#39;s public key (to: Keyserver, from: elon)&lt;/span&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;Form a part-encrypted request&lt;/div&gt;&lt;div&gt;&lt;i&gt;i_am:&lt;/i&gt;&lt;span&gt;&amp;nbsp;unencrypted(elon)&lt;/span&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;i&gt;my_req&lt;/i&gt;: encrypted(whois marx?)&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Encrypt that request (to: Keyserver, from: Komrade)&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;align=center;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="789.73" y="1742.5" width="200.27" height="167.5" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
