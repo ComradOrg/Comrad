@@ -7,3 +7,5 @@ dbm.*
 lib
 *.venv
 *.key
+*.key.*
+.op.*
