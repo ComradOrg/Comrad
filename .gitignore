@@ -1,18 +1,9 @@
 __pycache__
-app.json
-.keys.json
-app/cache
-app/log.txt
+log.txt
 venv
-# .vscode
-sto.dat
-p2p/kademlia0
-cache.sqlite
+.vscode
 dbm.*
 .DS_Store
-.vscode/
-.vscode/settings.json
 lib
 *.venv
-.vscode
 *.key
