@@ -14,7 +14,7 @@ import zlib
 from komrade import KomradeException,Logger
 
 
-LOG_GET_SET = False
+LOG_GET_SET = True
 
 
 
@@ -61,28 +61,28 @@ class Crypt(Logger):
 
 
     def set(self,k,v,prefix=''):
-        self.log('set() k -->',k)
+        # self.log('set() k -->',prefix,k)
         k_b=self.package_key(k,prefix=prefix)
-        self.log('set() k_b -->',k_b)
+        # self.log('set() k_b -->',k_b)
 
-        self.log('set() v -->',v)
+        # self.log('set() v -->',v)
         v_b=self.package_val(v)
-        self.log('set() v_b -->',v_b)
+        self.log(f'set(\n\t{prefix}{k},\n\t\n\t{v_b}\n)\n')
         
         return self.store.put(k_b,v_b)
 
     def get(self,k,prefix=''):
-        self.log('get() k -->',k)
+        # self.log('get() k -->',prefix,k)
         k_b=self.package_key(k,prefix=prefix)
-        self.log('get() k_b -->',k_b)
+        # self.log('get() k_b -->',k_b)
 
         try:
             v=self.store.get(k_b)
         except KeyError:
             return None
-        self.log('get() v -->',v)
+        # self.log('get() v -->',v)
         v_b=self.unpackage_val(v)
-        self.log('get() v_b -->',v_b)
+        self.log('get()',prefix,k,'-->',v_b)
         return v_b
 
 

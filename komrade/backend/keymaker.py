@@ -1,17 +1,25 @@
+from komrade.backend.crypt import Crypt
+from komrade import KomradeException,Logger
+from pythemis.skeygen import KEY_PAIR_TYPE, GenerateKeyPair
+from pythemis.smessage import SMessage, ssign, sverify
+from pythemis.skeygen import GenerateSymmetricKey
+from pythemis.scell import SCellSeal
+from pythemis.exception import ThemisError
+import getpass,os
+
+
 class Keymaker(Logger):
-
-
     ### BASE STORAGE
     @property
     def crypt_keys(self):
         if not hasattr(self,'_crypt_keys'):
-            self._crypt_keys = Crypt(fn=PATH_CRYPT_KEYS)
+            self._crypt_keys = Crypt(fn=self.PATH_CRYPT_KEYS)
         return self._crypt_keys
 
     @property
     def crypt_data(self):
         if not hasattr(self,'_crypt_data'):
-            self._crypt_data = Crypt(fn=PATH_CRYPT_DATA)
+            self._crypt_data = Crypt(fn=self.PATH_CRYPT_DATA)
         return self._crypt_data
 
 
@@ -32,33 +40,38 @@ class Keymaker(Logger):
 
         ## 2) I can assemble the key
         key_encr = self.findkey(keyname+'_encr', keychain,uri)
-        key_decr_key = self.findkey(keyname+'_decr_key', keychain, uri)
-        key_decr_cell = self.findkey(keyname+'_decr_cell', keychain, uri)
-        key_decr_pass = self.findkey(keyname+'_decr_pass', keychain, uri)
-        key = self.assemble_key(key_encr, key_decr_key, key_decr_cell, key_decr_pass)
+        key_decr = self.findkey(keyname+'_decr', keychain, uri)
+        key = self.assemble_key(key_encr, key_decr)
         return key
 
-    def assemble_key(self, key_encr, key_decr_key, key_decr_cell, key_decr_pass):
+    def get_cell(self, str_or_key_or_cell):
+        if type(str_or_key_or_cell)==SCellSeal:
+            return str_or_key_or_cell
+        elif type(str_or_key_or_cell)==str:
+            return SCellSeal(passphrase=str_or_key_or_cell)
+        elif type(str_or_key_or_cell)==bytes:
+            return SCellSeal(key=key)
+
+    def assemble_key(self, key_encr, key_decr):
         # need the encrypted half
         if not key_encr:
             self.log('!! encrypted half not given')
             return
+        if not key_decr:
+            self.log('!! decryptor half not given')
+            return
 
         # need some way to regenerate the decryptor
-        if not key_decr_cell:
-            if key_decr_key:
-                key_decr_cell = SCellSeal(key=key_decr_key)
-            elif key_decr_pass:
-                key_decr_cell = SCellSeal(passphrase=passphrase)
-        
+        decr_cell = self.get_cell(key_decr)
+
         # need the decryptor half
-        if not key_decr_cell:
-            self.log('!! decryptor half not given')
+        if not decr_cell:
+            self.log('!! decryptor cell not regenerable')
             return
 
         # decrypt!
         try:
-            key = key_decr_cell.decrypt(key_encr)
+            key = decr_cell.decrypt(key_encr)
             self.log('assembled_key built:',key)
             return key
         except ThemisError as e:

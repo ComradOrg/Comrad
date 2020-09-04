@@ -4,6 +4,7 @@ Running on node prime.
 """
 import os,sys; sys.path.append(os.path.abspath(os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__),'..')),'..')))
 from komrade.backend.crypt import Crypt
+from komrade.backend.caller import Caller
 from komrade.backend.keymaker import Keymaker
 from flask import Flask
 from flask_classful import FlaskView
@@ -38,96 +39,54 @@ if not os.path.exists(PATH_OPERATOR): os.makedirs(PATH_OPERATOR)
 
 
 
-class TheOperator(Keymaker):
+class TheOperator(Caller):
     """
     The operator.
     """
+    PATH_CRYPT_KEYS=PATH_CRYPT_KEYS
+    PATH_CRYPT_DATA=PATH_CRYPT_DATA
 
 
-    def __init__(self, passphrase = None):
+    def __init__(self, name = 'Operator', passphrase = None):
         """
         Boot up the operator. Requires knowing or setting a password of memory.
         """
-
-
-
-        # If not, forge them -- only once!
-        if not have_keys: self.forge_keys()
-
-        # load keys
-        self.pubkey,self.privkey = self.get_keys()
-        
-        # That's it!
-        
-
-    def op_keychain_encr(self):
-        self.log('loading encrypted keys from disk')
-        with open(PATH_OPERATOR_PUBKEY,'rb') as f_pub, open(PATH_OPERATOR_PRIVKEY,'rb') as f_priv:
-            pubkey_encr = f_pub.read()
-            privkey_encr = f_priv.read()
-            self.log('Operator pubkey_encr <--',pubkey_encr)
-            self.log('Operator privkey <--',privkey_encr)
-            return (pubkey_encr,privkey_encr)
-
-    def get_op_keys(self):
-        # Get passphrase
-        passphrase = 'aa' #@ HACK!!!
-        self.crypt_key,self. = self.get_k
-
+        self.name = name
 
         # Do I have my keys?
-        have_keys = self.check_keys()
+        have_keys = self.have_keys()
 
+        # If not, forge them -- only once!
+        # if not have_keys: self.forge_keys()
 
-        pubkey_encr,privkey_encr = self.get_encypted_keys()
-
-        # decrypt according to password of memory
-        try:
-            pubkey = self.cell.decrypt(pubkey_encr)
-            privkey = self.cell.decrypt(privkey_encr)
-        except ThemisError:
-            self.log('\nERROR: Incorrect password of memory! Shutting down.')
-            exit()
-
-        # self.log(f'decrypted keys to:\npubkey={pubkey}\nprivkey={privkey}')
-        return (pubkey,privkey)
+        # load keys
+        # self.pubkey,self.privkey = self.get_op_keys()
         
+        # That's it!
 
-    def check_keys(self):
+    def have_keys(self):
         self.log('checking for keys...')
-        have_keys = (os.path.exists(PATH_OPERATOR_PUBKEY) and os.path.exists(PATH_OPERATOR_PRIVKEY))
+        have_keys = self.crypt_keys.get(self.name,prefix='/pubkey_encr/')
         self.log('have_keys =',have_keys)
         return have_keys
 
-    def forge_keys(self):
-        self.log('forging keys...')
+    # def forge_keys(self):
+    #     self.log('forging keys...')
 
-        # Initialize asymmetric keys
-        keypair = GenerateKeyPair(KEY_PAIR_TYPE.EC)
-        privkey = keypair.export_private_key()
-        pubkey = keypair.export_public_key()
-
-        # Also create a symmetric passworded key!
-        ## It is up to you, forger of the keys, to remember this:
-        ## otherwise the whole system topples!
+    #     # first time only!
+    #     # this will save the three encrypted keys
+    #     # all are returned, including the decryptor keys
+    #     keychain = self.create_keys(self.name,return_all_keys=True)
         
-        # Encrypt private public keys
-        privkey = self.cell.encrypt(privkey)
-        pubkey = self.cell.encrypt(pubkey)
-
-        # Save
-        with open(PATH_OPERATOR_PUBKEY,'wb') as of: of.write(pubkey)
-        with open(PATH_OPERATOR_PRIVKEY,'wb') as of: of.write(privkey)
-
-        self.log('Keys forged!')
-
-
+        
+        
     
     ####
     # Key CRUD
     ####
 
-    def create_keys(self,name,pubkey_is_public=False):
+    def forge_new_keys(self,name,pubkey_is_public=False,return_all_keys=False):
+        self.log('forging new keys...')
 
         # Create public and private keys
         keypair = GenerateKeyPair(KEY_PAIR_TYPE.EC)
@@ -146,21 +105,34 @@ class TheOperator(Keymaker):
         adminkey_encr = SCellSeal(key=adminkey_decr).encrypt(adminkey)
 
         # store encrypted on my hardware
-        self.crypt_keys.set(name,pubkey_encr,prefix='/pub_encr/')
-        self.crypt_keys.set(pubkey,privkey_encr,prefix='/priv_encr/')
-        self.crypt_keys.set(privkey,adminkey_encr,prefix='/admin_encr/')
+        self.crypt_keys.set(name,pubkey_encr,prefix='/pubkey_encr/')
+        self.crypt_keys.set(pubkey,privkey_encr,prefix='/privkey_encr/')
+        self.crypt_keys.set(privkey,adminkey_encr,prefix='/adminkey_encr/')
 
         # store permissions file?
         secret_admin_val = pubkey_encr + BSEP + b'find,read,admin'
         if pubkey_is_public: secret_admin_val += b'*'+BSEP+b'find'
         secret_admin_val_encr = SCellSeal(key=adminkey).encrypt(secret_admin_val)
-        self.crypt_keys.set(adminkey,secret_admin_val_encr,prefix='/perm_encr/')
+        self.crypt_keys.set(adminkey,secret_admin_val_encr,prefix='/permkey_encr/')
 
         # keep public key?
-        if pubkey_is_public: self.crypt_keys.set(name,pubkey_decr,prefix='/pub_decr/')
+        if pubkey_is_public: self.crypt_keys.set(name,pubkey_decr,prefix='/pubkey_decr/')
         
         # send back decryption keys to client
-        return (pubkey_decr, privkey_decr, adminkey_decr)
+        if not return_all_keys: # default situation
+            keychain = {
+                'pubkey_decr':pubkey_decr,
+                'privkey_decr':privkey_decr,
+                'adminkey_decr':adminkey_decr
+            }
+        else: # only in special case!
+            keychain = {
+                'pubkey':pubkey,'pubkey_encr':pubkey_encr,'pubkey_decr':pubkey_decr,
+                'privkey':privkey,'privkey_encr':privkey_encr,'privkey_decr':privkey_decr,
+                'adminkey':adminkey,'adminkey_encr':adminkey_encr,'adminkey_decr':adminkey_decr
+            }
+        return keychain
+        
         
 
     # Magic key attributes
@@ -193,7 +165,7 @@ class TheOperator(Keymaker):
 
 
     def exists(self,name):
-        return self.crypt_keys.get(name,prefix='/pub_encr/') is not None
+        return self.crypt_keys.get(name,prefix='/pubkey_encr/') is not None
 
     def login(self, name, keychain_encr):
         pass
@@ -250,4 +222,4 @@ if __name__ == '__main__':
     #print(op.crypt_keys.set('aaaa','1111'))
 
     # print(op.crypt_keys.get('aaaa'))
-    op.create_keys(name='marx')
+    # print(op.forge_keys())

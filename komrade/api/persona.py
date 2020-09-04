@@ -72,7 +72,7 @@ class Persona(Model):
 if __name__ == '__main__':
     import random
     idnum = random.choice(list(range(1000)))
-    persona = Persona('elon'+str(idnum))
+    persona = Persona('Op'+str(idnum))
     print('\n\n\nREGISTERING\n\n\n')
     persona.register(passphrase='bb')
 
