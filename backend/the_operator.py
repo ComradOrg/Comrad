@@ -15,6 +15,11 @@ import getpass
 PATH_HERE = os.path.dirname(__file__)
 sys.path.append(PATH_HERE)
 from crypt import *
+### Constants
+BSEP=b'||||||||||'
+BSEP2=b'@@@@@@@@@@'
+BSEP3=b'##########'
+
 
 # paths
 PATH_KOMRADE = os.path.abspath(os.path.join(os.path.expanduser('~'),'.komrade'))
@@ -129,60 +134,45 @@ class TheOperator(object):
     # Key CRUD
     ####
 
-    def create_keys(self,name):
+    def create_keys(self,name,pubkey_is_public=False):
 
         # Create public and private keys
         keypair = GenerateKeyPair(KEY_PAIR_TYPE.EC)
         privkey = keypair.export_private_key()
         pubkey = keypair.export_public_key()
+        adminkey = GenerateSymmetricKey()
 
-        # Create permission keys
-        permkey_find = GenerateSymmetricKey()
-        permkey_read = GenerateSymmetricKey()
-        permkey_admin = GenerateSymmetricKey()
-        permkey_adminX = GenerateSymmetricKey()
-
-        # (1) Encrypted pubkey
-        pubkey_decr = permkey_find
+        # Create decryption/permission keys
+        pubkey_decr = GenerateSymmetricKey()
+        privkey_decr = GenerateSymmetricKey()
+        adminkey_decr = GenerateSymmetricKey() #SCellSeal(passphrase=passphrase)
+        
+        # Encrypt original keys
         pubkey_encr = SCellSeal(key=pubkey_decr).encrypt(pubkey)
-
-        # (2) Encnrypted priv key
-        privkey_decr = permkey_read
         privkey_encr = SCellSeal(key=privkey_decr).encrypt(privkey)
+        adminkey_encr = SCellSeal(key=adminkey_decr).encrypt(adminkey)
+
+        # store encrypted on my hardware
+        self.crypt_keys.set(name,pubkey_encr,prefix='/pub_encr/')
+        self.crypt_keys.set(pubkey,privkey_encr,prefix='/priv_encr/')
+        self.crypt_keys.set(privkey,adminkey_encr,prefix='/admin_encr/')
+
+        # store permissions file?
+        secret_admin_val = pubkey_encr + BSEP + b'find,read,admin'
+        if pubkey_is_public: secret_admin_val += b'*'+BSEP+b'find'
+        secret_admin_val_encr = SCellSeal(key=adminkey).encrypt(secret_admin_val)
+        self.crypt_keys.set(adminkey,secret_admin_val_encr,prefix='/perm_encr/')
+
+        # keep public key?
+        if pubkey_is_public: self.crypt_keys.set(name,pubkey_decr,prefix='/pub_decr/')
         
-        # (3) Encrypted admin key?
-        adminkey_decr = permkey_adminX
-        adminkey_encr = SCellSeal(key=adminkey_decr).encrypt(permkey_admin)
-
-
-
-        
-
-        self.log(f'priv_key saved to {self.key_path_priv}')
-        with open(self.key_path_priv, "wb") as private_key_file:
-            private_key_file.write(self.privkey_b64)
-
-        with open(self.key_path_pub, "wb") as public_key_file:
-            # save SIGNED public key
-            public_key_file.write(self.pubkey_b64)
-        
-        with open(self.key_path_pub_enc,'wb') as signed_public_key_file:
-            # self.log('encrypted_pubkey_b64 -->',self.encrypted_pubkey_b64)
-            pubkey_b64 = b64encode(self.pubkey)
-            self.log('pubkey',self.pubkey)
-            self.log('pubkey_b64',pubkey_b64)
-            
-            encrypted_pubkey_b64 = self.encrypt(pubkey_b64, pubkey_b64, KOMRADE_PRIV_KEY)
-            self.log('encrypted_pubkey_b64 -->',encrypted_pubkey_b64)
-            
-            signed_public_key_file.write(encrypted_pubkey_b64)
+        # send back decryption keys to client
+        return (pubkey_decr, privkey_decr, adminkey_decr)
         
 
 
-    def create_permissions_file(self):
-        pass
-
-
+    def exists(self,name):
+        return self.crypt_keys.get(name,prefix='/pub_encr/') is not None
 
 
 
@@ -209,6 +199,15 @@ class TheOperatorView(FlaskView):
 
 
 
+def get_random_id():
+    import uuid
+    return uuid.uuid4().hex
+
+def get_random_binary_id():
+    import base64
+    idstr = get_random_id()
+    return base64.b64encode(idstr.encode())
+
 
 
 
@@ -226,6 +225,7 @@ if __name__ == '__main__':
 
     op = TheOperator()
     
-    print(op.crypt_keys.set('aaaa','1111'))
+    #print(op.crypt_keys.set('aaaa','1111'))
 
-    print(op.crypt_keys.get('aaaa'))
+    # print(op.crypt_keys.get('aaaa'))
+    op.create_keys(name='marx')

@@ -34,28 +34,30 @@ class Crypt(object):
         if type(k_b)!=bytes: k_b=str(k_b).encode()
         return k_b
 
-    def package_key(self,k):
+    def package_key(self,k,prefix=''):
         k_b = self.force_binary(k)
         # k_b = self.cell.encrypt(k_b)
-        k_b = self.hash(k_b)
+        prefix_b = self.force_binary(prefix)
+        k_b = self.hash(prefix_b + k_b)
         return k_b
 
     def package_val(self,k):
         k_b = self.force_binary(k)
-        k_b = self.cell.encrypt(k_b)
+        if self.cell is not None: k_b = self.cell.encrypt(k_b)
         return k_b
 
 
     def unpackage_val(self,k_b):
         try:
-            return self.cell.decrypt(k_b)
+            if self.cell is not None: k_b = self.cell.decrypt(k_b)
         except ThemisError:
-            return None
+            pass
+        return k_b
 
 
-    def set(self,k,v):
+    def set(self,k,v,prefix=''):
         self.log('set() k -->',k)
-        k_b=self.package_key(k)
+        k_b=self.package_key(k,prefix=prefix)
         self.log('set() k_b -->',k_b)
 
         self.log('set() v -->',v)
@@ -64,12 +66,15 @@ class Crypt(object):
         
         return self.store.put(k_b,v_b)
 
-    def get(self,k):
+    def get(self,k,prefix=''):
         self.log('get() k -->',k)
-        k_b=self.package_key(k)
+        k_b=self.package_key(k,prefix=prefix)
         self.log('get() k_b -->',k_b)
 
-        v=self.store.get(k_b)
+        try:
+            v=self.store.get(k_b)
+        except KeyError:
+            return None
         self.log('get() v -->',v)
         v_b=self.unpackage_val(v)
         self.log('get() v_b -->',v_b)
