@@ -11,19 +11,24 @@ from pythemis.skeygen import GenerateSymmetricKey
 from pythemis.scell import SCellSeal
 from pythemis.exception import ThemisError
 import zlib
+from komrade import KomradeException,Logger
+
+
+LOG_GET_SET = False
 
 
 
 
-
-class Crypt(object):
-    def log(self,*x): print(*x)
-
+class Crypt(Logger):
     def __init__(self,name=None,fn=None,cell=None):
         if not name and fn: name=os.path.basename(fn).replace('.','_')
 
         self.name,self.fn,self.cell = name,fn,cell
         self.store = FilesystemStore(self.fn)
+
+    def log(self,*x):
+        if LOG_GET_SET:
+            super().log(*x)
         
     def hash(self,binary_data):
         return hashlib.sha256(binary_data).hexdigest()

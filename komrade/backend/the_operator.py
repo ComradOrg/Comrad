@@ -2,7 +2,9 @@
 There is only one operator!
 Running on node prime.
 """
-import os,sys
+import os,sys; sys.path.append(os.path.abspath(os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__),'..')),'..')))
+from komrade.backend.crypt import Crypt
+from komrade.backend.keymaker import Keymaker
 from flask import Flask
 from flask_classful import FlaskView
 from pythemis.skeygen import KEY_PAIR_TYPE, GenerateKeyPair
@@ -11,6 +13,7 @@ from pythemis.skeygen import GenerateSymmetricKey
 from pythemis.scell import SCellSeal
 from pythemis.exception import ThemisError
 from base64 import b64encode,b64decode
+from komrade import KomradeException,Logger
 import getpass
 PATH_HERE = os.path.dirname(__file__)
 sys.path.append(PATH_HERE)
@@ -35,22 +38,18 @@ if not os.path.exists(PATH_OPERATOR): os.makedirs(PATH_OPERATOR)
 
 
 
-class TheOperator(object):
+class TheOperator(Keymaker):
     """
     The operator.
     """
 
 
-    def __init__(self):
+    def __init__(self, passphrase = None):
         """
         Boot up the operator. Requires knowing or setting a password of memory.
         """
 
-        # Establish encryption/decryption cell
-        self.cell = SCellSeal(passphrase=getpass.getpass('What is the password of memory? '))
 
-        # Do I have my keys?
-        have_keys = self.check_keys()
 
         # If not, forge them -- only once!
         if not have_keys: self.forge_keys()
@@ -61,31 +60,25 @@ class TheOperator(object):
         # That's it!
         
 
-    @property
-    def crypt_keys(self):
-        if not hasattr(self,'_crypt_keys'):
-            self._crypt_keys = Crypt(fn=PATH_CRYPT_KEYS, cell=self.cell)
-        return self._crypt_keys
-
-    @property
-    def crypt_data(self):
-        if not hasattr(self,'_crypt_data'):
-            self._crypt_data = Crypt(fn=PATH_CRYPT_DATA, cell=self.cell)
-        return self._crypt_data
-
-    def log(self,*x):
-        print(*x)
-
-    def get_encypted_keys(self):
+    def op_keychain_encr(self):
         self.log('loading encrypted keys from disk')
         with open(PATH_OPERATOR_PUBKEY,'rb') as f_pub, open(PATH_OPERATOR_PRIVKEY,'rb') as f_priv:
             pubkey_encr = f_pub.read()
             privkey_encr = f_priv.read()
-            #self.log('loaded encrypted pubkey is:',pubkey_encr)
-            #self.log('loaded encrypted privkey is:',privkey_encr)
+            self.log('Operator pubkey_encr <--',pubkey_encr)
+            self.log('Operator privkey <--',privkey_encr)
             return (pubkey_encr,privkey_encr)
 
-    def get_keys(self):
+    def get_op_keys(self):
+        # Get passphrase
+        passphrase = 'aa' #@ HACK!!!
+        self.crypt_key,self. = self.get_k
+
+
+        # Do I have my keys?
+        have_keys = self.check_keys()
+
+
         pubkey_encr,privkey_encr = self.get_encypted_keys()
 
         # decrypt according to password of memory
@@ -170,11 +163,40 @@ class TheOperator(object):
         return (pubkey_decr, privkey_decr, adminkey_decr)
         
 
+    # Magic key attributes
+
+
+    ## DECRYPTED REAL FINAL KEYS
+
+    def pubkey(self, name, keychain_decr):
+        pubkey_decr = keychain_decr.get('pubkey_decr')
+        pubkey_encr = self.pubkey_encr(name)
+        if not pubkey_decr or not pubkey_encr: return None
+        pubkey = SCellSeal(key=pubkey_decr).decrypt(pubkey_encr)
+        return pubkey
+
+
+    def privkey(self, name, keychain_decr):
+        privkey_decr = keychain_decr.get('privkey_decr')
+        privkey_encr = self.privkey_encr(name, keychain_decr)
+        if not privkey_decr or not privkey_encr: return None
+        privkey = SCellSeal(key=privkey_decr).decrypt(privkey_encr)
+        return privkey
+
+    def adminkey(self, name, keychain_decr):
+        adminkey_decr = keychain_decr.get('adminkey_decr')
+        adminkey_encr = self.adminkey_encr(name, keychain_decr)
+        if not adminkey_decr or not adminkey_encr: return None
+        adminkey = SCellSeal(key=adminkey_decr).decrypt(adminkey_encr)
+        return adminkey
+
+
 
     def exists(self,name):
         return self.crypt_keys.get(name,prefix='/pub_encr/') is not None
 
-
+    def login(self, name, keychain_encr):
+        pass
 
 
 
