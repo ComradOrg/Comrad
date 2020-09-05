@@ -86,29 +86,23 @@ class TheSwitchboard(FlaskView, Logger):
 
         # first try to get from string to bytes
         self.log('incoming <--',encr_b64_str)
-
         try:
             encr_b64_b = encr_b64_str.encode('utf-8')
             self.log('encr_b64_b',encr_b64_b)
-
-            encr_b = b64decode(encr_b64_b)
-            self.log('encr_b',encr_b)
-            
-            return f'successfully understood input: {encr_b}'
-        except (UnicodeDecodeError,binascii.Error) as e:
+        except UnicodeEncodeError:
+            self.log('not valid unicode?')
             return OPERATOR_INTERCEPT_MESSAGE
 
-        if not encr_b64_str: return OPERATOR_INTERCEPT_MESSAGE
-        
+        # then get from b64 bytes to raw bytes
+        try:
+            data = b64decode(encr_b64_b)
+            self.log('data',data)
+            self.log(f'successfully understood input')
+        except binascii.Error as e:
+            self.log('not valid b64?')
+            return OPERATOR_INTERCEPT_MESSAGE
 
-        data = request.data
-        self.log('incoming_data! <--',data)
-
-        # step 1: decode
-        data = b64decode(data)
-        self.log('decoded data:',data)
-
-        # step 2: decrypt from phone
+        # then unwrap top level encryption
         data = SMessage(OPERATOR.privkey_, TELEPHONE_PUBKEY).unwrap(data)
         self.log('decrypted data:',data)
 
