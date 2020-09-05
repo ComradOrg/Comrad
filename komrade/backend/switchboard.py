@@ -101,7 +101,7 @@ class TheSwitchboard(FlaskView, Logger):
             self.log('not valid unicode?')
             return OPERATOR_INTERCEPT_MESSAGE
 
-        # then get from b64 bytes to raw bytes
+        # then try to get from b64 bytes to raw bytes
         try:
             data = b64decode(encr_b64_b)
             self.log('data',data)
@@ -110,21 +110,25 @@ class TheSwitchboard(FlaskView, Logger):
             self.log('not valid b64?')
             return OPERATOR_INTERCEPT_MESSAGE
 
-        # then unwrap top level encryption
+        # then try to unwrap top level encryption
         try:
             tele_pubkey = b64decode(TELEPHONE_PUBKEY)
+            data = SMessage(OPERATOR.privkey_, tele_pubkey).unwrap(data)
+            self.log('decrypted data:',data)
         except ThemisError:
             self.log('not really from the telephone?')
             return OPERATOR_INTERCEPT_MESSAGE
-        
-        data = SMessage(OPERATOR.privkey_, tele_pubkey).unwrap(data)
-        self.log('decrypted data:',data)
 
         # step 3: give to The Operator
-        res = OPERATOR.route(data)
+        try:
+            res = OPERATOR.route(data)
+            return res
+        except Exception as e:
+            self.log('got exception!!',e)
+            return OPERATOR_INTERCEPT_MESSAGE
 
         # return response to caller
-        return res
+        return OPERATOR_INTERCEPT_MESSAGE
 
 def run_forever(port='8080'):
     global OPERATOR
