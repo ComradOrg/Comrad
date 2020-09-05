@@ -81,14 +81,19 @@ class TheSwitchboard(FlaskView, Logger):
 
     @route('/please/<encr_b64_str>')
     def please(self,encr_b64_str=None):
+        if not encr_b64_str: return OPERATOR_INTERCEPT_MESSAGE
+        if not isBase64(encr_b64_str): return OPERATOR_INTERCEPT_MESSAGE
+
         # first try to get from string to bytes
         self.log('incoming <--',encr_b64_str)
 
         try:
             encr_b64_b = encr_b64_str.encode('utf-8')
             self.log('encr_b64_b',encr_b64_b)
+
             encr_b = b64decode(encr_b64_b)
             self.log('encr_b',encr_b)
+            
             return f'successfully understood input: {encr_b}'
         except (UnicodeDecodeError,binascii.Error) as e:
             return OPERATOR_INTERCEPT_MESSAGE
