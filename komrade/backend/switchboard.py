@@ -76,11 +76,11 @@ from flask_classful import FlaskView, route
 class TheSwitchboard(FlaskView, Logger):
     #default_methods = ['POST']
 
-    #def get(self):
-    #    return "We're sorry; we are unable to complete your call as dialed. Please check the number and dial again, or call your operator to help you."
+    def get(self):
+        return "We're sorry; we are unable to complete your call as dialed. Please check the number and dial again, or call your operator to help you."
 
-    @route('/<encr_b64_str>')
-    def get(self,encr_b64_str=None):
+    @route('/please/<encr_b64_str>')
+    def please(self,encr_b64_str=None):
         return 'hello?'
         raise Exception(encr_b64_str)
         # return encr_b64_str
@@ -121,5 +121,5 @@ def run_forever(port='8080'):
     global OPERATOR
     OPERATOR = TheOperator()
     app = Flask(__name__)
-    TheSwitchboard.register(app, route_base='/', route_prefix=None)
+    TheSwitchboard.register(app, route_base='/op/', route_prefix=None)
     app.run(debug=True, port=port, host='0.0.0.0')
