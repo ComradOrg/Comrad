@@ -128,6 +128,7 @@ class TheSwitchboard(FlaskView, Logger):
 
         # step 3: give to The Operator
         try:
+            return 'Success! your message was: '+str(data)
             res = OPERATOR.route(data)
             return res
         except Exception as e:
