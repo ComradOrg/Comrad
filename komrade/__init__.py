@@ -7,6 +7,7 @@ import os,sys
 from collections import defaultdict
 from base64 import b64encode,b64decode
 import ujson as json
+import binascii
 
 # common external imports
 from pythemis.skeygen import KEY_PAIR_TYPE, GenerateKeyPair
