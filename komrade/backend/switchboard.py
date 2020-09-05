@@ -76,10 +76,7 @@ class TheSwitchboard(FlaskView, Logger):
 
     #def get(self):
     #    return "We're sorry; we are unable to complete your call as dialed. Please check the number and dial again, or call your operator to help you."
-    def log(self,*x):
-        from logger import logger
-        log=logger.logger()
-        log(*x)
+
 
     def get(self,encr_b64_str):
         # first try to get from string to bytes
