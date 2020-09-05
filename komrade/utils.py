@@ -4,6 +4,27 @@ class KomradeException(Exception): pass
 import sys,os
 sys.path.append(os.path.dirname(__file__))
 
+
+def logger():
+    import logging
+    handler = logging.StreamHandler()
+    formatter = logging.Formatter('[%(asctime)s]\n%(message)s\n')
+    handler.setFormatter(formatter)
+    logger = logging.getLogger(__file__)
+    logger.addHandler(handler)
+    logger.setLevel(logging.DEBUG)
+    return logger
+
+LOG = None
+
+def log(*x):
+    global LOG
+    if not LOG: LOG=logger().debug
+
+    tolog=' '.join(str(_) for _ in x)
+    LOG(tolog)
+
+
 import inspect
 class Logger(object):
     def log(self,*x):
@@ -11,7 +32,7 @@ class Logger(object):
         calframe = inspect.getouterframes(curframe, 2)
         mytype = type(self).__name__
         caller = calframe[1][3]
-        print(f'\n[{mytype}.{caller}()]',*x)
+        LOG(f'\n[{mytype}.{caller}()]',*x)
 
 
 

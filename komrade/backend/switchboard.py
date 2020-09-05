@@ -77,7 +77,7 @@ class TheSwitchboard(FlaskView, Logger):
     #def get(self):
     #    return "We're sorry; we are unable to complete your call as dialed. Please check the number and dial again, or call your operator to help you."
     def log(self,*x):
-        import logger
+        from logger import logger
         log=logger.logger()
         log(*x)
 
