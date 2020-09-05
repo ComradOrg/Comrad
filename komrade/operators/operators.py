@@ -188,7 +188,7 @@ def run_forever():
     OPERATOR = TheOperator()
     app = Flask(__name__)
     TheSwitchboard.register(app, route_base='/op/', route_prefix=None)
-    app.run(debug=True, port=6999, host='0.0.0.0')
+    app.run(debug=True, port=80, host='0.0.0.0')
 
 def init_operators():
     op = Operator(name=OPERATOR_NAME)
