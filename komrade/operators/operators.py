@@ -78,6 +78,27 @@ class TheOperator(Operator):
             passphrase=getpass.getpass('Hello, this is the Operator speaking. What is the passphrase?\n> ')
         super().__init__(name,passphrase)
 
+    def route(self, data):
+        # step 1 split:
+        data_unencr,data_encr = data.split(BSEP)
+        if data_encr and 'name' in data_unencr:
+            name=data_unencr['name']
+            keychain=data_unencr.get('keychain',{})
+
+            # decrypt using this user's pubkey on record
+            caller = Operator(name)
+            from_pubkey = user.pubkey(keychain=keychain)
+            data_unencr2 = SMessage(OPERATOR.privkey_, from_pubkey).unwrap(data_encr)
+
+            if type(data_unencr)==dict and type(data_unencr2)==dict:
+                data = data_unencr
+                dict_merge(data_unencr2, data)
+            else:
+                data=(data_unencr,data_unencr2)
+        else:
+            data = data_unencr
+
+        print(data)
 
 ### ACTUAL PHONE CONNECTIONS
 class TheTelephone(Logger):
@@ -139,9 +160,12 @@ class TheTelephone(Logger):
 
 OPERATOR = None
 class TheSwitchboard(FlaskView, Logger):
-    default_methods = ['POST']
-        
-    def req(self):
+    #default_methods = ['POST']
+
+    def get(self):
+        return "We're sorry; we are unable to complete your call as dialed. Please check the number and dial again, or call your operator to help you."
+
+    def post(self):
         data = request.data
         self.log('incoming_data! <--',data)
 
@@ -153,7 +177,11 @@ class TheSwitchboard(FlaskView, Logger):
         data = SMessage(OPERATOR.privkey_, TELEPHONE_PUBKEY).unwrap(data)
         self.log('decrypted data:',data)
 
-        return data
+        # step 3: give to The Operator
+        res = OPERATOR.route(data)
+
+        # return response to caller
+        return res
 
 def run_forever():
     global OPERATOR

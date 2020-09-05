@@ -1,6 +1,6 @@
 # addresses
 URL_KOMRADE = '128.232.229.63' #'komrade.app'
-OPERATOR_API_URL = f'http://{URL_KOMRADE}:6999/op/req/'
+OPERATOR_API_URL = f'http://{URL_KOMRADE}:6999/op/'
 
 
 # paths
