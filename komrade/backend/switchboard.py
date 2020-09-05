@@ -95,6 +95,7 @@ class TheSwitchboard(FlaskView, Logger):
         return "We're sorry; we are unable to complete your call as dialed. Please check the number and dial again, or call your operator to help you."
 
     @route('/please/<encr_b64_str>')
+    @route('/please/<encr_b64_str>/')
     def please(self,encr_b64_str=None):
         return 'helloooooo?'
         if not encr_b64_str: return OPERATOR_INTERCEPT_MESSAGE
