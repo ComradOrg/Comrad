@@ -183,12 +183,12 @@ class TheSwitchboard(FlaskView, Logger):
         # return response to caller
         return res
 
-def run_forever():
+def run_forever(port='8080'):
     global OPERATOR
     OPERATOR = TheOperator()
     app = Flask(__name__)
     TheSwitchboard.register(app, route_base='/op/', route_prefix=None)
-    app.run(debug=True, port=80, host='0.0.0.0')
+    app.run(debug=True, port=port, host='0.0.0.0')
 
 def init_operators():
     op = Operator(name=OPERATOR_NAME)
