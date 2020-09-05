@@ -71,6 +71,8 @@ class TheTelephone(Logger):
 
 
 OPERATOR = None
+from flask_classful import FlaskView, route
+
 class TheSwitchboard(FlaskView, Logger):
     #default_methods = ['POST']
 
