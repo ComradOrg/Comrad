@@ -39,96 +39,52 @@ if not os.path.exists(PATH_OPERATOR): os.makedirs(PATH_OPERATOR)
 
 
 class Operator(Keymaker):
-    ### INIT CODE
-    def __init__(self,name):
-        self.name=name
-        # self.op = TheOperator()
-
-    ## CRYPT BASICS
     
-class Caller(Operator):
-    @property
-    def crypt_cell(self):
-        pass
+    def __init__(self, name, passphrase=None):
+        super().__init__(name=name,passphrase=passphrase)
 
+    def boot(self,create=False):
+         # Do I have my keys?
+        have_keys = self.exists()
+        
+        # If not, forge them -- only once!
+        if not have_keys and create:
+            self.get_new_keys()
 
+        # load keychain into memory
+        self._keychain = self.keychain(force = True)
 
 
 class TheOperator(Operator):
     """
-    The operator.
+    The remote operator! Only one!
     """
 
-    def __init__(self, name = 'TheOperator'):
+    def __init__(self, name = 'TheOperator', passphrase=None):
         """
         Boot up the operator. Requires knowing or setting a password of memory.
         """
-        self.name = name
+        if not passphrase:
+            passphrase=getpass.getpass('Hello, this is the Operator speaking. What is the passphrase?\n> ')
+        super().__init__(name,passphrase)
 
-        # Do I have my keys?
-        have_keys = self.have_keys()
-
-        # If not, forge them -- only once!
-        if not have_keys: self.forge_keys()
-
-        # load keys
-        # self.pubkey,self.privkey = self.get_op_keys()
-        
-        # That's it!
-
-    def login(self, name, keychain_encr):
-        pass
+        #self.boot(create=True)
 
 
 
-
-
-
-
-
-
-
-class TheOperatorView(FlaskView):
-    route_prefix = '/'
-    def index(self):
-        print('hello')
-        return "<br>".join(quotes)
-
-    def something(self):
-        return 'something'
-
-
-
-
-
-
-def get_random_id():
-    import uuid
-    return uuid.uuid4().hex
-
-def get_random_binary_id():
-    import base64
-    idstr = get_random_id()
-    return base64.b64encode(idstr.encode())
-
-
-
-
-
-
-## Main
-
-def run_forever():
-    app = Flask(__name__)
-    TheOperator.register(app, route_base='/op/', route_prefix=None)
-    app.run(debug=True)
-
-if __name__ == '__main__':
-    #run_forever()
-
-    op = TheOperator()
+    # # ca = RemoteOperator(name='elon')
+    # # # ca.get_new_keys()
+    # # op.boot()
+    # # ca.boot()
     
-    #print(op.crypt_keys.set('aaaa','1111'))
+    # #print(op.crypt_keys.set('aaaa','1111'))
 
-    # print(op.crypt_keys.get('aaaa'))
-    # print(op.forge_keys())
+    # # print(op.crypt_keys.get('aaaa'))
+    # # print(op.forge_keys())
+    # # from pprint import pprint
+    # # keychain = op.keychain()
+    # # pprint(keychain)
+    # # print(len(keychain))
+
+    # print('Op pubkey:',op.keychain()['pubkey'])
+    # print('Ca pubkey:',ca.keychain()['pubkey'])

@@ -6,6 +6,7 @@ from pythemis.skeygen import GenerateSymmetricKey
 from pythemis.scell import SCellSeal
 from pythemis.exception import ThemisError
 import getpass,os
+from collections import defaultdict
 
 PATH_KOMRADE = os.path.abspath(os.path.join(os.path.expanduser('~'),'.komrade'))
 PATH_OPERATOR = os.path.join(PATH_KOMRADE,'.operator')
@@ -13,8 +14,30 @@ PATH_OPERATOR_PUBKEY = os.path.join(PATH_OPERATOR,'.op.key.pub.encr')
 PATH_OPERATOR_PRIVKEY = os.path.join(PATH_OPERATOR,'.op.key.priv.encr')
 PATH_CRYPT_KEYS = os.path.join(PATH_OPERATOR,'.op.db.keys.crypt')
 PATH_CRYPT_DATA = os.path.join(PATH_OPERATOR,'.op.db.data.encr')
+BSEP=b'||||||||||'
+BSEP2=b'@@@@@@@@@@'
+BSEP3=b'##########'
+
+KEYNAMES = [
+            'pubkey','privkey','adminkey',
+            'pubkey_encr','privkey_encr','adminkey_encr',
+            'pubkey_decr','privkey_decr','adminkey_decr',
+            'pubkey_encr_encr','privkey_encr_encr','adminkey_encr_encr',
+            'pubkey_encr_decr','privkey_encr_decr','adminkey_encr_decr',
+            'pubkey_decr_encr','privkey_decr_encr','adminkey_decr_encr',
+            'pubkey_decr_decr','privkey_decr_decr','adminkey_decr_decr'
+        ]
+
 
 class Keymaker(Logger):
+    def __init__(self,name=None,passphrase=None):
+        self.name=name
+        self.passphrase=passphrase
+
+        for k in KEYNAMES:
+            func = lambda: self.keychain().get(k)
+            setattr(self,'_'+k,func) 
+
     ### BASE STORAGE
     @property
     def crypt_keys(self):
@@ -32,40 +55,60 @@ class Keymaker(Logger):
     ### STARTING WITH MOST ABSTRACT
 
     def findkey(self, keyname, keychain={}, uri=None):
+        self.log(f'looking for key {keyname}, in keychain {keychain.keys()} or under crypt uri {uri}')
         # look in keychain, then in crypt, for this key
         given_key = keychain.get(keyname)
-        if given_key: return given_key
+        if given_key:
+            self.log(f'{keyname} found in keychain: {given_key}')
+            return given_key
 
         found_key = self.crypt_keys.get(uri,prefix=f'/{keyname}/')
-        if found_key: return found_key
+        if found_key:
+            self.log(f'{keyname} found in crypt: {given_key}')
+            return found_key
+
+        self.log(f'{keyname} not found!!')
+            
 
     def getkey(self, keyname, keychain={}, uri=None):
+        self.log(f'keyname={keyname}, keychain={keychain.keys()}, uri={uri}')
+
         # 1) I already have this key stored in either the keychain or the crypt; return straight away
         key = self.findkey(keyname, keychain, uri)
-        if key: return key
+        if key:
+            self.log(f'>> I have {key} already, returning')
+            return key
 
         ## 2) I can assemble the key
+        self.log(f'assembling key: {keyname}_encr + {keyname}_decr')
         key_encr = self.findkey(keyname+'_encr', keychain,uri)
         key_decr = self.findkey(keyname+'_decr', keychain, uri)
         key = self.assemble_key(key_encr, key_decr)
         return key
 
     def get_cell(self, str_or_key_or_cell):
+        self.log('getting decr cell for',str_or_key_or_cell)
+
         if type(str_or_key_or_cell)==SCellSeal:
             return str_or_key_or_cell
         elif type(str_or_key_or_cell)==str:
             return SCellSeal(passphrase=str_or_key_or_cell)
         elif type(str_or_key_or_cell)==bytes:
-            return SCellSeal(key=key)
+            return SCellSeal(key=str_or_key_or_cell)
 
     def assemble_key(self, key_encr, key_decr):
+        self.log(f'assembling key: {key_decr} decrypting {key_encr}')
+
         # need the encrypted half
         if not key_encr:
             self.log('!! encrypted half not given')
             return
         if not key_decr:
-            self.log('!! decryptor half not given')
-            return
+            if self.passphrase:
+                key_decr = self.passphrase
+            else:
+                self.log('!! decryptor half not given')
+                return
 
         # need some way to regenerate the decryptor
         decr_cell = self.get_cell(key_decr)
@@ -77,12 +120,12 @@ class Keymaker(Logger):
 
         # decrypt!
         try:
+            self.log(f'>> decrypting {key_encr} with cell {decr_cell}')
             key = decr_cell.decrypt(key_encr)
             self.log('assembled_key built:',key)
             return key
         except ThemisError as e:
             self.log('!! decryption failed:',e)
-
 
     # Concrete keys
     ## (1) Final keys
@@ -97,50 +140,50 @@ class Keymaker(Logger):
     def pubkey_encr(self, **kwargs):
         return self.getkey(uri=self.name,keyname='pubkey_encr',**kwargs)
     def privkey_encr(self, **kwargs):
-        return self.getkey(uri=self.pubkey_encr(**kargs),keyname='privkey_encr',**kwargs)
+        return self.getkey(uri=self.pubkey(**kwargs),keyname='privkey_encr',**kwargs)
     def adminkey_encr(self, **kwargs):
-        return self.getkey(uri=self.privkey_encr(**kargs),keyname='adminkey_encr',**kwargs)
+        return self.getkey(uri=self.privkey(**kwargs),keyname='adminkey_encr',**kwargs)
 
     ## (1-Y) Decrpytor halves
     def pubkey_decr(self, **kwargs):
         return self.getkey(uri=self.name,keyname='pubkey_decr',**kwargs)
     def privkey_decr(self, **kwargs):
-        return self.getkey(uri=self.pubkey_decr(**kargs),keyname='privkey_decr',**kwargs)
+        return self.getkey(uri=self.pubkey(**kwargs),keyname='privkey_decr',**kwargs)
     def adminkey_decr(self, **kwargs):
-        return self.getkey(uri=self.privkey_decr(**kargs),keyname='adminkey_decr',**kwargs)
+        return self.getkey(uri=self.privkey(**kwargs),keyname='adminkey_decr',**kwargs)
 
     ## Second halving!
     ## (1-X-X)
     def pubkey_encr_encr(self, **kwargs):
         return self.getkey(uri=self.name,keyname='pubkey_encr_encr',**kwargs)
     def privkey_encr_encr(self, **kwargs):
-        return self.getkey(uri=self.pubkey_encr_encr(**kargs),keyname='privkey_encr_encr',**kwargs)
+        return self.getkey(uri=self.pubkey_encr(**kwargs),keyname='privkey_encr_encr',**kwargs)
     def adminkey_encr_encr(self, **kwargs):
-        return self.getkey(uri=self.privkey_encr_encr(**kargs),keyname='adminkey_encr_encr',**kwargs)
+        return self.getkey(uri=self.privkey_encr(**kwargs),keyname='adminkey_encr_encr',**kwargs)
 
     ## (1-X-Y)
     def pubkey_encr_decr(self, **kwargs):
         return self.getkey(uri=self.name,keyname='pubkey_encr_decr',**kwargs)
     def privkey_encr_decr(self, **kwargs):
-        return self.getkey(uri=self.pubkey_encr_decr(**kargs),keyname='privkey_encr_decr',**kwargs)
+        return self.getkey(uri=self.pubkey_encr(**kwargs),keyname='privkey_encr_decr',**kwargs)
     def adminkey_encr_decr(self, **kwargs):
-        return self.getkey(uri=self.privkey_encr_decr(**kargs),keyname='adminkey_encr_decr',**kwargs)
+        return self.getkey(uri=self.privkey_encr(**kwargs),keyname='adminkey_encr_decr',**kwargs)
 
     ## (1-Y-X)
     def pubkey_decr_encr(self, **kwargs):
         return self.getkey(uri=self.name,keyname='pubkey_decr_encr',**kwargs)
     def privkey_decr_encr(self, **kwargs):
-        return self.getkey(uri=self.pubkey_decr_encr(**kargs),keyname='privkey_decr_encr',**kwargs)
+        return self.getkey(uri=self.pubkey_decr(**kwargs),keyname='privkey_decr_encr',**kwargs)
     def adminkey_decr_encr(self, **kwargs):
-        return self.getkey(uri=self.privkey_decr_encr(**kargs),keyname='adminkey_decr_encr',**kwargs)
+        return self.getkey(uri=self.privkey_decr(**kwargs),keyname='adminkey_decr_encr',**kwargs)
 
     ## (1-Y-Y)
     def pubkey_decr_decr(self, **kwargs):
         return self.getkey(uri=self.name,keyname='pubkey_decr_decr',**kwargs)
     def privkey_decr_decr(self, **kwargs):
-        return self.getkey(uri=self.pubkey_decr_decr(**kargs),keyname='privkey_decr_decr',**kwargs)
+        return self.getkey(uri=self.pubkey_decr(**kwargs),keyname='privkey_decr_decr',**kwargs)
     def adminkey_decr_decr(self, **kwargs):
-        return self.getkey(uri=self.privkey_decr_decr(**kargs),keyname='adminkey_decr_decr',**kwargs)
+        return self.getkey(uri=self.privkey_decr(**kwargs),keyname='adminkey_decr_decr',**kwargs)
 
     ### DECR ENCR KEYS
     ## Third level: splitting (encrypted/decryption key) the encrypted keys and decryption keys above
@@ -170,8 +213,8 @@ class Keymaker(Logger):
     
     def get_new_keys(self,pubkey_pass = None, privkey_pass = None, adminkey_pass = None):
         # Get decryptor keys back from The Operator (one half of the Keymaker)
-        keychain = self.forge_keys(self.name)
-        self.log('create_keys() res from Operator? <-',res)
+        keychain = self.forge_new_keys(self.name)
+        self.log('create_keys() res from Operator? <-',keychain)
 
         # Now lock the decryptor keys away, sealing it with a password of memory!
         self.lock_new_keys(keychain)
@@ -226,45 +269,76 @@ class Keymaker(Logger):
         
 
         
-    def lock_new_keys(self,keychain):
+    def lock_new_keys(self,keychain,passphrase=None):
         # we're not going to store the decryptor keys directly though
-        passphrase=getpass.getpass('Forge the password of memory: ')
+        if not passphrase:
+            if self.passphrase:
+                passphrase=self.passphrase
+            else:
+                self.passphrase=passphrase=getpass.getpass('Forge the password of memory: ')
+        
         cell = SCellSeal(passphrase=passphrase)
+
         # encrypt the decryptor keys
         pubkey_decr_encr = cell.encrypt(keychain['pubkey_decr'])
         privkey_decr_encr = cell.encrypt(keychain['privkey_decr'])
         adminkey_decr_encr = cell.encrypt(keychain['adminkey_decr'])
         
-        # set to crypt, like a caller
+        # set to crypt and keychain
         self.crypt_keys.set(self.name,pubkey_decr_encr,prefix='/pubkey_decr_encr/')
+        #keychain['pubkey_decr_encr']=pubkey_decr_encr
+        
         self.crypt_keys.set(keychain['pubkey_decr'],privkey_decr_encr,prefix='/privkey_decr_encr/')
+        #keychain['privkey_decr_encr']=privkey_decr_encr
+        
         self.crypt_keys.set(keychain['privkey_decr'],adminkey_decr_encr,prefix='/adminkey_decr_encr/')
-
-        assert type(res)==tuple and len(res)==3
-        (pubkey_decr, privkey_decr, adminkey_decr) = res
-
-        # double-encrypt what was received
-        pubkey_decr_decr_key,pubkey_decr_decr_cell = self.pubkey_decr_decr_keycell(passphrase=pubkey_pass)
-        self.log('pubkey_decr_decr_key <--',pubkey_decr_decr_key)
-        self.log('pubkey_decr_decr_cell <--',pubkey_decr_decr_cell)
-        self.log('pubkey_decr <--',pubkey_decr)
-        pubkey_decr_encr = pubkey_decr_decr_cell.encrypt(pubkey_decr)
-        self.log('pubkey_decr_encr <--',pubkey_decr_encr)
-
-        # privkey_decr_encr = privkey_passcell.encrypt(privkey_decr)
-        # self.log('pubkey_decr_encr <--',pubkey_decr_encr)
-
-        # adminkey_decr_encr = adminkey_passcell.encrypt(adminkey_decr)
-        # self.log('pubkey_decr_encr <--',pubkey_decr_encr)
-
-        # store double encrypted keys
-        self.crypt_keys.set(self.name,pubkey_decr_encr,prefix='/pubkey_decr_encr/')
-        # self.crypt_keys.set(pubkey_decr,privkey_decr_encr,prefix='/privkey_decr_encr/')
-        # self.crypt_keys.set(privkey_decr,adminkey_decr_encr,prefix='/adminkey_decr_encr/')
+        #keychain['adminkey_decr_encr']=adminkey_decr_encr
         
         # store decryption keys if not passworded?
-        if pubkey_decr_decr_key: self.crypt_keys.set(self.name,pubkey_decr_decr_key,prefix='/pubkey_decr_decr_key/')
-        # if privkey_passkey: self.crypt_keys.set(pubkey_decr,privkey_passkey,prefix='/privkey_decr_decr_key/')
-        # if adminkey_passkey: self.crypt_keys.set(privkey_decr,adminkey_passkey,prefix='/adminkey_decr_decr_key/')
+        pub_ddk,priv_ddk,admin_ddk=[x+'key_decr_decr_key' for x in ['pub','priv','admin']]
+        if pub_ddk in keychain:
+            self.crypt_keys.set(self.name, keychain[pub_ddk], prefix=f'/{pub_ddk}/')
+        if priv_ddk in keychain:
+            self.crypt_keys.set(self.name, keychain[priv_ddk], prefix=f'/{priv_ddk}/')
+        if admin_ddk in keychain:
+            self.crypt_keys.set(self.name, keychain[admin_ddk], prefix=f'/{admin_ddk}/')
         
-        # done?
+        # # return protected keychain
+        # todel = ['pubkey_decr','privkey_decr','adminkey_decr']
+        # for x in todel:
+        #     if x in keychain:
+        #         del keychain[x]
+
+        # # add encr versions
+        # keychain
+
+        # del keychain['pubkey_decr']
+        # del keychain['privkey_decr']
+        # del keychain['adminkey_decr']
+        
+
+        # return ()
+        return passphrase
+
+    # def load_concrete_keychain():
+    #     keychain = {}
+    #     for keyname in KEYNAMES:
+    #         keychain=self.findkey(keyname, keychain, uri)
+
+    def keychain(self,passphrase=None,force=False,**kwargs):
+        # assemble as many keys as we can!
+        if not force and hasattr(self,'_keychain') and self._keychain: return self._keychain
+        if passphrase: self.passphrase=passphrase
+
+
+        _keychain = defaultdict(None)
+        for keyname in reversed(KEYNAMES+KEYNAMES):
+            self.log('??',keyname,'...')
+            if hasattr(self,keyname):
+                method=getattr(self,keyname)
+                res=method(keychain=_keychain, **kwargs)
+                self.log('res <--',res)
+                if res:
+                    _keychain[keyname]=res
+        return _keychain
+        

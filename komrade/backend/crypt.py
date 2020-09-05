@@ -71,6 +71,9 @@ class Crypt(Logger):
         
         return self.store.put(k_b,v_b)
 
+    def exists(self,k,prefix=''):
+        return bool(self.get(k,prefix=prefix))
+
     def get(self,k,prefix=''):
         # self.log('get() k -->',prefix,k)
         k_b=self.package_key(k,prefix=prefix)
