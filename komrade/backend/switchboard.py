@@ -26,7 +26,7 @@ class TheTelephone(Logger):
 
     def dial_operator(self,msg):
         URL = OPERATOR_API_URL + msg
-        r=tor_request_in_python(OPERATOR_API_URL)
+        r=tor_request_in_python(URL)
         print(r)
         print(r.text)
         return r
@@ -92,6 +92,8 @@ class TheSwitchboard(FlaskView, Logger):
     #default_methods = ['POST']
 
     def get(self,msg):
+        self.log('Incoming call!:',msg)
+
         if not msg:
             self.log('empty request!')
             return OPERATOR_INTERCEPT_MESSAGE
