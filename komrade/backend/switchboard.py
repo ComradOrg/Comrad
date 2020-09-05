@@ -79,8 +79,8 @@ class TheSwitchboard(FlaskView, Logger):
 
 
     def get(self,encr_b64_str):
-        return encr_b64_str
-        
+        raise Exception(encr_b64_str)
+
         # first try to get from string to bytes
         self.log('incoming <--',encr_b64_str)
 
