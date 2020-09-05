@@ -111,7 +111,12 @@ class TheSwitchboard(FlaskView, Logger):
             return OPERATOR_INTERCEPT_MESSAGE
 
         # then unwrap top level encryption
-        tele_pubkey = b64decode(TELEPHONE_PUBKEY)
+        try:
+            tele_pubkey = b64decode(TELEPHONE_PUBKEY)
+        except ThemisError:
+            self.log('not really from the telephone?')
+            return OPERATOR_INTERCEPT_MESSAGE
+        
         data = SMessage(OPERATOR.privkey_, tele_pubkey).unwrap(data)
         self.log('decrypted data:',data)
 
