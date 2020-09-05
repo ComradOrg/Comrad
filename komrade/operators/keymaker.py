@@ -1,33 +1,6 @@
-from komrade.operators.crypt import Crypt
-from komrade import KomradeException,Logger
-from pythemis.skeygen import KEY_PAIR_TYPE, GenerateKeyPair
-from pythemis.smessage import SMessage, ssign, sverify
-from pythemis.skeygen import GenerateSymmetricKey
-from pythemis.scell import SCellSeal
-from pythemis.exception import ThemisError
-import getpass,os
-from collections import defaultdict
-
-PATH_KOMRADE = os.path.abspath(os.path.join(os.path.expanduser('~'),'.komrade'))
-PATH_OPERATOR = os.path.join(PATH_KOMRADE,'.operator')
-PATH_OPERATOR_PUBKEY = os.path.join(PATH_OPERATOR,'.op.key.pub.encr')
-PATH_OPERATOR_PRIVKEY = os.path.join(PATH_OPERATOR,'.op.key.priv.encr')
-PATH_CRYPT_KEYS = os.path.join(PATH_OPERATOR,'.op.db.keys.crypt')
-PATH_CRYPT_DATA = os.path.join(PATH_OPERATOR,'.op.db.data.encr')
-BSEP=b'||||||||||'
-BSEP2=b'@@@@@@@@@@'
-BSEP3=b'##########'
-
-KEYNAMES = [
-            'pubkey','privkey','adminkey',
-            'pubkey_encr','privkey_encr','adminkey_encr',
-            'pubkey_decr','privkey_decr','adminkey_decr',
-            'pubkey_encr_encr','privkey_encr_encr','adminkey_encr_encr',
-            'pubkey_encr_decr','privkey_encr_decr','adminkey_encr_decr',
-            'pubkey_decr_encr','privkey_decr_encr','adminkey_decr_encr',
-            'pubkey_decr_decr','privkey_decr_decr','adminkey_decr_decr'
-        ]
-
+import os,sys; sys.path.append(os.path.abspath(os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__),'..')),'..')))
+from komrade import *
+from komrade.operators.crypt import *
 
 class Keymaker(Logger):
     def __init__(self,name=None,passphrase=None):
@@ -185,10 +158,66 @@ class Keymaker(Logger):
     def adminkey_decr_decr(self, **kwargs):
         return self.getkey(uri=self.privkey_decr(**kwargs),keyname='adminkey_decr_decr',**kwargs)
 
-    ### DECR ENCR KEYS
-    ## Third level: splitting (encrypted/decryption key) the encrypted keys and decryption keys above
 
+    # convenience functions
     
+    # Concrete keys
+    @property
+    def pubkey__(self): return self.keychain()['pubkey']
+    @property
+    def privkey_(self, **kwargs): return self.keychain()['privkey']
+    @property
+    def adminkey_(self, **kwargs): return self.keychain()['adminkey']
+    
+    ## (1-X) Encrypted halves
+    @property
+    def pubkey_encr_(self, **kwargs):return self.keychain()['pubkey_encr']
+    @property
+    def privkey_encr_(self, **kwargs): return self.keychain()['privkey_encr']
+    @property
+    def adminkey_encr_(self, **kwargs): return self.keychain()['adminkey_encr']
+
+    ## (1-Y) Decrpytor halves
+    @property
+    def pubkey_decr_(self, **kwargs): return self.keychain()['pubkey_decr']
+    @property
+    def privkey_decr_(self, **kwargs): return self.keychain()['privkey_decr']
+    @property
+    def adminkey_decr_(self, **kwargs): return self.keychain()['adminkey_decr']
+
+    ## Second halving!
+    ## (1-X-X)
+    @property
+    def pubkey_encr_encr_(self, **kwargs): return self.keychain()['pubkey_encr_encr']
+    @property
+    def privkey_encr_encr_(self, **kwargs): return self.keychain()['privkey_encr_encr']
+    @property
+    def adminkey_encr_encr_(self, **kwargs): return self.keychain()['adminkey_encr_encr']
+
+    ## (1-X-Y)
+    @property
+    def pubkey_encr_decr_(self, **kwargs): return self.keychain()['pubkey_encr_decr']
+    @property
+    def privkey_encr_decr_(self, **kwargs): return self.keychain()['privkey_encr_decr']
+    @property
+    def adminkey_encr_decr_(self, **kwargs): return self.keychain()['adminkey_encr_decr']
+
+    ## (1-Y-X)
+    @property
+    def pubkey_decr_encr_(self, **kwargs): return self.keychain()['pubkey_decr_encr']
+    @property
+    def privkey_decr_encr_(self, **kwargs): return self.keychain()['privkey_decr_encr']
+    @property
+    def adminkey_decr_encr_(self, **kwargs): return self.keychain()['adminkey_decr_encr']
+
+    ## (1-Y-Y)
+    @property
+    def pubkey_decr_decr_(self, **kwargs): return self.keychain()['pubkey_decr_decr']
+    @property
+    def privkey_decr_decr_(self, **kwargs): return self.keychain()['privkey_decr_decr']
+    @property
+    def adminkey_decr_decr_(self, **kwargs): return self.keychain()['adminkey_decr_decr']
+
 
     # Get key de-cryptors
     def genkey_pass_keycell(self,pass_phrase,q_name='Read permissions?'):

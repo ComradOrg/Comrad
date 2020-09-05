@@ -1,17 +1,16 @@
-###
-# Define some basic things while we're here
+# basic config
+from .constants import *
+from .utils import *
 
-class KomradeException(Exception): pass
+# common python imports
+import os,sys
+from collections import defaultdict
+from base64 import b64encode,b64decode
 
-# make sure komrade is on path
-import sys,os
-sys.path.append(os.path.dirname(__file__))
-
-import inspect
-class Logger(object):
-    def log(self,*x):
-        curframe = inspect.currentframe()
-        calframe = inspect.getouterframes(curframe, 2)
-        mytype = type(self).__name__
-        caller = calframe[1][3]
-        print(f'\n[{mytype}.{caller}()]',*x)
+# common external imports
+from pythemis.skeygen import KEY_PAIR_TYPE, GenerateKeyPair
+from pythemis.smessage import SMessage, ssign, sverify
+from pythemis.skeygen import GenerateSymmetricKey
+from pythemis.scell import SCellSeal
+from pythemis.exception import ThemisError
+import getpass

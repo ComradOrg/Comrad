@@ -1,21 +1,5 @@
 # ### Constants
-# BSEP=b'||||||||||'
-# BSEP2=b'@@@@@@@@@@'
-# BSEP3=b'##########'
-#
-
-# P2P_PREFIX=b'/persona/'
-# P2P_PREFIX_POST=b'/msg/'
-# P2P_PREFIX_INBOX=b'/inbox/'
-# P2P_PREFIX_OUTBOX=b'/outbox/'
-
-# DEBUG = True
-# UPLOAD_DIR = 'uploads/'
-# ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-
-# PORT_LISTEN = 5639
-# NODE_SLEEP_FOR=1
-# NODES_PRIME = [("128.232.229.63",8467)] 
+from komrade import *
 LAST_N_IN_INBOX = 10
 
 
