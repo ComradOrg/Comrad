@@ -9,3 +9,4 @@ lib
 *.key
 *.key.*
 .op.*
+*.pyc
