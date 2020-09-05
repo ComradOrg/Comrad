@@ -91,8 +91,8 @@ from flask_classful import FlaskView, route
 class TheSwitchboard(FlaskView, Logger):
     #default_methods = ['POST']
 
-    def get(self):
-        return "We're sorry; we are unable to complete your call as dialed. Please check the number and dial again, or call your operator to help you."
+    def get(self,msg):
+        return f"Your message was {msg}. But we're sorry; we are unable to complete your call as dialed. Please check the number and dial again, or call your operator to help you."
 
     @route('/please/<encr_b64_str>')
     def please(self,encr_b64_str=None):
