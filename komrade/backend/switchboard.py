@@ -25,6 +25,7 @@ class TheTelephone(Logger):
         return b64decode(OPERATOR_PUBKEY)
 
     def dial_operator(self,msg):
+        msg=msg.replace('/','_')
         URL = OPERATOR_API_URL + msg + '/'
         self.log("DIALING THE OPERATOR:",URL)
         r=tor_request_in_python(URL)
