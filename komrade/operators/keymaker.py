@@ -1,4 +1,4 @@
-from komrade.backend.crypt import Crypt
+from komrade.operators.crypt import Crypt
 from komrade import KomradeException,Logger
 from pythemis.skeygen import KEY_PAIR_TYPE, GenerateKeyPair
 from pythemis.smessage import SMessage, ssign, sverify

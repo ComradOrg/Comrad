@@ -3,8 +3,8 @@ There is only one operator!
 Running on node prime.
 """
 import os,sys; sys.path.append(os.path.abspath(os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__),'..')),'..')))
-from komrade.backend.crypt import Crypt
-from komrade.backend.keymaker import Keymaker
+from komrade.operators.crypt import Crypt
+from komrade.operators.keymaker import Keymaker
 from flask import Flask
 from flask_classful import FlaskView
 from pythemis.skeygen import KEY_PAIR_TYPE, GenerateKeyPair
@@ -55,6 +55,15 @@ class Operator(Keymaker):
         self._keychain = self.keychain(force = True)
 
 
+class Caller(Operator):
+    def get_new_keys(self,pubkey_pass = None, privkey_pass = None, adminkey_pass = None):
+        # Get decryptor keys back from The Operator (one half of the Keymaker)
+        keychain = self.forge_new_keys(self.name)
+        self.log('create_keys() res from Operator? <-',keychain)
+
+        # Now lock the decryptor keys away, sealing it with a password of memory!
+        self.lock_new_keys(keychain)
+
 class TheOperator(Operator):
     """
     The remote operator! Only one!
@@ -68,23 +77,23 @@ class TheOperator(Operator):
             passphrase=getpass.getpass('Hello, this is the Operator speaking. What is the passphrase?\n> ')
         super().__init__(name,passphrase)
 
-        #self.boot(create=True)
 
 
+OPERATOR = None
+class TheOperatorsSwitchboard(FlaskView):
+    def index(self):
+        return OPERATOR.keychain()['pubkey']
+        
+    def something(self):
+        return 'something'
 
-    # # ca = RemoteOperator(name='elon')
-    # # # ca.get_new_keys()
-    # # op.boot()
-    # # ca.boot()
-    
-    # #print(op.crypt_keys.set('aaaa','1111'))
 
-    # # print(op.crypt_keys.get('aaaa'))
-    # # print(op.forge_keys())
-    # # from pprint import pprint
-    # # keychain = op.keychain()
-    # # pprint(keychain)
-    # # print(len(keychain))
+def run_forever():
+    global OPERATOR
+    OPERATOR = TheOperator()
+    app = Flask(__name__)
+    TheOperatorsSwitchboard.register(app, route_base='/op/', route_prefix=None)
+    app.run(debug=True)
 
-    # print('Op pubkey:',op.keychain()['pubkey'])
-    # print('Ca pubkey:',ca.keychain()['pubkey'])
+if __name__ == '__main__':
+    run_forever()
