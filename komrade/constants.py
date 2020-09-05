@@ -20,10 +20,9 @@ PATH_CRYPT_DATA = os.path.join(PATH_OPERATOR,'.op.db.data.encr')
 BSEP=b'||||||||||'
 BSEP2=b'@@@@@@@@@@'
 BSEP3=b'##########'
-OPERATOR_PUBKEY = b'UEC2\x00\x00\x00-\x80\x99^\xef\x03PN\xc93`k\xa0\\A\xf6\\q\x0c\x8b\xa6\x1c\xc7I\xfbC\x96\xb5w\xf9\x83U\xe7\x0b\x8fp)\xaa'
-TELEPHONE_PUBKEY = b'UEC2\x00\x00\x00-^_\x9a\xad\x02\x1b8\x1b2\xa0U\xb8\xf1\x9ek\x00\x9fO\xb7\xa3\xf3\x1a\x9c\xe0/\xeb\xe9\xfe\xe9\xb8\x14\x9dE\x83\x07V\xe4'
-TELEPHONE_PRIVKEY = b'REC2\x00\x00\x00-?Y\xcb\xed\x00+4\xe5M\x8fC\xdd\xb6\xe3\xe4Z)\x01\xbc\x02\r\xb8X\xa4\\\x7f\xb2\xa8\xaeu\xdd\xa6\x84\xe1E\xde\x08'
-
+OPERATOR_PUBKEY = b'VUVDMgAAAC0Tfih+A1Rc0gslfhx6+WzC4qyFVZF+QFjGJH3sw/RyG5/mRILW'
+TELEPHONE_PUBKEY = b'VUVDMgAAAC0QnMrAA18GOJIg9ouLVvd8Ac/9mZK9GLOb/CMztWGx4GlLP8PP'
+TELEPHONE_PRIVKEY = b'UkVDMgAAAC1/aQiQAPWROJRkio2C/qT1ora5ak/ImwLoP1SdTxco+/1Q8qNC'
 # key names
 
 KEYNAMES = [

@@ -19,6 +19,10 @@ class TheTelephone(Logger):
     """
     def __init__(self, caller):
         self.caller = caller
+
+    @property
+    def op_pubkey(self):
+        return b64decode(OPERATOR_PUBKEY)
         
     @property
     def sess(self):
@@ -46,13 +50,17 @@ class TheTelephone(Logger):
         if json_coming_from_caller:
             json_coming_from_caller_s = json.dumps(json_coming_from_caller)
             json_coming_from_caller_b = json_coming_from_caller_s.encode()
-            json_coming_from_caller_b_encr = SMessage(self.caller.privkey_,OPERATOR_PUBKEY).wrap(json_coming_from_caller_b)
+            op_pubkey
+            json_coming_from_caller_b_encr = SMessage(self.caller.privkey_,self.op_pubkey).wrap(json_coming_from_caller_b)
         else:
             json_coming_from_caller_b_encr = b''
 
         # encrypt whole package E2EE, Telephone to Operator
         req_data = json_coming_from_phone_b + BSEP + json_coming_from_caller_b_encr
-        req_data_encr = SMessage(TELEPHONE_PRIVKEY, OPERATOR_PUBKEY).wrap(req_data)
+        req_data_encr = SMessage(
+            b64decode(TELEPHONE_PRIVKEY),
+            b64decode(OPERATOR_PUBKEY)
+        ).wrap(req_data)
         req_data_encr_b64 = b64encode(req_data_encr)
         self.log('req_data_encr_b64 <--',req_data_encr_b64)
 
@@ -103,7 +111,8 @@ class TheSwitchboard(FlaskView, Logger):
             return OPERATOR_INTERCEPT_MESSAGE
 
         # then unwrap top level encryption
-        data = SMessage(OPERATOR.privkey_, TELEPHONE_PUBKEY).unwrap(data)
+        tele_pubkey = b64decode(TELEPHONE_PUBKEY)
+        data = SMessage(OPERATOR.privkey_, tele_pubkey).unwrap(data)
         self.log('decrypted data:',data)
 
         # step 3: give to The Operator
