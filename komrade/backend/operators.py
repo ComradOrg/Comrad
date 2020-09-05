@@ -108,9 +108,9 @@ def init_operators():
     phone_pub = phone.pubkey_
     phone_priv = phone.privkey_
 
-    print('OPERATOR_PUBKEY',op_pub)
-    print('TELEPHONE_PUBKEY =',phone_pub)
-    print('TELEPHONE_PRIVKEY =',phone_priv)
+    print('OPERATOR_PUBKEY =',b64encode(op_pub))
+    print('TELEPHONE_PUBKEY =',b64encode(phone_pub))
+    print('TELEPHONE_PRIVKEY =',b64encode(phone_priv))
     
 
 def test_op():
