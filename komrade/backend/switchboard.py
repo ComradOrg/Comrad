@@ -81,6 +81,7 @@ class TheSwitchboard(FlaskView, Logger):
 
     @route('/<encr_b64_str>')
     def please_dial(self,encr_b64_str=None):
+        return 'hello?'
         raise Exception(encr_b64_str)
         # return encr_b64_str
 
