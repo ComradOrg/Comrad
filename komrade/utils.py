@@ -32,7 +32,7 @@ class Logger(object):
         calframe = inspect.getouterframes(curframe, 2)
         mytype = type(self).__name__
         caller = calframe[1][3]
-        LOG(f'\n[{mytype}.{caller}()]',*x)
+        log(f'\n[{mytype}.{caller}()]',*x)
 
 
 
