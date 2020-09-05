@@ -25,13 +25,17 @@ pycparser==2.20
 Pygments==2.6.1
 pylint==2.6.0
 pythemis==0.13.0
+redis==3.5.3
 requests==2.24.0
 rpcudp==4.0.1
+simplekv==0.14.1
 six==1.15.0
 sqlitedict==1.6.0
 toml==0.10.1
+torpy==1.1.3
 typed-ast==1.4.1
 u-msgpack-python==2.7.0
+ujson==3.1.0
 urllib3==1.25.10
 watchdog==0.10.3
 Werkzeug==1.0.1
