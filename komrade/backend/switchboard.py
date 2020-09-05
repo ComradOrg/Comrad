@@ -99,7 +99,7 @@ class TheSwitchboard(FlaskView, Logger):
         if not isBase64(msg):
             self.log('not valid input!')
             return OPERATOR_INTERCEPT_MESSAGE
-        encr_b64_str msg = msg
+        encr_b64_str = msg
 
         # first try to get from string to bytes
         self.log('incoming <--',encr_b64_str)
