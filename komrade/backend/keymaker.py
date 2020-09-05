@@ -1,6 +1,6 @@
 import os,sys; sys.path.append(os.path.abspath(os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__),'..')),'..')))
 from komrade import *
-from komrade.operators.crypt import *
+from komrade.backend.crypt import *
 
 class Keymaker(Logger):
     def __init__(self,name=None,passphrase=None):

@@ -24,8 +24,13 @@ def tor_request_in_python(url):
             s.mount('http://', adapter)
             s.mount('https://', adapter)
 
-            r = s.get(url, timeout=30)
+            # r = s.get(url, timeout=30)
+            # r = s.post('http://u7spnj3dmwumzoa4.onion/op/',data=b'hello world', timeout=30)
+            _dat = 'Z29iYmxlZHlnb29rZ29iYmxlZHlnb29rZ29iYmxlZHlnb29rZ29iYmxlZHlnb29rZ29iYmxlZHlnb29rZ29iYmxlZHlnb29rZ29iYmxlZHlnb29rZ29iYmxlZHlnb29rZ29iYmxlZHlnb29r'
+            r = s.get('http://u7spnj3dmwumzoa4.onion/op/'+_dat, timeout=30)
+            
             return r
+            #return r
 
             # #r = s.get('http://u7spnj3dmwumzoa4.onion',timeout=30)    
             # print (r, r.text[:1000])

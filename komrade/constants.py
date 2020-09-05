@@ -4,7 +4,7 @@ KOMRADE_ONION = 'u7spnj3dmwumzoa4.onion'
 KOMRADE_ONION2 = 'rwg4zcnpwshv4laq.onion' #'128.232.229.63' #'komrade.app'
 
 
-OPERATOR_API_URL = f'http://{KOMRADE_ONION}:6999/op/'
+OPERATOR_API_URL = f'http://{KOMRADE_ONION2}/op/'
 
 
 # paths
@@ -35,3 +35,5 @@ KEYNAMES = [
     'pubkey_decr_encr','privkey_decr_encr','adminkey_decr_encr',
     'pubkey_decr_decr','privkey_decr_decr','adminkey_decr_decr'
 ]
+
+OPERATOR_INTERCEPT_MESSAGE = "If you'd like to make a call, please hang up and try again. If you need help, hang up, and then dial your operator."
