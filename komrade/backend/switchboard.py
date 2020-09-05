@@ -89,7 +89,7 @@ class TheSwitchboard(FlaskView, Logger):
             self.log('encr_b64_b',encr_b64_b)
             encr_b = b64decode(encr_b64_b)
             self.log('encr_b',encr_b)
-            return 'successfully understood input'
+            return f'successfully understood input: {encr_b}'
         except (UnicodeDecodeError,binascii.Error) as e:
             return OPERATOR_INTERCEPT_MESSAGE
 
