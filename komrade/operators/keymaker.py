@@ -163,7 +163,7 @@ class Keymaker(Logger):
     
     # Concrete keys
     @property
-    def pubkey__(self): return self.keychain()['pubkey']
+    def pubkey_(self): return self.keychain()['pubkey']
     @property
     def privkey_(self, **kwargs): return self.keychain()['privkey']
     @property
