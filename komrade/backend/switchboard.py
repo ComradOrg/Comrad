@@ -77,8 +77,8 @@ class TheSwitchboard(FlaskView, Logger):
     #def get(self):
     #    return "We're sorry; we are unable to complete your call as dialed. Please check the number and dial again, or call your operator to help you."
 
-
-    def op(self,encr_b64_str):
+    @route('/')
+    def please_dial(self,encr_b64_str):
         raise Exception(encr_b64_str)
 
         # first try to get from string to bytes
