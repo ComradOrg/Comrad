@@ -81,8 +81,8 @@ class TheSwitchboard(FlaskView, Logger):
 
     @route('/')
     def please_dial(self,encr_b64_str=None):
-        #raise Exception(encr_b64_str)
-        return encr_b64_str
+        raise Exception(encr_b64_str)
+        # return encr_b64_str
 
         # first try to get from string to bytes
         self.log('incoming <--',encr_b64_str)
