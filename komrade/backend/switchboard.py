@@ -79,7 +79,6 @@ class TheSwitchboard(FlaskView, Logger):
 
 
     def get(self,encr_b64_str):
-        return 'hello?'
         # first try to get from string to bytes
         self.log('incoming <--',encr_b64_str)
 
@@ -88,6 +87,7 @@ class TheSwitchboard(FlaskView, Logger):
             self.log('encr_b64_b',encr_b64_b)
             encr_b = b64decode(encr_b64_b)
             self.log('encr_b',encr_b)
+            return encr_b
         except UnicodeDecodeError:
             return OPERATOR_INTERCEPT_MESSAGE
 
@@ -115,5 +115,5 @@ def run_forever(port='8080'):
     global OPERATOR
     OPERATOR = TheOperator()
     app = Flask(__name__)
-    TheSwitchboard.register(app, route_base='/op/', route_prefix=None)
+    TheSwitchboard.register(app, route_base='/', route_prefix=None)
     app.run(debug=True, port=port, host='0.0.0.0')
