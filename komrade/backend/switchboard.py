@@ -26,7 +26,7 @@ class TheTelephone(Logger):
 
     def dial_operator(self,msg):
         URL = OPERATOR_API_URL + msg
-        r=tor_request_in_python(URL)
+        r=tor_request_in_python(OPERATOR_API_URL)
         print(r)
         print(r.text)
         return r
@@ -94,6 +94,7 @@ class TheSwitchboard(FlaskView, Logger):
     def get(self):
         return "We're sorry; we are unable to complete your call as dialed. Please check the number and dial again, or call your operator to help you."
 
+    @route('/please/<encr_b64_str>')
     def please(self,encr_b64_str=None):
         return 'helloooooo?'
         if not encr_b64_str: return OPERATOR_INTERCEPT_MESSAGE
