@@ -26,7 +26,7 @@ class TheTelephone(Logger):
 
     def dial_operator(self,msg):
         URL = OPERATOR_API_URL + msg
-        r=tor_request_in_python(URL)
+        r=tor_request_in_python(OPERATOR_API_URL)
         print(r)
         print(r.text)
         return r
@@ -96,7 +96,7 @@ class TheSwitchboard(FlaskView, Logger):
 
     @route('/please/<encr_b64_str>')
     def please(self,encr_b64_str=None):
-        # return 'helloooooo?'
+        return 'helloooooo?'
         if not encr_b64_str: return OPERATOR_INTERCEPT_MESSAGE
         if not isBase64(encr_b64_str): return OPERATOR_INTERCEPT_MESSAGE
 
