@@ -23,6 +23,13 @@ class TheTelephone(Logger):
     @property
     def op_pubkey(self):
         return b64decode(OPERATOR_PUBKEY)
+
+    def dial_operator(self,msg):
+        URL = OPERATOR_API_URL + msg
+        r=tor_request_in_python(URL)
+        print(r)
+        print(r.text)
+        return r
         
     @property
     def sess(self):
@@ -66,7 +73,7 @@ class TheTelephone(Logger):
 
         # send!
         req_data_encr_b64_str = req_data_encr_b64.decode('utf-8')
-        res = self.sess.post(OPERATOR_API_URL + req_data_encr_b64)
+        res = self.dial_operator(req_data_encr_b64_str)
         self.log('result from operator?',res)
         return res
 

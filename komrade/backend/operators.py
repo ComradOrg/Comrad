@@ -8,6 +8,7 @@ from komrade import *
 from komrade.backend.crypt import *
 from komrade.backend.keymaker import *
 from komrade.backend.mazes import *
+from komrade.backend.switchboard import *
 
 
 OPERATOR_NAME = 'TheOperator'
