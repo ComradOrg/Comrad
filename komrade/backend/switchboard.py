@@ -92,13 +92,14 @@ class TheSwitchboard(FlaskView, Logger):
     #default_methods = ['POST']
 
     def get(self,msg):
-        return f"Your message was {msg}. But we're sorry; we are unable to complete your call as dialed. Please check the number and dial again, or call your operator to help you."
+        if not msg:
+            self.log('empty request!')
+            return OPERATOR_INTERCEPT_MESSAGE
 
-    @route('/please/<encr_b64_str>')
-    def please(self,encr_b64_str=None):
-        return 'helloooooo?'
-        if not encr_b64_str: return OPERATOR_INTERCEPT_MESSAGE
-        if not isBase64(encr_b64_str): return OPERATOR_INTERCEPT_MESSAGE
+        if not isBase64(msg):
+            self.log('not valid input!')
+            return OPERATOR_INTERCEPT_MESSAGE
+        encr_b64_str msg = msg
 
         # first try to get from string to bytes
         self.log('incoming <--',encr_b64_str)
