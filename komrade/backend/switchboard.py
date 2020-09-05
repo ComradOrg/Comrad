@@ -83,7 +83,7 @@ class TheSwitchboard(FlaskView, Logger):
         self.log('incoming <--',encr_b64_str)
 
         try:
-            encr_b64_b = encr_b64_str.decode('utf-8')
+            encr_b64_b = encr_b64_str.encode('utf-8')
             self.log('encr_b64_b',encr_b64_b)
             encr_b = b64decode(encr_b64_b)
             self.log('encr_b',encr_b)
