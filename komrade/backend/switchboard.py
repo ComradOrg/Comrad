@@ -96,6 +96,7 @@ class TheSwitchboard(FlaskView, Logger):
 
     @route('/please/<encr_b64_str>')
     def please(self,encr_b64_str=None):
+        return 'helloooooo?'
         if not encr_b64_str: return OPERATOR_INTERCEPT_MESSAGE
         if not isBase64(encr_b64_str): return OPERATOR_INTERCEPT_MESSAGE
 
