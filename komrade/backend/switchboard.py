@@ -25,7 +25,8 @@ class TheTelephone(Logger):
         return b64decode(OPERATOR_PUBKEY)
 
     def dial_operator(self,msg):
-        URL = OPERATOR_API_URL + msg
+        URL = OPERATOR_API_URL + msg + '/'
+        self.log("DIALING THE OPERATOR:",URL)
         r=tor_request_in_python(URL)
         print(r)
         print(r.text)
@@ -73,6 +74,10 @@ class TheTelephone(Logger):
 
         # send!
         req_data_encr_b64_str = req_data_encr_b64.decode('utf-8')
+        
+        # escape slashes
+        req_data_encr_b64_str_esc = req_data_encr_b64_str.replace('/','_')
+
         res = self.dial_operator(req_data_encr_b64_str)
         self.log('result from operator?',res)
         return res
@@ -98,6 +103,8 @@ class TheSwitchboard(FlaskView, Logger):
             self.log('empty request!')
             return OPERATOR_INTERCEPT_MESSAGE
 
+        # unenescape
+        msg = msg.replace('_','/')
         if not isBase64(msg):
             self.log('not valid input!')
             return OPERATOR_INTERCEPT_MESSAGE

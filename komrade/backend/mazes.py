@@ -27,7 +27,7 @@ def tor_request_in_python(url):
             # r = s.get(url, timeout=30)
             # r = s.post('http://u7spnj3dmwumzoa4.onion/op/',data=b'hello world', timeout=30)
             #_dat = 'Z29iYmxlZHlnb29rZ29iYmxlZHlnb29rZ29iYmxlZHlnb29rZ29iYmxlZHlnb29rZ29iYmxlZHlnb29rZ29iYmxlZHlnb29rZ29iYmxlZHlnb29rZ29iYmxlZHlnb29rZ29iYmxlZHlnb29r'
-            r = s.get(url, timeout=30)
+            r = s.get(url, timeout=60)
             
             return r
             #return r
