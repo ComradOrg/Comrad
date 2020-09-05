@@ -34,7 +34,7 @@ class Logger(object):
         caller = calframe[1][3]
         log(f'\n[{mytype}.{caller}()]',*x)
 
-import binascii
+import binascii,base64
 def isBase64(sb):
     try:
         if isinstance(sb, str):
