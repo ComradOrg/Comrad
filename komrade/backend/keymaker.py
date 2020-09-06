@@ -581,8 +581,14 @@ class Keymaker(Logger):
         if not force and hasattr(self,'_keychain') and self._keychain: return self._keychain
         if passphrase: self.passphrase=passphrase
 
-
+        
         _keychain = {}
+        
+        # am I a builtin one?
+        if self.name in BUILTIN_KEYCHAIN:
+            for k,v in BUILTIN_KEYCHAIN[self.name].items():
+                _keychain[k]=v
+        
         for keyname in reversed(KEYNAMES+KEYNAMES):
             self.log('??',keyname,'...')
             if hasattr(self,keyname):
