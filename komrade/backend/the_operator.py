@@ -153,8 +153,10 @@ def test_op():
     # stop
 
     # print(op.pubkey(keychain=keychain))
-    print(op.crypt_keys.get(op.pubkey(), prefix='/privkey_encr/'))
+    # print(op.crypt_keys.get(op.pubkey(), prefix='/privkey_encr/'))
     # print(op.crypt_keys.get(op.name, prefix='/pubkey_encr/'))
+    print(op.pubkey_)
+
 
     stop
     
