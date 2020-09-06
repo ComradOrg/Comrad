@@ -33,11 +33,18 @@ class TheOperator(Operator):
 
     def decrypt_incoming(self,data):
         # step 1 split:
-        data_encr_by_phone,data_encr_by_caller = data.split(BSEP)
-        data_unencr_by_phone,data_encr_by_caller = None,None
+        data_unencr,data_encr_by_phone,data_encr_by_caller = data.split(BSEP)
+        data_unencr_by_phone,data_unencr_by_caller = None,None
 
+        self.log('data_unencr =',data_unencr)
         self.log('data_encr_by_phone =',data_encr_by_phone)
         self.log('data_encr_by_caller =',data_encr_by_caller)
+
+        DATA = None
+
+        if data_unencr:
+            self.log('unencrypted data:',data_unencr)
+            stop
 
         if data_encr_by_phone:
             # then try to unwrap telephone encryption

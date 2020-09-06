@@ -43,7 +43,7 @@ class TheTelephone(Operator):
             json_unencrypted['_keychain']={}
         _kc = json_unencrypted['_keychain']
         if not 'privkey_decr' in _kc: 
-            _kc['privkey_decr'] = self.op.privkey_decr
+            _kc['privkey_decr'] = b64encode(self.op.privkey_decr_).decode()
         self.log('REQ!!!!!',_kc)
         
         if json_unencrypted:
