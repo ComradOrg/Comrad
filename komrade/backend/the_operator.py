@@ -97,7 +97,7 @@ def init_operators():
         op_decr_keys[k]=v_s
 
 
-    print('total_d',total_d)
+    # print('total_d',total_d)
     builtin_keychains = {OPERATOR_NAME:op_decr_keys, TELEPHONE_NAME:phone_decr_keys}
     builtin_keychains_s = json.dumps(builtin_keychains)
 
