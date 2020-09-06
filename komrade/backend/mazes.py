@@ -1,6 +1,6 @@
 import os,sys; sys.path.append(os.path.abspath(os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__),'..')),'..')))
 from komrade import *
-import requests_async
+# import requests_async as requests
 
 log=print
 
@@ -16,12 +16,12 @@ def tor_request_in_proxy(url):
         return s.get(url,timeout=60)
 
 async def tor_request_in_python_async(url):
-    import requests_async
+    import requests_async as requests
     tor = TorClient()
     with tor.get_guard() as guard:
         adapter = TorHttpAdapter(guard, 3, retries=RETRIES)
 
-        async with requests_async.Session() as s:
+        async with requests.Session() as s:
             # await s
             s.headers.update({'User-Agent': 'Mozilla/5.0'})
             s.mount('http://', adapter)
