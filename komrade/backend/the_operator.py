@@ -5,9 +5,7 @@ Running on node prime.
 # internal imports
 import os,sys; sys.path.append(os.path.abspath(os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__),'..')),'..')))
 from komrade import *
-from komrade.backend.crypt import *
-from komrade.backend.operators import *
-from komrade.backend.mazes import *
+from komrade.backend import *
 
 
 
@@ -15,6 +13,9 @@ class TheOperator(Operator):
     """
     The remote operator
     """
+    @property
+    def phone(self):
+        return TELEPHONE
     
 
     def __init__(self, name = OPERATOR_NAME, passphrase='acc'):
@@ -27,20 +28,31 @@ class TheOperator(Operator):
             passphrase=getpass.getpass('Hello, this is the Operator speaking. What is the passphrase?\n> ')
         super().__init__(name,passphrase,path_crypt_keys=PATH_CRYPT_OP_KEYS,path_crypt_data=PATH_CRYPT_OP_DATA)
 
-
     def decrypt_incoming(self,data):
         # step 1 split:
-        data_unencr,data_encr = data.split(BSEP)
-        self.log('data_unencr =',data_unencr)
-        self.log('data_encr =',data_encr)
+        data_encr_by_phone,data_encr_by_caller = data.split(BSEP)
+
+        self.log('data_encr_by_phone =',data_encr_by_phone)
+        self.log('data_encr_by_caller =',data_encr_by_caller)
+
+        if data_encr_by_phone:
+            # then try to unwrap telephone encryption
+            try:
+                data_unencr_by_phone = SMessage(self.privkey_, self.phone.pubkey_).unwrap(data)
+                self.log('decrypted data !!!:',data_unencr_by_phone)
+            except ThemisError:
+                self.log('not really from the telephone?')
+                return OPERATOR_INTERCEPT_MESSAGE
+            data_by_phone = TELEPHONE.
+
+
         if data_encr and 'name' in data_unencr:
             name=data_unencr['name']
             keychain=data_unencr.get('keychain',{})
 
             # decrypt using this user's pubkey on record
-            caller = Operator(name)
-            from_pubkey = user.pubkey(keychain=keychain)
-            data_unencr2 = SMessage(OPERATOR.privkey_, from_pubkey).unwrap(data_encr)
+            caller = Caller(name)
+            data_unencr2 = SMessage(self.privkey_, caller.pubkey_).unwrap(data_encr)
 
             if type(data_unencr)==dict and type(data_unencr2)==dict:
                 data = data_unencr

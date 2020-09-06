@@ -9,14 +9,14 @@ class TheTelephone(Operator):
     API client class for Caller to interact with The Operator.
     """
     def __init__(self, caller=None):
-        self.op = TheOperator()
-        self.caller = None
-
         super().__init__(
             name=TELEPHONE_NAME,
             path_crypt_keys=PATH_CRYPT_CA_KEYS,
             path_crypt_data=PATH_CRYPT_CA_KEYS
         )
+
+    @property
+    def op(self): return OPERATOR
 
     async def dial_operator(self,msg):
         msg=msg.replace('/','_')

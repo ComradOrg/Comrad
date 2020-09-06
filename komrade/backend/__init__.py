@@ -12,3 +12,10 @@ from .switchboard import *
 from .the_telephone import *
 
 from .callers import *
+
+
+
+
+## define default entities
+OPERATOR = TheOperator()
+TELEPHONE = TheTelephone()

@@ -13,12 +13,9 @@ class Caller(Operator):
 
     @property
     def phone(self):
-        """
-        Operator on the line.
-        """
-        if not hasattr(self,'_phone'):
-            self._phone = TheTelephone(caller = self)
-        return self._phone
+        return TELEPHONE
+    @property
+    def op(self): return OPERATOR
 
     def get_new_keys(self,pubkey_pass = None, privkey_pass = None, adminkey_pass = None):
         """
@@ -44,6 +41,6 @@ class Caller(Operator):
                                     'adminkey_decr_encr', 'adminkey_decr_decr']
 
         try:
-            return await self.phone.req(json_coming_from_phone = req_json)
+            return await self.phone.req(json_coming_from_phone = req_json, caller=self)
         except TypeError:
             return None
