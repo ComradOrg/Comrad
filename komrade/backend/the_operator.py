@@ -58,7 +58,7 @@ class TheOperator(Operator):
             self.log('found keys in unencrypted data:',DATA['_keychain'])
 
             KEYCHAIN = self.keychain(allow_builtin=False,force=True,extra_keys=DATA['_keychain'])
-            self.log('as of now 1, I the operator have these keys:',KEYCHAIN.keys())
+            self.log('as of now 2, I the operator have these keys:',KEYCHAIN.keys())
             stopppppppp
         self.log('DATA as of now!?',DATA)
         # stop
@@ -70,7 +70,7 @@ class TheOperator(Operator):
             
             them_pubkey = self.phone.pubkey_
             
-            self.log('as of now 2, I the operator have these keys:',self.keychain().keys())
+            self.log('as of now 3, I the operator have these keys:',self.keychain().keys())
             self.log('me_privkey now',me_privkey)
             print(me_privkey, '<--',them_pubkey)
             try:
