@@ -61,22 +61,23 @@ class TheOperator(Operator):
 
             KEYCHAIN = self.keychain(allow_builtin=False,force=True,extra_keys=DATA['_keychain'])
             self.log('as of now 2, I the operator have these keys:',KEYCHAIN.keys())
-            stopppppppp
+            # stopppppppp
         self.log('DATA as of now!?',DATA)
         # stop
 
         if data_encr_by_phone:
             
             # then try to unwrap telephone encryption
-            me_privkey = self.privkey(keychain = DATA.get('_keychain',{}))
-            
-            them_pubkey = self.phone.pubkey_
-            
-            self.log('as of now 3, I the operator have these keys:',self.keychain().keys())
+            me_privkey = KEYCHAIN.get('privkey')  #self.privkey(keychain = DATA.get('_keychain',{}))
+            if not me_privkey:
+                self.log('!! could not assemble my private key. failing.')
+                return OPERATOR_INTERCEPT_MESSAGE
+\            
+            # self.log('as of now 3, I the operator have these keys:',self.keychain().keys())
             self.log('me_privkey now',me_privkey)
-            print(me_privkey, '<--',them_pubkey)
+            # print(me_privkey, '<--',them_pubkey)
             try:
-                data_unencr_by_phone = SMessage(me_privkey, them_pubkey).unwrap(data_encr_by_phone)
+                data_unencr_by_phone = SMessage(me_privkey, self.phone.pubkey_).unwrap(data_encr_by_phone)
                 self.log('decrypted data !!!:',data_unencr_by_phone)
             except ThemisError as e:
                 self.log('not really from the telephone?',e)
