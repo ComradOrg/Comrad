@@ -414,11 +414,11 @@ class Keymaker(Logger):
         self.log('keys_to_save')
         
         if 'pubkey_encr' in keys_to_save:
-            self.crypt_keys.set(name,keychain['pubkey_encr'],prefix='/pubkey_encr/')
+            self.crypt_keys.set(name,keychain['pubkey_encr'],prefix=b'/pubkey_encr/')
         if 'privkey_encr' in keys_to_save:
-            self.crypt_keys.set(keychain['pubkey'],keychain['privkey_encr'],prefix='/privkey_encr/')
+            self.crypt_keys.set(keychain['pubkey'],keychain['privkey_encr'],prefix=b'/privkey_encr/')
         if 'adminkey_encr' in keys_to_save:
-            self.crypt_keys.set(keychain['privkey'],keychain['adminkey_encr'],prefix='/adminkey_encr/')
+            self.crypt_keys.set(keychain['privkey'],keychain['adminkey_encr'],prefix=b'/adminkey_encr/')
         stop
 
         # save decrypted keys?
