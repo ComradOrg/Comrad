@@ -114,9 +114,11 @@ def init_operators():
     with open(PATH_BUILTIN_KEYCHAINS_ENCR,'wb') as of:
         of.write(builtin_keychains_b_encr_b64)
         print('>> saved:',PATH_BUILTIN_KEYCHAINS_ENCR)
+        print(builtin_keychains_b_encr_b64,'\n\n')
     with open(PATH_BUILTIN_KEYCHAINS_DECR,'wb') as of:
         of.write(builtin_keychains_b_decr_b64)
         print('>> saved:',PATH_BUILTIN_KEYCHAINS_DECR)
+        print(builtin_keychains_b_decr_b64,'\n')
         
 
 
