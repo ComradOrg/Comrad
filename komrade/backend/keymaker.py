@@ -412,7 +412,8 @@ class Keymaker(Logger):
             if key in keychain:
                 print('adding',key,'to returned keychain')
                 keychain_toreturn[key]=keychain[key]
-        return keychain_toreturn
+        
+        
         ### SAVE ENCRYPTED KEYS?
         if 'pubkey_encr' in keys_to_save:
             self.crypt_keys.set(name,keychain['pubkey_encr'],prefix='/pubkey_encr/')
