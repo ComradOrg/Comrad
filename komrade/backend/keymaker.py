@@ -3,7 +3,7 @@ from komrade import *
 from komrade.backend.crypt import *
 
 class Keymaker(Logger):
-    def __init__(self,name=None,passphrase=None):
+    def __init__(self,name=None,passphrase=None, path_crypt_keys=None, path_crypt_data=None):
         self.name=name
         self.passphrase=passphrase
 

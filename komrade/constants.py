@@ -10,11 +10,15 @@ OPERATOR_API_URL = f'http://{KOMRADE_ONION}/op/'
 # paths
 import os
 PATH_KOMRADE = os.path.abspath(os.path.join(os.path.expanduser('~'),'.komrade'))
-PATH_OPERATOR = os.path.join(PATH_KOMRADE,'.operator')
-PATH_OPERATOR_PUBKEY = os.path.join(PATH_OPERATOR,'.op.key.pub.encr')
-PATH_OPERATOR_PRIVKEY = os.path.join(PATH_OPERATOR,'.op.key.priv.encr')
-PATH_CRYPT_KEYS = os.path.join(PATH_OPERATOR,'.op.db.keys.crypt')
-PATH_CRYPT_DATA = os.path.join(PATH_OPERATOR,'.op.db.data.encr')
+PATH_KOMRADE_KEYS = os.path.join(PATH_KOMRADE,'.keys')
+PATH_KOMRADE_DATA = os.path.join(PATH_KOMRADE,'.data')
+for x in [PATH_KOMRADE,PATH_KOMRADE_DATA,PATH_KOMRADE_KEYS]:
+    os.makedirs(x)
+PATH_CRYPT_OP_KEYS = os.path.join(PATH_KOMRADE_KEYS,'.op.db.keys.crypt')
+PATH_CRYPT_OP_DATA = os.path.join(PATH_KOMRADE_DATA,'.op.db.data.encr')
+PATH_CRYPT_CA_KEYS = os.path.join(PATH_KOMRADE_KEYS,'.ca.db.keys.crypt')
+PATH_CRYPT_CA_DATA = os.path.join(PATH_KOMRADE_DATA,'.ca.db.data.encr')
+
 
 # etc
 BSEP=b'||||||||||'

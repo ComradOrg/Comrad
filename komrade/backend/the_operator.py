@@ -57,8 +57,17 @@ class TheOperator(Operator):
 
 
 def init_operators():
-    op = Operator(name=OPERATOR_NAME)
-    phone = Operator(name=TELEPHONE_NAME)
+    op = Operator(
+        name=OPERATOR_NAME,
+        path_crypt_keys=PATH_CRYPT_OP_KEYS,
+        path_crypt_data=PATH_CRYPT_OP_DATA
+    )
+
+    phone = Operator(
+        name=TELEPHONE_NAME,
+        path_crypt_keys=PATH_CRYPT_CA_KEYS,
+        path_crypt_data=PATH_CRYPT_CA_DATA
+    )
 
     op.get_new_keys()
     phone.get_new_keys()
