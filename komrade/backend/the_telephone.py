@@ -29,9 +29,10 @@ class TheTelephone(Logger):
         msg=msg.replace('/','_')
         URL = OPERATOR_API_URL + msg + '/'
         self.log("DIALING THE OPERATOR:",URL)
-        r=await tor_request_async(URL)
-        print(r)
-        print(r.text)
+        try:
+            r=await tor_request_async(URL)
+        except TypeError:
+            return r
         return r
 
     async def req(self,json_coming_from_phone={},json_coming_from_caller={}):
@@ -71,7 +72,10 @@ class TheTelephone(Logger):
         # escape slashes
         req_data_encr_b64_str_esc = req_data_encr_b64_str.replace('/','_')
 
-        res = await self.dial_operator(req_data_encr_b64_str)
+        try:
+            res = await self.dial_operator(req_data_encr_b64_str)
+        except TypeError:
+            res = None
         self.log('result from operator?',res)
         return res
 
@@ -79,8 +83,10 @@ class TheTelephone(Logger):
     async def forge_new_keys(self, name, pubkey_is_public=False):
         req_json = {'_route':'forge_new_keys','name':name, 'pubkey_is_public':pubkey_is_public}
         # req_json_s = jsonify(req_json)
-        return await self.req(json_coming_from_phone = req_json)
-
+        try:
+            return await self.req(json_coming_from_phone = req_json)
+        except TypeError:
+            return None
 
 
     

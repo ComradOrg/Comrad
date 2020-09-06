@@ -9,7 +9,10 @@ def tor_request(url):
     # return tor_request_in_proxy(url)
 
 async def tor_request_async(url):
-    return await tor_request_in_python_async(url)
+    try:
+        return await tor_request_in_python_async(url)
+    except TypeError:
+        return None
 
 def tor_request_in_proxy(url):
     with get_tor_proxy_session() as s:
