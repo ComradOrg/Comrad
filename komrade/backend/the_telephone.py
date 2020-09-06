@@ -95,5 +95,7 @@ def test_call():
     # print(res)
     asyncio.run(phone.forge_new_keys('marx4'))
 
+    print('YEAH COOL')
+
 ## main
 if __name__=='__main__': test_call()
