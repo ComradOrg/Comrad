@@ -551,6 +551,7 @@ class Keymaker(Logger):
         if self.name in BUILTIN_KEYCHAIN:
             for k,v in BUILTIN_KEYCHAIN[self.name].items():
                 _keychain[k]=v
+            stop
         
         self.log('_keychain',_keychain)
         # stop
