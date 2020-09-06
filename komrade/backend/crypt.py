@@ -91,12 +91,12 @@ class Crypt(Logger):
 
 class KeyCrypt(Crypt):
     def __init__(self):
-        return super().__init__(name=PATH_CRYPT_KEYS.replace('.','_'))
+        return super().__init__(name=PATH_CRYPT_CA_KEYS.replace('.','_'))
 
 
 class DataCrypt(Crypt):
     def __init__(self):
-        return super().__init__(name=PATH_CRYPT_DATA.replace('.','_'))
+        return super().__init__(name=PATH_CRYPT_CA_DATA.replace('.','_'))
 
 
 

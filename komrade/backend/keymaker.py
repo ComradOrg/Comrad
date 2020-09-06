@@ -15,13 +15,13 @@ class Keymaker(Logger):
     @property
     def crypt_keys(self):
         if not hasattr(self,'_crypt_keys'):
-            self._crypt_keys = Crypt(fn=PATH_CRYPT_KEYS)
+            self._crypt_keys = Crypt(fn=PATH_CRYPT_CA_KEYS)
         return self._crypt_keys
 
     @property
     def crypt_data(self):
         if not hasattr(self,'_crypt_data'):
-            self._crypt_data = Crypt(fn=PATH_CRYPT_DATA)
+            self._crypt_data = Crypt(fn=PATH_CRYPT_CA_DATA)
         return self._crypt_data
 
 
