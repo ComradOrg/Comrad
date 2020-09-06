@@ -147,7 +147,8 @@ def test_op():
     from pprint import pprint
     pprint(keychain)
 
-    print(op.pubkey(keychain=keychain))
+    # print(op.pubkey(keychain=keychain))
+    print(op.crypt_keys.get(op.name, prefix='/pubkey_encr/'))
 
     stop
     
