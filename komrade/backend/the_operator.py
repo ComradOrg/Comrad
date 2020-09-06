@@ -44,7 +44,7 @@ class TheOperator(Operator):
         DATA = {}
         KEYCHAIN = self.keychain(allow_builtin=False,force=True)
         self.log('as of now 1, I the operator have these keys:',KEYCHAIN.keys())
-        stop1
+        # stop1
         
         if data_unencr:
             self.log('unencrypted data:',data_unencr)
