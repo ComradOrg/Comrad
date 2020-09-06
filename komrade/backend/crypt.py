@@ -99,15 +99,17 @@ class Crypt(Logger):
         self.log('k1? -->',prefix,k)
         k_b=self.package_key(k,prefix=prefix)
         self.log('k2? -->',k_b)
+        k_b_hash = self.hash(k_b)
+        self.log('k_b_hash',type(k_b_hash),k_b_hash)
 
         try:
-            v=self.store.get(k_b)
+            v=self.store.get(k_b_hash)
         except KeyError:
             return None
         self.log('v? -->',v)
         v_b=self.unpackage_val(v)
         self.log('v_b?',v_b)
-        self.log('get()',prefix,k,'-->',v_b)
+        self.log('get()',k_b,'-->',v_b)
         return v_b
 
 
