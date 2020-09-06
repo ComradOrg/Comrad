@@ -65,25 +65,25 @@ def init_operators():
 
     phone = Operator(
         name=TELEPHONE_NAME,
-        path_crypt_keys=PATH_CRYPT_CA_KEYS,
-        path_crypt_data=PATH_CRYPT_CA_DATA
+        path_crypt_keys=PATH_CRYPT_OP_KEYS,
+        path_crypt_data=PATH_CRYPT_OP_KEYS
     )
 
     op_decr_keys = op.get_new_keys(
-                    adminkey_pass=True, pubkey_pass=None, privkey_pass=None,
-                    save_encrypted=True, return_encrypted=False,
-                    save_decrypted=False, return_decrypted=True
+        keys_to_save = ['pubkey_encr', 'privkey_encr', 'adminkey_encr'],
+        keys_to_return = ['pubkey_decr', 'privkey_decr', 'adminkey_decr']
+    )
                     )
 
     phone_decr_keys = phone.get_new_keys(
-                    adminkey_pass=True, pubkey_pass=None, privkey_pass=None,
-                    save_encrypted=True, return_encrypted=False,
-                    save_decrypted=False, return_decrypted=True
-                    )
+        keys_to_save = ['pubkey_encr', 'privkey_encr', 'adminkey_encr'],
+        keys_to_return = ['pubkey_decr', 'privkey_decr', 'adminkey_decr']
+    )
 
-    print('op_decr_keys',op_decr_keys)
+    self.log('OPERATOR_KEYCHAIN =',op_decr_keys)
 
-    print('phone_decr_keys',phone_decr_keys)
+    self.log('TELEPHONE_KEYCHAIN =',phone_decr_keys)
+
 
     # op_pub = op.pubkey_decr_
     # phone_pub = phone.pubkey_decr_

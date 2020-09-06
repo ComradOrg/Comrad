@@ -49,8 +49,13 @@ OPERATOR_INTERCEPT_MESSAGE = "If you'd like to make a call, please hang up and t
 
 
 
-KEYMAKER_DEFAULT_KEYS_TO_SAVE = ['pubkey_encr', 'privkey_encr', 'adminkey_encr'],
-KEYMAKER_DEFAULT_KEYS_TO_RETURN = ['pubkey_decr', 'privkey_decr', 'adminkey_decr'],
+KEYMAKER_DEFAULT_KEYS_TO_SAVE = ['pubkey_encr', 'privkey_encr', 'adminkey_encr']
+KEYMAKER_DEFAULT_KEYS_TO_RETURN = ['pubkey_decr_decr','pubkey_decr_encr',
+                                   'privkey_decr_decr','privkey_decr_encr',
+                                   'adminkey_decr_decr','adminkey_decr_encr'
+                                   ]
+KEYMAKER_DEFAULT_KEYS_TO_GEN = ['pubkey','privkey','adminkey','pubkey_decr', 'privkey_decr', 'adminkey_decr'] + KEYMAKER_DEFAULT_KEYS_TO_SAVE + KEYMAKER_DEFAULT_KEYS_TO_RETURN
+
 
 KEY_TYPE_ASYMMETRIC_PUBKEY = 'asymmetric_pubkey'
 KEY_TYPE_ASYMMETRIC_PRIVKEY = 'asymmetric_privkey'
@@ -61,7 +66,7 @@ ENCRYPTED_KEY = 'encrypted_key'
 
 KEYMAKER_DEFAULT_KEY_TYPES = {
     'pubkey':KEY_TYPE_ASYMMETRIC_PUBKEY,
-    'privkey':KEY_TYPE_ASYMMETRIC_PRIVKEY
+    'privkey':KEY_TYPE_ASYMMETRIC_PRIVKEY,
     'adminkey':KEY_TYPE_SYMMETRIC_WITH_PASSPHRASE,
     
     'pubkey_decr':KEY_TYPE_SYMMETRIC_WITHOUT_PASSPHRASE,
@@ -70,7 +75,7 @@ KEYMAKER_DEFAULT_KEY_TYPES = {
 
     'pubkey_decr_decr':KEY_TYPE_SYMMETRIC_WITHOUT_PASSPHRASE,
     'privkey_decr_decr':KEY_TYPE_SYMMETRIC_WITH_PASSPHRASE,
-    'adminkey_decr_decr':KEY_TYPE_SYMMETRIC_WITH_PASSPHRASE
+    'adminkey_decr_decr':KEY_TYPE_SYMMETRIC_WITH_PASSPHRASE,
 
     'pubkey_encr_decr':KEY_TYPE_SYMMETRIC_WITHOUT_PASSPHRASE,
     'privkey_encr_decr':KEY_TYPE_SYMMETRIC_WITH_PASSPHRASE,

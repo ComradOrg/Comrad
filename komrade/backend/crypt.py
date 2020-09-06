@@ -36,7 +36,7 @@ class Crypt(Logger):
 
     def force_binary(self,k_b):
         if type(k_b)==str: k_b=k_b.encode()
-        if type(k_b)!=bytes: k_b=str(k_b).encode()
+        if type(k_b)!=bytes: k_b=k_b.decode()
         return k_b
 
     def package_key(self,k,prefix=''):
@@ -67,7 +67,7 @@ class Crypt(Logger):
 
         # self.log('set() v -->',v)
         v_b=self.package_val(v)
-        self.log(f'set(\n\t{prefix}{k},\n\t\n\t{v_b}\n)\n')
+        self.log(f'set(\n\t{prefix}{k},\n\t{k_b}\n\t\n\t{v_b}\n)\n')
         
         return self.store.put(k_b,v_b)
 
