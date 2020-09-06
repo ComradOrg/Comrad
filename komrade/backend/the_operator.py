@@ -72,10 +72,10 @@ class TheOperator(Operator):
         data = self.decrypt_incoming(data)
 
         # decode
-        data_s = data.decode()
+        # data_s = data.decode()
 
 
-        self.log('DATA =',data_s)
+        self.log('DATA =',type(data),data)
         stop
         return self.route(data)
 
