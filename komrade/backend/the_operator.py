@@ -73,11 +73,13 @@ class TheOperator(Operator):
         data = self.decrypt_incoming(data)
 
         # decode
-        data_s = data.decode()
+        # data_s = data.decode()
+        data_json = json.load(data)
 
 
         self.log('DATA =',type(data),data)
-        self.log('DATA_s =',type(data_s),data_s)
+        # self.log('DATA_s =',type(data_s),data_s)
+        self.log('DATA_json =',type(data_json),data_json)
         
         stop
         return self.route(data)
