@@ -69,10 +69,21 @@ def init_operators():
         path_crypt_data=PATH_CRYPT_CA_DATA
     )
 
-    op.get_new_keys()
-    phone.get_new_keys()
+    op_decr_keys = op.get_new_keys(
+                    adminkey_pass=True, pubkey_pass=None, privkey_pass=None,
+                    save_encrypted=True, return_encrypted=False,
+                    save_decrypted=False, return_decrypted=True
+                    )
 
-    
+    phone_decr_keys = phone.get_new_keys(
+                    adminkey_pass=True, pubkey_pass=None, privkey_pass=None,
+                    save_encrypted=True, return_encrypted=False,
+                    save_decrypted=False, return_decrypted=True
+                    )
+
+    print('op_decr_keys',op_decr_keys)
+
+    print('phone_decr_keys',phone_decr_keys)
 
     op_pub = op.pubkey_decr_
     phone_pub = phone.pubkey_decr_
