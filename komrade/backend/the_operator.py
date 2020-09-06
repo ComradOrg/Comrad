@@ -79,10 +79,10 @@ def init_operators():
     #print('OPERATOR_PUBKEY =',b64encode(op_pub))
     #print('TELEPHONE_PUBKEY =',b64encode(phone_pub))
     #print('TELEPHONE_PRIVKEY =',b64encode(phone_priv))
-    return json.dumps([
-        op.keychain(),
-        phone.keychain()
-    ],indent=4)
+    return {
+        'op.keychain()':op.keychain(),
+        'phone.keychain()'
+    }
 
 
 def test_op():
