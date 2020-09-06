@@ -18,6 +18,7 @@ class TheTelephone(Operator):
     @property
     def op(self):
         global OPERATOR
+        from komrade.backend.the_operator import TheOperator
         if not OPERATOR: OPERATOR=TheOperator()
         return OPERATOR
 

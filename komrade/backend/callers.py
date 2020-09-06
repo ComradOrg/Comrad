@@ -14,12 +14,14 @@ class Caller(Operator):
     @property
     def phone(self):
         global TELEPHONE
+        from komrade.backend.the_telephone import TheTelephone
         if not TELEPHONE: TELEPHONE=TheTelephone()
         return TELEPHONE
     @property
     def op(self):
         global OPERATOR
-        if not OPERATOR: Operator=TheOperator()
+        from komrade.backend.the_operator import TheOperator
+        if not OPERATOR: OPERATOR=TheOperator()
         return OPERATOR
 
     def get_new_keys(self,pubkey_pass = None, privkey_pass = None, adminkey_pass = None):
