@@ -57,16 +57,11 @@ class TheOperator(Operator):
                 self.log('phone_pubkey_decr',phone_pubkey_decr)
 
                 # get phone pubkey
-                new_phone_keychain = self.phone.keychain(extra_keys={'pubkey_decr':phone_pubkey_decr})
-                new_op_keychain = self.keychain(extra_keys={'privkey_decr':my_privkey_decr})
+                new_phone_keychain = self.phone.keychain()#extra_keys={'pubkey_decr':phone_pubkey_decr})
+                new_op_keychain = self.keychain()# extra_keys={'privkey_decr':my_privkey_decr})
 
                 PHONE_PUBKEY = new_phone_keychain.get('pubkey')
                 MY_PRIVKEY = new_op_keychain.get('privkey')
-
-                self.log('PHONE_PUBKEY',PHONE_PUBKEY)
-                self.log('MY_PRIVKEY',MY_PRIVKEY)
-                stopppp
-                
 
 
         if DATA.get('_keychain'):
