@@ -73,16 +73,16 @@ def init_operators():
         keys_to_save = ['pubkey_encr', 'privkey_encr', 'adminkey_encr'],
         keys_to_return = ['pubkey_decr', 'privkey_decr', 'adminkey_decr']
     )
-                    )
 
     phone_decr_keys = phone.get_new_keys(
         keys_to_save = ['pubkey_encr', 'privkey_encr', 'adminkey_encr'],
         keys_to_return = ['pubkey_decr', 'privkey_decr', 'adminkey_decr']
     )
 
-    self.log('OPERATOR_KEYCHAIN =',op_decr_keys)
-
-    self.log('TELEPHONE_KEYCHAIN =',phone_decr_keys)
+    print('\n'*5)
+    print('OPERATOR_KEYCHAIN =',op_decr_keys)
+    print()
+    print('TELEPHONE_KEYCHAIN =',phone_decr_keys)
 
 
     # op_pub = op.pubkey_decr_
