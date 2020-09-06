@@ -41,7 +41,9 @@ class TheTelephone(Operator):
         if not caller: caller=self.caller
         
 
-        self.log('about to make a call. my keychain?',self.keychain())
+        keychain = self.keychain(allow_builtin=self.allow_builtin, force=True)
+        # self.log('about to make a call. my keychain?',keychain)
+        # stop
         # stop
         # Three parts of every request:
 
