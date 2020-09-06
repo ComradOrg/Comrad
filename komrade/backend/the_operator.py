@@ -45,19 +45,29 @@ class TheOperator(Operator):
         KEYCHAIN = self.keychain(allow_builtin=False,force=True)
         self.log('as of now 1, I the operator have these keys:',KEYCHAIN.keys())
         # stop1
+        PHONE_PUBKEY=None
+        MY_PRIVKEY=None
         
         if data_unencr:
             self.log('unencrypted data:',data_unencr)
             
             if BSEP2 in data_unencr:
                 my_privkey_decr,phone_pubkey_decr = data_unencr.split(BSEP2)
-                self.log('unencr??')
+                self.log('my_privkey_decr',my_privkey_decr)
+                self.log('phone_pubkey_decr',phone_pubkey_decr)
 
-            if data_unencr:
-                data_unencr_s = data_unencr.decode()
-                data_unencr_json = json.loads(data_unencr_s)
-                if type(data_unencr_json) == dict:
-                    dict_merge(DATA, data_unencr_json)
+                # get phone pubkey
+                new_phone_keychain = self.phone.keychain(extra_keys={'pubkey_decr':phone_pubkey_decr})
+                new_op_keychain = self.keychain(extra_keys={'privkey_decr':my_privkey_decr})
+
+                PHONE_PUBKEY = new_phone_keychain.get('pubkey')
+                MY_PRIVKEY = new_op_keychain.get('privkey')
+
+                self.log('PHONE_PUBKEY',PHONE_PUBKEY)
+                self.log('MY_PRIVKEY',MY_PRIVKEY)
+                stopppp
+                
+
 
         if DATA.get('_keychain'):
             DATA['_keychain'] = self.valid_keychain(DATA['_keychain'])
