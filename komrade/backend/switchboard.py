@@ -15,7 +15,20 @@ TELEPHONE = None
 from flask_classful import FlaskView, route
 
 class TheSwitchboard(FlaskView, Logger):
-    #default_methods = ['POST']
+    default_methods = ['GET']
+    excluded_methods = ['phone','op']
+
+    @property
+    def phone(self):
+        global TELEPHONE
+        if not TELEPHONE: TELEPHONE=TheTelephone()
+        return TELEPHONE
+
+    @property
+    def op(self):
+        global OPERATOR
+        if not OPERATOR: OPERATOR=TheOperator()
+        return OPERATOR
 
     def get(self,msg):
         self.log('Incoming call!:',msg)
@@ -49,22 +62,10 @@ class TheSwitchboard(FlaskView, Logger):
             self.log('not valid b64?')
             return OPERATOR_INTERCEPT_MESSAGE
 
-        # then try to split
-        # try:
-        #     unencr_data,
-
-        # # then try to unwrap top level encryption
-        # try:
-        #     data = SMessage(OPERATOR.privkey_, TELEPHONE.pubkey_).unwrap(data)
-        #     self.log('decrypted data:',data)
-        # except ThemisError:
-        #     self.log('not really from the telephone?')
-        #     return OPERATOR_INTERCEPT_MESSAGE
-
         # # step 3: give to The Operator
         try:
             # return 'Success! your message was: '+str(data)
-            res = OPERATOR.receive(data)
+            res = self.op.receive(data)
             return res
         except Exception as e:
             self.log('got exception!!',e)
@@ -74,9 +75,9 @@ class TheSwitchboard(FlaskView, Logger):
         return OPERATOR_INTERCEPT_MESSAGE
 
 def run_forever(port='8080'):
-    global OPERATOR,TELEPHONE
-    TELEPHONE = TheTelephone()
-    OPERATOR = TheOperator(phone=TELEPHONE)
+    # global OPERATOR,TELEPHONE
+    # TELEPHONE = TheTelephone()
+    # OPERATOR = TheOperator(phone=TELEPHONE)
     app = Flask(__name__)
     TheSwitchboard.register(app, route_base='/op/', route_prefix=None)
     app.run(debug=True, port=port, host='0.0.0.0')
