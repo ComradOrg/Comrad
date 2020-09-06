@@ -44,8 +44,8 @@ class TheOperator(Operator):
             try:
                 data_unencr_by_phone = SMessage(self.privkey_, self.phone.pubkey_).unwrap(data)
                 self.log('decrypted data !!!:',data_unencr_by_phone)
-            except ThemisError:
-                self.log('not really from the telephone?')
+            except ThemisError as e:
+                self.log('not really from the telephone?',e)
                 return OPERATOR_INTERCEPT_MESSAGE
             
 
