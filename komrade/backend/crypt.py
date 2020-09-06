@@ -51,7 +51,7 @@ class Crypt(Logger):
         k_b = self.force_binary(k)
         self.log(type(k_b),k_b)
         k_s = k_b.decode()
-        self.log(type(k_s),_sk)
+        self.log(type(k_s),k_s)
         k_s2 = prefix + k_s
         self.log(type(k_s2),k_s2)
         k_b2 = k_s2.encode()
