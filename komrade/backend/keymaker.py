@@ -581,7 +581,7 @@ class Keymaker(Logger):
     #     for keyname in KEYNAMES:
     #         keychain=self.findkey(keyname, keychain, uri)
 
-    def keychain(self,passphrase=None,force=False,allow_builtin=True,**kwargs):
+    def keychain(self,passphrase=None,force=False,allow_builtin=True,keys_to_gen=KEYMAKER_DEFAULT_KEYS_TO_GEN,**kwargs):
         # assemble as many keys as we can!
         if not force and hasattr(self,'_keychain') and self._keychain: return self._keychain
         if passphrase: self.passphrase=passphrase
@@ -590,20 +590,23 @@ class Keymaker(Logger):
         _keychain = {}
         
         # am I a builtin one?
-        self.log('hello///',self.name,self.name in BUILTIN_KEYCHAIN)
+        # self.log('hello///',self.name,self.name in BUILTIN_KEYCHAIN)
+        if hasattr(self,'allow_builtin'):
+            allow_builtin = allow_builtin & self.allow_builtin
+
         if self.name in BUILTIN_KEYCHAIN and allow_builtin:
             self.log('??',_keychain)
             
-            if self.name!=OPERATOR_NAME:
-                for k,v in BUILTIN_KEYCHAIN[self.name].items():
-                    _keychain[k]=v
-                self.log('??',_keychain)
-                # stop
+            # if self.name!=OPERATOR_NAME:
+            for k,v in BUILTIN_KEYCHAIN[self.name].items():
+                _keychain[k]=v
+            self.log('??',_keychain)
+            # stop
         
         self.log('_keychain',_keychain)
         # stop
         
-        for keyname in reversed(KEYNAMES+KEYNAMES):
+        for keyname in keys_to_gen:
             self.log('??',keyname,'...')
             if hasattr(self,keyname):
                 method=getattr(self,keyname)

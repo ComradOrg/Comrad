@@ -32,8 +32,7 @@ class TheTelephone(Operator):
             return r
         return r
 
-    def keychain(self,**kwargs):
-        return super().keychain(allow_builtin=True,**kwargs)
+
 
 
     async def req(self,json_coming_from_phone={},json_coming_from_caller={},caller=None,json_unencrypted={}):

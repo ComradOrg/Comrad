@@ -21,7 +21,7 @@ class TheOperator(Operator):
         return TELEPHONE
     
 
-    def __init__(self, name = OPERATOR_NAME, passphrase='acc'):
+    def __init__(self, name = OPERATOR_NAME, passphrase='acc', allow_builtin=True):
         """
         Boot up the operator. Requires knowing or setting a password of memory.
         """
@@ -29,6 +29,7 @@ class TheOperator(Operator):
         # if not os.path.exists(PATH_OPERATOR): os.makedirs(PATH_OPERATOR)
         if not passphrase:
             passphrase=getpass.getpass('Hello, this is the Operator speaking. What is the passphrase?\n> ')
+        self.allow_builtin=allow_builtin
         super().__init__(name,passphrase,path_crypt_keys=PATH_CRYPT_OP_KEYS,path_crypt_data=PATH_CRYPT_OP_DATA)
 
     def decrypt_incoming(self,data):
