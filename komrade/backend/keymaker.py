@@ -404,7 +404,7 @@ class Keymaker(Logger):
         
         keychain_toreturn = defaultdict(None)
         for key in keys_to_return:
-            if key in keyhain:
+            if key in keychain:
                 print('adding',key,'to returned keychain')
                 keychain_toreturn[key]=keychain[key]
         return keychain_toreturn
