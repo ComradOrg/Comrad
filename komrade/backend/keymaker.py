@@ -549,8 +549,11 @@ class Keymaker(Logger):
         # am I a builtin one?
         self.log('hello///',self.name,self.name in BUILTIN_KEYCHAIN)
         if self.name in BUILTIN_KEYCHAIN:
+            self.log('??',_keychain)
+            
             for k,v in BUILTIN_KEYCHAIN[self.name].items():
                 _keychain[k]=v
+            self.log('??',_keychain)
             stop
         
         self.log('_keychain',_keychain)
