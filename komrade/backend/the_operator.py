@@ -82,9 +82,12 @@ class TheOperator(Operator):
             except ThemisError as e:
                 self.log('not really from the telephone?',e)
                 return OPERATOR_INTERCEPT_MESSAGE
-            stopeee
             
+            if type(data_unencr_by_phone)== dict:
+                dict_merge(DATA, data_unencr_by_phone)
 
+        self.log('DATA as of now 3!?',DATA)
+        stop3
 
         if data_encr_by_caller and 'name' in data_unencr_by_phone:
             name=data_unencr_by_phone['name']
