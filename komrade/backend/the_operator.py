@@ -53,7 +53,7 @@ class TheOperator(Operator):
 
         if data_encr_by_caller and 'name' in data_unencr_by_phone:
             name=data_unencr_by_phone['name']
-            keychain=data_unencr_by_phone.get('keychain',{})
+            keychain=data_unencr_by_phone.get('_keychain',{})
 
             # decrypt using this user's pubkey on record
             caller = Caller(name)
@@ -73,16 +73,15 @@ class TheOperator(Operator):
         data = self.decrypt_incoming(data)
 
         # decode
-        # data_s = data.decode()
-        data_json = json.load(data)
+        data_s = data.decode()
+        data_json = json.loads(data_s)
 
 
         self.log('DATA =',type(data),data)
-        # self.log('DATA_s =',type(data_s),data_s)
-        self.log('DATA_json =',type(data_json),data_json)
+        self.log('DATA_s =',type(data_s),data_s)
+        self.log('DATA_json =',type(data_json),data_s)
         
-        stop
-        return self.route(data)
+        return self.route(data_json)
 
     def route(self, data):
         # data = self.decrypt_incoming(data)
@@ -115,8 +114,8 @@ def init_operators():
 
     # keys_to_return = ['pubkey_encr','privkey_encr','adminkey_encr','adminkey_decr_encr']
     op_decr_keys = op.forge_new_keys(
-        keys_to_save=['pubkey','privkey','adminkey_encr','adminkey_decr_encr','adminkey_decr_decr'],
-        keys_to_return=['pubkey']
+        keys_to_save=['pubkey','privkey_encr','adminkey_encr','adminkey_decr_encr','adminkey_decr_decr'],
+        keys_to_return=['pubkey','privkey_decr']
     )
 
     phone_decr_keys = phone.forge_new_keys(

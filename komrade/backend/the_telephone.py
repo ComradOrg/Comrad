@@ -32,13 +32,29 @@ class TheTelephone(Operator):
             return r
         return r
 
-    async def req(self,json_coming_from_phone={},json_coming_from_caller={},caller=None):
+    async def req(self,json_coming_from_phone={},json_coming_from_caller={},caller=None,json_unencrypted={}):
         if not caller: caller=self.caller
-        # Two parts of every request:
-        
-        # 1) only overall encryption layer E2EE Telephone -> Operator:
+        # Three parts of every request:
 
-        req_data = []        
+        # 0) Unencrypted. do not use except for very specific minimal reasons!
+        # the one being: giving the operator half his private key back:
+        # which we have but he doesn't 
+        if not '_keychain' in json_unencrypted: 
+            json_unencrypted['_keychain']={}
+        _kc = json_unencrypted['_keychain']
+        if not 'privkey_decr' in _kc: 
+            _kc['privkey_decr'] = self.op.privkey_decr
+        self.log('REQ!!!!!',_kc)
+        
+        if json_unencrypted:
+            json_unencrypted_s = json.dumps(json_unencrypted)
+            json_unencrypted_b = json_unencrypted_s.encode()
+        else:
+            json_unencrypted_b = b''
+        
+        self.log('json_unencrypted_b',json_unencrypted_b)
+
+        # 1) only overall encryption layer E2EE Telephone -> Operator:
         if json_coming_from_phone:
             json_coming_from_phone_s = json.dumps(json_coming_from_phone)
             json_coming_from_phone_b = json_coming_from_phone_s.encode()
@@ -55,7 +71,7 @@ class TheTelephone(Operator):
             json_coming_from_caller_b_encr = b''
 
         # encrypt whole package E2EE, Telephone to Operator
-        req_data_encr = json_coming_from_phone_b_encr + BSEP + json_coming_from_caller_b_encr
+        req_data_encr = json_unencrypted_b + BSEP + json_coming_from_phone_b_encr + BSEP + json_coming_from_caller_b_encr
         # req_data_encr = SMessage(self.privkey_,self.op.pubkey_).wrap(req_data)
         req_data_encr_b64 = b64encode(req_data_encr)
         self.log('req_data_encr_b64 <--',req_data_encr_b64)
