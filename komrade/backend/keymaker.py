@@ -355,7 +355,7 @@ class Keymaker(Logger):
         self.log('forging new keys...',name,self.name)
         self.log('keys_to_save:',keys_to_save)
         self.log('keys_to_return',keys_to_return)
-        stop
+        # stop
 
 
         if not name: name=self.name
