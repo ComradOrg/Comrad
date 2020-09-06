@@ -554,7 +554,7 @@ class Keymaker(Logger):
             for k,v in BUILTIN_KEYCHAIN[self.name].items():
                 _keychain[k]=v
             self.log('??',_keychain)
-            stop
+            # stop
         
         self.log('_keychain',_keychain)
         # stop
