@@ -79,7 +79,7 @@ class Crypt(Logger):
         v_b=self.package_val(v)
         self.log(f'set({prefix}{k},\n\t{k_b}\n\t\n\t{v_b}\n)\n')
         # stop
-        stop
+        # stop
         
         return self.store.put(k_b,v_b)
 

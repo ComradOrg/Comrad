@@ -389,7 +389,7 @@ class Keymaker(Logger):
                     self.log(f'{_key}\n-- encrypting ----->\n{_key_encr}')
                     keychain[key_name]=_key_encr
         
-        self.log('once more, with encryption!',keychain)
+        
 
         # filter for transfer
         for k,v in keychain.items():
@@ -397,8 +397,10 @@ class Keymaker(Logger):
                 v=v.data
             v=b64encode(v)
             keychain[k]=v
-            self.log('-->',v)
+            # self.log('-->',v)
             # stop
+        self.log('once more, with encryption!',keychain)
+        
 
         # keychain_tosave = dict([(k,keychain[k]) for k in keys_to_save if k in keychain])
         
