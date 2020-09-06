@@ -163,60 +163,60 @@ class Keymaker(Logger):
     
     # Concrete keys
     @property
-    def pubkey_(self): return self.keychain()['pubkey']
+    def pubkey_(self): return self.keychain().get('pubkey')
     @property
-    def privkey_(self, **kwargs): return self.keychain()['privkey']
+    def privkey_(self, **kwargs): return self.keychain().get('privkey')
     @property
-    def adminkey_(self, **kwargs): return self.keychain()['adminkey']
+    def adminkey_(self, **kwargs): return self.keychain().get('adminkey')
     
     ## (1-X) Encrypted halves
     @property
-    def pubkey_encr_(self, **kwargs):return self.keychain()['pubkey_encr']
+    def pubkey_encr_(self, **kwargs):return self.keychain().get('pubkey_encr')
     @property
-    def privkey_encr_(self, **kwargs): return self.keychain()['privkey_encr']
+    def privkey_encr_(self, **kwargs): return self.keychain().get('privkey_encr')
     @property
-    def adminkey_encr_(self, **kwargs): return self.keychain()['adminkey_encr']
+    def adminkey_encr_(self, **kwargs): return self.keychain().get('adminkey_encr')
 
     ## (1-Y) Decrpytor halves
     @property
-    def pubkey_decr_(self, **kwargs): return self.keychain()['pubkey_decr']
+    def pubkey_decr_(self, **kwargs): return self.keychain().get('pubkey_decr')
     @property
-    def privkey_decr_(self, **kwargs): return self.keychain()['privkey_decr']
+    def privkey_decr_(self, **kwargs): return self.keychain().get('privkey_decr')
     @property
-    def adminkey_decr_(self, **kwargs): return self.keychain()['adminkey_decr']
+    def adminkey_decr_(self, **kwargs): return self.keychain().get('adminkey_decr')
 
     ## Second halving!
     ## (1-X-X)
     @property
-    def pubkey_encr_encr_(self, **kwargs): return self.keychain()['pubkey_encr_encr']
+    def pubkey_encr_encr_(self, **kwargs): return self.keychain().get('pubkey_encr_encr')
     @property
-    def privkey_encr_encr_(self, **kwargs): return self.keychain()['privkey_encr_encr']
+    def privkey_encr_encr_(self, **kwargs): return self.keychain().get('privkey_encr_encr')
     @property
-    def adminkey_encr_encr_(self, **kwargs): return self.keychain()['adminkey_encr_encr']
+    def adminkey_encr_encr_(self, **kwargs): return self.keychain().get('adminkey_encr_encr')
 
     ## (1-X-Y)
     @property
-    def pubkey_encr_decr_(self, **kwargs): return self.keychain()['pubkey_encr_decr']
+    def pubkey_encr_decr_(self, **kwargs): return self.keychain().get('pubkey_encr_decr')
     @property
-    def privkey_encr_decr_(self, **kwargs): return self.keychain()['privkey_encr_decr']
+    def privkey_encr_decr_(self, **kwargs): return self.keychain().get('privkey_encr_decr')
     @property
-    def adminkey_encr_decr_(self, **kwargs): return self.keychain()['adminkey_encr_decr']
+    def adminkey_encr_decr_(self, **kwargs): return self.keychain().get('adminkey_encr_decr')
 
     ## (1-Y-X)
     @property
-    def pubkey_decr_encr_(self, **kwargs): return self.keychain()['pubkey_decr_encr']
+    def pubkey_decr_encr_(self, **kwargs): return self.keychain().get('pubkey_decr_encr')
     @property
-    def privkey_decr_encr_(self, **kwargs): return self.keychain()['privkey_decr_encr']
+    def privkey_decr_encr_(self, **kwargs): return self.keychain().get('privkey_decr_encr')
     @property
-    def adminkey_decr_encr_(self, **kwargs): return self.keychain()['adminkey_decr_encr']
+    def adminkey_decr_encr_(self, **kwargs): return self.keychain().get('adminkey_decr_encr')
 
     ## (1-Y-Y)
     @property
-    def pubkey_decr_decr_(self, **kwargs): return self.keychain()['pubkey_decr_decr']
+    def pubkey_decr_decr_(self, **kwargs): return self.keychain().get('pubkey_decr_decr')
     @property
-    def privkey_decr_decr_(self, **kwargs): return self.keychain()['privkey_decr_decr']
+    def privkey_decr_decr_(self, **kwargs): return self.keychain().get('privkey_decr_decr')
     @property
-    def adminkey_decr_decr_(self, **kwargs): return self.keychain()['adminkey_decr_decr']
+    def adminkey_decr_decr_(self, **kwargs): return self.keychain().get('adminkey_decr_decr')
 
 
     # Get key de-cryptors
