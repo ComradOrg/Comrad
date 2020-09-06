@@ -71,11 +71,11 @@ class Crypt(Logger):
 
 
     def set(self,k,v,prefix=''):
-        # self.log('set() k -->',prefix,k)
+        self.log('set() k -->',prefix,k)
         k_b=self.package_key(k,prefix=prefix)
-        # self.log('set() k_b -->',k_b)
+        self.log('set() k_b -->',k_b)
 
-        # self.log('set() v -->',v)
+        self.log('set() v -->',v)
         v_b=self.package_val(v)
         self.log(f'set({prefix}{k},\n\t{k_b}\n\t\n\t{v_b}\n)\n')
         # stop
