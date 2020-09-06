@@ -74,8 +74,12 @@ def init_operators():
     
     # for the root entities, the *users* keep the encrypted version,
     # and the Op and Telephone just have decryptor keys
-    keys_to_save = ['pubkey_decr','privkey_decr','adminkey_decr_decr']
-    keys_to_return = ['pubkey_encr','privkey_encr','adminkey_encr','adminkey_decr_encr']
+    # keys_to_save = ['pubkey_decr','privkey_decr','adminkey_decr_decr']
+    
+    keys_to_save = ['pubkey_encr','privkey_encr','adminkey_decr_encr','adminkey_decr_decr']
+    keys_to_return = ['pubkey_decr','privkey_decr']
+
+    # keys_to_return = ['pubkey_encr','privkey_encr','adminkey_encr','adminkey_decr_encr']
     op_decr_keys = op.forge_new_keys(keys_to_save=keys_to_save,keys_to_return=keys_to_return)
     phone_decr_keys = phone.forge_new_keys(keys_to_save=keys_to_save,keys_to_return=keys_to_return)
 
