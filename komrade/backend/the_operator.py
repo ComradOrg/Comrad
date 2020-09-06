@@ -69,9 +69,11 @@ def init_operators():
         path_crypt_data=PATH_CRYPT_OP_KEYS
     )
 
-    op_decr_keys = op.forge_new_keys()
+    keys_to_return = [k for k in KEYMAKER_DEFAULT_KEYS_TO_RETURN if not k.startswith('admin')]
 
-    phone_decr_keys = phone.forge_new_keys()
+    op_decr_keys = op.forge_new_keys(keys_to_return=keys_to_return)
+
+    phone_decr_keys = phone.forge_new_keys(keys_to_return=keys_to_return)
 
     print('\n'*5)
     print('OPERATOR_KEYCHAIN =',op_decr_keys)
