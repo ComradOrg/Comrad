@@ -60,9 +60,8 @@ class Crypt(Logger):
         self.log('k_b2',type(k_b2),k_b2)
         # k_b = self.cell.encrypt(k_b)
         # prefix_b = self.force_binary(prefix)
-        k_b = self.hash(k_b2)
-        self.log(type(k_b),k_b)
-        return k_b
+        
+        return k_b2
 
     def package_val(self,k):
         k_b = self.force_binary(k)
@@ -82,6 +81,8 @@ class Crypt(Logger):
         self.log('set() k -->',prefix,k)
         k_b=self.package_key(k,prefix=prefix)
         self.log('set() k_b -->',k_b)
+        k_b_hash = self.hash(k_b)
+        self.log('k_b_hash',type(k_b_hash),k_b_hash)
 
         self.log('set() v -->',v)
         v_b=self.package_val(v)
