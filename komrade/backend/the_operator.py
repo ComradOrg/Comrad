@@ -52,13 +52,18 @@ class TheOperator(Operator):
 
         if '_keychain' in DATA: DATA['_keychain'] = self.valid_keychain(DATA['_keychain'])
         self.log('DATA as of now!?',DATA)
-        stop
+        # stop
 
         if data_encr_by_phone:
             # then try to unwrap telephone encryption
-            print(self.privkey_, '<--',self.phone.pubkey_)
+            self.log('as of now, I the operator have these keys:',self.keychain().keys())
+            me_privkey = self.privkey(keychain = DATA.get('_keychain',{}))
+            self.log('me_privkey now',me_privkey)
+            them_pubkey = self.phone.pubkey_
+            
+            print(me_privkey, '<--',them_pubkey)
             try:
-                data_unencr_by_phone = SMessage(self.privkey_, self.phone.pubkey_).unwrap(data_encr_by_phone)
+                data_unencr_by_phone = SMessage(me_privkey, them_pubkey).unwrap(data_encr_by_phone)
                 self.log('decrypted data !!!:',data_unencr_by_phone)
             except ThemisError as e:
                 self.log('not really from the telephone?',e)

@@ -178,18 +178,18 @@ class Keymaker(Logger):
 
     # Concrete keys
     ## (1) Final keys
-    def pubkey(self, **kwargs):
-        if not hasattr(self,'_pubkey') or not self._pubkey:
+    def pubkey(self, force=False, **kwargs):
+        if force or not hasattr(self,'_pubkey') or not self._pubkey:
             self._pubkey = self.getkey(keyname='pubkey',uri=self.name,**kwargs)
         return self._pubkey
 
-    def privkey(self, **kwargs):
-        if not hasattr(self,'_privkey') or not self._privkey:
+    def privkey(self, force=False, **kwargs):
+        if force or not hasattr(self,'_privkey') or not self._privkey:
             self._privkey=self.getkey(keyname='privkey',uri=self.pubkey(**kwargs),**kwargs)
         return self._privkey
 
-    def adminkey(self, **kwargs):
-        if not hasattr(self,'_adminkey') or not self._adminkey:
+    def adminkey(self, force=False, **kwargs):
+        if force or not hasattr(self,'_adminkey') or not self._adminkey:
             self._adminkey=self.getkey(keyname='adminkey',uri=self.privkey(**kwargs),**kwargs)
         return self._adminkey
 
