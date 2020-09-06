@@ -100,7 +100,9 @@ def init_operators():
     builtin_keychains = {TELEPHONE_NAME:phone_decr_keys, OPERATOR_NAME:op_decr_keys}
     builtin_keychains_s = json.dumps(builtin_keychains)
 
-    self.log('builtin_keychains =',builtin_keychains)
+    print('builtin_keychains =',builtin_keychains)
+
+    print('builtin_keychains_s =',builtin_keychains_s)
     builtin_keychains_b = builtin_keychains_s.encode('utf-8')
     
     builtin_keychains_b_decr = KomradeSymmetricKeyWithoutPassphrase()
