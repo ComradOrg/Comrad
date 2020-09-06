@@ -31,6 +31,7 @@ class TheOperator(Operator):
     def decrypt_incoming(self,data):
         # step 1 split:
         data_encr_by_phone,data_encr_by_caller = data.split(BSEP)
+        data_unencr_by_phone,data_encr_by_caller = None,None
 
         self.log('data_encr_by_phone =',data_encr_by_phone)
         self.log('data_encr_by_caller =',data_encr_by_caller)
@@ -43,24 +44,24 @@ class TheOperator(Operator):
             except ThemisError:
                 self.log('not really from the telephone?')
                 return OPERATOR_INTERCEPT_MESSAGE
-            data_by_phone = TELEPHONE.
+            
 
 
-        if data_encr and 'name' in data_unencr:
-            name=data_unencr['name']
-            keychain=data_unencr.get('keychain',{})
+        if data_encr_by_caller and 'name' in data_unencr_by_phone:
+            name=data_unencr_by_phone['name']
+            keychain=data_unencr_by_phone.get('keychain',{})
 
             # decrypt using this user's pubkey on record
             caller = Caller(name)
-            data_unencr2 = SMessage(self.privkey_, caller.pubkey_).unwrap(data_encr)
+            data_unencr2 = SMessage(self.privkey_, caller.pubkey_).unwrap(data_encr_by_caller)
 
-            if type(data_unencr)==dict and type(data_unencr2)==dict:
-                data = data_unencr
-                dict_merge(data_unencr2, data)
+            if type(data_unencr_by_phone)==dict and type(data_encr_by_caller)==dict:
+                data = data_unencr_by_phone
+                dict_merge(data_encr_by_caller, data)
             else:
-                data=(data_unencr,data_unencr2)
+                data=(data_unencr_by_phone,data_encr_by_caller)
         else:
-            data = data_unencr
+            data = data_unencr_by_phone
         return data
 
     def receive(self,data):
