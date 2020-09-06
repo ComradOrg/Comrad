@@ -81,7 +81,7 @@ def init_operators():
     #print('TELEPHONE_PRIVKEY =',b64encode(phone_priv))
     return {
         'op.keychain()':op.keychain(),
-        'phone.keychain()'
+        'phone.keychain()':phone.keychain()
     }
 
 
