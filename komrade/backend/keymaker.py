@@ -352,7 +352,11 @@ class Keymaker(Logger):
                         keys_to_return = KEYMAKER_DEFAULT_KEYS_TO_RETURN,
                         keys_to_gen = KEYMAKER_DEFAULT_KEYS_TO_GEN,
                         key_types = KEYMAKER_DEFAULT_KEY_TYPES):
-        self.log('forging new keys...')
+        self.log('forging new keys...',name,self.name)
+        self.log('keys_to_save:',keys_to_save)
+        self.log('keys_to_return',keys_to_return)
+
+
         if not name: name=self.name
 
         keys_to_gen = set(keys_to_gen) | set(keys_to_save) | set(keys_to_return)
