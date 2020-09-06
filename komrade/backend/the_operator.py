@@ -41,6 +41,9 @@ class TheOperator(Operator):
         self.log('data_encr_by_caller =',data_encr_by_caller)
 
         DATA = {}
+        KEYCHAIN = self.keychain(allow_builtin=False,force=True)
+        self.log('as of now 1, I the operator have these keys:',KEYCHAIN.keys())
+        stop1
 
         if data_unencr:
             self.log('unencrypted data:',data_unencr)
@@ -55,8 +58,7 @@ class TheOperator(Operator):
         # stop
 
         if data_encr_by_phone:
-            self.log('as of now 1, I the operator have these keys:',self.keychain().keys())
-            stop1
+            
             # then try to unwrap telephone encryption
             me_privkey = self.privkey(keychain = DATA.get('_keychain',{}))
             
