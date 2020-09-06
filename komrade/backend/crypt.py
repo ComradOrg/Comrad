@@ -41,7 +41,7 @@ class Crypt(Logger):
         # return zlib.adler32(binary_data)
 
     def force_binary(self,k_b):
-        # if k_b is None: return b''
+        if k_b is None: return None
         if type(k_b)==str: k_b=k_b.encode()
         if type(k_b)!=bytes: k_b=k_b.decode()
         return k_b
