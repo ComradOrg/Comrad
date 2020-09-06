@@ -72,14 +72,16 @@ def init_operators():
     op.get_new_keys()
     phone.get_new_keys()
 
-    #op_pub = op.pubkey_
-    #phone_pub = phone.pubkey_
-    #phone_priv = phone.privkey_
 
-    #print('OPERATOR_PUBKEY =',b64encode(op_pub))
-    #print('TELEPHONE_PUBKEY =',b64encode(phone_pub))
-    #print('TELEPHONE_PRIVKEY =',b64encode(phone_priv))
-    return {
+
+    op_pub = op.pubkey_decr_
+    phone_pub = phone.pubkey_decr_
+    phone_priv = phone.privkey_decr_
+
+    print('OPERATOR_PUBKEY =',b64encode(op_pub))
+    print('TELEPHONE_PUBKEY =',b64encode(phone_pub))
+    print('TELEPHONE_PRIVKEY =',b64encode(phone_priv))
+    # return {
         'op.keychain()':op.keychain(),
         'phone.keychain()':phone.keychain()
     }
