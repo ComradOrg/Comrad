@@ -82,9 +82,9 @@ def init_operators():
     print('TELEPHONE_PUBKEY =',b64encode(phone_pub))
     print('TELEPHONE_PRIVKEY =',b64encode(phone_priv))
     # return {
-        'op.keychain()':op.keychain(),
-        'phone.keychain()':phone.keychain()
-    }
+        # 'op.keychain()':op.keychain(),
+        # 'phone.keychain()':phone.keychain()
+    # }
 
 
 def test_op():
