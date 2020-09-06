@@ -30,6 +30,8 @@ class TheOperator(Operator):
     def route(self, data):
         # step 1 split:
         data_unencr,data_encr = data.split(BSEP)
+        self.log('data_unencr =',data_unencr)
+        self.log('data_encr =',data_encr)
         if data_encr and 'name' in data_unencr:
             name=data_unencr['name']
             keychain=data_unencr.get('keychain',{})

@@ -3,16 +3,13 @@ from komrade import *
 
 log=print
 
-# def get_tor_python_session():
-#     tor = TorClient()
-#     with tor.get_guard() as guard:
-#         adapter = TorHttpAdapter(guard, 3, retries=RETRIES)
+def tor_request(url):
+    return tor_request_in_python(url)
+    # return tor_request_in_proxy(url)
 
-#         with requests.Session() as s:
-#             s.headers.update({'User-Agent': 'Mozilla/5.0'})
-#             s.mount('http://', adapter)
-#             s.mount('https://', adapter)
-#             return s
+def tor_request_in_proxy(url):
+    with get_tor_proxy_session() as s:
+        return s.get(url,timeout=60)
 
 def tor_request_in_python(url):
     tor = TorClient()
@@ -55,22 +52,6 @@ def get_async_tor_proxy_session():
 
 
 
-
-def tor_request(url,method='get',data=None):
-    with get_tor_proxy_session() as s:
-        if method=='get':
-            return s.get(url)
-        elif method=='post':
-            log('data',data)
-            return s.post(url,data=data)
-
-
-def request(Q,**kwargs):
-    log('request() Q:',Q)
-    res = tor_request(Q,**kwargs)
-    log('reqeust() <-',res)
-    return res
-    
 
 def test_torpy():
     hostname = KOMRADE_ONION

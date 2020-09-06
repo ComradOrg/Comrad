@@ -21,7 +21,7 @@ class TheTelephone(Logger):
         msg=msg.replace('/','_')
         URL = OPERATOR_API_URL + msg + '/'
         self.log("DIALING THE OPERATOR:",URL)
-        r=tor_request_in_python(URL)
+        r=tor_request(URL)
         print(r)
         print(r.text)
         return r
@@ -78,10 +78,9 @@ class TheTelephone(Logger):
 
 
     def forge_new_keys(self, name, pubkey_is_public=False):
-        req_json = {'forge_new_keys':{'name':name, 'pubkey_is_public':pubkey_is_public}}
-        req_json_s = jsonify(req_json)
-        req_json_s_encr = SMessage()
-        return self.sess.post(json=req_json)
+        req_json = {'_route':'forge_new_keys','name':name, 'pubkey_is_public':pubkey_is_public}
+        # req_json_s = jsonify(req_json)
+        return self.req(json_coming_from_phone = req_json)
 
 
 
@@ -91,8 +90,11 @@ def test_call():
     # caller.boot(create=True)
     # print(caller.keychain())
     phone = TheTelephone(caller=caller)
-    res = phone.req({'name':'marx', 'pubkey_is_public':True})
-    print(res)
+    # req_json = {'_route':'forge_new_keys','name':name, 'pubkey_is_public':pubkey_is_public}}
+    # req_json_s = jsonify(req_json)
+    # res = phone.req({'forge_new_keys':{'name':'marx', 'pubkey_is_public':True}})
+    # print(res)
+    phone.forge_new_keys('marx4')
 
 ## main
 if __name__=='__main__': test_call()
