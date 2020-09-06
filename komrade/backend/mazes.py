@@ -26,7 +26,10 @@ async def tor_request_in_python_async(url):
             s.headers.update({'User-Agent': 'Mozilla/5.0'})
             s.mount('http://', adapter)
             s.mount('https://', adapter)
-            r = await s.get(url, timeout=60)
+            try:
+                r = await s.get(url, timeout=60)
+            except TypeError:
+                r = None
             # raise Exception(type(r))
             # await r
             return r
