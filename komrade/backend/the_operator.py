@@ -56,11 +56,12 @@ class TheOperator(Operator):
 
         if data_encr_by_phone:
             # then try to unwrap telephone encryption
-            self.log('as of now, I the operator have these keys:',self.keychain().keys())
             me_privkey = self.privkey(keychain = DATA.get('_keychain',{}))
-            self.log('me_privkey now',me_privkey)
+            
             them_pubkey = self.phone.pubkey_
             
+            self.log('as of now, I the operator have these keys:',self.keychain().keys())
+            self.log('me_privkey now',me_privkey)
             print(me_privkey, '<--',them_pubkey)
             try:
                 data_unencr_by_phone = SMessage(me_privkey, them_pubkey).unwrap(data_encr_by_phone)
