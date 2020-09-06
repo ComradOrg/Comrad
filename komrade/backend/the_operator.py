@@ -89,13 +89,13 @@ def init_operators():
     print('TELEPHONE_KEYCHAIN =',phone_decr_keys)
 
     # stringify
-    total_d = {}
+    total_d = {OPERATOR_NAME:{}, TELEPHONE_NAME:{}}
     for k,v in phone_decr_keys.items():
         v_s = v.decode('utf-8')
-        total_d[k]=v_s
+        total_d[TELEPHONE_NAME][k]=v_s
     for k,v in op_decr_keys.items():
         v_s = v.decode('utf-8')
-        total_d[k]=v_s
+        total_d[OPERATOR_NAME][k]=v_s
 
     builtin_keychains = total_d
     builtin_keychains_s = json.dumps(builtin_keychains)
