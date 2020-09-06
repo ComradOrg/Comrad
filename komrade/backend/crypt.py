@@ -26,7 +26,14 @@ class Crypt(Logger):
         self.store = FilesystemStore(self.fn)
         if init_d:
             for k,v in init_d.items():
-                self.store.put(k,v)
+                try:
+                    self.store.put(k,v)
+                except OSError as e:
+                    self.log('!!',e)
+                    self.log('!! key ->',k)
+                    self.log('!! val ->',v)
+                    raise KomradeException()
+                    
 
     def log(self,*x):
         if LOG_GET_SET:
