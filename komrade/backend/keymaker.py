@@ -484,6 +484,33 @@ class Keymaker(Logger):
         return keychain_toreturn
 
 
+    def valid_keychain(self,keychain_b64_d):
+        valid_kc = {}
+
+        for k,v in keychain_b64_d.items():
+            self.log('incoming <--',k,v)
+            if type(v)==bytes: 
+                data = v
+            elif type(v)==str:
+                if not isBase64(v):
+                    self.log('not valid input!')
+                    continue
+                
+                # first try to get from string to bytes
+                try:
+                    data = v.encode()
+                    self.log('data',encr_b64_b)
+                except UnicodeEncodeError:
+                    self.log('not valid unicode?')
+                    continue
+            
+            # then try to get from b64 bytes to raw bytes
+            if isBase64(v):
+                valid_kc[k]=b64decode(v)
+            else:
+                valid_kc[k]=v
+        
+        return valid_kc
         
     @property
     def cell_dblencr(self):

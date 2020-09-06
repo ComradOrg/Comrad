@@ -50,6 +50,7 @@ class TheOperator(Operator):
                 if type(data_unencr_json) == dict:
                     dict_merge(DATA, data_unencr_json)
 
+        if '_keychain' in DATA: DATA['_keychain'] = self.valid_keychain(DATA['_keychain'])
         self.log('DATA as of now!?',DATA)
         stop
 
