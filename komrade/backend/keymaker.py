@@ -27,7 +27,7 @@ class Keymaker(Logger):
 
     ### STARTING WITH MOST ABSTRACT
 
-    def findkey(self, keyname, keychain={}, uri=None):
+    def findkey(self, keyname, keychain=defaultdict(None), uri=None):
         self.log(f'looking for key {keyname}, in keychain {keychain.keys()} or under crypt uri {uri}')
         # look in keychain, then in crypt, for this key
         given_key = keychain.get(keyname)
@@ -43,7 +43,7 @@ class Keymaker(Logger):
         self.log(f'{keyname} not found!!')
             
 
-    def getkey(self, keyname, keychain={}, uri=None):
+    def getkey(self, keyname, keychain=defaultdict(None), uri=None):
         self.log(f'keyname={keyname}, keychain={keychain.keys()}, uri={uri}')
 
         # 1) I already have this key stored in either the keychain or the crypt; return straight away
