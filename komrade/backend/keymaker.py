@@ -384,7 +384,7 @@ class Keymaker(Logger):
         for k,v in keychain.items():
             if issubclass(type(v),KomradeKey):
                 v=v.data
-            # v=b64encode(v)
+            v=b64encode(v)
             keychain[k]=v
             self.log('-->',v)
             # stop
