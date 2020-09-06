@@ -78,7 +78,7 @@ class TheTelephone(Logger):
 
 
     def forge_new_keys(self, name, pubkey_is_public=False):
-        req_json = {'name':name, 'pubkey_is_public':pubkey_is_public}
+        req_json = {'forge_new_keys':{'name':name, 'pubkey_is_public':pubkey_is_public}}
         req_json_s = jsonify(req_json)
         req_json_s_encr = SMessage()
         return self.sess.post(json=req_json)
