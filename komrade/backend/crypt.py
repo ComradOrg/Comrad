@@ -104,6 +104,7 @@ class CryptMemory(Crypt):
     def __init__(self):
         self.data = defaultdict(None) 
         self.crypt = defaultdict(None)
+        self.cell = None
     
     def set(self,k,v,prefix=''):
         k_b=self.package_key(k,prefix=prefix)
