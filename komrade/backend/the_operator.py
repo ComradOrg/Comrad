@@ -72,7 +72,7 @@ class TheOperator(Operator):
             if not me_privkey:
                 self.log('!! could not assemble my private key. failing.')
                 return OPERATOR_INTERCEPT_MESSAGE
-\            
+            
             # self.log('as of now 3, I the operator have these keys:',self.keychain().keys())
             self.log('me_privkey now',me_privkey)
             # print(me_privkey, '<--',them_pubkey)
