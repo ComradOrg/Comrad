@@ -9,7 +9,7 @@ def tor_request(url):
     # return tor_request_in_proxy(url)
 
 async def tor_request_async(url):
-    return tor_request_in_python_async(url)
+    return await tor_request_in_python_async(url)
 
 def tor_request_in_proxy(url):
     with get_tor_proxy_session() as s:
@@ -22,10 +22,11 @@ async def tor_request_in_python_async(url):
         adapter = TorHttpAdapter(guard, 3, retries=RETRIES)
 
         async with requests_async.Session() as s:
+            await s
             s.headers.update({'User-Agent': 'Mozilla/5.0'})
             s.mount('http://', adapter)
             s.mount('https://', adapter)
-            r = s.get(url, timeout=60)
+            r = await s.get(url, timeout=60)
             # raise Exception(type(r))
             # await r
             return r
