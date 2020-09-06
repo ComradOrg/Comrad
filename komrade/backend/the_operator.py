@@ -83,8 +83,10 @@ class TheOperator(Operator):
                 self.log('not really from the telephone?',e)
                 return OPERATOR_INTERCEPT_MESSAGE
             
-            if type(data_unencr_by_phone)== dict:
-                dict_merge(DATA, data_unencr_by_phone)
+            data_unencr_by_phone_json = json.loads(data_unencr_by_phone.decode())
+            self.log('data_unencr_by_phone_json',data_unencr_by_phone_json)
+            if type(data_unencr_by_phone_json)== dict:
+                dict_merge(DATA, data_unencr_by_phone_json)
 
         self.log('DATA as of now 3!?',DATA)
         stop3
