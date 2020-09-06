@@ -90,10 +90,10 @@ def init_operators():
 
     # stringify
     for k,v in phone_decr_keys.items():
-        v_s = v.decode('utf-8')
+        v_s = b64encode(v).decode('utf-8')
         phone_decr_keys[k]=v_s
     for k,v in op_decr_keys.items():
-        v_s = v.decode('utf-8')
+        v_s = b64encode(v).decode('utf-8')
         op_decr_keys[k]=v_s
 
 
