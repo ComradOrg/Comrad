@@ -403,9 +403,10 @@ class Keymaker(Logger):
             raise KomradeException('there is no private property in a socialist network! all keys must be split between komrades')
         
         keychain_toreturn = defaultdict(None)
-        for key in keys_to_return and key in keyhain:
-            print('adding',key,'to returned keychain')
-            keychain_toreturn[key]=keychain[key]
+        for key in keys_to_return:
+            if key in keyhain:
+                print('adding',key,'to returned keychain')
+                keychain_toreturn[key]=keychain[key]
         return keychain_toreturn
         # ### SAVE ENCRYPTED KEYS?
         # if 'pubkey_encr' in keys_to_save:
