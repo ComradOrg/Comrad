@@ -17,25 +17,24 @@ class TheTelephone(Logger):
     def op_pubkey(self):
         return b64decode(OPERATOR_PUBKEY)
 
-    def dial_operator(self,msg):
+    # def dial_operator(self,msg):
+    #     msg=msg.replace('/','_')
+    #     URL = OPERATOR_API_URL + msg + '/'
+    #     self.log("DIALING THE OPERATOR:",URL)
+    #     r=tor_request(URL)
+    #     print(r)
+    #     print(r.text)
+    #     return r
+    async def dial_operator(self,msg):
         msg=msg.replace('/','_')
         URL = OPERATOR_API_URL + msg + '/'
         self.log("DIALING THE OPERATOR:",URL)
-        r=tor_request(URL)
+        r=await tor_request(URL)
         print(r)
         print(r.text)
         return r
-        
-    @property
-    def sess(self):
-        """
-        Get connection to Tor
-        """
-        if not hasattr(self,'_sess'):
-            self._sess = get_tor_proxy_session()
-        return self._sess
 
-    def req(self,json_coming_from_phone={},json_coming_from_caller={}):
+    async def req(self,json_coming_from_phone={},json_coming_from_caller={}):
         # Two parts of every request:
         
         # 1) only overall encryption layer E2EE Telephone -> Operator:
@@ -72,15 +71,15 @@ class TheTelephone(Logger):
         # escape slashes
         req_data_encr_b64_str_esc = req_data_encr_b64_str.replace('/','_')
 
-        res = self.dial_operator(req_data_encr_b64_str)
+        res = await self.dial_operator(req_data_encr_b64_str)
         self.log('result from operator?',res)
         return res
 
 
-    def forge_new_keys(self, name, pubkey_is_public=False):
+    async def forge_new_keys(self, name, pubkey_is_public=False):
         req_json = {'_route':'forge_new_keys','name':name, 'pubkey_is_public':pubkey_is_public}
         # req_json_s = jsonify(req_json)
-        return self.req(json_coming_from_phone = req_json)
+        return await self.req(json_coming_from_phone = req_json)
 
 
 
@@ -94,7 +93,7 @@ def test_call():
     # req_json_s = jsonify(req_json)
     # res = phone.req({'forge_new_keys':{'name':'marx', 'pubkey_is_public':True}})
     # print(res)
-    phone.forge_new_keys('marx4')
+    asyncio.run(phone.forge_new_keys('marx4'))
 
 ## main
 if __name__=='__main__': test_call()

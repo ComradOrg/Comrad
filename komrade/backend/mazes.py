@@ -1,5 +1,6 @@
 import os,sys; sys.path.append(os.path.abspath(os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__),'..')),'..')))
 from komrade import *
+import requests_async
 
 log=print
 
@@ -7,9 +8,25 @@ def tor_request(url):
     return tor_request_in_python(url)
     # return tor_request_in_proxy(url)
 
+async def tor_request_async(url):
+    return tor_request_in_python_async(url)
+
 def tor_request_in_proxy(url):
     with get_tor_proxy_session() as s:
         return s.get(url,timeout=60)
+
+async def tor_request_in_python_async(url):
+    import requests_async
+    tor = TorClient()
+    with tor.get_guard() as guard:
+        adapter = TorHttpAdapter(guard, 3, retries=RETRIES)
+
+        with requests_async.Session() as s:
+            s.headers.update({'User-Agent': 'Mozilla/5.0'})
+            s.mount('http://', adapter)
+            s.mount('https://', adapter)
+            r = await s.get(url, timeout=60)
+            return r
 
 def tor_request_in_python(url):
     tor = TorClient()
@@ -34,7 +51,6 @@ def tor_request_in_python(url):
             # return s
 
 def get_tor_proxy_session():
-    import requests
     session = requests.session()
     # Tor uses the 9050 port as the default socks port
     session.proxies = {'http':  'socks5://127.0.0.1:9050',

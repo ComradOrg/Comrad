@@ -242,7 +242,9 @@ class Keymaker(Logger):
 
     ### CREATING KEYS
     
-    def get_new_keys(self,pubkey_pass = None, privkey_pass = None, adminkey_pass = None):
+    def get_new_keys(self,pubkey_pass = None, privkey_pass = None, adminkey_pass = None,
+                    save_encrypted = True, return_encrypted = False,
+                    save_decrypted = False, return_decrypted = True):
         # Get decryptor keys back from The Operator (one half of the Keymaker)
         keychain = self.forge_new_keys(self.name)
         self.log('create_keys() res from Operator? <-',keychain)
