@@ -48,9 +48,12 @@ class Crypt(Logger):
 
     def package_key(self,k,prefix=''):
         k_b = self.force_binary(k)
+        k_s = k_b.decode('utf-8')
+        k_s2 = prefix + k_s
+        k_b2 = k_s2.encode('utf-8')
         # k_b = self.cell.encrypt(k_b)
-        prefix_b = self.force_binary(prefix)
-        k_b = self.hash(prefix_b + k_b)
+        # prefix_b = self.force_binary(prefix)
+        k_b = self.hash(k_b2)
         return k_b
 
     def package_val(self,k):
