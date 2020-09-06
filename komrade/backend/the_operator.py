@@ -41,8 +41,9 @@ class TheOperator(Operator):
 
         if data_encr_by_phone:
             # then try to unwrap telephone encryption
+            print(self.privkey_, '<--',self.phone.pubkey_)
             try:
-                data_unencr_by_phone = SMessage(self.privkey_, self.phone.pubkey_).unwrap(data)
+                data_unencr_by_phone = SMessage(self.privkey_, self.phone.pubkey_).unwrap(data_encr_by_phone)
                 self.log('decrypted data !!!:',data_unencr_by_phone)
             except ThemisError as e:
                 self.log('not really from the telephone?',e)
