@@ -13,7 +13,8 @@ PATH_KOMRADE = os.path.abspath(os.path.join(os.path.expanduser('~'),'.komrade'))
 PATH_KOMRADE_KEYS = os.path.join(PATH_KOMRADE,'.keys')
 PATH_KOMRADE_DATA = os.path.join(PATH_KOMRADE,'.data')
 for x in [PATH_KOMRADE,PATH_KOMRADE_DATA,PATH_KOMRADE_KEYS]:
-    os.makedirs(x)
+    if not os.path.exists(x):
+        os.makedirs(x)
 PATH_CRYPT_OP_KEYS = os.path.join(PATH_KOMRADE_KEYS,'.op.db.keys.crypt')
 PATH_CRYPT_OP_DATA = os.path.join(PATH_KOMRADE_DATA,'.op.db.data.encr')
 PATH_CRYPT_CA_KEYS = os.path.join(PATH_KOMRADE_KEYS,'.ca.db.keys.crypt')
