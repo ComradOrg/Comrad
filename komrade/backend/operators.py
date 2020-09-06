@@ -25,5 +25,11 @@ class Operator(Keymaker):
         # load keychain into memory
         self._keychain = self.keychain(force = True)
 
-
+    ### BASE STORAGE
+    @property
+    def crypt_keys(self):
+        if not hasattr(self,'_crypt_keys'):
+            self._crypt_keys = Crypt(fn=self.path_crypt_keys,init_d=BUILTIN_KEYCHAIN)
+            
+        return self._crypt_keys
 

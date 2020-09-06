@@ -121,22 +121,22 @@ def get_builtin_keys():
 
         # filter
         print(builtin_keychains)
-        for name in builtin_keychains:
-            for keyname in builtin_keychains[name]:
-                v=builtin_keychains[name][keyname]
-                builtin_keychains[name][keyname] = v.encode('utf-8')
+        for keyname in builtin_keychains:
+            v=builtin_keychains[keyname]
+            builtin_keychains[keyname] = v.encode('utf-8')
         
         return builtin_keychains
 
 BUILTIN_KEYCHAIN = get_builtin_keys()
-if not BUILTIN_KEYCHAIN or not TELEPHONE_NAME in BUILTIN_KEYCHAIN or not OPERATOR_NAME in BUILTIN_KEYCHAIN:
+if not BUILTIN_KEYCHAIN:
     raise Exception('where are the keys to the telephone and operator? how are we going to make any calls... smh')
 
-TELEPHONE_KEYCHAIN = BUILTIN_KEYCHAIN[TELEPHONE_NAME]
-OPERATOR_KEYCHAIN = BUILTIN_KEYCHAIN[OPERATOR_NAME]
+# TELEPHONE_KEYCHAIN = BUILTIN_KEYCHAIN[TELEPHONE_NAME]
+# OPERATOR_KEYCHAIN = BUILTIN_KEYCHAIN[OPERATOR_NAME]
 
 
-print(TELEPHONE_KEYCHAIN)
+# print(TELEPHONE_KEYCHAIN)
 
-print()
-print(OPERATOR_KEYCHAIN)
+# print()
+# print(OPERATOR_KEYCHAIN)
+print(BUILTIN_KEYCHAIN)

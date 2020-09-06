@@ -19,11 +19,14 @@ LOG_GET_SET = True
 
 
 class Crypt(Logger):
-    def __init__(self,name=None,fn=None,cell=None):
+    def __init__(self,name=None,fn=None,cell=None,init_d=None):
         if not name and fn: name=os.path.basename(fn).replace('.','_')
 
         self.name,self.fn,self.cell = name,fn,cell
         self.store = FilesystemStore(self.fn)
+        if init_d:
+            for k,v in init_d.items():
+                self.store.put(k,v)
 
     def log(self,*x):
         if LOG_GET_SET:
