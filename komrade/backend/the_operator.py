@@ -27,7 +27,7 @@ class TheOperator(Operator):
             passphrase=getpass.getpass('Hello, this is the Operator speaking. What is the passphrase?\n> ')
         super().__init__(name,passphrase)
 
-    def route(self, data):
+    def decrypt_incoming(self,data):
         # step 1 split:
         data_unencr,data_encr = data.split(BSEP)
         self.log('data_unencr =',data_unencr)
@@ -48,8 +48,12 @@ class TheOperator(Operator):
                 data=(data_unencr,data_unencr2)
         else:
             data = data_unencr
+        return data
 
-        print(data)
+    def route(self, data):
+        data = self.decrypt_incoming(data)
+        self.log('DATA =',data)
+        return 'success!'
 
 
 def init_operators():
