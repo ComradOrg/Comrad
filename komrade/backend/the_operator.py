@@ -156,19 +156,30 @@ def test_op():
     #print(pubkey_b64)
     keychain = op.keychain(force=True)
     from pprint import pprint
+    print('REASSEMBLED OPERATOR KEYCHAIN')
     pprint(keychain)
     # stop
 
+    phone = Operator(
+        name=TELEPHONE_NAME,
+        path_crypt_keys=PATH_CRYPT_OP_KEYS,
+        path_crypt_data=PATH_CRYPT_OP_KEYS
+    )
+    keychain = phone.keychain(force=True)
+    from pprint import pprint
+    print('REASSEMBLED TELEPHONE KEYCHAIN')
+    pprint(keychain)
+    
     # print(op.pubkey(keychain=keychain))
     # print(op.crypt_keys.get(op.pubkey(), prefix='/privkey_encr/'))
     # print(op.crypt_keys.get(op.name, prefix='/pubkey_encr/'))
-    print(op.pubkey_)
+    # print(op.pubkey_)
 
 
-    stop
+    # stop
     
-    pubkey = op.keychain()['pubkey']
-    pubkey_b64 = b64encode(pubkey)
-    print(pubkey)
+    # pubkey = op.keychain()['pubkey']
+    # pubkey_b64 = b64encode(pubkey)
+    # print(pubkey)
 
 if __name__ == '__main__': test_op()
