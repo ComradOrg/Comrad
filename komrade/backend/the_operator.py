@@ -40,11 +40,18 @@ class TheOperator(Operator):
         self.log('data_encr_by_phone =',data_encr_by_phone)
         self.log('data_encr_by_caller =',data_encr_by_caller)
 
-        DATA = None
+        DATA = {}
 
         if data_unencr:
             self.log('unencrypted data:',data_unencr)
-            stop
+            if data_unencr:
+                data_unencr_s = data_unencr.decode()
+                data_unencr_json = json.loads(data_unencr_s)
+                if type(data_unencr_json) == dict:
+                    dict_merge(DATA, data_unencr_json)
+
+        self.log('DATA as of now!?',DATA)
+        stop
 
         if data_encr_by_phone:
             # then try to unwrap telephone encryption
