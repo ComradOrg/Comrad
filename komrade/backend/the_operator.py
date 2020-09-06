@@ -47,7 +47,6 @@ class TheOperator(Operator):
                 self.log('decrypted data !!!:',data_unencr_by_phone)
             except ThemisError as e:
                 self.log('not really from the telephone?',e)
-                stoppp
                 return OPERATOR_INTERCEPT_MESSAGE
             
 
@@ -74,10 +73,12 @@ class TheOperator(Operator):
         data = self.decrypt_incoming(data)
 
         # decode
-        # data_s = data.decode()
+        data_s = data.decode()
 
 
         self.log('DATA =',type(data),data)
+        self.log('DATA_s =',type(data_s),data_s)
+        
         stop
         return self.route(data)
 
