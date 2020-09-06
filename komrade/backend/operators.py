@@ -11,8 +11,8 @@ from komrade.backend.switchboard import *
 
 class Operator(Keymaker):
     
-    def __init__(self, name, passphrase=None,**kwargs):
-        super().__init__(name=name,passphrase=passphrase,**kwargs)
+    def __init__(self, name, passphrase=None, path_crypt_keys=PATH_CRYPT_CA_KEYS, path_crypt_data=PATH_CRYPT_CA_DATA):
+        super().__init__(name=name,passphrase=passphrase, path_crypt_keys=path_crypt_keys, path_crypt_data=path_crypt_data)
 
     def boot(self,create=False):
          # Do I have my keys?

@@ -6,6 +6,8 @@ class Keymaker(Logger):
     def __init__(self,name=None,passphrase=None, path_crypt_keys=None, path_crypt_data=None):
         self.name=name
         self.passphrase=passphrase
+        self.path_crypt_keys=path_crypt_keys
+        self.path_crypt_data=path_crypt_data
 
         for k in KEYNAMES:
             func = lambda: self.keychain().get(k)
@@ -15,13 +17,13 @@ class Keymaker(Logger):
     @property
     def crypt_keys(self):
         if not hasattr(self,'_crypt_keys'):
-            self._crypt_keys = Crypt(fn=PATH_CRYPT_CA_KEYS)
+            self._crypt_keys = Crypt(fn=self.path_crypt_keys)
         return self._crypt_keys
 
     @property
     def crypt_data(self):
         if not hasattr(self,'_crypt_data'):
-            self._crypt_data = Crypt(fn=PATH_CRYPT_CA_DATA)
+            self._crypt_data = Crypt(fn=self.path_crypt_data)
         return self._crypt_data
 
 
