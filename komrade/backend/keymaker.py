@@ -404,13 +404,13 @@ class Keymaker(Logger):
         if 'adminkey_encr' in keys_to_save:
             self.crypt_keys.set(keychain['privkey'],keychain['adminkey_encr'],prefix='/adminkey_encr/')
         if 'pubkey_encr_encr' in keys_to_save:
-            self.crypt_keys.set(self.name,keychain['pubkey_decr_encr'],prefix='/pubkey_decr_encr/')
+            self.crypt_keys.set(name,keychain['pubkey_decr_encr'],prefix='/pubkey_decr_encr/')
         if 'privkey_encr_encr' in keys_to_save:
             self.crypt_keys.set(keychain['pubkey_decr'],keychain['privkey_decr_encr'],prefix='/privkey_decr_encr/')
         if 'adminkey_encr_encr' in keys_to_save:
             self.crypt_keys.set(keychain['privkey_decr'],keychain['adminkey_decr_encr'],prefix='/adminkey_decr_encr/')
         if 'pubkey_decr_encr' in keys_to_save:
-            self.crypt_keys.set(self.name,keychain['pubkey_decr_encr'],prefix='/pubkey_decr_encr/')
+            self.crypt_keys.set(name,keychain['pubkey_decr_encr'],prefix='/pubkey_decr_encr/')
         if 'privkey_decr_encr' in keys_to_save:
             self.crypt_keys.set(keychain['pubkey_decr'],keychain['privkey_decr_encr'],prefix='/privkey_decr_encr/')
         if 'adminkey_decr_encr' in keys_to_save:
@@ -419,17 +419,17 @@ class Keymaker(Logger):
         if 'pubkey_decr' in keys_to_save:
             self.crypt_keys.set(name,keychain['pubkey_decr'],prefix='/pubkey_decr/')
         if 'privkey_decr' in keys_to_save:
-            self.crypt_keys.set(pubkey,keychain['privkey_decr'],prefix='/privkey_decr/')
+            self.crypt_keys.set(keychain['pubkey'],keychain['privkey_decr'],prefix='/privkey_decr/')
         if 'adminkey_decr' in keys_to_save:
-            self.crypt_keys.set(privkey,keychain['adminkey_decr'],prefix='/adminkey_decr/')
+            self.crypt_keys.set(keychain['privkey'],keychain['adminkey_decr'],prefix='/adminkey_decr/')
         if 'pubkey_decr_decr' in keys_to_save:
-            self.crypt_keys.set(self.name,keychain['pubkey_decr_decr'],prefix='/pubkey_decr_decr/')
+            self.crypt_keys.set(name,keychain['pubkey_decr_decr'],prefix='/pubkey_decr_decr/')
         if 'privkey_decr_decr' in keys_to_save:
             self.crypt_keys.set(keychain['pubkey_decr'],keychain['privkey_decr_decr'],prefix='/privkey_decr_decr/')
         if 'adminkey_decr_decr' in keys_to_save:
             self.crypt_keys.set(keychain['privkey_decr'],keychain['adminkey_decr_decr'],prefix='/adminkey_decr_decr/')
         if 'pubkey_decr_decr' in keys_to_save:
-            self.crypt_keys.set(self.name,keychain['pubkey_decr_decr'],prefix='/pubkey_decr_decr/')
+            self.crypt_keys.set(name,keychain['pubkey_decr_decr'],prefix='/pubkey_decr_decr/')
         if 'privkey_decr_decr' in keys_to_save:
             self.crypt_keys.set(keychain['pubkey_decr'],keychain['privkey_decr_decr'],prefix='/privkey_decr_decr/')
         if 'adminkey_decr_decr' in keys_to_save:
