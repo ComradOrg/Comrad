@@ -145,6 +145,7 @@ def test_op():
     keychain = op.keychain(force=True)
     from pprint import pprint
     pprint(keychain)
+    stop
     
     pubkey = op.keychain()['pubkey']
     pubkey_b64 = b64encode(pubkey)
