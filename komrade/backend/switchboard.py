@@ -11,6 +11,7 @@ from flask_classful import FlaskView
 
 
 OPERATOR = None
+TELEPHONE = None
 from flask_classful import FlaskView, route
 
 class TheSwitchboard(FlaskView, Logger):
@@ -50,8 +51,7 @@ class TheSwitchboard(FlaskView, Logger):
 
         # then try to unwrap top level encryption
         try:
-            tele_pubkey = b64decode(TELEPHONE_PUBKEY)
-            data = SMessage(OPERATOR.privkey_, tele_pubkey).unwrap(data)
+            data = SMessage(OPERATOR.privkey_, TELEPHONE.pubkey_).unwrap(data)
             self.log('decrypted data:',data)
         except ThemisError:
             self.log('not really from the telephone?')
@@ -70,8 +70,9 @@ class TheSwitchboard(FlaskView, Logger):
         return OPERATOR_INTERCEPT_MESSAGE
 
 def run_forever(port='8080'):
-    global OPERATOR
+    global OPERATOR,TELEPHONE
     OPERATOR = TheOperator()
+    TELEPHONE = TheTelephone()
     app = Flask(__name__)
     TheSwitchboard.register(app, route_base='/op/', route_prefix=None)
     app.run(debug=True, port=port, host='0.0.0.0')

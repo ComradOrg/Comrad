@@ -25,7 +25,7 @@ class TheOperator(Operator):
         # if not os.path.exists(PATH_OPERATOR): os.makedirs(PATH_OPERATOR)
         if not passphrase:
             passphrase=getpass.getpass('Hello, this is the Operator speaking. What is the passphrase?\n> ')
-        super().__init__(name,passphrase)
+        super().__init__(name,passphrase,path_crypt_keys=PATH_CRYPT_OP_KEYS,path_crypt_data=PATH_CRYPT_OP_DATA)
 
     def decrypt_incoming(self,data):
         # step 1 split:
@@ -144,23 +144,17 @@ def init_operators():
 
 
 def test_op():
-    op = Operator(
-        name=OPERATOR_NAME,
-        path_crypt_keys=PATH_CRYPT_OP_KEYS,
-        path_crypt_data=PATH_CRYPT_OP_DATA
-    )
-    op.boot()
-    # print(op.crypt_keys.get('TheOperator',))
-    #pubkey = op.keychain()['pubkey']
-    #pubkey_b64 = b64encode(pubkey)
-    #print(pubkey_b64)
-    keychain_op = op.keychain(force=True)
+    from komrade.backend.the_telephone import TheTelephone
+
     
-    phone = Operator(
-        name=TELEPHONE_NAME,
-        path_crypt_keys=PATH_CRYPT_OP_KEYS,
-        path_crypt_data=PATH_CRYPT_OP_KEYS
-    )
+    op = TheOperator()
+    # op.boot()
+    
+    keychain_op = op.keychain(force=True)
+
+    
+    phone = TheTelephone()
+    # phone.boot()
     keychain_ph = phone.keychain(force=True)
     
     

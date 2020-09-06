@@ -10,26 +10,15 @@ class TheTelephone(Operator):
     """
     API client class for Caller to interact with The Operator.
     """
-    def __init__(self, caller):
-        self.caller = caller
+    def __init__(self):
+        self.op = TheOperator()
+
         super().__init__(
             name=TELEPHONE_NAME,
             path_crypt_keys=PATH_CRYPT_CA_KEYS,
             path_crypt_data=PATH_CRYPT_CA_KEYS
         )
 
-    @property
-    def op_pubkey(self):
-        return b64decode(OPERATOR_PUBKEY)
-
-    # def dial_operator(self,msg):
-    #     msg=msg.replace('/','_')
-    #     URL = OPERATOR_API_URL + msg + '/'
-    #     self.log("DIALING THE OPERATOR:",URL)
-    #     r=tor_request(URL)
-    #     print(r)
-    #     print(r.text)
-    #     return r
     async def dial_operator(self,msg):
         msg=msg.replace('/','_')
         URL = OPERATOR_API_URL + msg + '/'
@@ -40,7 +29,7 @@ class TheTelephone(Operator):
             return r
         return r
 
-    async def req(self,json_coming_from_phone={},json_coming_from_caller={}):
+    async def req(self,json_coming_from_phone={},json_coming_from_caller={},caller=None):
         # Two parts of every request:
         
         # 1) only overall encryption layer E2EE Telephone -> Operator:
@@ -54,20 +43,17 @@ class TheTelephone(Operator):
             json_coming_from_phone_b=b''
 
         # 2) (optional) extra E2EE encrypted layer Caller -> Operator
-        if json_coming_from_caller:
+        if json_coming_from_caller and caller:
             json_coming_from_caller_s = json.dumps(json_coming_from_caller)
             json_coming_from_caller_b = json_coming_from_caller_s.encode()
             op_pubkey
-            json_coming_from_caller_b_encr = SMessage(self.caller.privkey_,self.op_pubkey).wrap(json_coming_from_caller_b)
+            json_coming_from_caller_b_encr = SMessage(self.privkey_,self.op.pubkey_).wrap(json_coming_from_caller_b)
         else:
             json_coming_from_caller_b_encr = b''
 
         # encrypt whole package E2EE, Telephone to Operator
         req_data = json_coming_from_phone_b + BSEP + json_coming_from_caller_b_encr
-        req_data_encr = SMessage(
-            b64decode(TELEPHONE_PRIVKEY),
-            b64decode(OPERATOR_PUBKEY)
-        ).wrap(req_data)
+        req_data_encr = SMessage(self.privkey_,self.op.pubkey_).wrap(req_data)
         req_data_encr_b64 = b64encode(req_data_encr)
         self.log('req_data_encr_b64 <--',req_data_encr_b64)
 

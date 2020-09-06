@@ -13,6 +13,7 @@ class Operator(Keymaker):
     
     def __init__(self, name, passphrase=None, path_crypt_keys=PATH_CRYPT_CA_KEYS, path_crypt_data=PATH_CRYPT_CA_DATA):
         super().__init__(name=name,passphrase=passphrase, path_crypt_keys=path_crypt_keys, path_crypt_data=path_crypt_data)
+        self.boot(create=False)
 
     def boot(self,create=False):
          # Do I have my keys?

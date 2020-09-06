@@ -80,9 +80,6 @@ class Keymaker(Logger):
         self.path_crypt_keys=path_crypt_keys
         self.path_crypt_data=path_crypt_data
 
-        for k in KEYNAMES:
-            func = lambda: self.keychain().get(k)
-            setattr(self,'_'+k,func) 
 
     ### BASE STORAGE
     @property
