@@ -21,12 +21,14 @@ class TheSwitchboard(FlaskView, Logger):
     @property
     def phone(self):
         global TELEPHONE
+        from komrade.backend.the_telephone import TheTelephone
         if not TELEPHONE: TELEPHONE=TheTelephone()
         return TELEPHONE
 
     @property
     def op(self):
         global OPERATOR
+        from komrade.backend.the_operator import TheOperator
         if not OPERATOR: OPERATOR=TheOperator()
         return OPERATOR
 
