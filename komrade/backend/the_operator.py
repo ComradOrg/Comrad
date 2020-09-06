@@ -69,7 +69,9 @@ def init_operators():
         path_crypt_data=PATH_CRYPT_OP_KEYS
     )
 
-    keys_to_return = [k for k in KEYMAKER_DEFAULT_KEYS_TO_RETURN if not k.startswith('admin')]
+
+    # keys_to_return = [k for k in KEYMAKER_DEFAULT_KEYS_TO_RETURN if not k.startswith('admin')]
+    keys_to_return ['pubkey_decr','privkey_decr']
 
     op_decr_keys = op.forge_new_keys(keys_to_return=keys_to_return)
 
@@ -101,7 +103,6 @@ def init_operators():
 
     with open(PATH_BUILTIN_KEYCHAINS_ENCR,'wb') as of:
         of.write(builtin_keychains_b_encr_b64)
-        # pickle.dump(builtin_keychains, )
         print('>> saved:',PATH_BUILTIN_KEYCHAINS_ENCR)
     with open(PATH_BUILTIN_KEYCHAINS_DECR,'wb') as of:
         of.write(builtin_keychains_b_decr_b64)
