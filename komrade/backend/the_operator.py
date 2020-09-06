@@ -139,12 +139,16 @@ def init_operators():
 def test_op():
     op = TheOperator()
     op.boot()
+    # print(op.crypt_keys.get('TheOperator',))
     #pubkey = op.keychain()['pubkey']
     #pubkey_b64 = b64encode(pubkey)
     #print(pubkey_b64)
     keychain = op.keychain(force=True)
     from pprint import pprint
     pprint(keychain)
+
+    print(op.pubkey(keychain=keychain))
+
     stop
     
     pubkey = op.keychain()['pubkey']
