@@ -124,7 +124,7 @@ def get_builtin_keys():
         for name in builtin_keychains: 
             for keyname in builtin_keychains[name]:
                 v=builtin_keychains[name][keyname]
-                builtin_keychains[name][keyname] = v.encode('utf-8')
+                builtin_keychains[name][keyname] = b64decode(v.encode('utf-8'))
         
         return builtin_keychains
 
