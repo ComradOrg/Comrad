@@ -99,7 +99,7 @@ class DataCrypt(Crypt):
         return super().__init__(name=PATH_CRYPT_CA_DATA.replace('.','_'))
 
 
-
+from collections import defaultdict
 class CryptMemory(Crypt):
     def __init__(self):
         self.data = defaultdict(None) 
