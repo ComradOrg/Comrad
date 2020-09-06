@@ -591,7 +591,7 @@ class Keymaker(Logger):
                 _keychain[k]=v
         
         self.log('_keychain',_keychain)
-        stop
+        # stop
         
         for keyname in reversed(KEYNAMES+KEYNAMES):
             self.log('??',keyname,'...')
