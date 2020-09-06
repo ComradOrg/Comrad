@@ -92,6 +92,12 @@ class Keymaker(Logger):
         return self._crypt_keys
 
     @property
+    def crypt_keys_mem(self):
+        if not hasattr(self,'_crypt_keys_mem'):
+            self._crypt_keys_mem = CryptMemory()
+        return self._crypt_keys_mem
+        
+    @property
     def crypt_data(self):
         if not hasattr(self,'_crypt_data'):
             self._crypt_data = Crypt(fn=self.path_crypt_data)
@@ -396,6 +402,8 @@ class Keymaker(Logger):
         if 'pubkey' in keys_to_save or 'privkey' in keys_to_save or 'adminkey' in keys_to_save:
             raise KomradeException('there is no private property in a socialist network! all keys must be split between komrades')
         
+        keychain_toreturn = defaultdict(None)
+
         ### SAVE ENCRYPTED KEYS?
         if 'pubkey_encr' in keys_to_save:
             self.crypt_keys.set(name,keychain['pubkey_encr'],prefix='/pubkey_encr/')
@@ -403,6 +411,17 @@ class Keymaker(Logger):
             self.crypt_keys.set(keychain['pubkey'],keychain['privkey_encr'],prefix='/privkey_encr/')
         if 'adminkey_encr' in keys_to_save:
             self.crypt_keys.set(keychain['privkey'],keychain['adminkey_encr'],prefix='/adminkey_encr/')
+
+        # save decrypted keys?
+        if 'pubkey_decr' in keys_to_save:
+            self.crypt_keys.set(name,keychain['pubkey_decr'],prefix='/pubkey_decr/')
+        if 'privkey_decr' in keys_to_save:
+            self.crypt_keys.set(keychain['pubkey'],keychain['privkey_decr'],prefix='/privkey_decr/')
+        if 'adminkey_decr' in keys_to_save:
+            self.crypt_keys.set(keychain['privkey'],keychain['adminkey_decr'],prefix='/adminkey_decr/')
+
+
+
         if 'pubkey_encr_encr' in keys_to_save:
             self.crypt_keys.set(name,keychain['pubkey_decr_encr'],prefix='/pubkey_decr_encr/')
         if 'privkey_encr_encr' in keys_to_save:
@@ -416,13 +435,7 @@ class Keymaker(Logger):
         if 'adminkey_decr_encr' in keys_to_save:
             self.crypt_keys.set(keychain['privkey_decr'],keychain['adminkey_decr_encr'],prefix='/adminkey_decr_encr/')
         
-        if 'pubkey_decr' in keys_to_save:
-            self.crypt_keys.set(name,keychain['pubkey_decr'],prefix='/pubkey_decr/')
-        if 'privkey_decr' in keys_to_save:
-            self.crypt_keys.set(keychain['pubkey'],keychain['privkey_decr'],prefix='/privkey_decr/')
-        if 'adminkey_decr' in keys_to_save:
-            self.crypt_keys.set(keychain['privkey'],keychain['adminkey_decr'],prefix='/adminkey_decr/')
-        if 'pubkey_decr_decr' in keys_to_save:
+       if 'pubkey_decr_decr' in keys_to_save:
             self.crypt_keys.set(name,keychain['pubkey_decr_decr'],prefix='/pubkey_decr_decr/')
         if 'privkey_decr_decr' in keys_to_save:
             self.crypt_keys.set(keychain['pubkey_decr'],keychain['privkey_decr_decr'],prefix='/privkey_decr_decr/')
@@ -436,19 +449,59 @@ class Keymaker(Logger):
             self.crypt_keys.set(keychain['privkey_decr'],keychain['adminkey_decr_decr'],prefix='/adminkey_decr_decr/')
 
 
-        # store permissions file?
-        # if 'permkey_encr' in keys_to_save:
-        #     secret_admin_val = keychain['pubkey_encr'] + BSEP + b'find,read,admin'
-        #     secret_admin_val_encr = SCellSeal(key=keychain['adminkey']).encrypt(secret_admin_val)
-        #     self.crypt_keys.set(adminkey,secret_admin_val_encr,prefix='/permkey_encr/')
+
+
+        ## returning?
+        if 'pubkey_encr' in keys_to_return:
+            self.crypt_keys_mem.set(name,keychain['pubkey_encr'],prefix='/pubkey_encr/')
+        if 'privkey_encr' in keys_to_return:
+            self.crypt_keys_mem.set(keychain['pubkey'],keychain['privkey_encr'],prefix='/privkey_encr/')
+        if 'adminkey_encr' in keys_to_return:
+            self.crypt_keys_mem.set(keychain['privkey'],keychain['adminkey_encr'],prefix='/adminkey_encr/')
+
+        # save decrypted keys?
+        if 'pubkey_decr' in keys_to_return:
+            self.crypt_keys_mem.set(name,keychain['pubkey_decr'],prefix='/pubkey_decr/')
+        if 'privkey_decr' in keys_to_return:
+            self.crypt_keys_mem.set(keychain['pubkey'],keychain['privkey_decr'],prefix='/privkey_decr/')
+        if 'adminkey_decr' in keys_to_return:
+            self.crypt_keys_mem.set(keychain['privkey'],keychain['adminkey_decr'],prefix='/adminkey_decr/')
+
+
+
+        if 'pubkey_encr_encr' in keys_to_return:
+            self.crypt_keys_mem.set(name,keychain['pubkey_decr_encr'],prefix='/pubkey_decr_encr/')
+        if 'privkey_encr_encr' in keys_to_return:
+            self.crypt_keys_mem.set(keychain['pubkey_decr'],keychain['privkey_decr_encr'],prefix='/privkey_decr_encr/')
+        if 'adminkey_encr_encr' in keys_to_return:
+            self.crypt_keys_mem.set(keychain['privkey_decr'],keychain['adminkey_decr_encr'],prefix='/adminkey_decr_encr/')
+        if 'pubkey_decr_encr' in keys_to_return:
+            self.crypt_keys_mem.set(name,keychain['pubkey_decr_encr'],prefix='/pubkey_decr_encr/')
+        if 'privkey_decr_encr' in keys_to_return:
+            self.crypt_keys_mem.set(keychain['pubkey_decr'],keychain['privkey_decr_encr'],prefix='/privkey_decr_encr/')
+        if 'adminkey_decr_encr' in keys_to_return:
+            self.crypt_keys_mem.set(keychain['privkey_decr'],keychain['adminkey_decr_encr'],prefix='/adminkey_decr_encr/')
         
+       if 'pubkey_decr_decr' in keys_to_return:
+            self.crypt_keys_mem.set(name,keychain['pubkey_decr_decr'],prefix='/pubkey_decr_decr/')
+        if 'privkey_decr_decr' in keys_to_return:
+            self.crypt_keys_mem.set(keychain['pubkey_decr'],keychain['privkey_decr_decr'],prefix='/privkey_decr_decr/')
+        if 'adminkey_decr_decr' in keys_to_return:
+            self.crypt_keys_mem.set(keychain['privkey_decr'],keychain['adminkey_decr_decr'],prefix='/adminkey_decr_decr/')
+        if 'pubkey_decr_decr' in keys_to_return:
+            self.crypt_keys_mem.set(name,keychain['pubkey_decr_decr'],prefix='/pubkey_decr_decr/')
+        if 'privkey_decr_decr' in keys_to_return:
+            self.crypt_keys_mem.set(keychain['pubkey_decr'],keychain['privkey_decr_decr'],prefix='/privkey_decr_decr/')
+        if 'adminkey_decr_decr' in keys_to_return:
+            self.crypt_keys_mem.set(keychain['privkey_decr'],keychain['adminkey_decr_decr'],prefix='/adminkey_decr_decr/')
 
-        keychain_toreturn = defaultdict(None)
-        for k in keys_to_return:
-            if k in keychain:
-                keychain_toreturn[k] = keychain[k]
+        keychain_toreturn = self.crypt_keys_mem.data
+        crypt_toreturn = self.crypt_keys_mem.crypt
 
-        return keychain_toreturn
+        self.log('keychain_toreturn',keychain_toreturn)
+        self.log('crypt_toreturn',crypt_toreturn)
+
+        return crypt_toreturn
         
     @property
     def cell_dblencr(self):

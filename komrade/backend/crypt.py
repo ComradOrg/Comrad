@@ -17,7 +17,17 @@ from komrade import KomradeException,Logger
 LOG_GET_SET = True
 
 
-
+class CryptMemory(Crypt):
+    def __init__(self):
+        self.data = defaultdict(None) 
+        self.crypt = defaultdict(None)
+    
+    def set(self,k,v,prefix=''):
+        k_b=self.package_key(k,prefix=prefix)
+        v_b=self.package_val(v)
+        self.data[k]=v_b
+        self.crypt[k_b]=v_b
+    
 
 class Crypt(Logger):
     def __init__(self,name=None,fn=None,cell=None):
