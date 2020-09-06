@@ -406,14 +406,7 @@ class Keymaker(Logger):
         # for k,v in keychain_tosave.items():
         if 'pubkey' in keys_to_save or 'privkey' in keys_to_save or 'adminkey' in keys_to_save:
             raise KomradeException('there is no private property in a socialist network! all keys must be split between komrades')
-        
-        keychain_toreturn = {}
-        for key in keys_to_return:
-            if key in keychain:
-                print('adding',key,'to returned keychain')
-                keychain_toreturn[key]=keychain[key]
-        
-        
+
         ### SAVE ENCRYPTED KEYS?
         if 'pubkey_encr' in keys_to_save:
             self.crypt_keys.set(name,keychain['pubkey_encr'],prefix='/pubkey_encr/')
@@ -458,6 +451,15 @@ class Keymaker(Logger):
         if 'adminkey_decr_decr' in keys_to_save:
             self.crypt_keys.set(keychain['privkey_decr'],keychain['adminkey_decr_decr'],prefix='/adminkey_decr_decr/')
 
+
+                
+        keychain_toreturn = {}
+        for key in keys_to_return:
+            if key in keychain:
+                print('adding',key,'to returned keychain')
+                keychain_toreturn[key]=keychain[key]
+
+        return keychain_toreturn
 
 
         
