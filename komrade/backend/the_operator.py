@@ -127,7 +127,7 @@ def init_operators():
 
 def test_op():
     op = TheOperator()
-    #op.boot()
+    op.boot()
     #pubkey = op.keychain()['pubkey']
     #pubkey_b64 = b64encode(pubkey)
     #print(pubkey_b64)
