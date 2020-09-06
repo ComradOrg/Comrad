@@ -585,9 +585,12 @@ class Keymaker(Logger):
         _keychain = {}
         
         # am I a builtin one?
+        self.log('hello///',self.name,self.name in BUILTIN_KEYCHAIN)
         if self.name in BUILTIN_KEYCHAIN:
             for k,v in BUILTIN_KEYCHAIN[self.name].items():
                 _keychain[k]=v
+        
+        self.log('_keychain',_keychain)
         
         for keyname in reversed(KEYNAMES+KEYNAMES):
             self.log('??',keyname,'...')
