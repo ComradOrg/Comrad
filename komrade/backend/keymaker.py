@@ -106,7 +106,7 @@ class Keymaker(Logger):
 
     ### STARTING WITH MOST ABSTRACT
 
-    def findkey(self, keyname, keychain=defaultdict(None), uri=None):
+    def findkey(self, keyname, keychain={}, uri=None):
         self.log(f'looking for key {keyname}, in keychain {keychain.keys()} or under crypt uri {uri}')
         # look in keychain, then in crypt, for this key
         given_key = keychain.get(keyname)
@@ -122,7 +122,7 @@ class Keymaker(Logger):
         self.log(f'{keyname} not found!!')
             
 
-    def getkey(self, keyname, keychain=defaultdict(None), uri=None):
+    def getkey(self, keyname, keychain={}, uri=None):
         self.log(f'keyname={keyname}, keychain={keychain.keys()}, uri={uri}')
 
         # 1) I already have this key stored in either the keychain or the crypt; return straight away
@@ -325,7 +325,7 @@ class Keymaker(Logger):
     def gen_keys_from_types(self,key_types,passphrase=None):
         asymmetric_pubkey=None
         asymmetric_privkey=None
-        keychain = defaultdict(None)
+        keychain = {}
         for key_name,key_type_desc in key_types.items():
             if key_type_desc in {KEY_TYPE_ASYMMETRIC_PUBKEY,KEY_TYPE_ASYMMETRIC_PRIVKEY}:
                 if not asymmetric_privkey or not asymmetric_pubkey:
@@ -366,8 +366,8 @@ class Keymaker(Logger):
 
         self.log('!!!!',keychain)
         # stop
-        #keychain_tosave = defaultdict(None)
-        #keychain_toreturn = defaultdict(None)
+        #keychain_tosave = {}
+        #keychain_toreturn = {}
         self.log('keys_to_save =',keys_to_save)
         self.log('keys_to_return =',keys_to_return)
         
@@ -402,7 +402,7 @@ class Keymaker(Logger):
         if 'pubkey' in keys_to_save or 'privkey' in keys_to_save or 'adminkey' in keys_to_save:
             raise KomradeException('there is no private property in a socialist network! all keys must be split between komrades')
         
-        keychain_toreturn = defaultdict(None)
+        keychain_toreturn = {}
         for key in keys_to_return:
             if key in keychain:
                 print('adding',key,'to returned keychain')
@@ -582,7 +582,7 @@ class Keymaker(Logger):
         if passphrase: self.passphrase=passphrase
 
 
-        _keychain = defaultdict(None)
+        _keychain = {}
         for keyname in reversed(KEYNAMES+KEYNAMES):
             self.log('??',keyname,'...')
             if hasattr(self,keyname):
