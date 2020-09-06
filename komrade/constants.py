@@ -26,11 +26,11 @@ BSEP=b'||||||||||'
 BSEP2=b'@@@@@@@@@@'
 BSEP3=b'##########'
 
-OPERATOR_PUBKEY = b'VUVDMgAAAC1tkzQ1A0FpH7GMJxSJvKASo6U4FknRKadfN7tyXtjclNVoTD7M'
-TELEPHONE_PUBKEY = b'VUVDMgAAAC2NxJDgAsleqZ/UlYioesV5Q7y2p+io+LFXffJRG1JXwftVJHA8'
-TELEPHONE_PRIVKEY = b'UkVDMgAAAC2eWzy+AFkPLGvdBis/rY3tfi8/SFaHn4Xaxj8eDSFmLAwUo68P'
 OPERATOR_NAME = 'TheOperator'
 TELEPHONE_NAME = 'TheTelephone'
+PATH_APP = os.path.abspath(os.path.dirname(__file__))
+PATH_BUILTIN_KEYCHAINS_ENCR = os.path.join(PATH_APP,'.builtin.keychains.encr')
+PATH_BUILTIN_KEYCHAINS_DECR = os.path.join(PATH_APP,'.builtin.keychains.decr')
 
 
 # key names

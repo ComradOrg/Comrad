@@ -80,6 +80,34 @@ def init_operators():
     print()
     print('TELEPHONE_KEYCHAIN =',phone_decr_keys)
 
+    # stringify
+    for k,v in phone_decr_keys.items():
+        v_s = v.decode('utf-8')
+        phone_decr_keys[k]=v_s
+    for k,v in op_decr_keys.items():
+        v_s = v.decode('utf-8')
+        op_decr_keys[k]=v_s
+
+
+    builtin_keychains = {TELEPHONE_NAME:phone_decr_keys, OPERATOR_NAME:op_decr_keys}
+    builtin_keychains_s = json.dumps(builtin_keychains)
+    builtin_keychains_b = builtin_keychains_s.encode('utf-8')
+    
+    builtin_keychains_b_decr = KomradeSymmetricKeyWithoutPassphrase()
+    builtin_keychains_b_encr = builtin_keychains_b_decr.encrypt(builtin_keychains_b)
+
+    builtin_keychains_b_decr_b64 = b64encode(builtin_keychains_b_decr.key)
+    builtin_keychains_b_encr_b64 = b64encode(builtin_keychains_b_encr) 
+
+    with open(PATH_BUILTIN_KEYCHAINS_ENCR,'wb') as of:
+        of.write(builtin_keychains_b_encr_b64)
+        # pickle.dump(builtin_keychains, )
+        print('>> saved:',PATH_BUILTIN_KEYCHAINS_ENCR)
+    with open(PATH_BUILTIN_KEYCHAINS_DECR,'wb') as of:
+        of.write(builtin_keychains_b_decr_b64)
+        print('>> saved:',PATH_BUILTIN_KEYCHAINS_DECR)
+        
+
 
     # op_pub = op.pubkey_decr_
     # phone_pub = phone.pubkey_decr_
