@@ -39,25 +39,14 @@ class TheTelephone(Operator):
 
     async def req(self,json_coming_from_phone={},json_coming_from_caller={},caller=None,json_unencrypted={}):
         if not caller: caller=self.caller
+
+        self.log('about to make a call. my keychain?',self.keychain())
+        # stop
         # Three parts of every request:
 
         # 0) Unencrypted. do not use except for very specific minimal reasons!
-        # the one being: giving the operator half his private key back:
-        # which we have but he doesn't 
-        if not '_keychain' in json_unencrypted: 
-            json_unencrypted['_keychain']={}
-        _kc = json_unencrypted['_keychain']
-        if not 'privkey_decr' in _kc: 
-            _kc['privkey_decr'] = b64encode(self.op.privkey_decr_).decode()
-        self.log('REQ!!!!!',_kc)
-        
-        if json_unencrypted:
-            json_unencrypted_s = json.dumps(json_unencrypted)
-            json_unencrypted_b = json_unencrypted_s.encode()
-        else:
-            json_unencrypted_b = b''
-        
-        self.log('json_unencrypted_b',json_unencrypted_b)
+        # exchange half-complete pieces of info, both of which necessary for other
+        unencr_header = self.op.privkey_decr + BSEP2 + self.pubkey_decr
 
         # 1) only overall encryption layer E2EE Telephone -> Operator:
         if json_coming_from_phone:
@@ -75,8 +64,13 @@ class TheTelephone(Operator):
         else:
             json_coming_from_caller_b_encr = b''
 
-        # encrypt whole package E2EE, Telephone to Operator
-        req_data_encr = json_unencrypted_b + BSEP + json_coming_from_phone_b_encr + BSEP + json_coming_from_caller_b_encr
+        
+        
+        
+
+        req_data_encr = unencr_header + BSEP + json_coming_from_phone_b_encr + BSEP + json_coming_from_caller_b_encr
+        self.log('req_data_encr',req_data_encr)
+        sewerwe
         # req_data_encr = SMessage(self.privkey_,self.op.pubkey_).wrap(req_data)
         req_data_encr_b64 = b64encode(req_data_encr)
         self.log('req_data_encr_b64 <--',req_data_encr_b64)
