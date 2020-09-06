@@ -55,12 +55,14 @@ class TheOperator(Operator):
         # stop
 
         if data_encr_by_phone:
+            self.log('as of now 1, I the operator have these keys:',self.keychain().keys())
+            stop1
             # then try to unwrap telephone encryption
             me_privkey = self.privkey(keychain = DATA.get('_keychain',{}))
             
             them_pubkey = self.phone.pubkey_
             
-            self.log('as of now, I the operator have these keys:',self.keychain().keys())
+            self.log('as of now 2, I the operator have these keys:',self.keychain().keys())
             self.log('me_privkey now',me_privkey)
             print(me_privkey, '<--',them_pubkey)
             try:
