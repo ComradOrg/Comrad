@@ -137,7 +137,11 @@ def init_operators():
 
 
 def test_op():
-    op = TheOperator()
+    op = Operator(
+        name=OPERATOR_NAME,
+        path_crypt_keys=PATH_CRYPT_OP_KEYS,
+        path_crypt_data=PATH_CRYPT_OP_DATA
+    )
     op.boot()
     # print(op.crypt_keys.get('TheOperator',))
     #pubkey = op.keychain()['pubkey']
