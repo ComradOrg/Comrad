@@ -50,12 +50,13 @@ class Crypt(Logger):
         self.log(type(k),k)
         k_b = self.force_binary(k)
         self.log(type(k_b),k_b)
-        k_s = k_b.decode()
-        self.log(type(k_s),k_s)
-        k_s2 = prefix + k_s
-        self.log(type(k_s2),k_s2)
-        k_b2 = k_s2.encode()
-        self.log(type(k_b2),k_b2)
+        # k_s = k_b.decode()
+        # self.log(type(k_s),k_s)
+        # k_s2 = prefix + k_s
+        # self.log(type(k_s2),k_s2)
+        # k_b2 = k_s2.encode()
+        k_b2 = self.force_binary(prefix) + k_b
+        self.log('k_b2',type(k_b2),k_b2)
         # k_b = self.cell.encrypt(k_b)
         # prefix_b = self.force_binary(prefix)
         k_b = self.hash(k_b2)
