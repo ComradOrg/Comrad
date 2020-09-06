@@ -97,8 +97,10 @@ def init_operators():
         v_s = v.decode('utf-8')
         total_d[OPERATOR_NAME][k]=v_s
 
+
+    print('total_d',total_d)
     builtin_keychains = total_d
-    builtin_keychains_s = json.dumps(total_d)
+    builtin_keychains_s = json.dumps(builtin_keychains)
 
     print('builtin_keychains =',builtin_keychains)
 
