@@ -90,7 +90,7 @@ class Crypt(Logger):
         # stop
         # stop
         
-        return self.store.put(k_b,v_b)
+        return self.store.put(k_b_hash,v_b)
 
     def exists(self,k,prefix=''):
         return bool(self.get(k,prefix=prefix))
