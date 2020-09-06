@@ -59,6 +59,7 @@ class TheOperator(Operator):
 
             KEYCHAIN = self.keychain(allow_builtin=False,force=True,extra_keys=DATA['_keychain'])
             self.log('as of now 1, I the operator have these keys:',KEYCHAIN.keys())
+            stopppppppp
         self.log('DATA as of now!?',DATA)
         # stop
 
