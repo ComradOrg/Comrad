@@ -13,7 +13,7 @@ from komrade.backend.mazes import *
 
 class TheOperator(Operator):
     """
-    The remote operator! Only one!
+    The remote operator
     """
     
 
@@ -26,6 +26,7 @@ class TheOperator(Operator):
         if not passphrase:
             passphrase=getpass.getpass('Hello, this is the Operator speaking. What is the passphrase?\n> ')
         super().__init__(name,passphrase,path_crypt_keys=PATH_CRYPT_OP_KEYS,path_crypt_data=PATH_CRYPT_OP_DATA)
+
 
     def decrypt_incoming(self,data):
         # step 1 split:
@@ -50,10 +51,22 @@ class TheOperator(Operator):
             data = data_unencr
         return data
 
-    def route(self, data):
+    def receive(self,data):
+        # decrypt
         data = self.decrypt_incoming(data)
-        self.log('DATA =',data)
-        return 'success!'
+
+        # decode
+        data_s = data.decode()
+
+
+        self.log('DATA =',data_s)
+        stop
+        return self.route(data)
+
+    def route(self, data):
+        # data = self.decrypt_incoming(data)
+        # self.log('DATA =',data)
+        return data# 'success!'
 
 
 def init_operators():
