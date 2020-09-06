@@ -37,6 +37,10 @@ class TheOperator(Operator):
         data_unencr,data_encr_by_phone,data_encr_by_caller = data.split(BSEP)
         data_unencr_by_phone,data_unencr_by_caller = None,None
 
+        self.log('my keychain:',self.keychain())
+        self.log('phone keychain:',self.phone.keychain())
+        weeee
+
         self.log('data_unencr =',data_unencr)
         self.log('data_encr_by_phone =',data_encr_by_phone)
         self.log('data_encr_by_caller =',data_encr_by_caller)
