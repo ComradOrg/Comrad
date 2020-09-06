@@ -63,7 +63,7 @@ class TheTelephone(Operator):
         req_data_encr_b64_str_esc = req_data_encr_b64_str.replace('/','_')
 
         try:
-            res = await self.dial_operator(req_data_encr_b64_str_esc)
+            res = await self.dial_operator(req_data_encr_b64_str)
         except TypeError:
             res = None
         self.log('result from operator?',res)
@@ -75,15 +75,15 @@ class TheTelephone(Operator):
 
     
 def test_call():
-    caller = Operator('marx3') #Caller('marx')
+    caller = Caller('marx33') #Caller('marx')
     # caller.boot(create=True)
     # print(caller.keychain())
-    phone = TheTelephone()
+    # phone = TheTelephone()
     # req_json = {'_route':'forge_new_keys','name':name, 'pubkey_is_public':pubkey_is_public}}
     # req_json_s = jsonify(req_json)
     # res = phone.req({'forge_new_keys':{'name':'marx', 'pubkey_is_public':True}})
     # print(res)
-    asyncio.run(phone.forge_new_keys('marx4'))
+    asyncio.run(caller.forge_new_keys())
 
     print('YEAH COOL')
 
