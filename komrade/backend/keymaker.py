@@ -2,6 +2,29 @@ import os,sys; sys.path.append(os.path.abspath(os.path.join(os.path.abspath(os.p
 from komrade import *
 from komrade.backend.crypt import *
 
+
+
+class KomradeSymmetric(SCellSeal):
+    @property
+    def cell(self):
+        if not hasattr(self,'_cell'):
+            if hasattr(self,'passphrase') and self.passphrase:
+                self._cell = SCellSeal(passphrase=passphrase)
+            elif hasattr(self,'key') and self.key:
+                self._cell = SCellSeal(key=key)
+        
+class KomradeSymmetricPass(KomradeSymmetric):
+    def __init__(self,passphrase=None, why=WHY_MSG):
+        self.passphrase=passphrase
+        if not self.passphrase:
+            self.passphrase=getpass.getpass(why)
+        return self.passphrase
+
+class KomradeSymmetricKey(SCellSeal):
+    def __init__(self):
+        self.key = GenerateSymmetricKey()
+
+
 class Keymaker(Logger):
     def __init__(self,name=None,passphrase=None, path_crypt_keys=None, path_crypt_data=None):
         self.name=name
@@ -242,75 +265,116 @@ class Keymaker(Logger):
 
     ### CREATING KEYS
     
-    def get_new_keys(self,pubkey_pass = None, privkey_pass = None, adminkey_pass = None,
-                    save_encrypted = True, return_encrypted = False,
-                    save_decrypted = False, return_decrypted = True):
-        # Get decryptor keys back from The Operator (one half of the Keymaker)
-        keychain = self.forge_new_keys(self.name)
-        self.log('create_keys() res from Operator? <-',keychain)
+    def get_new_keys(self):
+        raise KomradeException('Every keymaker must make their own get_new_keys() !')
 
-        # Now lock the decryptor keys away, sealing it with a password of memory!
-        self.lock_new_keys(keychain)
+    def gen_keys_from_types(self,key_types,passphrase=None):
+        asymmetric_pubkey=None
+        asymmetric_privkey=None
+        keychain = defaultdict(None)
+        for key_name,key_type_descr in key_types.items():
+            if key_type_descr in {KEY_TYPE_ASYMMETRIC_PRIVKEY,KEY_TYPE_ASYMMETRIC_PRIVKEY}:
+                if not asymmetric_privkey or not asymmetric_pubkey:
+                    keypair = GenerateKeyPair(KEY_PAIR_TYPE.EC)
+                    asymmetric_privkey = keypair.export_private_key()
+                    asymmetric_pubkey = keypair.export_public_key()
 
-    def forge_new_keys(self,name,pubkey_is_public=False,return_all_keys=False):
+            if key_type_descr==KEY_TYPE_ASYMMETRIC_PRIVKEY:
+                keychain[key_name] = asymmetric_privkey
+            elif key_type_descr==KEY_TYPE_ASYMMETRIC_PUBKEY:
+                keychain[key_name] = asymmetric_pubkey
+            elif key_type_desc==KEY_TYPE_SYMMETRIC_WITHOUT_PASSPHRASE:
+                keychain[key_name]=KomradeSymmetricKey()
+            elif key_type_desc==KEY_TYPE_SYMMETRIC_WITH_PASSPHRASE:
+                if not passphrase and not self.passphrase:
+                    self.passphrase=getpass.getpass(WHY_MSG)
+                keychain[key_name]=KomradeSymmetricPass(passphrase=passphrase if passphrase else self.passphrase)
+
+
+    def forge_new_keys(self,
+                        name,
+                        keys_to_save = KEYMAKER_DEFAULT_KEYS_TO_SAVE,
+                        keys_to_return = KEYMAKER_DEFAULT_KEYS_TO_RETURN,
+                        key_types = KEYMAKER_DEFAULT_KEY_TYPES):
         self.log('forging new keys...')
 
         # Create public and private keys
+        keychain = {}
         keypair = GenerateKeyPair(KEY_PAIR_TYPE.EC)
-        privkey = keypair.export_private_key()
-        pubkey = keypair.export_public_key()
-        adminkey = GenerateSymmetricKey()
+        keychain['privkey'] = keypair.export_private_key()
+        keychain['pubkey'] = keypair.export_public_key()
+        keychain['adminkey'] = GenerateSymmetricKey()
 
-        # Create decryption/permission keys
-        pubkey_decr = GenerateSymmetricKey()
-        privkey_decr = GenerateSymmetricKey()
-        adminkey_decr = GenerateSymmetricKey() #SCellSeal(passphrase=passphrase)
+        # # Create decryption/permission keys
+        # keychain['pubkey_decr'] = GenerateSymmetricKey()
+        # keychain['privkey_decr'] = GenerateSymmetricKey()
+        # keychain['adminkey_decr'] = GenerateSymmetricKey() #SCellSeal(passphrase=passphrase)
         
-        # Encrypt original keys
-        pubkey_encr = SCellSeal(key=pubkey_decr).encrypt(pubkey)
-        privkey_encr = SCellSeal(key=privkey_decr).encrypt(privkey)
-        adminkey_encr = SCellSeal(key=adminkey_decr).encrypt(adminkey)
+        # # Encrypt original keys
+        # keychain['pubkey_encr'] = SCellSeal(key=pubkey_decr).encrypt(pubkey)
+        # keychain['privkey_encr'] = SCellSeal(key=privkey_decr).encrypt(privkey)
+        # keychain['adminkey_encr'] = SCellSeal(key=adminkey_decr).encrypt(adminkey)
+
+        double_enc = ['pubkey_decr_encr','pubkey_encr_encr','pubkey_decr_encr','pubkey_encr_encr','pubkey_decr_encr','pubkey_encr_encr']
+        for xkey in double_encr:
+            if xkey in to_return or xkey in to_save:
+                xkey_orig = xkey[:-len('_encr')]
+                keychain[xkey] = self.cell_dblencr.encrypt(**)
 
         # store encrypted on my hardware
-        self.crypt_keys.set(name,pubkey_encr,prefix='/pubkey_encr/')
-        self.crypt_keys.set(pubkey,privkey_encr,prefix='/privkey_encr/')
-        self.crypt_keys.set(privkey,adminkey_encr,prefix='/adminkey_encr/')
+        if save_encrypted:
+            self.crypt_keys.set(name,pubkey_encr,prefix='/pubkey_encr/')
+            self.crypt_keys.set(pubkey,privkey_encr,prefix='/privkey_encr/')
+            self.crypt_keys.set(privkey,adminkey_encr,prefix='/adminkey_encr/')
 
         # store permissions file?
         secret_admin_val = pubkey_encr + BSEP + b'find,read,admin'
         if pubkey_is_public: secret_admin_val += b'*'+BSEP+b'find'
         secret_admin_val_encr = SCellSeal(key=adminkey).encrypt(secret_admin_val)
-        self.crypt_keys.set(adminkey,secret_admin_val_encr,prefix='/permkey_encr/')
+        if save_encrypted:
+            self.crypt_keys.set(adminkey,secret_admin_val_encr,prefix='/permkey_encr/')
 
-        # keep public key?
-        if pubkey_is_public: self.crypt_keys.set(name,pubkey_decr,prefix='/pubkey_decr/')
+            # keep public key?
+        if pubkey_is_public:
+            self.crypt_keys.set(name,pubkey_decr,prefix='/pubkey_decr/')
         
         # send back decryption keys to client
-        if not return_all_keys: # default situation
-            keychain = {
-                'pubkey_decr':pubkey_decr,
-                'privkey_decr':privkey_decr,
-                'adminkey_decr':adminkey_decr
-            }
-        else: # only in special case!
-            keychain = {
-                'pubkey':pubkey,'pubkey_encr':pubkey_encr,'pubkey_decr':pubkey_decr,
-                'privkey':privkey,'privkey_encr':privkey_encr,'privkey_decr':privkey_decr,
-                'adminkey':adminkey,'adminkey_encr':adminkey_encr,'adminkey_decr':adminkey_decr
-            }
-        return keychain
+        toreturn={}
+        if return_decrypted:
+            toreturn['pubkey_decr']=pubkey_decr
+            toreturn['privkey_decr']=privkey_decr
+            toreturn['adminkey_decr']=adminkey_decr
         
+        if return_encrypted:   
+            toreturn['pubkey_encr']=pubkey_encr
+            toreturn['privkey_encr']=privkey_encr
+            toreturn['adminkey_encr']=adminkey_encr
+         
+        return toreturn
+        
+    @property
+    def cell_dblencr(self):
+        if not hasattr(self,'_cell_dblencr'):
+            self._dbl_encr = get_cell_dblencr()
+        return self._dbl_encr
 
-        
-    def lock_new_keys(self,keychain,passphrase=None):
-        # we're not going to store the decryptor keys directly though
+    def get_cell_dblencr(self,passphrase=None):
         if not passphrase:
             if self.passphrase:
                 passphrase=self.passphrase
             else:
                 self.passphrase=passphrase=getpass.getpass('Forge the password of memory: ')
-        
         cell = SCellSeal(passphrase=passphrase)
+        return cell
+
+        
+    def lock_new_keys(self,
+                        keychain,
+                        passphrase=None,
+                        save_encrypted = True, return_encrypted = False,
+                        save_decrypted = False, return_decrypted = True):
+        # we're not going to store the decryptor keys directly though
+        
 
         # encrypt the decryptor keys
         pubkey_decr_encr = cell.encrypt(keychain['pubkey_decr'])
@@ -318,14 +382,13 @@ class Keymaker(Logger):
         adminkey_decr_encr = cell.encrypt(keychain['adminkey_decr'])
         
         # set to crypt and keychain
-        self.crypt_keys.set(self.name,pubkey_decr_encr,prefix='/pubkey_decr_encr/')
-        #keychain['pubkey_decr_encr']=pubkey_decr_encr
+        if save_decrypted:
+            self.crypt_keys.set(self.name,pubkey_decr_encr,prefix='/pubkey_decr_encr/')
+            self.crypt_keys.set(keychain['pubkey_decr'],privkey_decr_encr,prefix='/privkey_decr_encr/')
+            #keychain['privkey_decr_encr']=privkey_decr_encr
         
-        self.crypt_keys.set(keychain['pubkey_decr'],privkey_decr_encr,prefix='/privkey_decr_encr/')
-        #keychain['privkey_decr_encr']=privkey_decr_encr
-        
-        self.crypt_keys.set(keychain['privkey_decr'],adminkey_decr_encr,prefix='/adminkey_decr_encr/')
-        #keychain['adminkey_decr_encr']=adminkey_decr_encr
+            self.crypt_keys.set(keychain['privkey_decr'],adminkey_decr_encr,prefix='/adminkey_decr_encr/')
+            #keychain['adminkey_decr_encr']=adminkey_decr_encr
         
         # store decryption keys if not passworded?
         pub_ddk,priv_ddk,admin_ddk=[x+'key_decr_decr_key' for x in ['pub','priv','admin']]

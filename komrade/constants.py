@@ -46,3 +46,46 @@ KEYNAMES = [
 ]
 
 OPERATOR_INTERCEPT_MESSAGE = "If you'd like to make a call, please hang up and try again. If you need help, hang up, and then dial your operator."
+
+
+
+KEYMAKER_DEFAULT_KEYS_TO_SAVE = ['pubkey_encr', 'privkey_encr', 'adminkey_encr'],
+KEYMAKER_DEFAULT_KEYS_TO_RETURN = ['pubkey_decr', 'privkey_decr', 'adminkey_decr'],
+
+KEY_TYPE_ASYMMETRIC_PUBKEY = 'asymmetric_pubkey'
+KEY_TYPE_ASYMMETRIC_PRIVKEY = 'asymmetric_privkey'
+KEY_TYPE_SYMMETRIC_WITHOUT_PASSPHRASE = 'symmetric_key_without_passphrase'
+KEY_TYPE_SYMMETRIC_WITH_PASSPHRASE = 'symmetric_key_with_passphrase'
+ENCRYPTED_KEY = 'encrypted_key'
+
+
+KEYMAKER_DEFAULT_KEY_TYPES = {
+    'pubkey':KEY_TYPE_ASYMMETRIC_PUBKEY,
+    'privkey':KEY_TYPE_ASYMMETRIC_PRIVKEY
+    'adminkey':KEY_TYPE_SYMMETRIC_WITH_PASSPHRASE,
+    
+    'pubkey_decr':KEY_TYPE_SYMMETRIC_WITHOUT_PASSPHRASE,
+    'privkey_decr':KEY_TYPE_SYMMETRIC_WITHOUT_PASSPHRASE,
+    'adminkey_decr':KEY_TYPE_SYMMETRIC_WITH_PASSPHRASE,
+
+    'pubkey_decr_decr':KEY_TYPE_SYMMETRIC_WITHOUT_PASSPHRASE,
+    'privkey_decr_decr':KEY_TYPE_SYMMETRIC_WITH_PASSPHRASE,
+    'adminkey_decr_decr':KEY_TYPE_SYMMETRIC_WITH_PASSPHRASE
+
+    'pubkey_encr_decr':KEY_TYPE_SYMMETRIC_WITHOUT_PASSPHRASE,
+    'privkey_encr_decr':KEY_TYPE_SYMMETRIC_WITH_PASSPHRASE,
+    'adminkey_encr_decr':KEY_TYPE_SYMMETRIC_WITH_PASSPHRASE,
+
+
+    # encrypted keys
+    'pubkey_encr':ENCRYPTED_KEY,
+    'privkey_encr':ENCRYPTED_KEY,
+    'adminkey_encr':ENCRYPTED_KEY,
+    'pubkey_encr_encr':ENCRYPTED_KEY,
+    'privkey_encr_encr':ENCRYPTED_KEY,
+    'adminkey_encr_encr':ENCRYPTED_KEY,
+    'pubkey_decr_encr':ENCRYPTED_KEY,
+    'privkey_decr_encr':ENCRYPTED_KEY,
+    'adminkey_decr_encr':ENCRYPTED_KEY
+}
+WHY_MSG = 'Forge the password of memory: '
