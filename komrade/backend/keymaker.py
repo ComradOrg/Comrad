@@ -581,7 +581,7 @@ class Keymaker(Logger):
     #     for keyname in KEYNAMES:
     #         keychain=self.findkey(keyname, keychain, uri)
 
-    def keychain(self,passphrase=None,force=False,allow_builtin=False,**kwargs):
+    def keychain(self,passphrase=None,force=False,allow_builtin=True,**kwargs):
         # assemble as many keys as we can!
         if not force and hasattr(self,'_keychain') and self._keychain: return self._keychain
         if passphrase: self.passphrase=passphrase
@@ -594,10 +594,11 @@ class Keymaker(Logger):
         if self.name in BUILTIN_KEYCHAIN and allow_builtin:
             self.log('??',_keychain)
             
-            for k,v in BUILTIN_KEYCHAIN[self.name].items():
-                _keychain[k]=v
-            self.log('??',_keychain)
-            # stop
+            if self.name!=OPERATOR_NAME:
+                for k,v in BUILTIN_KEYCHAIN[self.name].items():
+                    _keychain[k]=v
+                self.log('??',_keychain)
+                # stop
         
         self.log('_keychain',_keychain)
         # stop
