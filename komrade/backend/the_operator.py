@@ -98,7 +98,7 @@ def init_operators():
         total_d[OPERATOR_NAME][k]=v_s
 
     builtin_keychains = total_d
-    builtin_keychains_s = json.dumps(builtin_keychains)
+    builtin_keychains_s = json.dumps(total_d)
 
     print('builtin_keychains =',builtin_keychains)
 
