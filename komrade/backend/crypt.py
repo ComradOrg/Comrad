@@ -1,17 +1,14 @@
 """
 Storage for both keys and data
 """
+import os,sys; sys.path.append(os.path.abspath(os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__),'..')),'..')))
+from komrade import *
 from simplekv.fs import FilesystemStore
 from simplekv.memory.redisstore import RedisStore
 import redis
 import hashlib,os
-from pythemis.skeygen import KEY_PAIR_TYPE, GenerateKeyPair
-from pythemis.smessage import SMessage, ssign, sverify
-from pythemis.skeygen import GenerateSymmetricKey
-from pythemis.scell import SCellSeal
-from pythemis.exception import ThemisError
 import zlib
-from komrade import KomradeException,Logger
+
 
 
 LOG_GET_SET = True
@@ -77,7 +74,7 @@ class Crypt(Logger):
 
         # self.log('set() v -->',v)
         v_b=self.package_val(v)
-        self.log(f'set(\n\t{prefix}{k},\n\t{k_b}\n\t\n\t{v_b}\n)\n')
+        self.log(f'set({prefix}{k},\n\t{k_b}\n\t\n\t{v_b}\n)\n')
         stop
         
         return self.store.put(k_b,v_b)
