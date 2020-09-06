@@ -21,7 +21,7 @@ async def tor_request_in_python_async(url):
     with tor.get_guard() as guard:
         adapter = TorHttpAdapter(guard, 3, retries=RETRIES)
 
-        with requests_async.Session() as s:
+        with async requests_async.Session() as s:
             s.headers.update({'User-Agent': 'Mozilla/5.0'})
             s.mount('http://', adapter)
             s.mount('https://', adapter)
