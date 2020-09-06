@@ -13,9 +13,14 @@ class Caller(Operator):
 
     @property
     def phone(self):
+        global TELEPHONE
+        if not TELEPHONE: TELEPHONE=TheTelephone()
         return TELEPHONE
     @property
-    def op(self): return OPERATOR
+    def op(self):
+        global OPERATOR
+        if not OPERATOR: Operator=TheOperator()
+        return OPERATOR
 
     def get_new_keys(self,pubkey_pass = None, privkey_pass = None, adminkey_pass = None):
         """

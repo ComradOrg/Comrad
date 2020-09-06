@@ -17,5 +17,5 @@ from .callers import *
 
 
 ## define default entities
-OPERATOR = TheOperator()
-TELEPHONE = TheTelephone()
+OPERATOR = None
+TELEPHONE = None

@@ -16,7 +16,10 @@ class TheTelephone(Operator):
         )
 
     @property
-    def op(self): return OPERATOR
+    def op(self):
+        global OPERATOR
+        if not OPERATOR: Operator=TheOperator()
+        return OPERATOR
 
     async def dial_operator(self,msg):
         msg=msg.replace('/','_')

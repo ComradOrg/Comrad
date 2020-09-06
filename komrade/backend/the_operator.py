@@ -15,6 +15,8 @@ class TheOperator(Operator):
     """
     @property
     def phone(self):
+        global TELEPHONE
+        if not TELEPHONE: TELEPHONE=TheTelephone()
         return TELEPHONE
     
 
