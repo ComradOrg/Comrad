@@ -76,6 +76,7 @@ class KomradeAsymmetricPrivateKey(KomradeAsymmetricKey):
 class Keymaker(Logger):
     def __init__(self,name=None,passphrase=None, path_crypt_keys=None, path_crypt_data=None):
         self.name=name
+        self._keychain={}
         self.passphrase=passphrase
         self.path_crypt_keys=path_crypt_keys
         self.path_crypt_data=path_crypt_data
@@ -581,18 +582,18 @@ class Keymaker(Logger):
     #     for keyname in KEYNAMES:
     #         keychain=self.findkey(keyname, keychain, uri)
 
-    def keychain(self,passphrase=None,force=False,allow_builtin=True,keys_to_gen=KEYMAKER_DEFAULT_KEYS_TO_GEN,**kwargs):
+    def keychain(self,passphrase=None,force=False,allow_builtin=True,extra_keys={},keys_to_gen=KEYMAKER_DEFAULT_KEYS_TO_GEN,**kwargs):
         # assemble as many keys as we can!
         if not force and hasattr(self,'_keychain') and self._keychain: return self._keychain
         if passphrase: self.passphrase=passphrase
 
-        
-        _keychain = {}
+        self._keychain = _keychain = {**extra_keys}
+        self.log('_keychain at start of keychain() =',_keychain)
         
         # am I a builtin one?
         # self.log('hello///',self.name,self.name in BUILTIN_KEYCHAIN)
         if hasattr(self,'allow_builtin'):
-            allow_builtin = allow_builtin & self.allow_builtin
+            allow_builtin = allow_builtin and self.allow_builtin
 
         if self.name in BUILTIN_KEYCHAIN and allow_builtin:
             self.log('??',_keychain)

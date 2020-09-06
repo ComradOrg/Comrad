@@ -44,8 +44,7 @@ class TheOperator(Operator):
         DATA = {}
         KEYCHAIN = self.keychain(allow_builtin=False,force=True)
         self.log('as of now 1, I the operator have these keys:',KEYCHAIN.keys())
-        stop1
-
+        
         if data_unencr:
             self.log('unencrypted data:',data_unencr)
             if data_unencr:
@@ -54,7 +53,12 @@ class TheOperator(Operator):
                 if type(data_unencr_json) == dict:
                     dict_merge(DATA, data_unencr_json)
 
-        if '_keychain' in DATA: DATA['_keychain'] = self.valid_keychain(DATA['_keychain'])
+        if '_keychain' in DATA:
+            DATA['_keychain'] = self.valid_keychain(DATA['_keychain'])
+            self.log('found keys in unencrypted data:',DATA['_keychain'])
+
+            KEYCHAIN = self.keychain(allow_builtin=False,force=True,_ke)
+            self.log('as of now 1, I the operator have these keys:',KEYCHAIN.keys())
         self.log('DATA as of now!?',DATA)
         # stop
 
