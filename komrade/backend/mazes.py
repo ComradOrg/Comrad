@@ -27,7 +27,7 @@ async def tor_request_in_python_async(url):
             s.mount('https://', adapter)
             r = s.get(url, timeout=60)
             # raise Exception(type(r))
-            await r
+            # await r
             return r
 
 def tor_request_in_python(url):
