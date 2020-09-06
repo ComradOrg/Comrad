@@ -29,7 +29,7 @@ class TheTelephone(Logger):
         msg=msg.replace('/','_')
         URL = OPERATOR_API_URL + msg + '/'
         self.log("DIALING THE OPERATOR:",URL)
-        r=await tor_request(URL)
+        r=await tor_request_async(URL)
         print(r)
         print(r.text)
         return r
