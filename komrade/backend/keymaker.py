@@ -499,16 +499,16 @@ class Keymaker(Logger):
                 # first try to get from string to bytes
                 try:
                     data = v.encode()
-                    self.log('data',encr_b64_b)
+                    self.log('data',data)
                 except UnicodeEncodeError:
                     self.log('not valid unicode?')
                     continue
             
             # then try to get from b64 bytes to raw bytes
-            if isBase64(v):
-                valid_kc[k]=b64decode(v)
+            if isBase64(data):
+                valid_kc[k]=b64decode(data)
             else:
-                valid_kc[k]=v
+                valid_kc[k]=data
         
         return valid_kc
         
