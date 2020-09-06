@@ -8,8 +8,9 @@ class TheTelephone(Operator):
     """
     API client class for Caller to interact with The Operator.
     """
-    def __init__(self):
+    def __init__(self, caller=None):
         self.op = TheOperator()
+        self.caller = None
 
         super().__init__(
             name=TELEPHONE_NAME,
@@ -28,6 +29,7 @@ class TheTelephone(Operator):
         return r
 
     async def req(self,json_coming_from_phone={},json_coming_from_caller={},caller=None):
+        if not caller: caller=self.caller
         # Two parts of every request:
         
         # 1) only overall encryption layer E2EE Telephone -> Operator:
@@ -36,7 +38,7 @@ class TheTelephone(Operator):
         if json_coming_from_phone:
             json_coming_from_phone_s = json.dumps(json_coming_from_phone)
             json_coming_from_phone_b = json_coming_from_phone_s.encode()
-            #json_coming_from_phone_b_encr = SMessage(TELEPHONE_PRIVKEY,OPERATOR_PUBKEY).wrap(json_coming_from_phone_b)
+            json_coming_from_phone_b_encr = SMessage(self.privkey_,self.op.pubkey_).wrap(json_coming_from_phone_b)
         else:
             json_coming_from_phone_b=b''
 
@@ -44,14 +46,13 @@ class TheTelephone(Operator):
         if json_coming_from_caller and caller:
             json_coming_from_caller_s = json.dumps(json_coming_from_caller)
             json_coming_from_caller_b = json_coming_from_caller_s.encode()
-            op_pubkey
-            json_coming_from_caller_b_encr = SMessage(self.privkey_,self.op.pubkey_).wrap(json_coming_from_caller_b)
+            json_coming_from_caller_b_encr = SMessage(caller.privkey_,self.op.pubkey_).wrap(json_coming_from_caller_b)
         else:
             json_coming_from_caller_b_encr = b''
 
         # encrypt whole package E2EE, Telephone to Operator
-        req_data = json_coming_from_phone_b + BSEP + json_coming_from_caller_b_encr
-        req_data_encr = SMessage(self.privkey_,self.op.pubkey_).wrap(req_data)
+        req_data_encr = json_coming_from_phone_b_encr + BSEP + json_coming_from_caller_b_encr
+        # req_data_encr = SMessage(self.privkey_,self.op.pubkey_).wrap(req_data)
         req_data_encr_b64 = b64encode(req_data_encr)
         self.log('req_data_encr_b64 <--',req_data_encr_b64)
 
@@ -62,20 +63,14 @@ class TheTelephone(Operator):
         req_data_encr_b64_str_esc = req_data_encr_b64_str.replace('/','_')
 
         try:
-            res = await self.dial_operator(req_data_encr_b64_str)
+            res = await self.dial_operator(req_data_encr_b64_str_esc)
         except TypeError:
             res = None
         self.log('result from operator?',res)
         return res
 
 
-    async def forge_new_keys(self, name, pubkey_is_public=False):
-        req_json = {'_route':'forge_new_keys','name':name, 'pubkey_is_public':pubkey_is_public}
-        # req_json_s = jsonify(req_json)
-        try:
-            return await self.req(json_coming_from_phone = req_json)
-        except TypeError:
-            return None
+
 
 
     

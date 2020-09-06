@@ -49,15 +49,19 @@ class TheSwitchboard(FlaskView, Logger):
             self.log('not valid b64?')
             return OPERATOR_INTERCEPT_MESSAGE
 
-        # then try to unwrap top level encryption
-        try:
-            data = SMessage(OPERATOR.privkey_, TELEPHONE.pubkey_).unwrap(data)
-            self.log('decrypted data:',data)
-        except ThemisError:
-            self.log('not really from the telephone?')
-            return OPERATOR_INTERCEPT_MESSAGE
+        # then try to split
+        # try:
+        #     unencr_data,
 
-        # step 3: give to The Operator
+        # # then try to unwrap top level encryption
+        # try:
+        #     data = SMessage(OPERATOR.privkey_, TELEPHONE.pubkey_).unwrap(data)
+        #     self.log('decrypted data:',data)
+        # except ThemisError:
+        #     self.log('not really from the telephone?')
+        #     return OPERATOR_INTERCEPT_MESSAGE
+
+        # # step 3: give to The Operator
         try:
             # return 'Success! your message was: '+str(data)
             res = OPERATOR.route(data)

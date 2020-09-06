@@ -29,3 +29,17 @@ class Caller(Operator):
         # Now lock the decryptor keys away, sealing it with a password of memory!
         self.lock_new_keys(keychain)
 
+    async def forge_new_keys(self, name = None, pubkey_is_public=False):
+        if not name: name=self.name
+        if not name: return
+
+        req_json = {'_route':'forge_new_keys','name':name}
+        req_json['keys_to_save']=['pubkey_encr','privkey_encr','adminkey_encr']
+        req_json['keys_to_return']=['pubkey_decr',
+                                    'privkey_decr_encr', 'privkey_decr_decr',
+                                    'adminkey_decr_encr', 'adminkey_decr_decr']
+
+        try:
+            return await self.phone.req(json_coming_from_phone = req_json)
+        except TypeError:
+            return None
