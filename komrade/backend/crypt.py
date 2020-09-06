@@ -47,7 +47,8 @@ class Crypt(Logger):
         return k_b
 
     def package_key(self,k,prefix=''):
-        self.log(type(k),k)
+        self.log('k???',type(k),k)
+        self.log('prefix???',type(prefix),prefix)
         k_b = self.force_binary(k)
         self.log(type(k_b),k_b)
         # k_s = k_b.decode()
