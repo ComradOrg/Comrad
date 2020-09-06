@@ -22,7 +22,7 @@ class TheOperator(Operator):
         Boot up the operator. Requires knowing or setting a password of memory.
         """
         # init req paths
-        if not os.path.exists(PATH_OPERATOR): os.makedirs(PATH_OPERATOR)
+        # if not os.path.exists(PATH_OPERATOR): os.makedirs(PATH_OPERATOR)
         if not passphrase:
             passphrase=getpass.getpass('Hello, this is the Operator speaking. What is the passphrase?\n> ')
         super().__init__(name,passphrase)
