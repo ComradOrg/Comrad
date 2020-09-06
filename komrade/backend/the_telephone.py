@@ -6,12 +6,17 @@ from komrade.backend.operators import *
 from komrade.backend.mazes import *
 
 ### ACTUAL PHONE CONNECTIONS
-class TheTelephone(Logger):
+class TheTelephone(Operator):
     """
     API client class for Caller to interact with The Operator.
     """
     def __init__(self, caller):
         self.caller = caller
+        super().__init__(
+            name=TELEPHONE_NAME,
+            path_crypt_keys=PATH_CRYPT_CA_KEYS,
+            path_crypt_data=PATH_CRYPT_CA_KEYS
+        )
 
     @property
     def op_pubkey(self):
