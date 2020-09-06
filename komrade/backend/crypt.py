@@ -95,16 +95,17 @@ class Crypt(Logger):
         return bool(self.get(k,prefix=prefix))
 
     def get(self,k,prefix=''):
-        # self.log('get() k -->',prefix,k)
+        self.log('k1? -->',prefix,k)
         k_b=self.package_key(k,prefix=prefix)
-        # self.log('get() k_b -->',k_b)
+        self.log('k2? -->',k_b)
 
         try:
             v=self.store.get(k_b)
         except KeyError:
             return None
-        # self.log('get() v -->',v)
+        self.log('v? -->',v)
         v_b=self.unpackage_val(v)
+        self.log('v_b?',v_b)
         self.log('get()',prefix,k,'-->',v_b)
         return v_b
 
