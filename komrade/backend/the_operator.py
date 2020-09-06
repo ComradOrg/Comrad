@@ -77,7 +77,7 @@ def init_operators():
     # keys_to_save = ['pubkey_decr','privkey_decr','adminkey_decr_decr']
     
     keys_to_save = ['pubkey_encr','privkey_encr','adminkey_decr_encr','adminkey_decr_decr']
-    keys_to_return = ['pubkey_decr']
+    keys_to_return = ['pubkey_decr','privkey_decr']
 
     # keys_to_return = ['pubkey_encr','privkey_encr','adminkey_encr','adminkey_decr_encr']
     op_decr_keys = op.forge_new_keys(keys_to_save=keys_to_save,keys_to_return=keys_to_return)
