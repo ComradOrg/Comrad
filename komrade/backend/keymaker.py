@@ -400,7 +400,7 @@ class Keymaker(Logger):
             # self.log('-->',v)
             # stop
         self.log('once more, with encryption!',keychain)
-        
+
 
         # keychain_tosave = dict([(k,keychain[k]) for k in keys_to_save if k in keychain])
         
@@ -410,6 +410,8 @@ class Keymaker(Logger):
             raise KomradeException('there is no private property in a socialist network! all keys must be split between komrades')
 
         ### SAVE ENCRYPTED KEYS?
+        self.log('KEYCHAIN AS OF NOW:',keychain)
+        stop
         if 'pubkey_encr' in keys_to_save:
             self.crypt_keys.set(name,keychain['pubkey_encr'],prefix='/pubkey_encr/')
         if 'privkey_encr' in keys_to_save:
