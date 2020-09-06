@@ -57,7 +57,7 @@ class TheOperator(Operator):
             DATA['_keychain'] = self.valid_keychain(DATA['_keychain'])
             self.log('found keys in unencrypted data:',DATA['_keychain'])
 
-            KEYCHAIN = self.keychain(allow_builtin=False,force=True,_ke)
+            KEYCHAIN = self.keychain(allow_builtin=False,force=True,extra_keys=DATA['_keychain'])
             self.log('as of now 1, I the operator have these keys:',KEYCHAIN.keys())
         self.log('DATA as of now!?',DATA)
         # stop
