@@ -357,9 +357,9 @@ class Keymaker(Logger):
                         keys_to_return = KEYMAKER_DEFAULT_KEYS_TO_RETURN,
                         keys_to_gen = KEYMAKER_DEFAULT_KEYS_TO_GEN,
                         key_types = KEYMAKER_DEFAULT_KEY_TYPES):
-        self.log('forging new keys...',name,self.name)
-        self.log('keys_to_save:',keys_to_save)
-        self.log('keys_to_return',keys_to_return)
+        # self.log('forging new keys...',name,self.name)
+        # self.log('keys_to_save:',keys_to_save)
+        # self.log('keys_to_return',keys_to_return)
         # stop
 
 
@@ -367,19 +367,19 @@ class Keymaker(Logger):
 
         keys_to_gen = set(keys_to_gen) | set(keys_to_save) | set(keys_to_return)
         keys_to_gen = sorted(list(keys_to_gen),key=lambda x: x.count('_'))
-        self.log('keys_to_gen =',keys_to_gen)
+        # self.log('keys_to_gen =',keys_to_gen)
         key_types = dict([(k,key_types[k]) for k in keys_to_gen])
-        self.log('key_types =',key_types)
+        # self.log('key_types =',key_types)
 
         keychain = self.gen_keys_from_types(key_types)
-        self.log('keychain =',keychain)
+        # self.log('keychain =',keychain)
 
-        self.log('!!!!',keychain)
+        # self.log('!!!!',keychain)
         # stop
         #keychain_tosave = {}
         #keychain_toreturn = {}
-        self.log('keys_to_save =',keys_to_save)
-        self.log('keys_to_return =',keys_to_return)
+        # self.log('keys_to_save =',keys_to_save)
+        # self.log('keys_to_return =',keys_to_return)
         
         for key_name in keys_to_gen:
             if key_name.endswith('_encr') and key_name not in keychain:
@@ -404,7 +404,7 @@ class Keymaker(Logger):
             keychain[k]=v
             # self.log('-->',v)
             # stop
-        self.log('once more, with encryption!',keychain)
+        # self.log('once more, with encryption!',keychain)
 
 
         # keychain_tosave = dict([(k,keychain[k]) for k in keys_to_save if k in keychain])
@@ -478,7 +478,7 @@ class Keymaker(Logger):
         keychain_toreturn = {}
         for key in keys_to_return:
             if key in keychain:
-                print('adding',key,'to returned keychain')
+                # print('adding',key,'to returned keychain')
                 keychain_toreturn[key]=keychain[key]
 
         return keychain_toreturn
