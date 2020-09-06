@@ -69,15 +69,9 @@ def init_operators():
         path_crypt_data=PATH_CRYPT_OP_KEYS
     )
 
-    op_decr_keys = op.forge_new_keys(
-        keys_to_save = ['pubkey_encr', 'privkey_encr', 'adminkey_encr'],
-        keys_to_return = ['pubkey_decr', 'privkey_decr', 'adminkey_decr']
-    )
+    op_decr_keys = op.forge_new_keys()
 
-    phone_decr_keys = phone.forge_new_keys(
-        keys_to_save = ['pubkey_encr', 'privkey_encr', 'adminkey_encr'],
-        keys_to_return = ['pubkey_decr', 'privkey_decr', 'adminkey_decr']
-    )
+    phone_decr_keys = phone.forge_new_keys()
 
     print('\n'*5)
     print('OPERATOR_KEYCHAIN =',op_decr_keys)
