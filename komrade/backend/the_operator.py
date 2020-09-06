@@ -116,29 +116,9 @@ class TheOperator(Operator):
 
 
 def init_operators():
-    op = Operator(
-        name=OPERATOR_NAME,
-        path_crypt_keys=PATH_CRYPT_OP_KEYS,
-        path_crypt_data=PATH_CRYPT_OP_DATA
-    )
+    op = TheOperator()
+    phone = TheTelephone()
 
-    phone = Operator(
-        name=TELEPHONE_NAME,
-        path_crypt_keys=PATH_CRYPT_OP_KEYS,
-        path_crypt_data=PATH_CRYPT_OP_KEYS
-    )
-
-
-    # keys_to_return = [k for k in KEYMAKER_DEFAULT_KEYS_TO_RETURN if not k.startswith('admin')]
-    
-    # for the root entities, the *users* keep the encrypted version,
-    # and the Op and Telephone just have decryptor keys
-    # keys_to_save = ['pubkey_decr','privkey_decr','adminkey_decr_decr']
-    
-    # keys_to_save = ['pubkey_encr','privkey_encr','adminkey_decr_encr','adminkey_decr_decr','adminkey_encr']
-    # keys_to_return = ['pubkey_decr','privkey_decr']
-
-    # keys_to_return = ['pubkey_encr','privkey_encr','adminkey_encr','adminkey_decr_encr']
     op_decr_keys = op.forge_new_keys(
         keys_to_save=['pubkey','privkey_encr','adminkey_encr','adminkey_decr_encr','adminkey_decr_decr'],
         keys_to_return=['pubkey','privkey_decr']
