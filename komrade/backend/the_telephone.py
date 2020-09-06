@@ -39,6 +39,7 @@ class TheTelephone(Operator):
 
     async def req(self,json_coming_from_phone={},json_coming_from_caller={},caller=None,json_unencrypted={}):
         if not caller: caller=self.caller
+        
 
         self.log('about to make a call. my keychain?',self.keychain())
         # stop
@@ -46,8 +47,10 @@ class TheTelephone(Operator):
 
         # 0) Unencrypted. do not use except for very specific minimal reasons!
         # exchange half-complete pieces of info, both of which necessary for other
-        unencr_header = self.op.privkey_decr + BSEP2 + self.pubkey_decr
+        unencr_header = self.op.privkey_decr_ + BSEP2 + self.pubkey_decr_
+        # self.log('unencr_header',unencr_header)
 
+        # ewrwerewrwerw
         # 1) only overall encryption layer E2EE Telephone -> Operator:
         if json_coming_from_phone:
             json_coming_from_phone_s = json.dumps(json_coming_from_phone)
@@ -66,11 +69,10 @@ class TheTelephone(Operator):
 
         
         
-        
 
         req_data_encr = unencr_header + BSEP + json_coming_from_phone_b_encr + BSEP + json_coming_from_caller_b_encr
         self.log('req_data_encr',req_data_encr)
-        sewerwe
+        # sewerwe
         # req_data_encr = SMessage(self.privkey_,self.op.pubkey_).wrap(req_data)
         req_data_encr_b64 = b64encode(req_data_encr)
         self.log('req_data_encr_b64 <--',req_data_encr_b64)

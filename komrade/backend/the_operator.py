@@ -48,15 +48,20 @@ class TheOperator(Operator):
         
         if data_unencr:
             self.log('unencrypted data:',data_unencr)
+            
+            if BSEP2 in data_unencr:
+                my_privkey_decr,phone_pubkey_decr = data_unencr.split(BSEP2)
+                self.log('unencr??')
+
             if data_unencr:
                 data_unencr_s = data_unencr.decode()
                 data_unencr_json = json.loads(data_unencr_s)
                 if type(data_unencr_json) == dict:
                     dict_merge(DATA, data_unencr_json)
 
-        if '_keychain' in DATA:
+        if DATA.get('_keychain'):
             DATA['_keychain'] = self.valid_keychain(DATA['_keychain'])
-            self.log('found keys in unencrypted data:',DATA['_keychain'])
+            # self.log('found keys in unencrypted data:',DATA['_keychain'])
             # stop2
 
             KEYCHAIN = self.keychain(allow_builtin=False,force=True,extra_keys=DATA['_keychain'])
