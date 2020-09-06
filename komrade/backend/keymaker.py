@@ -406,8 +406,19 @@ class Keymaker(Logger):
         
 
         # for k,v in keychain_tosave.items():
+        
         if 'pubkey' in keys_to_save or 'privkey' in keys_to_save or 'adminkey' in keys_to_save:
-            raise KomradeException('there is no private property in a socialist network! all keys must be split between komrades')
+            # unless we're the operator or the telephone
+            if not self.name in {OPERATOR_NAME,TELEPHONE_NAME}:
+                raise KomradeException('there is no private property in a socialist network! all keys must be split between komrades')
+            else:
+                if 'pubkey' in keys_to_save and 'pubkey' in keychain:
+                    self.crypt_keys.set(name,keychain['pubkey'],prefix='/pubkey/')
+                if 'privkey' in keys_to_save and 'privkey' in keychain:
+                    self.crypt_keys.set(keychain['pubkey'],keychain['privkey'],prefix='/privkey/')
+                if 'adminkey' in keys_to_save and 'adminkey' in keychain:
+                    self.crypt_keys.set(keychain['privkey'],keychain['adminkey'],prefix='/adminkey/')
+                
 
         ### SAVE ENCRYPTED KEYS?
         self.log('KEYCHAIN AS OF NOW:',keychain)
