@@ -139,8 +139,8 @@ def init_operators():
     )
 
     phone_decr_keys = phone.forge_new_keys(
-        keys_to_save=['pubkey'],
-        keys_to_return=['pubkey','privkey']
+        keys_to_save=['pubkey_encr'],
+        keys_to_return=['pubkey_decr','privkey']
     )
 
     print('\n'*5)

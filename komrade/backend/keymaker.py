@@ -74,12 +74,13 @@ class KomradeAsymmetricPrivateKey(KomradeAsymmetricKey):
 
 
 class Keymaker(Logger):
-    def __init__(self,name=None,passphrase=None, path_crypt_keys=None, path_crypt_data=None):
+    def __init__(self,name=None,passphrase=None, path_crypt_keys=None, path_crypt_data=None, allow_builtin=True):
         self.name=name
         self._keychain={}
         self.passphrase=passphrase
         self.path_crypt_keys=path_crypt_keys
         self.path_crypt_data=path_crypt_data
+        self.allow_builtin=allow_builtin
 
 
     ### BASE STORAGE

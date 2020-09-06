@@ -8,12 +8,14 @@ class TheTelephone(Operator):
     """
     API client class for Caller to interact with The Operator.
     """
-    def __init__(self, caller=None):
+    def __init__(self, caller=None, allow_builtin=True):
         super().__init__(
             name=TELEPHONE_NAME,
             path_crypt_keys=PATH_CRYPT_CA_KEYS,
             path_crypt_data=PATH_CRYPT_CA_KEYS
         )
+        self.caller=caller
+        self.allow_builtin=allow_builtin
 
     @property
     def op(self):
