@@ -68,6 +68,7 @@ class TheOperator(Operator):
             except ThemisError as e:
                 self.log('not really from the telephone?',e)
                 return OPERATOR_INTERCEPT_MESSAGE
+            stopeee
             
 
 
