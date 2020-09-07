@@ -202,30 +202,32 @@ class Operator(Keymaker):
         assert data.count(BSEP) == 3
         (
             unencr_header,  # Tele.pubkey_encr|Op.pubkey_decr
-            data_encr_phone2op,
-            data_encr_caller2op,
+            data_encr_phone2phone,
+            data_encr_caller2phone,
             data_encr_caller2caller
         ) = data.split(BSEP)
 
         # set up
         DATA = {}
 
+        # layer 1: unencr
         # get other keys from halfkeys
-        phone_pubkey,op_pubkey = self.reassemble_nec_keys_using_header(unencr_header)
-
-        # assuming the entire message is to me, whoever I am
-        op_keychain = self.keychain()
-        op_privkey = my_keychain.get('privkey')
-
-        self.log('keychain',self.keychain())
-        self.log('to_privkey',to_privkey)
+        from_phone_pubkey,to_phone_pubkey = self.reassemble_nec_keys_using_header(unencr_header)
         
+        # layer 2: I know I (either Telephone or Operator) am the recipient of this msg
+        to_phone = self
+        to_keychain = self.keychain()
+        to_privkey = to_keychain.get('privkey')
 
         # 2) decrypt from phone
-        self.log('data_encr_by_phone',data_encr_phone2op)
+        self.log('data_encr_by_phone',data_encr_phone2phone)
         self.log('phone_pubkey',phone_pubkey)
 
-        data_by_phone = self.decrypt_from_send(data_encr_phone2op,phone_pubkey,op_privkey)
+        data_phone2phone = self.decrypt_from_send(
+            msg_encr=data_encr_phone2op,
+            from_pubkey=,
+            to_privkey=
+        )
         self.log('data_by_phone',data_by_phone)
 
         # 3) decrypt from caller
@@ -282,6 +284,48 @@ class Operator(Keymaker):
 
         self.log('reassembled phone/op pubkeys:',phone_pubkey,op_pubkey)
         return (phone_pubkey,op_pubkey)
+
+    def discover_which_phones_from_header(self,unencr_header):
+        assert unencr_header.count(BSEP2)==1
+        from_phone_pubkey_encr,to_phone_pubkey_decr = unencr_header.split(BSEP2)
+        
+        phone_keychain = self.phone.keychain()
+        op_keychain = self.phone.keychain()
+        
+        # was this sent from Phone -> Op?
+        to_phone=None
+        from_phone=None
+
+        op_fits_as_to_phone=False
+        tele_fits_as_to_phone=False
+        op_fits_as_from_phone=False
+        tele_fits_as_from_phone=False
+
+        if self.op.pubkey_encr_:
+            op_fits_as_to_phone = self.assemble_key(self.op.pubkey_encr_,to_phone_pubkey_decr)
+        if self.phone.pubkey_encr_:
+            tele_fits_as_to_phone = self.assemble_key(self.phone.pubkey_encr_,to_phone_pubkey_decr)
+        if self.op.pubkey_decr_:
+            op_fits_as_from_phone = self.assemble_key(self.op.pubkey_decr_,from_phone_pubkey_encr)
+        if self.phone.pubkey_decr_:
+            tele_fits_as_from_phone = self.assemble_key(self.phone.pubkey_decr_,from_phone_pubkey_encr)
+        
+        self.log('op_fits_as_to_phone',op_fits_as_to_phone)
+        self.log('tele_fits_as_to_phone',tele_fits_as_to_phone)
+        self.log('op_fits_as_from_phone',op_fits_as_from_phone)
+        self.log('tele_fits_as_from_phone',tele_fits_as_from_phone)
+
+        stop
+        # get phone pubkey
+        new_phone_keychain = self.phone.keychain(extra_keys={'pubkey_encr':phone_pubkey_encr},force=True)
+        new_op_keychain = self.keychain(extra_keys={'pubkey_decr':op_pubkey_decr},force=True)
+
+        phone_pubkey = new_phone_keychain.get('pubkey')
+        op_pubkey = new_op_keychain.get('pubkey')
+
+        self.log('reassembled phone/op pubkeys:',phone_pubkey,op_pubkey)
+        return (phone_pubkey,op_pubkey)
+
 
     def reassemble_necessary_keys_using_decr_phone_data(self,decr_phone_data):
         name=decr_phone_data.get('name')
