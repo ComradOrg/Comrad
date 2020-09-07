@@ -91,9 +91,11 @@ class Operator(Keymaker):
         
         # 2) encrypt to phone
         json_phone_encr = self.encrypt_to_send(json_phone,from_phone_privkey,to_pubkey)
+        self.log('json_phone_encr',json_phone_encr)
 
         # 3) to caller
         json_caller_encr = self.encrypt_to_send(json_caller,from_caller_privkey,to_pubkey)
+        self.log()
 
         # return
         req_data_encr = unencr_header + BSEP + json_phone_encr + BSEP + json_caller_encr

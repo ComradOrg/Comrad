@@ -31,9 +31,18 @@ class TheTelephone(Operator):
         
 
     def dial_operator(self,msg):
-        msg=msg.replace('/','_')
+        self.log(msg,'msg!?')
+        msg_b64=b64encode(msg)
+        
+        self.log(msg_b64,'msg_b64!?')
+
+        msg_b64_str = msg_b64.decode()
+        self.log(msg_b64_str,'msg_b64_str!?')
+
+        msg=msg_b64_str.replace('/','_')
         URL = OPERATOR_API_URL + msg + '/'
         self.log("DIALING THE OPERATOR:",URL)
+        # stop
         r=komrade_request(URL)
         if r.status_code==200:
             return r.text
@@ -70,7 +79,7 @@ class TheTelephone(Operator):
 
         # 1) unencr header
         # telephone_pubkey_decr | op_pubkey_decr | op_privkey_decr
-        unencr_header = self.pubkey_decr_ + BSEP2 + self.op.pubkey_encr_
+        unencr_header = self.pubkey_encr_ + BSEP2 + self.op.pubkey_decr_
 
         # 2) caller privkey?
         from_caller_privkey=caller.privkey_ if caller and json_caller else None
@@ -79,9 +88,9 @@ class TheTelephone(Operator):
         encrypted_message_to_operator = self.encrypt_outgoing(
             json_phone=json_phone,
             json_caller=json_caller,
-            from_phone_privkey=phone_keychain['privkey'],
+            from_phone_privkey=self.privkey_,
             from_caller_privkey=from_caller_privkey,
-            to_pubkey=op_keychain['pubkey'],
+            to_pubkey=self.op.pubkey_,
             unencr_header=unencr_header
         )
 
