@@ -101,7 +101,8 @@ class Operator(Keymaker):
             caller = Caller(name)
             self.log('got caller on phone',name,caller)
             return caller.pubkey_
-        
+        except:
+            return
 
         
     def decrypt_incoming(self,
