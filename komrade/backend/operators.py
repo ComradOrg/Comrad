@@ -134,18 +134,30 @@ class Operator(Keymaker):
         if not from_phone: from_phone=self.phone
         if not to_phone: to_phone=self.op
 
+        from_phone_keychain = from_phone.keychain()
+        from_phone_pubkey_encr=from_phone_keychain.get('pubkey_encr')
+        from_phone_privkey=from_phone_keychain.get('privkey')
+        
+        to_phone_keychain = to_phone.keychain()
+        to_phone_pubkey_decr=to_phone_keychain.get('pubkey_decr')
+        to_phone_pubkey=to_phone_keychain.get('pubkey')
+
+        self.log('data_encr_phone2phone',data_encr_phone2phone)
+        self.log('from_phone_pubkey',from_phone_pubkey,from_phone)
+        self.log('to_phone_privkey',to_phone_privkey,to_phone)
+
         ### LAYERS OF ENCRYPTION:
         # 1) unencr header
         # Telephone sends half its and the operator's public keys
-        unencr_header = from_phone.pubkey_encr_ + BSEP2 + to_phone.pubkey_decr_
+        unencr_header = from_phone_pubkey_encr + BSEP2 + to_phone_pubkey_decr
         self.log('Layer 1: Unencrypted header:',unencr_header)
 
         ## Encrypt level 1: from Phone to Op
         if json_phone2phone:
             encrypted_message_from_telephone_to_op = self.encrypt_to_send(
                 msg_json = json_phone2phone,
-                from_privkey = from_phone.privkey_,
-                to_pubkey = to_phone.pubkey_
+                from_privkey = from_phone_privkey,
+                to_pubkey = to_phone_pubkey
             )
             self.log('Layer 2: Phone 2 op:',encrypted_message_from_telephone_to_op)
 
@@ -153,8 +165,8 @@ class Operator(Keymaker):
         if json_caller2phone and from_caller:
             encrypted_message_from_caller_to_op = self.encrypt_to_send(
                 msg_json = json_caller2phone,
-                from_privkey = from_caller.privkey_,
-                to_pubkey = to_phone.pubkey_
+                from_privkey = from_caller.keychain().get('privkey'),
+                to_pubkey = to_phone_pubkey
             )
             self.log('Layer 3: Caller 2 op:',encrypted_message_from_telephone_to_op)
         
@@ -162,8 +174,8 @@ class Operator(Keymaker):
         if json_caller2caller and from_caller and to_caller:
             encrypted_message_from_caller_to_caller = self.encrypt_to_send(
                 msg_json = json_caller2caller,
-                from_privkey = from_caller.privkey_,
-                to_pubkey = to_caller.pubkey_
+                from_privkey = from_caller.keychain().get('privkey'),
+                to_pubkey = to_caller.keychain().get('pubkey')
             )
             self.log('Layer 3: Caller 2 Caller:',encrypted_message_from_telephone_to_op)
         
