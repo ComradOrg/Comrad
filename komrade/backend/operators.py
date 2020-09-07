@@ -318,9 +318,9 @@ class Operator(Keymaker):
         if phone_pubkey_encr:
             tele_fits_as_to_phone = self.assemble_key(phone_pubkey_encr,to_phone_pubkey_decr)
         if op_pubkey_decr:
-            op_fits_as_from_phone = self.assemble_key(op_pubkey_decr,from_phone_pubkey_encr)
+            op_fits_as_from_phone = self.assemble_key(from_phone_pubkey_encr, op_pubkey_decr)
         if phone_pubkey_decr:
-            tele_fits_as_from_phone = self.assemble_key(phone_pubkey_decr,from_phone_pubkey_encr)
+            tele_fits_as_from_phone = self.assemble_key(from_phone_pubkey_encr,phone_pubkey_decr)
         
         self.log('op_fits_as_to_phone',op_fits_as_to_phone)
         self.log('tele_fits_as_to_phone',tele_fits_as_to_phone)
