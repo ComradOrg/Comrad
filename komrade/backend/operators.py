@@ -187,6 +187,9 @@ class Operator(Keymaker):
         data = b64decode(data_b64_b)
         self.log('data',data)
 
+        data = b64decode(data_b64_b)
+        self.log('data2',data)
+
         # split
         assert data.count(BSEP) == 3
         (
