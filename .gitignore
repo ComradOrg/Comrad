@@ -6,7 +6,7 @@ dbm.*
 .DS_Store
 lib
 *.venv
-*.key
-*.key.*
+# *.key
+# *.key.*
 .op.*
 *.pyc
