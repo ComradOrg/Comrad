@@ -149,7 +149,9 @@ class Operator(Keymaker):
         DATA = {}
 
         # assuming the entire message is to me, whoever I am
-        to_privkey = self.privkey()
+        my_keychain = self.keychain()
+        to_privkey = my_keychain.get('privkey')
+        
         self.log('keychain',self.keychain())
         self.log('to_privkey',to_privkey)
         
