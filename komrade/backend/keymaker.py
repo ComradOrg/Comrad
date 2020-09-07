@@ -363,7 +363,7 @@ class Keymaker(Logger):
                 if the_key_to_encrypt_it_with in keychain and name_of_what_to_encrypt in keychain:
                     _key_decr = keychain[the_key_to_encrypt_it_with]
                     _key = keychain[name_of_what_to_encrypt]
-                    # self.log(f'about to encrypt key {name_of_what_to_encrypt}, using {the_key_to_encrypt_it_with}, which is a type {key_types[the_key_to_encrypt_it_with]} and has value {keychain[the_key_to_encrypt_it_with]}')
+                    self.log(f'about to encrypt key {name_of_what_to_encrypt}, using {the_key_to_encrypt_it_with}, which is a type {KEYMAKER_DEFAULT_KEY_TYPES[the_key_to_encrypt_it_with]} and has value {keychain[the_key_to_encrypt_it_with]}')
                     _key_encr = _key_decr.encrypt(_key)
                     # self.log(f'{_key}\n-- encrypting ----->\n{_key_encr}')
                     keychain[key_name]=_key_encr
