@@ -279,7 +279,7 @@ def init_operators():
     THIRD_PARTY_DICT_encr = b64encode(omega_key.encrypt(THIRD_PARTY_DICT))
     
     with open(PATH_OMEGA_KEY,'wb') as of:
-        of.write(omega_key.data)
+        of.write(b64encode(omega_key.data))
     with open(PATH_BUILTIN_KEYCHAIN,'wb') as of:
         of.write(STORE_IN_APP_encr)
         print('STORE_IN_APP_encr',STORE_IN_APP_encr)
