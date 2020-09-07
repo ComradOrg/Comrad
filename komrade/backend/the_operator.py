@@ -114,7 +114,38 @@ class TheOperator(Operator):
             data = data_unencr_by_phone
         return data
 
-    def receive(self,data):
+
+    def encrypt_information(self,json_going_to_phone={},json_going_to_caller={},caller=None):
+        # 1)
+        unencr_header = self.privkey_encr_ + BSEP2 + self.phone.pubkey_encr_
+
+        # 2) encrypt to phone
+        if json_going_to_phone:
+            json_going_to_phone_s = json.dumps(json_going_to_phone)
+            json_going_to_phone_b = json_going_to_phone_s.encode()
+            json_going_to_phone_b_encr = SMessage(
+                self.privkey_
+                self.phone.pubkey_
+            ).wrap(json_going_to_phone_b)
+        else:
+            json_going_to_phone_b=b''
+
+        # 3) to caller
+        if json_going_to_caller and caller:
+            json_going_to_caller_s = json.dumps(json_going_to_caller)
+            json_going_to_caller_b = json_going_to_caller_s.encode()
+            json_going_to_caller_b_encr = SMessage(
+                caller.privkey_,
+                self.pubkey_
+            ).wrap(json_going_to_caller_b)
+        else:
+            json_going_to_caller_b_encr = b''
+
+        req_data_encr = unencr_header + BSEP + json_coming_from_phone_b_encr + BSEP + json_coming_from_caller_b_encr
+        return req_data_encr
+
+
+    def recv(self,data):
         # decrypt
         data = self.decrypt_incoming(data)
 
@@ -127,22 +158,46 @@ class TheOperator(Operator):
         self.log('DATA_s =',type(data_s),data_s)
         self.log('DATA_json =',type(data_json),data_s)
         
-        return self.route(data_json)
+        res = self.route(data_json)
+        self.log('result from routing =',res)
+
+        # send back!
+        return self.send(res)
+
+
+    def send(self,res):
+        if not len(res)==2:
+            self.log('!! error. argument to send() must be: (json_tophone,json_tosender)')
+            return
+        
+        msg_tophone,msg_tocaller = res
+        if msg_tocaller and 'name' in msg_tophone:
+            caller = Operator(msg_tophone['name'])
+        self.log('send!',msg_tophone,msg_tocaller,caller)
+        data = self.encrypt_information(json_going_to_phone=msg_tophone,json_going_to_caller=caller)
+        self.log('got back encr:',data)
+        return data
+
 
     def route(self, data):
         res=None
-        if data.get('_route') == 'forge_new_keys':
-            del data['_route']
-            res = self.forge_new_keys(**data)
-            self.log('returned keys from route:','\n'.join(res.keys()))
-            self.log('res1',res)
-            for k,v in res.items():
-                if type(v)==bytes:
-                    res[k]=b64encode(res[k]).decode()
-            self.log('res2',res)
+        route = data.get('_route')
+        if not route: return OPERATOR_INTERCEPT_MESSAGE
+        del data['_route']
+
+        if route == 'forge_new_keys':
+            res = msg_tophone,msg_tocaller = self.forge_new_keys(**data)
         else:
             res = OPERATOR_INTERCEPT_MESSAGE
         return res# 'success!'
+
+    def forge_new_keys(self,**data):
+        # get keys
+        res = super().forge_new_keys(**data)
+        self.log('returned keys from keymaker.forge_new_keys:','\n'.join(res.keys()))
+        
+        # return to_phone,to_caller
+        return (res,{})
 
 
 def init_operators():

@@ -16,7 +16,7 @@ from flask_classful import FlaskView, route
 
 class TheSwitchboard(FlaskView, Logger):
     default_methods = ['GET']
-    excluded_methods = ['phone','op']
+    excluded_methods = ['phone','op','send']
 
     @property
     def phone(self):
@@ -31,6 +31,15 @@ class TheSwitchboard(FlaskView, Logger):
         from komrade.backend.the_operator import TheOperator
         if not OPERATOR: OPERATOR=TheOperator()
         return OPERATOR
+
+    def send(self,res):
+        # package and send back
+        self.log('res1',res)
+        for k,v in res.items():
+            if type(v)==bytes:
+                res[k]=b64encode(res[k]).decode()
+        self.log('res2',res)
+        return res
 
     def get(self,msg):
         self.log('Incoming call!:',msg)
@@ -67,9 +76,9 @@ class TheSwitchboard(FlaskView, Logger):
         # # step 3: give to The Operator
         try:
             self.log('Success! your message was: '+str(data))
-            res = self.op.receive(data)
+            res = self.op.recv(data)
             self.log('Your return result should be:',res)
-            return res
+            return self.send(res)
         except AssertionError as e:
             self.log('got exception!!',e)
             return OPERATOR_INTERCEPT_MESSAGE

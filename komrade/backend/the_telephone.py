@@ -108,7 +108,11 @@ class TheTelephone(Operator):
         req_data_encr_b64_str = req_data_encr_b64.decode('utf-8')
 
         #try:
-        res = self.dial_operator(req_data_encr_b64_str)
+        res_s = self.dial_operator(req_data_encr_b64_str)
+        
+        
+        # try decoding
+        
         # res = await self.dial_operator(req_data_encr_b64_str)
         #except TypeError:
         #    res = None
