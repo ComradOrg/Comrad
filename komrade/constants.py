@@ -60,8 +60,10 @@ KEYMAKER_DEFAULT_KEYS_TO_SAVE = ['pubkey_encr']
 KEYMAKER_DEFAULT_KEYS_TO_RETURN = ['privkey_encr',
                                    'adminkey_encr',
                                    'pubkey_decr',
-                                   'privkey_decr_encr', 'privkey_decr_decr'
-                                   'adminkey_decr_encr', 'adminkey_decr_decr']
+                                   'privkey_decr_encr',
+                                   'privkey_decr_decr',
+                                   'adminkey_decr_encr',
+                                   'adminkey_decr_decr']
 
 KEYMAKER_DEFAULT_KEYS_TO_GEN =  ['pubkey','privkey','adminkey',
                                  'pubkey_decr','privkey_decr', 'adminkey_decr']
@@ -69,6 +71,10 @@ KEYMAKER_DEFAULT_KEYS_TO_GEN += KEYMAKER_DEFAULT_KEYS_TO_SAVE
 KEYMAKER_DEFAULT_KEYS_TO_GEN += KEYMAKER_DEFAULT_KEYS_TO_RETURN
 KEYMAKER_DEFAULT_KEYS_TO_GEN = list(set(KEYMAKER_DEFAULT_KEYS_TO_GEN))
 KEYMAKER_DEFAULT_KEYS_TO_GEN.sort(key=lambda x: x.count('_'))
+
+print('KEYMAKER_DEFAULT_KEYS_TO_SAVE',KEYMAKER_DEFAULT_KEYS_TO_SAVE)
+print('KEYMAKER_DEFAULT_KEYS_TO_RETURN',KEYMAKER_DEFAULT_KEYS_TO_RETURN)
+print('KEYMAKER_DEFAULT_KEYS_TO_GEN',KEYMAKER_DEFAULT_KEYS_TO_GEN)
 
 
 KEY_TYPE_ASYMMETRIC_PUBKEY = 'asymmetric_pubkey'
