@@ -353,6 +353,21 @@ class Keymaker(Logger):
                 keychain[key_name]=KomradeSymmetricKeyWithPassphrase(passphrase=passphrase)
         return keychain
 
+    def gen_encr_keys(self,keychain,keys_to_gen,passphrase=None):
+        # generate encrypted keys too
+        for key_name in keys_to_gen:
+            if key_name.endswith('_encr') and key_name not in keychain:
+                # encrypt it with the associated decr
+                name_of_what_to_encrypt = key_name[:-len('_encr')]
+                the_key_to_encrypt_it_with = name_of_what_to_encrypt + '_decr'
+                if the_key_to_encrypt_it_with in keychain and name_of_what_to_encrypt in keychain:
+                    _key_decr = keychain[the_key_to_encrypt_it_with]
+                    _key = keychain[name_of_what_to_encrypt]
+                    self.log(f'about to encrypt key {name_of_what_to_encrypt}, using {the_key_to_encrypt_it_with}, which is a type {key_types[the_key_to_encrypt_it_with]} and has value {keychain[the_key_to_encrypt_it_with]}')
+                    _key_encr = _key_decr.encrypt(_key)
+                    self.log(f'{_key}\n-- encrypting ----->\n{_key_encr}')
+                    keychain[key_name]=_key_encr
+        return keychain
 
     def forge_new_keys(self,
                         name=None,
@@ -375,27 +390,20 @@ class Keymaker(Logger):
         self.log('key_types =',key_types)
 
         keychain = self.gen_keys_from_types(key_types)
-        self.log('keychain =',keychain)
+        self.log('keychain 1 =',keychain)
+        keychain = self.gen_encr_keys(key_types)
+        self.log('keychain 2 =',keychain)
+        keychain222
+        
 
         # self.log('!!!!',keychain)
-        stop
+        # stop
         #keychain_tosave = {}
         #keychain_toreturn = {}
         # self.log('keys_to_save =',keys_to_save)
         # self.log('keys_to_return =',keys_to_return)
         
-        for key_name in keys_to_gen:
-            if key_name.endswith('_encr') and key_name not in keychain:
-                # encrypt it with the associated decr
-                name_of_what_to_encrypt = key_name[:-len('_encr')]
-                the_key_to_encrypt_it_with = name_of_what_to_encrypt + '_decr'
-                if the_key_to_encrypt_it_with in keychain and name_of_what_to_encrypt in keychain:
-                    _key_decr = keychain[the_key_to_encrypt_it_with]
-                    _key = keychain[name_of_what_to_encrypt]
-                    self.log(f'about to encrypt key {name_of_what_to_encrypt}, using {the_key_to_encrypt_it_with}, which is a type {key_types[the_key_to_encrypt_it_with]} and has value {keychain[the_key_to_encrypt_it_with]}')
-                    _key_encr = _key_decr.encrypt(_key)
-                    self.log(f'{_key}\n-- encrypting ----->\n{_key_encr}')
-                    keychain[key_name]=_key_encr
+
         
         
 
