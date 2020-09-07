@@ -171,6 +171,7 @@ class TheOperator(Operator):
             return
         
         msg_tophone,msg_tocaller = res
+        caller=None
         if msg_tocaller and 'name' in msg_tophone:
             caller = Operator(msg_tophone['name'])
         self.log('send!',msg_tophone,msg_tocaller,caller)
@@ -186,7 +187,7 @@ class TheOperator(Operator):
         del data['_route']
 
         if route == 'forge_new_keys':
-            res = msg_tophone,msg_tocaller = self.forge_new_keys(**data)
+            res = self.forge_new_keys(**data)
         else:
             res = OPERATOR_INTERCEPT_MESSAGE
         return res# 'success!'
@@ -194,10 +195,13 @@ class TheOperator(Operator):
     def forge_new_keys(self,**data):
         # get keys
         res = super().forge_new_keys(**data)
+        pkg={}
+        pkg['name']=data.get('name')
+        pkg['_keychain']=res
         self.log('returned keys from keymaker.forge_new_keys:','\n'.join(res.keys()))
         
         # return to_phone,to_caller
-        return (res,{})
+        return (pkg,{})
 
 
 def init_operators():
