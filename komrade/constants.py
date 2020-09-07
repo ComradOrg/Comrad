@@ -122,3 +122,11 @@ WHY_MSG = 'Forge the password of memory: '
 TELEPHONE_KEYCHAIN = None
 OPERATOR_KEYCHAIN = None
 OMEGA_KEY = None
+OPERATOR = None
+TELEPHONE = None
+
+
+
+
+PATH_OPERATOR_WEB_KEYS_FILE = f'/home/ryan/www/website-komrade/.builtin.keys'
+PATH_OPERATOR_WEB_KEYS_URL = f'http://{KOMRADE_URL}/.builtin.keys'

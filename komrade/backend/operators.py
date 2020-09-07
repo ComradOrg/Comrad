@@ -11,8 +11,9 @@ from komrade.backend.switchboard import *
 
 class Operator(Keymaker):
     
-    def __init__(self, name, passphrase=None, path_crypt_keys=PATH_CRYPT_CA_KEYS, path_crypt_data=PATH_CRYPT_CA_DATA):
-        super().__init__(name=name,passphrase=passphrase, path_crypt_keys=path_crypt_keys, path_crypt_data=path_crypt_data)
+    def __init__(self, name, passphrase=None, keychain = {}, path_crypt_keys=PATH_CRYPT_CA_KEYS, path_crypt_data=PATH_CRYPT_CA_DATA):
+        super().__init__(name=name,passphrase=passphrase, keychain=keychain,
+                         path_crypt_keys=path_crypt_keys, path_crypt_data=path_crypt_data)
         self.boot(create=False)
 
     def boot(self,create=False):
@@ -25,6 +26,29 @@ class Operator(Keymaker):
 
         # load keychain into memory
         self._keychain = self.keychain(force = True)
+
+    
+    @property
+    def phone(self):
+        global TELEPHONE,TELEPHONE_KEYCHAIN
+        if TELEPHONE: return TELEPHONE
+        self.log('!! getting telephone !!')
+        if not TELEPHONE_KEYCHAIN:
+            self.log('!! getting telephone keychain !!')
+            connect_phonelines()
+        TELEPHONE=TheTelephone(keychain=TELEPHONE_KEYCHAIN)
+        return TELEPHONE
+
+    @property
+    def op(self):
+        global OPERATOR,OPERATOR_KEYCHAIN
+        if OPERATOR: return OPERATOR
+        self.log('!! getting operator !!')
+        if not OPERATOR_KEYCHAIN:
+            self.log('!! getting operator keychain !!')
+            connect_phonelines()
+        OPERATOR=TheOperator(keychain=OPERATOR_KEYCHAIN)
+        return OPERATOR
 
     def encrypt_to_send(self,msg_json,from_privkey,to_pubkey):
         if not msg_json or not from_privkey or not to_pubkey:
@@ -129,3 +153,133 @@ class Operator(Keymaker):
         # return
         req_data_encr = unencr_header + BSEP + json_phone_encr + BSEP + json_caller_encr
         return req_data_encr
+
+
+
+
+
+
+### CREATE PRIME ENTITIES
+def create_phonelines():
+    ## CREATE OPERATOR
+    op = Operator(name=OPERATOR_NAME)
+    op_keys_to_keep_on_client = ['pubkey_encr']
+    op_keys_to_keep_on_3rdparty = ['pubkey_decr','privkey_decr']
+    op_keys_to_keep_on_server = ['adminkey_encr','privkey_decr_encr','privkey_decr_decr','adminkey_decr_encr','adminkey_decr_decr']
+
+    ## create phone
+    phone = Operator(name=TELEPHONE_NAME)
+    phone_keys_to_keep_on_client = ['privkey_encr']
+    phone_keys_to_keep_on_3rdparty = ['privkey_decr','pubkey_decr']
+    phone_keys_to_keep_on_server = ['pubkey_encr']
+
+    # create keys for Op
+    op_decr_keys = op.forge_new_keys(
+        keys_to_save=op_keys_to_keep_on_server,  # on server only; flipped around
+        keys_to_return=op_keys_to_keep_on_client + op_keys_to_keep_on_3rdparty # on clients only
+    )
+
+    # create keys for phone
+    phone_decr_keys = phone.forge_new_keys(
+        name=TELEPHONE_NAME,
+        keys_to_save=phone_keys_to_keep_on_server,  # on server only
+        keys_to_return=phone_keys_to_keep_on_client + phone_keys_to_keep_on_3rdparty   # on clients only
+    )
+
+    ## store remote keys
+    THIRD_PARTY_DICT = {OPERATOR_NAME:{}, TELEPHONE_NAME:{}}
+    for key in op_keys_to_keep_on_3rdparty:
+        if key in op_decr_keys:
+            THIRD_PARTY_DICT[OPERATOR_NAME][key]=op_decr_keys[key]
+    for key in phone_keys_to_keep_on_3rdparty:
+        if key in phone_decr_keys:
+            THIRD_PARTY_DICT[TELEPHONE_NAME][key]=phone_decr_keys[key]
+
+    # store local keys
+    STORE_IN_APP = {OPERATOR_NAME:{}, TELEPHONE_NAME:{}}
+    for key in op_keys_to_keep_on_client:
+        if key in op_decr_keys:
+            STORE_IN_APP[OPERATOR_NAME][key]=op_decr_keys[key]
+    for key in phone_keys_to_keep_on_client:
+        if key in phone_decr_keys:
+            STORE_IN_APP[TELEPHONE_NAME][key]=phone_decr_keys[key]
+
+    # package
+    STORE_IN_APP_pkg = package_for_transmission(STORE_IN_APP[TELEPHONE_NAME]) + BSEP + package_for_transmission(STORE_IN_APP[OPERATOR_NAME])
+    THIRD_PARTY_DICT_pkg = package_for_transmission(THIRD_PARTY_DICT[TELEPHONE_NAME]) + BSEP + package_for_transmission(THIRD_PARTY_DICT[OPERATOR_NAME])
+
+    # encrypt
+    omega_key = KomradeSymmetricKeyWithoutPassphrase()
+    STORE_IN_APP_encr = b64encode(omega_key.encrypt(STORE_IN_APP_pkg))
+    THIRD_PARTY_totalpkg = b64encode(omega_key.data + BSEP + omega_key.encrypt(THIRD_PARTY_DICT_pkg))
+
+    # save
+    with open(PATH_BUILTIN_KEYCHAIN,'wb') as of:
+        of.write(STORE_IN_APP_encr)
+        print('STORE_IN_APP_encr',STORE_IN_APP_encr)
+        
+    with open(PATH_OPERATOR_WEB_KEYS_FILE,'wb') as of:
+        of.write(THIRD_PARTY_totalpkg)
+        print('THIRD_PARTY_DICT_encr',THIRD_PARTY_totalpkg)
+
+
+def connect_phonelines():
+    # globals
+    global OMEGA_KEY,OPERATOR_KEYCHAIN,TELEPHONE_KEYCHAIN
+    if OMEGA_KEY and OPERATOR_KEYCHAIN and TELEPHONE_KEYCHAIN:
+        return (OPERATOR,TELEPHONE)
+
+    # import
+    from komrade.backend.mazes import tor_request
+    from komrade.backend import PATH_OPERATOR_WEB_KEYS_URL
+
+    # load local keys
+    if not os.path.exists(PATH_BUILTIN_KEYCHAIN):
+        print('builtin keys not present??')
+        return
+    with open(PATH_BUILTIN_KEYCHAIN,'rb') as f:
+        local_builtin_keychain_encr = b64decode(f.read())
+
+    # load remote keys
+    print('??',PATH_OPERATOR_WEB_KEYS_URL)
+    r = tor_request(PATH_OPERATOR_WEB_KEYS_URL)
+    if r.status_code!=200:
+        print('cannot authenticate the keymakers')
+        return
+    
+    # unpack remote pkg
+    pkg = b64decode(r.text)
+    OMEGA_KEY_b,remote_builtin_keychain_encr = pkg.split(BSEP)
+    OMEGA_KEY = KomradeSymmetricKeyWithoutPassphrase(key=OMEGA_KEY_b)
+    remote_builtin_keychain = OMEGA_KEY.decrypt(remote_builtin_keychain_encr)
+    remote_builtin_keychain_phone,remote_builtin_keychain_op = remote_builtin_keychain.split(BSEP)
+    remote_builtin_keychain_phone_json = unpackage_from_transmission(remote_builtin_keychain_phone)
+    remote_builtin_keychain_op_json = unpackage_from_transmission(remote_builtin_keychain_op)    
+    print('remote_builtin_keychain_phone_json',remote_builtin_keychain_phone_json)
+    print('remote_builtin_keychain_op_json',remote_builtin_keychain_op_json)
+    
+    # unpack local pkg
+    local_builtin_keychain = OMEGA_KEY.decrypt(local_builtin_keychain_encr)
+    local_builtin_keychain_phone,local_builtin_keychain_op = local_builtin_keychain.split(BSEP)
+    local_builtin_keychain_phone_json = unpackage_from_transmission(local_builtin_keychain_phone)
+    local_builtin_keychain_op_json = unpackage_from_transmission(local_builtin_keychain_op)
+    print('local_builtin_keychain_phone_json',local_builtin_keychain_phone_json)
+    print('local_builtin_keychain_op_json',local_builtin_keychain_op_json)
+
+    # set builtin keychains
+    TELEPHONE_KEYCHAIN={}
+    OPERATOR_KEYCHAIN={}
+    dict_merge(TELEPHONE_KEYCHAIN,local_builtin_keychain_phone_json)
+    dict_merge(OPERATOR_KEYCHAIN,local_builtin_keychain_op_json)
+    dict_merge(TELEPHONE_KEYCHAIN,remote_builtin_keychain_phone_json)
+    dict_merge(OPERATOR_KEYCHAIN,remote_builtin_keychain_op_json)
+    
+    return (OPERATOR_KEYCHAIN,TELEPHONE_KEYCHAIN)
+
+    # # load prime objects?
+    # from komrade.backend.the_operator import TheOperator
+    # from komrade.backend.the_telephone import TheTelephone
+    # OPERATOR = TheOperator(keychain=OPERATOR_KEYCHAIN)
+    # TELEPHONE = TheTelephone(keychain=TELEPHONE_KEYCHAIN)
+    
+    # return (OPERATOR,TELEPHONE)

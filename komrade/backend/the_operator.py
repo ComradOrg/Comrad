@@ -8,10 +8,6 @@ from komrade import *
 from komrade.backend import *
 
 
-# PATH_OPERATOR_WEB_KEYS_URI = hashish(b'keys')
-PATH_OPERATOR_WEB_KEYS_FILE = f'/home/ryan/www/website-komrade/.builtin.keys'
-PATH_OPERATOR_WEB_KEYS_URL = f'http://{KOMRADE_ONION}/.builtin.keys'
-
 # print(PATH_OPERATOR_WEB_KEYS_URL)
 
 
@@ -27,7 +23,7 @@ class TheOperator(Operator):
         return TELEPHONE
     
 
-    def __init__(self, name = OPERATOR_NAME, passphrase='acc', allow_builtin=True):
+    def __init__(self, name = OPERATOR_NAME, passphrase='acc', keychain = {}):
         """
         Boot up the operator. Requires knowing or setting a password of memory.
         """
@@ -35,8 +31,7 @@ class TheOperator(Operator):
         # if not os.path.exists(PATH_OPERATOR): os.makedirs(PATH_OPERATOR)
         if not passphrase:
             passphrase=getpass.getpass('Hello, this is the Operator speaking. What is the passphrase?\n> ')
-        self.allow_builtin=allow_builtin
-        super().__init__(name,passphrase,path_crypt_keys=PATH_CRYPT_OP_KEYS,path_crypt_data=PATH_CRYPT_OP_DATA)
+        super().__init__(name,passphrase,path_crypt_keys=PATH_CRYPT_OP_KEYS,path_crypt_data=PATH_CRYPT_OP_DATA,keychain=keychain)
 
     def decrypt_incoming(self,data):
         # step 1 split:
@@ -194,104 +189,6 @@ class TheOperator(Operator):
         return (pkg,{})
 
 
-def init_operators():
-
-    ## CREATE OPERATOR
-    op = Operator(name=OPERATOR_NAME)
-    
-    # save what we normally save for a client on the server -- The Op is a client from our pov
-    
-    # take 1
-    # op_keys_to_keep_on_client = ['pubkey_decr']
-    # op_keys_to_keep_on_3rdparty = ['pubkey_encr','privkey_encr']
-    # op_keys_to_keep_on_server = ['adminkey_encr',
-    #                             'privkey_decr_encr',
-    #                             'privkey_decr_decr',
-    #                             'adminkey_decr_encr',
-    #                             'adminkey_decr_decr']
-
-    # phone_keys_to_keep_on_client = ['privkey_decr']
-    # phone_keys_to_keep_on_3rdparty = ['privkey_encr','pubkey_encr']
-    # phone_keys_to_keep_on_server = ['pubkey_decr']
-
-    op_keys_to_keep_on_client = ['pubkey_encr']
-    op_keys_to_keep_on_3rdparty = ['pubkey_decr','privkey_decr']
-    op_keys_to_keep_on_server = ['adminkey_encr',
-                                'privkey_decr_encr',
-                                'privkey_decr_decr',
-                                'adminkey_decr_encr',
-                                'adminkey_decr_decr']
-
-    phone_keys_to_keep_on_client = ['privkey_encr']
-    phone_keys_to_keep_on_3rdparty = ['privkey_decr','pubkey_decr']
-    phone_keys_to_keep_on_server = ['pubkey_encr']
-
-    op_decr_keys = op.forge_new_keys(
-        keys_to_save=op_keys_to_keep_on_server,  # on server only; flipped around
-        keys_to_return=op_keys_to_keep_on_client + op_keys_to_keep_on_3rdparty # on clients only
-    )
-    from pprint import pprint
-
-    ## CREATE TELEPHONE
-    phone = Operator(name=TELEPHONE_NAME)
-
-    
-
-    phone_decr_keys = phone.forge_new_keys(
-        name=TELEPHONE_NAME,
-        keys_to_save=phone_keys_to_keep_on_server,  # on server only
-        keys_to_return=phone_keys_to_keep_on_client + phone_keys_to_keep_on_3rdparty   # on clients only
-    )
-
-    print('OP KEYS RETURNED')
-    pprint(op_decr_keys)
-
-
-    print('PHONE KEYS RETURNED')
-    pprint(phone_decr_keys)
-
-
-
-    THIRD_PARTY_DICT = {OPERATOR_NAME:{}, TELEPHONE_NAME:{}}
-
-    for key in op_keys_to_keep_on_3rdparty:
-        if key in op_decr_keys:
-            THIRD_PARTY_DICT[OPERATOR_NAME][key]=op_decr_keys[key]
-    for key in phone_keys_to_keep_on_3rdparty:
-        if key in phone_decr_keys:
-            THIRD_PARTY_DICT[TELEPHONE_NAME][key]=phone_decr_keys[key]
-
-    STORE_IN_APP = {OPERATOR_NAME:{}, TELEPHONE_NAME:{}}
-
-    for key in op_keys_to_keep_on_client:
-        if key in op_decr_keys:
-            STORE_IN_APP[OPERATOR_NAME][key]=op_decr_keys[key]
-    for key in phone_keys_to_keep_on_client:
-        if key in phone_decr_keys:
-            STORE_IN_APP[TELEPHONE_NAME][key]=phone_decr_keys[key]
-
-    STORE_IN_APP_pkg = package_for_transmission(STORE_IN_APP[TELEPHONE_NAME]) + BSEP + package_for_transmission(STORE_IN_APP[OPERATOR_NAME])
-
-    THIRD_PARTY_DICT_pkg = package_for_transmission(THIRD_PARTY_DICT[TELEPHONE_NAME]) + BSEP + package_for_transmission(THIRD_PARTY_DICT[OPERATOR_NAME])
-
-    print('store in app =',STORE_IN_APP)
-    print('store in web =',THIRD_PARTY_DICT)
-    print()
-
-
-    print('new: make omega key')
-    omega_key = KomradeSymmetricKeyWithoutPassphrase()
-
-    STORE_IN_APP_encr = b64encode(omega_key.encrypt(STORE_IN_APP_pkg))
-    THIRD_PARTY_totalpkg = b64encode(omega_key.data + BSEP + omega_key.encrypt(THIRD_PARTY_DICT_pkg))
-
-    with open(PATH_BUILTIN_KEYCHAIN,'wb') as of:
-        of.write(STORE_IN_APP_encr)
-        print('STORE_IN_APP_encr',STORE_IN_APP_encr)
-        
-    with open(PATH_OPERATOR_WEB_KEYS_FILE,'wb') as of:
-        of.write(THIRD_PARTY_totalpkg)
-        print('THIRD_PARTY_DICT_encr',THIRD_PARTY_totalpkg)
 
 
 def test_op():

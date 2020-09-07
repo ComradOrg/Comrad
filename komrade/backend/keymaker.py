@@ -74,9 +74,9 @@ class KomradeAsymmetricPrivateKey(KomradeAsymmetricKey):
 
 
 class Keymaker(Logger):
-    def __init__(self,name=None,passphrase=None, path_crypt_keys=None, path_crypt_data=None, allow_builtin=True):
+    def __init__(self,name=None,passphrase=None,keychain={}, path_crypt_keys=None, path_crypt_data=None, allow_builtin=True):
         self.name=name
-        self._keychain={}
+        self._keychain=keychain
         self.passphrase=passphrase
         self.path_crypt_keys=path_crypt_keys
         self.path_crypt_data=path_crypt_data
@@ -122,6 +122,11 @@ class Keymaker(Logger):
             
 
     def getkey(self, keyname, keychain={}, uri=None):
+        # cached?
+        if hasattr(self,'_'+keyname) and getattr(self,'_'+keyname):
+            return getattr(self,'_'+keyname)
+        if keyname in self._keychain: return self._keychain[keyname]
+
         # self.log(f'keyname={keyname}, keychain={keychain.keys()}, uri={uri}')
 
         # 1) I already have this key stored in either the keychain or the crypt; return straight away
@@ -370,65 +375,6 @@ class Keymaker(Logger):
                     keychain[key_name]=_key_encr
         return keychain
 
-    def check_builtin_keys(self):
-        global OMEGA_KEY,OPERATOR_KEYCHAIN,TELEPHONE_KEYCHAIN
-        if OMEGA_KEY and OPERATOR_KEYCHAIN and TELEPHONE_KEYCHAIN: return
-        self.log('getting built in keys!')
-
-        if not os.path.exists(PATH_OMEGA_KEY) or not os.path.exists(PATH_BUILTIN_KEYCHAIN):
-            self.log('builtin keys not present??')
-            return
-        
-        with open(PATH_OMEGA_KEY,'rb') as f:
-            OMEGA_KEY = KomradeSymmetricKeyWithoutPassphrase(
-                key=b64decode(f.read())
-            )
-        
-        with open(PATH_BUILTIN_KEYCHAIN,'rb') as f:
-            local_builtin_keychain_encr = b64decode(f.read())
-
-        print('local',local_builtin_keychain_encr)
-
-        from komrade.backend.mazes import tor_request
-        from komrade.backend import PATH_OPERATOR_WEB_KEYS_URL
-
-        meta_keychain={}
-        local_builtin_keychain = OMEGA_KEY.decrypt(local_builtin_keychain_encr)
-        local_builtin_keychain_phone,local_builtin_keychain_op = local_builtin_keychain.split(BSEP)
-        local_builtin_keychain_phone_json = unpackage_from_transmission(local_builtin_keychain_phone)
-        local_builtin_keychain_op_json = unpackage_from_transmission(local_builtin_keychain_op)
-        
-        self.log('local_builtin_keychain_phone_json',local_builtin_keychain_phone_json)
-        self.log('local_builtin_keychain_op_json',local_builtin_keychain_op_json)
-        
-
-
-        print('??',PATH_OPERATOR_WEB_KEYS_URL)
-        r = tor_request(PATH_OPERATOR_WEB_KEYS_URL)
-        if r.status_code!=200:
-            self.log('cannot authenticate the keymakers')
-            return
-        remote_builtin_keychain_encr = b64decode(r.text)
-        remote_builtin_keychain = OMEGA_KEY.decrypt(remote_builtin_keychain_encr)
-        remote_builtin_keychain_phone,remote_builtin_keychain_op = remote_builtin_keychain.split(BSEP)
-        remote_builtin_keychain_phone_json = unpackage_from_transmission(remote_builtin_keychain_phone)
-        remote_builtin_keychain_op_json = unpackage_from_transmission(remote_builtin_keychain_op)
-        
-        self.log('remote_builtin_keychain_phone_json',remote_builtin_keychain_phone_json)
-        self.log('remote_builtin_keychain_op_json',remote_builtin_keychain_op_json)
-        
-        TELEPHONE_KEYCHAIN={}
-        OPERATOR_KEYCHAIN={}
-        dict_merge(TELEPHONE_KEYCHAIN,local_builtin_keychain_phone_json)
-        dict_merge(OPERATOR_KEYCHAIN,local_builtin_keychain_op_json)
-        dict_merge(TELEPHONE_KEYCHAIN,remote_builtin_keychain_phone_json)
-        dict_merge(OPERATOR_KEYCHAIN,remote_builtin_keychain_op_json)
-        # BUILTIN_KEYCHAIN = meta_keychain
-        self.log('OPERATOR_KEYCHAIN',OPERATOR_KEYCHAIN)
-        self.log('TELEPHONE_KEYCHAIN',TELEPHONE_KEYCHAIN)
-        stop
-        return BUILTIN_KEYCHAIN
-        
 
 
     def forge_new_keys(self,

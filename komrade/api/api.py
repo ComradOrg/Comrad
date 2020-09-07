@@ -31,7 +31,7 @@ def logger():
     handler = logging.StreamHandler()
     formatter = logging.Formatter('[%(asctime)s]\n%(message)s\n')
     handler.setFormatter(formatter)
-    logger = logging.getLogger(__file__)
+    logger = logging.getLogger('komrade')
     logger.addHandler(handler)
     logger.setLevel(logging.DEBUG)
     return logger

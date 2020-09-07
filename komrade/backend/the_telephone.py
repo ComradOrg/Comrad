@@ -8,15 +8,14 @@ class TheTelephone(Operator):
     """
     API client class for Caller to interact with The Operator.
     """
-    def __init__(self, caller=None, allow_builtin=True):
+    def __init__(self, caller=None, keychain={}):
         super().__init__(
             name=TELEPHONE_NAME,
+            keychain=keychain,
             path_crypt_keys=PATH_CRYPT_CA_KEYS,
             path_crypt_data=PATH_CRYPT_CA_KEYS
         )
         self.caller=caller
-        self.allow_builtin=allow_builtin
-        self.check_builtin_keys()
 
     def dial_operator(self,msg):
         msg=msg.replace('/','_')
@@ -49,8 +48,7 @@ class TheTelephone(Operator):
         json_phone  = {json_phone}
         json_caller = {json_caller}""")
 
-        op_keychain = unpackage_from_transmission(OPERATOR_KEYCHAIN)
-        phone_keychain = unpackage_from_transmission(TELEPHONE_KEYCHAIN)
+        print(type(self),self._keychain,self.keychain())
 
         self.log('op_keychain',op_keychain)
 

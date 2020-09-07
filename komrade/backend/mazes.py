@@ -4,6 +4,10 @@ from komrade import *
 
 log=print
 
+def komrade_request(url):
+    # return tor_request(url)
+    return requests.get(url,timeout=60)
+
 def tor_request(url):
     return tor_request_in_python(url)
     # return tor_request_in_proxy(url)
@@ -131,8 +135,8 @@ from torpy.http.requests import TorRequests, tor_requests_session, do_request as
 from torpy.http.urlopener import do_request as urllib_request
 
 # logging.getLogger('requests').setLevel(logging.CRITICAL)
-logging.basicConfig(format='[%(asctime)s] [%(threadName)-16s] %(message)s', level=logging.DEBUG)
-logger = logging.getLogger(__name__)
+# logging.basicConfig(format='[%(asctime)s] [%(threadName)-16s] %(message)s', level=logging.DEBUG)
+# logger = logging.getLogger('komrade')
 
 
 HS_BASIC_HOST = os.getenv('HS_BASIC_HOST')

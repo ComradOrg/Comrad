@@ -11,18 +11,6 @@ class Caller(Operator):
     Variant of an Operator which handles local keys and keymaking.
     """
 
-    @property
-    def phone(self):
-        global TELEPHONE
-        from komrade.backend.the_telephone import TheTelephone
-        if not TELEPHONE: TELEPHONE=TheTelephone()
-        return TELEPHONE
-    @property
-    def op(self):
-        global OPERATOR
-        from komrade.backend.the_operator import TheOperator
-        if not OPERATOR: OPERATOR=TheOperator()
-        return OPERATOR
 
     def get_new_keys(self, name = None, passphrase = None, is_group=None):
         if not name: name=self.name
