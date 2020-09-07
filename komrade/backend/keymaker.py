@@ -370,6 +370,11 @@ class Keymaker(Logger):
                     keychain[key_name]=_key_encr
         return keychain
 
+    def init_builtin_keys(self):
+        
+        with open()
+
+
     def forge_new_keys(self,
                         name=None,
                         passphrase=None,
