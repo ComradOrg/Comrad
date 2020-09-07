@@ -57,6 +57,9 @@ class Operator(Keymaker):
         return OPERATOR
 
     def encrypt_to_send(self,msg_json,from_privkey,to_pubkey):
+        self.log('msg_json',msg_json)
+        self.log('from_privkey',from_privkey)
+        self.log('to_pubkey',to_pubkey)
         if not msg_json or not from_privkey or not to_pubkey:
             self.log('not enough info!',msg_json,from_privkey,to_pubkey)
             return b''
