@@ -212,7 +212,8 @@ class Operator(Keymaker):
 
         # layer 1: unencr
         # get other keys from halfkeys
-        from_phone_pubkey,to_phone_pubkey = self.reassemble_nec_keys_using_header(unencr_header)
+        # from_phone_pubkey,to_phone_pubkey = self.reassemble_nec_keys_using_header(unencr_header)
+        from_phone,to_phone = self.discover_which_phones_from_header(unencr_header)
         
         # layer 2: I know I (either Telephone or Operator) am the recipient of this msg
         to_phone = self
@@ -225,8 +226,8 @@ class Operator(Keymaker):
 
         data_phone2phone = self.decrypt_from_send(
             msg_encr=data_encr_phone2op,
-            from_pubkey=,
-            to_privkey=
+            from_pubkey=e,
+            to_privkey=y
         )
         self.log('data_by_phone',data_by_phone)
 
