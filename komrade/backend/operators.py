@@ -63,15 +63,15 @@ class Operator(Keymaker):
         self.log('packing for transmission: msg_json',type(msg_json),msg_json)
         msg_b = package_for_transmission(msg_json)
         self.log('packing for transmission: msg_b',type(msg_b),msg_b)
-        try:
-            msg_encr = SMessage(
-                from_privkey,
-                to_pubkey,
-            ).wrap(msg_b)
-            return msg_encr
-        except ThemisError as e:
-            self.log('unable to encrypt to send!',e)
-        return b''
+        # try:
+        msg_encr = SMessage(
+            from_privkey,
+            to_pubkey,
+        ).wrap(msg_b)
+        return msg_encr
+        # except ThemisError as e:
+            # self.log('unable to encrypt to send!',e)
+        # return b''
 
 
     def decrypt_from_send(self,msg_encr,from_pubkey,to_privkey):
