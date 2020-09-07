@@ -313,14 +313,14 @@ class Operator(Keymaker):
         op_fits_as_from_phone=False
         tele_fits_as_from_phone=False
 
-        if self.op.pubkey_encr_:
-            op_fits_as_to_phone = self.assemble_key(self.op.pubkey_encr_,to_phone_pubkey_decr)
-        if self.phone.pubkey_encr_:
-            tele_fits_as_to_phone = self.assemble_key(self.phone.pubkey_encr_,to_phone_pubkey_decr)
-        if self.op.pubkey_decr_:
-            op_fits_as_from_phone = self.assemble_key(self.op.pubkey_decr_,from_phone_pubkey_encr)
-        if self.phone.pubkey_decr_:
-            tele_fits_as_from_phone = self.assemble_key(self.phone.pubkey_decr_,from_phone_pubkey_encr)
+        if op_pubkey_encr:
+            op_fits_as_to_phone = self.assemble_key(op_pubkey_encr,to_phone_pubkey_decr)
+        if phone_pubkey_encr:
+            tele_fits_as_to_phone = self.assemble_key(phone_pubkey_encr,to_phone_pubkey_decr)
+        if op_pubkey_decr:
+            op_fits_as_from_phone = self.assemble_key(op_pubkey_decr,from_phone_pubkey_encr)
+        if phone_pubkey_decr:
+            tele_fits_as_from_phone = self.assemble_key(phone_pubkey_decr,from_phone_pubkey_encr)
         
         self.log('op_fits_as_to_phone',op_fits_as_to_phone)
         self.log('tele_fits_as_to_phone',tele_fits_as_to_phone)
