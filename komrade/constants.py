@@ -31,7 +31,8 @@ OPERATOR_NAME = 'TheOperator'
 TELEPHONE_NAME = 'TheTelephone'
 PATH_APP = os.path.abspath(os.path.dirname(__file__))
 # PATH_BUILTIN_KEYCHAINS_ENCR = os.path.join(PATH_APP,'.builtin.keychains.encr')
-PATH_BUILTIN_KEYCHAIN = os.path.join(PATH_APP,'.builtin.keys')
+PATH_BUILTIN_KEYCHAIN = os.path.join(PATH_APP,'.builtin.keychain')
+PATH_OMEGA_KEY = os.path.join(PATH_APP,'.omega.key')
 # PATH_BUILTIN_KEYCHAINS_DECR = os.path.join(PATH_APP,'.builtin.keychains.decr')
 
 

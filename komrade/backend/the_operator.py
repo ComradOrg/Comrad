@@ -271,11 +271,21 @@ def init_operators():
     print('store in web =',THIRD_PARTY_DICT)
     print()
 
-    with open(PATH_BUILTIN_KEYCHAIN,'wb') as of:
-        of.write(STORE_IN_APP)
-    with open(PATH_OPERATOR_WEB_KEYS_FILE,'wb') as of:
-        of.write(THIRD_PARTY_DICT)
+
+    print('new: make omega key')
+    omega_key = KomradeSymmetricKeyWithoutPassphrase()
+
+    STORE_IN_APP_encr = omega_key.encrypt(STORE_IN_APP)
+    THIRD_PARTY_DICT_encr = omega_key.encrypt(THIRD_PARTY_DICT)
     
+    with open(PATH_OMEGA_KEY,'wb') as of:
+        of.write(omega_key.data)
+    with open(PATH_BUILTIN_KEYCHAIN,'wb') as of:
+        of.write(STORE_IN_APP_encr)
+        print('STORE_IN_APP_encr',STORE_IN_APP_encr)
+    with open(PATH_OPERATOR_WEB_KEYS_FILE,'wb') as of:
+        of.write(THIRD_PARTY_DICT_encr)
+        print('THIRD_PARTY_DICT_encr',THIRD_PARTY_DICT_encr)
 
 
 def test_op():
