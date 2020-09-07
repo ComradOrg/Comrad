@@ -49,13 +49,13 @@ class TheSwitchboard(FlaskView, Logger):
 
     def route(self,msg):
         # give to The Operator
-        try:
-            self.log('Success! your message was: '+str(msg))
-            res = self.op.recv(msg)
-            self.log('Your return result should be:',res)
-            return self.send(res)
-        except AssertionError as e:
-            self.log('got exception!!',e)
+        # try:
+        self.log('Success! your message was: '+str(msg))
+        res = self.op.recv(msg)
+        self.log('Your return result should be:',res)
+        return self.send(res)
+        # except AssertionError as e:
+            # self.log('got exception!!',e)
         return OPERATOR_INTERCEPT_MESSAGE
     
     def get(self,msg):
