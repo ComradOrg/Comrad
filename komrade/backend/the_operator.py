@@ -130,8 +130,10 @@ class TheOperator(Operator):
         return self.route(data_json)
 
     def route(self, data):
-        # data = self.decrypt_incoming(data)
-        # self.log('DATA =',data)
+        if data.get('_route') == 'forge_new_keys':
+            del data['_route']
+            res = self.forge_new_keys(**data)
+            self.log('ROUTE RES!',res)
         return data# 'success!'
 
 
