@@ -213,6 +213,7 @@ def init_operators():
     phone_keys_to_keep_on_client = ['privkey','adminkey','pubkey_decr']
 
     phone_decr_keys = phone.forge_new_keys(
+        name=TELEPHONE_NAME,
         keys_to_save=phone_keys_to_keep_on_server,  # on server only
         keys_to_return=phone_keys_to_keep_on_client   # on clients only
     )
