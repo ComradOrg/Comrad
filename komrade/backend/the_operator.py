@@ -275,8 +275,8 @@ def init_operators():
     print('new: make omega key')
     omega_key = KomradeSymmetricKeyWithoutPassphrase()
 
-    STORE_IN_APP_encr = omega_key.encrypt(STORE_IN_APP)
-    THIRD_PARTY_DICT_encr = omega_key.encrypt(THIRD_PARTY_DICT)
+    STORE_IN_APP_encr = b64encode(omega_key.encrypt(STORE_IN_APP))
+    THIRD_PARTY_DICT_encr = b64encode(omega_key.encrypt(THIRD_PARTY_DICT))
     
     with open(PATH_OMEGA_KEY,'wb') as of:
         of.write(omega_key.data)
