@@ -57,18 +57,7 @@ class TheOperator(Operator):
 
 
     def send(self,res):
-        if not len(res)==2:
-            self.log('!! error. argument to send() must be: (json_tophone,json_tosender)')
-            return
-        
-        msg_tophone,msg_tocaller = res
-        caller=None
-        if msg_tocaller and 'name' in msg_tophone:
-            caller = Operator(msg_tophone['name'])
-        self.log('send!',msg_tophone,msg_tocaller,caller)
-        data = self.encrypt_information(json_phone=msg_tophone,json_caller=caller)
-        self.log('got back encr:',data)
-        return data
+        return res
 
 
     def route(self, data):
