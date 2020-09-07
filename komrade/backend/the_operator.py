@@ -69,40 +69,23 @@ class TheOperator(Operator):
                 PHONE_PUBKEY = new_phone_keychain.get('pubkey')
                 MY_PRIVKEY = new_op_keychain.get('privkey')
 
-                print(new_phone_keychain,'new_phone_keychain')
-                print(new_op_keychain,'new_op_keychain')
+                # print(new_phone_keychain,'new_phone_keychain')
+                # print(new_op_keychain,'new_op_keychain')
                 
 
-                self.log('PHONE_PUBKEY',PHONE_PUBKEY)
-                self.log('MY_PRIVKEY',MY_PRIVKEY)
-                stopppp
+                # self.log('PHONE_PUBKEY',PHONE_PUBKEY)
+                # self.log('MY_PRIVKEY',MY_PRIVKEY)
+                # stopppp
                 
-
-
-        if DATA.get('_keychain'):
-            DATA['_keychain'] = self.valid_keychain(DATA['_keychain'])
-            # self.log('found keys in unencrypted data:',DATA['_keychain'])
-            # stop2
-
-            KEYCHAIN = self.keychain(allow_builtin=False,force=True,extra_keys=DATA['_keychain'])
-            self.log('as of now 2, I the operator have these keys:',KEYCHAIN.keys())
-            # stopppppppp
-        self.log('DATA as of now!?',DATA)
-        # stop
-
         if data_encr_by_phone:
             
             # then try to unwrap telephone encryption
-            me_privkey = KEYCHAIN.get('privkey')  #self.privkey(keychain = DATA.get('_keychain',{}))
-            if not me_privkey:
-                self.log('!! could not assemble my private key. failing.')
+            if not MY_PRIVKEY or not PHONE_PUBKEY:
+                self.log('!! could not assemble my or phone\'s keys. failing.')
                 return OPERATOR_INTERCEPT_MESSAGE
             
-            # self.log('as of now 3, I the operator have these keys:',self.keychain().keys())
-            self.log('me_privkey now',me_privkey)
-            # print(me_privkey, '<--',them_pubkey)
             try:
-                data_unencr_by_phone = SMessage(me_privkey, self.phone.pubkey_).unwrap(data_encr_by_phone)
+                data_unencr_by_phone = SMessage(MY_PRIVKEY, PHONE_PUBKEY).unwrap(data_encr_by_phone)
                 self.log('decrypted data !!!:',data_unencr_by_phone)
             except ThemisError as e:
                 self.log('not really from the telephone?',e)
@@ -122,7 +105,7 @@ class TheOperator(Operator):
 
             # decrypt using this user's pubkey on record
             caller = Caller(name)
-            data_unencr2 = SMessage(self.privkey_, caller.pubkey_).unwrap(data_encr_by_caller)
+            data_unencr2 = SMessage(MY_PRIVKEY, caller.pubkey_).unwrap(data_encr_by_caller)
 
             if type(data_unencr_by_phone)==dict and type(data_encr_by_caller)==dict:
                 data = data_unencr_by_phone
