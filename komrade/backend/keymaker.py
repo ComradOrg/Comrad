@@ -400,7 +400,7 @@ class Keymaker(Logger):
         self.log('keychain 2 =',keychain)
 
         # save keys!
-        keys_saved = self.save_keychain(keychain,keys_to_save)
+        keys_saved = self.save_keychain(name,keychain,keys_to_save)
         self.log('keys_saved =',keys_saved)
 
         # return keys!
@@ -416,8 +416,7 @@ class Keymaker(Logger):
         return keychain_toreturn
 
 
-    def save_keychain(self,keychain,keys_to_save):
-
+    def save_keychain(self,name,keychain,keys_to_save):
         keys_saved = []
 
         # filter for transfer

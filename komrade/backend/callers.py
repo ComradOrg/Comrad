@@ -52,7 +52,7 @@ class Caller(Operator):
         assert set(req_json['keys_to_return']) == set(returned_keys.keys())
 
         # now save these keys!
-        saved_keys = self.save_keychain(returned_keys)
+        saved_keys = self.save_keychain(name,returned_keys)
         self.log('saved keys!',saved_keys)
 
         # better have the right keys
