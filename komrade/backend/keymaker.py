@@ -363,22 +363,22 @@ class Keymaker(Logger):
         self.log('forging new keys...',name,self.name)
         self.log('keys_to_save:',keys_to_save)
         self.log('keys_to_return',keys_to_return)
-        stop
+        
 
 
         if not name: name=self.name
 
         keys_to_gen = set(keys_to_gen) | set(keys_to_save) | set(keys_to_return)
         keys_to_gen = sorted(list(keys_to_gen),key=lambda x: x.count('_'))
-        # self.log('keys_to_gen =',keys_to_gen)
+        self.log('keys_to_gen =',keys_to_gen)
         key_types = dict([(k,key_types[k]) for k in keys_to_gen])
         # self.log('key_types =',key_types)
 
         keychain = self.gen_keys_from_types(key_types)
-        # self.log('keychain =',keychain)
+        self.log('keychain =',keychain)
 
         # self.log('!!!!',keychain)
-        # stop
+        stop
         #keychain_tosave = {}
         #keychain_toreturn = {}
         # self.log('keys_to_save =',keys_to_save)
