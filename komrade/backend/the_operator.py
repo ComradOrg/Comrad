@@ -168,7 +168,7 @@ def init_operators():
     print('OPERATOR_KEYCHAIN =',op_decr_keys)
     print()
     print('TELEPHONE_KEYCHAIN =',phone_decr_keys)
-    stop
+    # stop
 
     # stringify
     for k,v in phone_decr_keys.items():
@@ -178,6 +178,11 @@ def init_operators():
         v_s = b64encode(v).decode('utf-8')
         op_decr_keys[k]=v_s
 
+    print('\n'*5)
+    print('OPERATOR_KEYCHAIN =',op_decr_keys)
+    print()
+    print('TELEPHONE_KEYCHAIN =',phone_decr_keys)
+    stoppwppepe
 
     # print('total_d',total_d)
     builtin_keychains = {OPERATOR_NAME:op_decr_keys, TELEPHONE_NAME:phone_decr_keys}
