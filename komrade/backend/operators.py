@@ -36,6 +36,8 @@ class Operator(Keymaker):
         if not TELEPHONE_KEYCHAIN:
             self.log('!! getting telephone keychain !!')
             connect_phonelines()
+
+        from komrade.backend.the_telephone import TheTelephone
         TELEPHONE=TheTelephone(keychain=TELEPHONE_KEYCHAIN)
         return TELEPHONE
 
@@ -47,6 +49,8 @@ class Operator(Keymaker):
         if not OPERATOR_KEYCHAIN:
             self.log('!! getting operator keychain !!')
             connect_phonelines()
+        
+        from komrade.backend.the_operator import TheOperator
         OPERATOR=TheOperator(keychain=OPERATOR_KEYCHAIN)
         return OPERATOR
 
@@ -227,7 +231,7 @@ def connect_phonelines():
     # globals
     global OMEGA_KEY,OPERATOR_KEYCHAIN,TELEPHONE_KEYCHAIN
     if OMEGA_KEY and OPERATOR_KEYCHAIN and TELEPHONE_KEYCHAIN:
-        return (OPERATOR,TELEPHONE)
+        return (OPERATOR_KEYCHAIN,TELEPHONE_KEYCHAIN)
 
     # import
     from komrade.backend.mazes import tor_request

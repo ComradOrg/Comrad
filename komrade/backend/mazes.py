@@ -4,8 +4,9 @@ from komrade import *
 
 log=print
 
-def komrade_request(url):
-    # return tor_request(url)
+def komrade_request(url,allow_clearnet = ALLOW_CLEARNET):
+    if '.onion' in url or not allow_clearnet:
+        return tor_request(url)
     return requests.get(url,timeout=60)
 
 def tor_request(url):

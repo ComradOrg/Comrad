@@ -8,10 +8,13 @@ class TheTelephone(Operator):
     """
     API client class for Caller to interact with The Operator.
     """
-    def __init__(self, caller=None, keychain={}):
+    def __init__(self, caller=None):
+        global OPERATOR_KEYCHAIN,TELEPHONE_KEYCHAIN
+        if not TELEPHONE_KEYCHAIN or not OPERATOR_KEYCHAIN:
+            OPERATOR_KEYCHAIN,TELEPHONE_KEYCHAIN = connect_phonelines()
         super().__init__(
             name=TELEPHONE_NAME,
-            keychain=keychain,
+            keychain=TELEPHONE_KEYCHAIN,
             path_crypt_keys=PATH_CRYPT_CA_KEYS,
             path_crypt_data=PATH_CRYPT_CA_KEYS
         )

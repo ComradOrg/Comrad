@@ -191,6 +191,7 @@ class Api(object):
 
 
     def tor_request(self,url,method='get',data=None):
+        stopfixthis
         with self.get_tor_proxy_session() as s:
             if method=='get':
                 return s.get(url)

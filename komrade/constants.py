@@ -4,7 +4,8 @@ KOMRADE_ONION = 'u7spnj3dmwumzoa4.onion'
 KOMRADE_ONION2 = 'rwg4zcnpwshv4laq.onion' #'128.232.229.63' #'komrade.app'
 
 
-OPERATOR_API_URL = f'http://{KOMRADE_ONION}/op/'
+# OPERATOR_API_URL = f'http://{KOMRADE_ONION}/op/'
+OPERATOR_API_URL = f'http://{KOMRADE_URL}/op/'
 
 
 # paths
@@ -130,3 +131,8 @@ TELEPHONE = None
 
 PATH_OPERATOR_WEB_KEYS_FILE = f'/home/ryan/www/website-komrade/.builtin.keys'
 PATH_OPERATOR_WEB_KEYS_URL = f'http://{KOMRADE_URL}/.builtin.keys'
+
+
+
+# dangerous! leave on only if absolutely necessary for initial dev
+ALLOW_CLEARNET = True
