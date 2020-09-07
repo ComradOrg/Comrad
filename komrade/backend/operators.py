@@ -168,6 +168,7 @@ class Operator(Keymaker):
 
         self.log(b'\n ~~~ \n'.join(MSG_PIECES))
         MSG = BSEP.join(MSG_PIECES)
+        self.log('MSG',MSG)
         MSG_b64 = b64encode(MSG)
         self.log(b' ~~~ ring ring ~~~ rriing ~~~',MSG_b64)
 

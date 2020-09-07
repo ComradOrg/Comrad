@@ -92,7 +92,7 @@ def test_call():
     # res = phone.req({'forge_new_keys':{'name':'marx', 'pubkey_is_public':True}})
     # print(res)
     # asyncio.run(caller.get_new_keys())
-    x=caller.get_new_keys()
+    x=caller.get_new_keys(passphrase='1869')
 
     print('YEAH COOL',x)
 
