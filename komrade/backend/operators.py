@@ -154,9 +154,10 @@ class Operator(Keymaker):
 
         # 2) decrypt from phone
         data_by_phone = self.decrypt_from_send(data_encr_by_phone,phone_pubkey,to_privkey)
+        self.log('data_by_phone',data_by_phone)
 
         # 3) decrypt from caller
-        caller_pubkey = self.reassemble_necessary_keys_using_decr_phone_data(json_phone_decr)
+        caller_pubkey = self.reassemble_necessary_keys_using_decr_phone_data(data_by_phone)
         data_by_caller = self.decrypt_from_send(data_encr_by_caller,caller_pubkey,to_privkey)
 
         # return
