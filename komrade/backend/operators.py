@@ -179,7 +179,7 @@ class Operator(Keymaker):
         return msg_b64_str
 
     
-    def answer_phone(self,data_b64_s):
+    def answer_phone(self,data_b64_s, from_phone=None,to_phone=None):
         assert type(data_b64_s) == str
         self.log('Pronto!\n ... '+data_b64_s+' ...?')
 
@@ -213,12 +213,12 @@ class Operator(Keymaker):
         # layer 1: unencr
         # get other keys from halfkeys
         # from_phone_pubkey,to_phone_pubkey = self.reassemble_nec_keys_using_header(unencr_header)
-        from_phone,to_phone = self.discover_which_phones_from_header(unencr_header)
+        if not from_phone or not to_phone:
+            from_phone,to_phone = self.discover_which_phones_from_header(unencr_header)
         
         # layer 2: I know I (either Telephone or Operator) am the recipient of this msg
-        to_phone = self
-        to_keychain = self.keychain()
-        to_privkey = to_keychain.get('privkey')
+        from_phone_keychain = from_phone.keychain()
+        to_phone_keychain = to_phone.keychain()
 
         # 2) decrypt from phone
         self.log('data_encr_by_phone',data_encr_phone2phone)
@@ -226,24 +226,33 @@ class Operator(Keymaker):
 
         data_phone2phone = self.decrypt_from_send(
             msg_encr=data_encr_phone2op,
-            from_pubkey=e,
-            to_privkey=y
+            from_pubkey=from_phone_keychain.get('pubkey'),
+            to_privkey=to_phone_keychain.get('pubkey')
         )
         self.log('data_by_phone',data_by_phone)
 
         # 3) decrypt from caller
-        caller_pubkey = self.reassemble_necessary_keys_using_decr_phone_data(data_by_phone)
-        data_by_caller = self.decrypt_from_send(data_encr_by_caller,caller_pubkey,to_privkey)
+        from_caller_pubkey = self.reassemble_necessary_keys_using_decr_phone_data(data_phone2phone)
+        data_caller2phone = self.decrypt_from_send(
+            data_encr_caller2caller,
+            from_caller_pubkey,
+            to_privkey
+        )
 
-        # return
-        # req_data_encr = unencr_header + BSEP + data_by_phone + BSEP + data_by_caller
-        
+        #to_caller_pubkey = self.reassemble_necessary_keys_using_decr_caller_data(data_caller2phone)
+        # send this to caller...
+
+
+
+        # decrypt caller 2 caller
         self.log('data_by_phone',data_by_phone)
         self.log('data_by_caller',data_by_caller)
 
         DATA = {}
-        dict_merge(DATA,data_by_phone)
-        dict_merge(DATA,data_by_caller)
+        dict_merge(DATA,data_phone2phone)
+        dict_merge(DATA,data_caller2phone)
+        # dict_merge(DATA,data_caller2caller)
+        # dict_merge(DATA,data_by_caller)
         self.log('DATA!!!!!',DATA)
         return DATA
 
@@ -316,20 +325,21 @@ class Operator(Keymaker):
         if op_pubkey_encr:
             op_fits_as_to_phone = self.assemble_key(op_pubkey_encr,to_phone_pubkey_decr)
             self.log('op_fits_as_to_phone',op_fits_as_to_phone)
-            # return (self.phone,self.op)
+            return (self.phone,self.op)
         if phone_pubkey_encr:
             tele_fits_as_to_phone = self.assemble_key(phone_pubkey_encr,to_phone_pubkey_decr)
             self.log('tele_fits_as_to_phone',tele_fits_as_to_phone)
-            # self()
+            return (self.op,self.phone)
         if op_pubkey_decr:
             op_fits_as_from_phone = self.assemble_key(from_phone_pubkey_encr, op_pubkey_decr)
             self.log('op_fits_as_from_phone',op_fits_as_from_phone)
+            return (self.op,self.phone)
         if phone_pubkey_decr:
             tele_fits_as_from_phone = self.assemble_key(from_phone_pubkey_encr,phone_pubkey_decr)
             self.log('tele_fits_as_from_phone',tele_fits_as_from_phone)
+            return (self.phone,self.op)
         
-        stop
-
+        
 
 
         # # get phone pubkey
