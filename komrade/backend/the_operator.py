@@ -207,7 +207,7 @@ def init_operators():
 
 
     ## CREATE TELEPHONE
-    phone = Operator(name=OPERATOR_NAME)
+    phone = Operator(name=TELEPHONE_NAME)
 
     phone_keys_to_keep_on_server = KEYMAKER_DEFAULT_KEYS_TO_SAVE
     phone_keys_to_keep_on_client = ['privkey','adminkey','pubkey_decr']
