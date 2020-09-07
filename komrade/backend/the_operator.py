@@ -259,12 +259,12 @@ def init_operators():
 
     STORE_IN_APP = package_for_transmission({
         OPERATOR_NAME:package_for_transmission(STORE_IN_APP[OPERATOR_NAME]),
-        TELEPHONE_NAME:package_for_transmission(STORE_IN_APP[TELEPHONE_NAME]))
+        TELEPHONE_NAME:package_for_transmission(STORE_IN_APP[TELEPHONE_NAME])
         })
 
     THIRD_PARTY_DICT = package_for_transmission({
         OPERATOR_NAME:package_for_transmission(THIRD_PARTY_DICT[OPERATOR_NAME]),
-        TELEPHONE_NAME:package_for_transmission(THIRD_PARTY_DICT[TELEPHONE_NAME]))
+        TELEPHONE_NAME:package_for_transmission(THIRD_PARTY_DICT[TELEPHONE_NAME])
         })
 
     print('store in app =',STORE_IN_APP)
