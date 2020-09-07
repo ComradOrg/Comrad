@@ -393,7 +393,7 @@ class Keymaker(Logger):
         self.log('keychain 1 =',keychain)
         keychain = self.gen_encr_keys(keychain,keys_to_gen)
         self.log('keychain 2 =',keychain)
-        keychain222
+        exit()
         
 
         # self.log('!!!!',keychain)
