@@ -60,7 +60,9 @@ class Operator(Keymaker):
         if not msg_json or not from_privkey or not to_pubkey:
             self.log('not enough info!',msg_json,from_privkey,to_pubkey)
             return b''
+        self.log('packing for transmission: msg_json',type(msg_json),msg_json)
         msg_b = package_for_transmission(msg_json)
+        self.log('packing for transmission: msg_b',type(msg_b),msg_b)
         try:
             msg_encr = SMessage(
                 from_privkey,
