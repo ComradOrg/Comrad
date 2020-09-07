@@ -523,7 +523,7 @@ class Keymaker(Logger):
         keys_saved_d = {}
         for key_saved in keys_saved:
             keys_saved_d[key_saved] = keychain[key_saved]
-        return key_saved_d
+        return keys_saved_d
 
 
     def valid_keychain(self,keychain_b64_d):
