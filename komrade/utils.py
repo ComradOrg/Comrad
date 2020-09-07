@@ -59,23 +59,9 @@ def hashish(binary_data):
 from base64 import b64encode,b64decode
 import ujson as json
 def package_for_transmission(data_json):
-
-    # for k,v in data_json.items():
-    #     if type(v)==bytes:
-    #         if not isBase64(v): v=b64encode(v)
-    #         v=v.decode()
-    #     elif type(v)==str:
-    #         # if not isBase64(v): v=b64encode(v.encode())
-    #         pass
-    #     elif type(v)==dict:
-    #         v=package_for_transmission(v)
-    #     data_json[k]=v
-    # print(type(data_json), data_json)
-    # data_json_s = json.dumps(data_json)
-    # data_json_b = data_json_s.encode()
-    print('package_for_transmission.data_json =',data_json)
+    # print('package_for_transmission.data_json =',data_json)
     data_json_bstr = json.dumps(data_json,reject_bytes=False)
-    print('package_for_transmission.data_json_b =',data_json_bstr)
+    # print('package_for_transmission.data_json_b =',data_json_bstr)
     return b64encode(data_json_bstr.encode())
 
 
@@ -100,27 +86,7 @@ def unpackage_from_transmission(data_json_b64):
     data_json_dejson = dejsonize(data_json)
     print('unpackage_from_transmission.data_json =',data_json_dejson)
 
-    stop
     return data_json
-
-    # print(type(data_json_b),'data_json_b1???',data_json_b)
-    # if type(data_json_b)==bytes and isBase64(data_json_b): data_json_b=b64decode(data_json_b)
-    # print(type(data_json_b),'data_json_b???',data_json_b)
-    # # print(type(data_json_b),)
-    # data_json_s = data_json_b.decode()
-    # print(type(data_json_s),'data_json_s???',data_json_s)
-    # data_json = json.loads(data_json_s)
-    # print(type(data_json),'data_json???',data_json)
-    # for k,v in data_json.items():
-    #     if type(v)==bytes:
-    #         if isBase64(v):v=b64decode(v.decode())
-    #         data_json[k]=v
-    #     elif type(v)==str:
-    #         if isBase64(v): v=b64decode(v.encode())
-    #         data_json[k]=v
-    #     elif type(v)==dict:
-    #         data_json[k]=unpackage_from_transmission(v)
-    # return data_json
 
 
 
