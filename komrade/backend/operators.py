@@ -84,16 +84,16 @@ class Operator(Keymaker):
 
 
     def encrypt_outgoing(self,
-                        json_phone={},
-                        json_caller={},
-                        from_phone_privkey=None,
-                        from_caller_privkey=None,
+                        data_from_sender1={},
+                        data_from_sender2={},
+                        privkey_from_sender1=None,
+                        privkey_from_sender2=None,
                         to_pubkey=None,
                         unencr_header=b''):
         
         
         # 2) encrypt to phone
-        json_phone_encr = self.encrypt_to_send(json_phone,from_phone_privkey,to_pubkey)
+        json_phone_encr = self.encrypt_to_send(data_from_sender1,from_phone_privkey,to_pubkey)
         self.log('json_phone_encr',json_phone_encr)
 
         # 3) to caller

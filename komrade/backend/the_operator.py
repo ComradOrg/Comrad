@@ -46,23 +46,30 @@ class TheOperator(Operator):
         # decrypt
         self.log('recv 1: got',data)
 
+        # decrypt from phone
         data_in = self.decrypt_incoming(data)
         self.log('recv 2: decrypt gave me',data_in)
 
         # route
-        result = self.route(data_in)
+        encr_result = self.route(data_in)
         self.log('recv 3: route gave me',result)
-        
-        # encrypt
-        data_out = self.encrypt_outgoing(result)
-        self.log('recv 4: encrypt gave me',data_out)
 
         # send
-        return self.send(data_out)
+        return self.send(encr_result)
 
 
-    def send(self,res):
-        return res
+    def send(self,encr_data_b):
+        # telephone v:
+        # unencr_header = self.pubkey_encr_ + BSEP2 + self.op.pubkey_decr_
+        unencr_header = self.phone.pubkey_decr_ + BSEP2 + self.op.pubkey_encr_
+        self.log('unencr_header',unencr_header)
+        
+        total_pkg = unencr_header + BSEP + encr_data_b
+        self.log('total_pkg',total_pkg)
+        total_pkg_b64 = b64encode(total_pkg)
+        self.log('total_pkg_b64',total_pkg_b64)
+
+        return total_pkg_b64
 
 
     def route(self, data):
@@ -83,10 +90,10 @@ class TheOperator(Operator):
         pkg={}
         pkg['name']=data.get('name')
         pkg['_keychain']=res
+
         self.log('returned keys from keymaker.forge_new_keys:','\n'.join(res.keys()))
         
-        # return to_phone,to_caller
-        return (pkg,{})
+        
 
 
 
