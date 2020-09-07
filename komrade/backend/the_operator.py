@@ -82,7 +82,7 @@ class TheOperator(Operator):
         self.log('unencr_header',unencr_header)
         self.log('encr_data_b',encr_data_b)
         
-        total_pkg = unencr_header + BSEP + encr_data_b
+        total_pkg = unencr_header + BSEP + encr_data_b.encode()
         self.log('total_pkg',total_pkg)
         total_pkg_b64 = b64encode(total_pkg)
         self.log('total_pkg_b64',total_pkg_b64)
