@@ -176,12 +176,12 @@ class Keymaker(Logger):
 
         # decrypt!
         try:
-            self.log(f'>> decrypting {key_encr_name} with {key_decr_name}\n({key_encr} with cell {decr_cell}')
+            # self.log(f'>> decrypting {key_encr_name} with {key_decr_name}\n({key_encr} with cell {decr_cell}')
             key = decr_cell.decrypt(key_encr)
             # self.log('assembled_key built:',key)
             return key
         except ThemisError as e:
-            self.log('!! decryption failed:',e)
+            # self.log('!! decryption failed:',e)
             return
 
     # Concrete keys
