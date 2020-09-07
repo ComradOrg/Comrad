@@ -249,17 +249,27 @@ def init_operators():
         if key in phone_decr_keys:
             STORE_IN_APP[TELEPHONE_NAME][key]=phone_decr_keys[key]
 
+
+    print('store in app =',STORE_IN_APP)
+    print('store in web =',THIRD_PARTY_DICT)
+    exit()
+
+
+
+
     for name in THIRD_PARTY_DICT:
         THIRD_PARTY_DICT[name] = package_for_transmission(THIRD_PARTY_DICT[name])
-        print('THIRD_PARTY_DICT',THIRD_PARTY_DICT)
+        print('THIRD_PARTY_DICT',name,THIRD_PARTY_DICT[name])
     THIRD_PARTY_DICT=package_for_transmission(THIRD_PARTY_DICT)
+
+
     # THIRD_PARTY_DICT[OPERATOR_NAME] = packa(THIRD_PARTY_DICT)
     # STORE_IN_APP = package_for_transmission(STORE_IN_APP)
     print('THIRD_PARTY_DICT',THIRD_PARTY_DICT)
 
     with open(PATH_BUILTIN_KEYCHAIN,'wb') as of:
         of.write(THIRD_PARTY_DICT)
-    with open(PATH_BUILTIN_KEYCHAIN,'wb') as of:
+    with open(PATH_OPERATOR_WEB_KEYS_FILE,'wb') as of:
         of.write(THIRD_PARTY_DICT)
     
 
