@@ -189,8 +189,8 @@ class TheOperator(Operator):
 
 
 def init_operators():
-    op = TheOperator()
-    phone = TheTelephone()
+    op = Operator(name=OPERATOR_NAME)
+    phone = Operator(name=OPERATOR_NAME)
 
     # save what we normally save for a client on the server -- The Op is a client from our pov
 
