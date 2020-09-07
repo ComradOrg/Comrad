@@ -372,7 +372,7 @@ class Keymaker(Logger):
         keys_to_gen = sorted(list(keys_to_gen),key=lambda x: x.count('_'))
         self.log('keys_to_gen =',keys_to_gen)
         key_types = dict([(k,key_types[k]) for k in keys_to_gen])
-        # self.log('key_types =',key_types)
+        self.log('key_types =',key_types)
 
         keychain = self.gen_keys_from_types(key_types)
         self.log('keychain =',keychain)
