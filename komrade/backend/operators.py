@@ -149,7 +149,10 @@ class Operator(Keymaker):
         DATA = {}
 
         # assuming the entire message is to me, whoever I am
-        to_privkey = self.privkey_
+        to_privkey = self.privkey()
+        self.log('keychain',self.keychain())
+        self.log('to_privkey',to_privkey)
+        exit()
 
         # get other keys from halfkeys
         phone_pubkey,op_pubkey = self.reassemble_nec_keys_using_header(unencr_header)
