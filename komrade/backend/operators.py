@@ -125,11 +125,10 @@ class Operator(Keymaker):
             return
 
         
-    def decrypt_incoming(self,
-                          json_phone={},
-                          json_caller={}):
+    def decrypt_incoming(self,data):
         # step 1 split:
-        data_unencr,data_encr_by_phone,data_encr_by_caller = data.split(BSEP)
+        print('!?!?!?',type(data),data)
+        unencr_header,data_encr_by_phone,data_encr_by_caller = data.split(BSEP)
         data_unencr_by_phone,data_unencr_by_caller = None,None
 
         # set up
