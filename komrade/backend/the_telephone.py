@@ -65,7 +65,7 @@ class TheTelephone(Operator):
             to_phone=self.op,
             from_caller=from_caller,
             to_caller=to_caller,
-            json_phone2phone=json_caller2phone, 
+            json_phone2phone=json_phone2phone, 
             json_caller2phone=json_caller2phone,   # (person) -> operator
             json_caller2caller=json_caller2caller)
 
