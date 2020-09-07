@@ -225,6 +225,7 @@ class Operator(Keymaker):
         to_phone_keychain = to_phone.keychain()
         to_phone_privkey=to_phone_keychain.get('privkey')
 
+        self.log('data_encr_phone2phone',from_phone_pubkey,from_phone)
         self.log('from_phone_pubkey',from_phone_pubkey,from_phone)
         self.log('to_phone_privkey',to_phone_privkey,to_phone)
 
