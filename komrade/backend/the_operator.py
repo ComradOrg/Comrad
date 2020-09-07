@@ -124,7 +124,7 @@ class TheOperator(Operator):
             json_going_to_phone_s = json.dumps(json_going_to_phone)
             json_going_to_phone_b = json_going_to_phone_s.encode()
             json_going_to_phone_b_encr = SMessage(
-                self.privkey_
+                self.privkey_,
                 self.phone.pubkey_
             ).wrap(json_going_to_phone_b)
         else:
