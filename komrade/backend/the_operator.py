@@ -182,31 +182,32 @@ def init_operators():
     print('OPERATOR_KEYCHAIN =',op_decr_keys)
     print()
     print('TELEPHONE_KEYCHAIN =',phone_decr_keys)
-    stoppwppepe
+    print('\n'*5)
+    # stoppwppepe
 
-    # print('total_d',total_d)
-    builtin_keychains = {OPERATOR_NAME:op_decr_keys, TELEPHONE_NAME:phone_decr_keys}
-    builtin_keychains_s = json.dumps(builtin_keychains)
+    # # print('total_d',total_d)
+    # builtin_keychains = {OPERATOR_NAME:op_decr_keys, TELEPHONE_NAME:phone_decr_keys}
+    # builtin_keychains_s = json.dumps(builtin_keychains)
 
-    print('builtin_keychains =',builtin_keychains)
+    # print('builtin_keychains =',builtin_keychains)
 
-    print('builtin_keychains_s =',builtin_keychains_s)
-    builtin_keychains_b = builtin_keychains_s.encode('utf-8')
+    # print('builtin_keychains_s =',builtin_keychains_s)
+    # builtin_keychains_b = builtin_keychains_s.encode('utf-8')
     
-    builtin_keychains_b_decr = KomradeSymmetricKeyWithoutPassphrase()
-    builtin_keychains_b_encr = builtin_keychains_b_decr.encrypt(builtin_keychains_b)
+    # builtin_keychains_b_decr = KomradeSymmetricKeyWithoutPassphrase()
+    # builtin_keychains_b_encr = builtin_keychains_b_decr.encrypt(builtin_keychains_b)
 
-    builtin_keychains_b_decr_b64 = b64encode(builtin_keychains_b_decr.key)
-    builtin_keychains_b_encr_b64 = b64encode(builtin_keychains_b_encr) 
+    # builtin_keychains_b_decr_b64 = b64encode(builtin_keychains_b_decr.key)
+    # builtin_keychains_b_encr_b64 = b64encode(builtin_keychains_b_encr) 
 
-    with open(PATH_BUILTIN_KEYCHAINS_ENCR,'wb') as of:
-        of.write(builtin_keychains_b_encr_b64)
-        print('>> saved:',PATH_BUILTIN_KEYCHAINS_ENCR)
-        print(builtin_keychains_b_encr_b64,'\n\n')
-    with open(PATH_BUILTIN_KEYCHAINS_DECR,'wb') as of:
-        of.write(builtin_keychains_b_decr_b64)
-        print('>> saved:',PATH_BUILTIN_KEYCHAINS_DECR)
-        print(builtin_keychains_b_decr_b64,'\n')
+    # with open(PATH_BUILTIN_KEYCHAINS_ENCR,'wb') as of:
+    #     of.write(builtin_keychains_b_encr_b64)
+    #     print('>> saved:',PATH_BUILTIN_KEYCHAINS_ENCR)
+    #     print(builtin_keychains_b_encr_b64,'\n\n')
+    # with open(PATH_BUILTIN_KEYCHAINS_DECR,'wb') as of:
+    #     of.write(builtin_keychains_b_decr_b64)
+    #     print('>> saved:',PATH_BUILTIN_KEYCHAINS_DECR)
+    #     print(builtin_keychains_b_decr_b64,'\n')
         
 
 
