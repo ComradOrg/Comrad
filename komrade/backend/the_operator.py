@@ -139,7 +139,7 @@ class TheOperator(Operator):
             for k,v in res.items():
                 if type(v)==bytes:
                     res[k]=b64encode(res[k]).decode()
-            sef.log('res2',res)
+            self.log('res2',res)
         else:
             res = OPERATOR_INTERCEPT_MESSAGE
         return res# 'success!'
