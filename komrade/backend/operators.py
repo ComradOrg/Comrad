@@ -125,7 +125,16 @@ class Operator(Keymaker):
             return
 
         
-    def decrypt_incoming(self,data):
+    def decrypt_incoming(self,data_b64_s):
+        assert type(data_b64_s) == s
+
+        if not isBase64(data_b64_s):
+            self.log('incoming data not b64')
+            return OPERATOR_INTERCEPT_MESSAGE
+
+        data_b64_b = data_b64_s.encode()
+        data = b64decode(data_b64_b)
+
         # step 1 split:
         print('!?!?!?',type(data),data)
         unencr_header,data_encr_by_phone,data_encr_by_caller = data.split(BSEP)
