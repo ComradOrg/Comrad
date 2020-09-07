@@ -7,7 +7,7 @@ from komrade.backend import *
 from flask import Flask, request, jsonify
 from flask_classful import FlaskView
 
-
+from komrade.the_operator import *
 
 
 OPERATOR = None
