@@ -391,7 +391,7 @@ class Keymaker(Logger):
 
         keychain = self.gen_keys_from_types(key_types)
         self.log('keychain 1 =',keychain)
-        keychain = self.gen_encr_keys(key_types,keys_to_gen)
+        keychain = self.gen_encr_keys(keychain,keys_to_gen)
         self.log('keychain 2 =',keychain)
         keychain222
         
