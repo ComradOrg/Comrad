@@ -68,9 +68,7 @@ class Operator(Keymaker):
                         to_pubkey=None,
                         unencr_header=b''):
         
-        # 1) unencrypted header:
         
-
         # 2) encrypt to phone
         json_phone_encr = self.encrypt_to_send(json_phone,from_phone_privkey,to_pubkey)
 
@@ -115,8 +113,8 @@ class Operator(Keymaker):
         # set up
         DATA = {}
 
-        # assuming the entire message is to me
-        to_pubkey = self.pubkey_
+        # assuming the entire message is to me, whoever I am
+        to_privkey = self.privkey_
 
         # get other keys from halfkeys
         phone_pubkey,op_pubkey = self.reassemble_nec_keys_using_header(data_unencr)

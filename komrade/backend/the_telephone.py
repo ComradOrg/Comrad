@@ -56,8 +56,7 @@ class TheTelephone(Operator):
 
         # 1) unencr header
         # telephone_pubkey_decr | op_pubkey_decr | op_privkey_decr
-        unencr_header = phone_keychain['pubkey_decr']
-        unencr_header += BSEP2 + op_keychain['pubkey_encr']
+        unencr_header = phone_keychain['pubkey_decr'] + BSEP2 + op_keychain['pubkey_encr']
 
         # 2) caller privkey?
         from_caller_privkey=caller.privkey_ if caller and json_caller else None
@@ -66,7 +65,10 @@ class TheTelephone(Operator):
         encrypted_message_to_operator = self.encrypt_outgoing(
             json_phone=json_phone,
             json_caller=json_caller,
-            from_caller_privkey=from_caller_privkey
+            from_phone_privkey=phone_keychain['privkey'],
+            from_caller_privkey=from_caller_privkey,
+            to_pubkey=op_keychain['pubkey'],
+            unencr_header=unencr_header
         )
 
         # send

@@ -194,11 +194,18 @@ def init_operators():
     op = Operator(name=OPERATOR_NAME)
     
     # save what we normally save for a client on the server -- The Op is a client from our pov
-    op_keys_to_keep_on_client = ['pubkey_decr']  # we only store one half of one key about Op on clients
+    op_keys_to_keep_on_client = ['pubkey_decr']
+    op_keys_to_keep_on_3rdparty = ['pubkey_encr','privkey_encr']
+    op_keys_to_keep_on_server = ['privkey_encr',
+                                'adminkey_encr',
+                                'privkey_decr_encr',
+                                'privkey_decr_decr',
+                                'adminkey_decr_encr',
+                                'adminkey_decr_decr']
 
-    # rest we keep on server, except for one we kept on client
-    op_keys_to_keep_on_server = [x for x in KEYMAKER_DEFAULT_KEYS_TO_RETURN if x not in op_keys_to_keep_on_client]
-    op_keys_to_keep_on_server.append('pubkey_encr')
+    phone_keys_to_keep_on_client = ['privkey_decr']
+    phone_keys_to_keep_on_3rdparty = ['privkey_encr','pubkey_encr']
+    phone_keys_to_keep_on_server = ['pubkey_decr']
 
     op_decr_keys = op.forge_new_keys(
         keys_to_save=op_keys_to_keep_on_server,  # on server only; flipped around
@@ -209,8 +216,7 @@ def init_operators():
     ## CREATE TELEPHONE
     phone = Operator(name=TELEPHONE_NAME)
 
-    phone_keys_to_keep_on_server = KEYMAKER_DEFAULT_KEYS_TO_SAVE
-    phone_keys_to_keep_on_client = ['privkey','adminkey','pubkey_decr']
+    
 
     phone_decr_keys = phone.forge_new_keys(
         name=TELEPHONE_NAME,
