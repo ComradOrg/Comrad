@@ -126,7 +126,7 @@ class Operator(Keymaker):
 
         
     def decrypt_incoming(self,data_b64_s):
-        assert type(data_b64_s) == s
+        assert type(data_b64_s) == str
 
         if not isBase64(data_b64_s):
             self.log('incoming data not b64')
