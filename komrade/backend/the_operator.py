@@ -170,13 +170,13 @@ def init_operators():
     print('TELEPHONE_KEYCHAIN =',phone_decr_keys)
     # stop
 
-    # stringify
-    for k,v in phone_decr_keys.items():
-        v_s = b64encode(v) #.decode('utf-8')
-        phone_decr_keys[k]=v_s
-    for k,v in op_decr_keys.items():
-        v_s = b64encode(v) #.decode('utf-8')
-        op_decr_keys[k]=v_s
+    # # stringify
+    # for k,v in phone_decr_keys.items():
+    #     v_s = b64encode(v) #.decode('utf-8')
+    #     phone_decr_keys[k]=v_s
+    # for k,v in op_decr_keys.items():
+    #     v_s = b64encode(v) #.decode('utf-8')
+    #     op_decr_keys[k]=v_s
 
     print('\n'*5)
     print('OPERATOR_KEYCHAIN =',op_decr_keys)

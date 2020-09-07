@@ -54,9 +54,10 @@ class TheTelephone(Operator):
 
         # 0) Unencrypted. do not use except for very specific minimal reasons!
         # exchange half-complete pieces of info, both of which necessary for other
+        
 
         unencr_header = OPERATOR_KEYCHAIN['privkey_decr'] + BSEP2 + TELEPHONE_NAME['pubkey_decr']
-        # self.log('unencr_header',unencr_header)
+        self.log('unencr_header',unencr_header)
 
         # ewrwerewrwerw
         # 1) only overall encryption layer E2EE Telephone -> Operator:
