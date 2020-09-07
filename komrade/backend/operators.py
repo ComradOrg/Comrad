@@ -291,7 +291,7 @@ class Operator(Keymaker):
         from_phone_pubkey_encr,to_phone_pubkey_decr = unencr_header.split(BSEP2)
         
         phone_keychain = self.phone.keychain()
-        op_keychain = self.phone.keychain()
+        op_keychain = self.op.keychain()
         op_pubkey_encr = op_keychain.get('pubkey_encr')
         op_pubkey_decr = op_keychain.get('pubkey_decr')
         phone_pubkey_encr = phone_keychain.get('pubkey_encr')
@@ -315,27 +315,32 @@ class Operator(Keymaker):
 
         if op_pubkey_encr:
             op_fits_as_to_phone = self.assemble_key(op_pubkey_encr,to_phone_pubkey_decr)
+            self.log('op_fits_as_to_phone',op_fits_as_to_phone)
+            # return (self.phone,self.op)
         if phone_pubkey_encr:
             tele_fits_as_to_phone = self.assemble_key(phone_pubkey_encr,to_phone_pubkey_decr)
+            self.log('tele_fits_as_to_phone',tele_fits_as_to_phone)
+            # self()
         if op_pubkey_decr:
             op_fits_as_from_phone = self.assemble_key(from_phone_pubkey_encr, op_pubkey_decr)
+            self.log('op_fits_as_from_phone',op_fits_as_from_phone)
         if phone_pubkey_decr:
             tele_fits_as_from_phone = self.assemble_key(from_phone_pubkey_encr,phone_pubkey_decr)
+            self.log('tele_fits_as_from_phone',tele_fits_as_from_phone)
         
-        self.log('op_fits_as_to_phone',op_fits_as_to_phone)
-        self.log('tele_fits_as_to_phone',tele_fits_as_to_phone)
-        self.log('op_fits_as_from_phone',op_fits_as_from_phone)
-        self.log('tele_fits_as_from_phone',tele_fits_as_from_phone)
+        stop
 
-        # get phone pubkey
-        new_phone_keychain = self.phone.keychain(extra_keys={'pubkey_encr':phone_pubkey_encr},force=True)
-        new_op_keychain = self.keychain(extra_keys={'pubkey_decr':op_pubkey_decr},force=True)
 
-        phone_pubkey = new_phone_keychain.get('pubkey')
-        op_pubkey = new_op_keychain.get('pubkey')
 
-        self.log('reassembled phone/op pubkeys:',phone_pubkey,op_pubkey)
-        return (phone_pubkey,op_pubkey)
+        # # get phone pubkey
+        # new_phone_keychain = self.phone.keychain(extra_keys={'pubkey_encr':phone_pubkey_encr},force=True)
+        # new_op_keychain = self.keychain(extra_keys={'pubkey_decr':op_pubkey_decr},force=True)
+
+        # phone_pubkey = new_phone_keychain.get('pubkey')
+        # op_pubkey = new_op_keychain.get('pubkey')
+
+        # self.log('reassembled phone/op pubkeys:',phone_pubkey,op_pubkey)
+        # return (phone_pubkey,op_pubkey)
 
 
     def reassemble_necessary_keys_using_decr_phone_data(self,decr_phone_data):
