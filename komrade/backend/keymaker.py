@@ -493,7 +493,7 @@ class Keymaker(Logger):
             self.crypt_keys.set(keychain['pubkey_decr'],keychain['privkey_decr_encr'],prefix='/privkey_decr_encr/')
         
         if 'adminkey_decr_encr' in keys_to_save and 'adminkey_decr_encr' in keychain:
-            keys_saved+=['adminkey_decr_encr']v
+            keys_saved+=['adminkey_decr_encr']
             self.crypt_keys.set(keychain['privkey_decr'],keychain['adminkey_decr_encr'],prefix='/adminkey_decr_encr/')
         
         if 'pubkey_decr_decr' in keys_to_save and 'pubkey_decr_decr' in keychain:
