@@ -218,35 +218,32 @@ class Operator(Keymaker):
         
         # layer 2: I know I (either Telephone or Operator) am the recipient of this msg
         from_phone_keychain = from_phone.keychain()
+        from_phone_pubkey=from_phone_keychain.get('pubkey')
         to_phone_keychain = to_phone.keychain()
+        to_phone_privkey=to_phone_keychain.get('privkey')
 
         # 2) decrypt from phone
-        self.log('data_encr_by_phone',data_encr_phone2phone)
-        self.log('phone_pubkey',phone_pubkey)
-
         data_phone2phone = self.decrypt_from_send(
             msg_encr=data_encr_phone2op,
-            from_pubkey=from_phone_keychain.get('pubkey'),
-            to_privkey=to_phone_keychain.get('pubkey')
+            from_pubkey=from_phone_pubkey,
+            to_privkey=to_phone_privkey
         )
-        self.log('data_by_phone',data_by_phone)
+        self.log('data_phone2phone',data_phone2phone)
 
         # 3) decrypt from caller
         from_caller_pubkey = self.reassemble_necessary_keys_using_decr_phone_data(data_phone2phone)
         data_caller2phone = self.decrypt_from_send(
-            data_encr_caller2caller,
-            from_caller_pubkey,
-            to_privkey
+            msg_encr=data_encr_caller2caller,
+            from_pubkey=from_caller_pubkey,
+            to_privkey=to_phone_privkey
         )
+        self.log('data_caller2phone',data_caller2phone)
 
+
+        # @TODO: 4) Caller 2 Caller
         #to_caller_pubkey = self.reassemble_necessary_keys_using_decr_caller_data(data_caller2phone)
         # send this to caller...
 
-
-
-        # decrypt caller 2 caller
-        self.log('data_by_phone',data_by_phone)
-        self.log('data_by_caller',data_by_caller)
 
         DATA = {}
         dict_merge(DATA,data_phone2phone)
