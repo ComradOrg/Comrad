@@ -51,7 +51,9 @@ def isBase64(sb):
 
 
 
-
+def hashish(binary_data):
+    import hashlib
+    return hashlib.sha256(binary_data).hexdigest()
 
 
 
