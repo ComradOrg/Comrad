@@ -45,6 +45,19 @@ class Caller(Operator):
                                     'privkey_decr_encr', 'privkey_decr_decr',
                                     'adminkey_decr_encr', 'adminkey_decr_decr']
 
-        return self.phone.req(json_coming_from_phone = req_json, caller=self)
-        # return await self.phone.req(json_coming_from_phone = req_json, caller=self)
-        
+        returned_keys = self.phone.req(json_coming_from_phone = req_json, caller=self)
+        self.log('got returnd keys from Op:',returned_keys)
+
+        # better have the right keys
+        assert set(req_json['keys_to_return']) == set(returned_keys.keys())
+
+        # now save these keys!
+        saved_keys = self.save_keychain(returned_keys)
+        self.log('saved keys!',saved_keys)
+
+        # better have the right keys
+        assert set(req_json['keys_to_return']) == set(saved_keys.keys())
+
+        # success!
+        self.log('yay!!!!')
+        return saved_keys
