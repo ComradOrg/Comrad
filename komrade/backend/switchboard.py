@@ -66,8 +66,9 @@ class TheSwitchboard(FlaskView, Logger):
 
         # # step 3: give to The Operator
         try:
-            # return 'Success! your message was: '+str(data)
+            self.log('Success! your message was: '+str(data))
             res = self.op.receive(data)
+            self.log('Your return result should be:',res)
             return res
         except AssertionError as e:
             self.log('got exception!!',e)

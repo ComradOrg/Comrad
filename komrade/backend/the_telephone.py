@@ -32,10 +32,7 @@ class TheTelephone(Operator):
         # self.log(cmd)
         # os.system(cmd)
         # exit()
-        try:
-            r=await tor_request_async(URL)
-        except TypeError:
-            return r
+        r=await tor_request_async(URL)
         return r
 
 
@@ -99,10 +96,10 @@ class TheTelephone(Operator):
         # send!
         req_data_encr_b64_str = req_data_encr_b64.decode('utf-8')
 
-        try:
-            res = await self.dial_operator(req_data_encr_b64_str)
-        except TypeError:
-            res = None
+        #try:
+        res = await self.dial_operator(req_data_encr_b64_str)
+        #except TypeError:
+        #    res = None
         self.log('result from operator?',res)
         return res
 
