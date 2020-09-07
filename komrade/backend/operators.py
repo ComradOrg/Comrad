@@ -155,6 +155,9 @@ class Operator(Keymaker):
         phone_pubkey,op_pubkey = self.reassemble_nec_keys_using_header(unencr_header)
 
         # 2) decrypt from phone
+        self.log('data_encr_by_phone',data_encr_by_phone)
+        self.log('phone_pubkey',phone_pubkey)
+        self.log('to_privkey',to_privkey)
         data_by_phone = self.decrypt_from_send(data_encr_by_phone,phone_pubkey,to_privkey)
         self.log('data_by_phone',data_by_phone)
 
