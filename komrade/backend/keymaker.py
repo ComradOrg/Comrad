@@ -358,6 +358,7 @@ class Keymaker(Logger):
         for key_name in keys_to_gen:
             if key_name.endswith('_encr') and key_name not in keychain:
                 # encrypt it with the associated decr
+                self.log(f'let\'s encrypt {key_name}!')
                 name_of_what_to_encrypt = key_name[:-len('_encr')]
                 the_key_to_encrypt_it_with = name_of_what_to_encrypt + '_decr'
                 if the_key_to_encrypt_it_with in keychain and name_of_what_to_encrypt in keychain:
