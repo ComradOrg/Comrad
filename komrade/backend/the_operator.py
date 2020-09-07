@@ -98,40 +98,40 @@ class TheOperator(Operator):
         return DATA
 
 
-    def encrypt_outgoing(self,json_going_to_phone={},json_going_to_caller={},caller=None):
+    def encrypt_outgoing(self,json_phone={},json_caller={},caller=None):
         # 1)
         unencr_header = self.privkey_encr_ + BSEP2 + self.phone.pubkey_encr_
         self.log('unencr_header',unencr_header)
 
         # 2) encrypt to phone
-        if json_going_to_phone:
-            json_going_to_phone_b = package_for_transmission(json_going_to_phone)
+        if json_phone:
+            json_phone_b = package_for_transmission(json_phone)
             try:
-                json_going_to_phone_b_encr = SMessage(
+                json_phone_b_encr = SMessage(
                     self.privkey_,
                     self.phone.pubkey_
-                ).wrap(json_going_to_phone_b)
+                ).wrap(json_phone_b)
             except ThemisError as e:
                 self.log('unable to send to phone!',e)
                 return OPERATOR_INTERCEPT_MESSAGE
         else:
-            json_going_to_phone_b=b''
+            json_phone_b=b''
 
         # 3) to caller
-        if json_going_to_caller and caller:
-            json_going_to_caller_b = package_for_transmission(json_going_to_caller)
+        if json_caller and caller:
+            json_caller_b = package_for_transmission(json_caller)
             try:
-                json_going_to_caller_b_encr = SMessage(
+                json_caller_b_encr = SMessage(
                     caller.privkey_,
                     self.pubkey_
-                ).wrap(json_going_to_caller_b)
+                ).wrap(json_caller_b)
             except ThemisError as e:
                 self.log('unable to send to caller!',e)
                 return OPERATOR_INTERCEPT_MESSAGE
         else:
-            json_going_to_caller_b_encr = b''
+            json_caller_b_encr = b''
 
-        req_data_encr = unencr_header + BSEP + json_going_to_phone_b_encr + BSEP + json_going_to_caller_b_encr
+        req_data_encr = unencr_header + BSEP + json_phone_b_encr + BSEP + json_caller_b_encr
         return req_data_encr
 
 
@@ -159,7 +159,7 @@ class TheOperator(Operator):
         if msg_tocaller and 'name' in msg_tophone:
             caller = Operator(msg_tophone['name'])
         self.log('send!',msg_tophone,msg_tocaller,caller)
-        data = self.encrypt_information(json_going_to_phone=msg_tophone,json_going_to_caller=caller)
+        data = self.encrypt_information(json_phone=msg_tophone,json_caller=caller)
         self.log('got back encr:',data)
         return data
 
@@ -192,14 +192,16 @@ def init_operators():
     op = TheOperator()
     phone = TheTelephone()
 
+    # save what we normally save for a client on the server -- The Op is a client from our pov
+
     op_decr_keys = op.forge_new_keys(
-        keys_to_save=['pubkey','privkey_encr','adminkey_encr','adminkey_decr_encr','adminkey_decr_decr'],
-        keys_to_return=['pubkey','privkey_decr']
+        keys_to_save=KEYMAKER_DEFAULT_KEYS_TO_RETURN,  # on server only; flipped around
+        keys_to_return=KEYMAKER_DEFAULT_KEYS_TO_SAVE+['pubkey'] # on clients only
     )
 
     phone_decr_keys = phone.forge_new_keys(
-        keys_to_save=['pubkey_encr'],
-        keys_to_return=['pubkey_decr','privkey']
+        keys_to_save=KEYMAKER_DEFAULT_KEYS_TO_SAVE,  # on server only
+        keys_to_return=KEYMAKER_DEFAULT_KEYS_TO_RETURN+['privkey']   # on clients only
     )
 
     print('\n'*5)

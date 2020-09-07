@@ -35,50 +35,25 @@ class TheSwitchboard(FlaskView, Logger):
     def send(self,res):
         return res
 
-    def get(self,msg):
-        self.log('Incoming call!:',msg)
-
-        if not msg:
-            self.log('empty request!')
-            return OPERATOR_INTERCEPT_MESSAGE
-
-        # unenescape
-        msg = msg.replace('_','/')
-        if not isBase64(msg):
-            self.log('not valid input!')
-            return OPERATOR_INTERCEPT_MESSAGE
-        encr_b64_str = msg
-
-        # first try to get from string to bytes
-        self.log('incoming <--',encr_b64_str)
+    def route(self,msg):
+        # give to The Operator
         try:
-            encr_b64_b = encr_b64_str.encode('utf-8')
-            self.log('encr_b64_b',encr_b64_b)
-        except UnicodeEncodeError:
-            self.log('not valid unicode?')
-            return OPERATOR_INTERCEPT_MESSAGE
-
-        # then try to get from b64 bytes to raw bytes
-        try:
-            data = b64decode(encr_b64_b)
-            self.log('data',data)
-            self.log(f'successfully understood input')
-        except binascii.Error as e:
-            self.log('not valid b64?')
-            return OPERATOR_INTERCEPT_MESSAGE
-
-        # # step 3: give to The Operator
-        try:
-            self.log('Success! your message was: '+str(data))
-            res = self.op.recv(data)
+            self.log('Success! your message was: '+str(msg))
+            res = self.op.recv(msg)
             self.log('Your return result should be:',res)
             return self.send(res)
         except AssertionError as e:
             self.log('got exception!!',e)
-            return OPERATOR_INTERCEPT_MESSAGE
-
-        # return response to caller
         return OPERATOR_INTERCEPT_MESSAGE
+    
+    def get(self,msg):
+        self.log('Incoming call!:',msg)
+        if not msg:
+            self.log('empty request!')
+            return OPERATOR_INTERCEPT_MESSAGE
+        # unenescape
+        msg = msg.replace('_','/')
+        return self.route(msg)
 
 def run_forever(port='8080'):
     global OPERATOR,TELEPHONE

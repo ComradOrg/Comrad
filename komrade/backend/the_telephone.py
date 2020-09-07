@@ -17,107 +17,58 @@ class TheTelephone(Operator):
         self.caller=caller
         self.allow_builtin=allow_builtin
 
-    # @property
-    # def op(self):
-    #     global OPERATOR
-    #     from komrade.backend.the_operator import TheOperator
-    #     if not OPERATOR: OPERATOR=TheOperator()
-    #     return OPERATOR
-
-    # async def dial_operator(self,msg):
     def dial_operator(self,msg):
         msg=msg.replace('/','_')
         URL = OPERATOR_API_URL + msg + '/'
         self.log("DIALING THE OPERATOR:",URL)
-        # cmd='/home/ryan/etc/tor-browser_en-US/Browser/start-tor-browser --new-window "'+URL+'"'
-        # self.log(cmd)
-        # os.system(cmd)
-        # exit()
-        # r=await tor_request_async(URL)
         r=tor_request(URL)
-
-        self.log('result!?!?!',r)
-        
         if r.status_code==200:
             return r.text
         else:
             self.log('!! error in request',r.status_code,r.text)
             return None
         
+    def recv(self,data):
+        # decrypt
+        data_in = self.decrypt_incoming(data)
+        # route
+        result = self.route(data_json)
+        # encrypt
+        data_out = self.encrypt_outgoing(result)
+        # send
+        return self.send(res)
 
 
-
-
-    # async def req(self,json_coming_from_phone={},json_coming_from_caller={},caller=None):
-    def req(self,json_coming_from_phone={},json_coming_from_caller={},caller=None):
+    # async def req(self,json_phone={},json_caller={},caller=None):
+    def ask_operator(self,json_phone={},json_caller={},caller=None):
         if not caller: caller=self.caller
         self.log(f"""
         RING RING!
         caller = {caller}
-        json_coming_from_phone  = {json_coming_from_phone}
-        json_coming_from_caller = {json_coming_from_caller}""")
-        
+        json_phone  = {json_phone}
+        json_caller = {json_caller}""")
 
-        # keychain = self.keychain(allow_builtin=self.allow_builtin, force=True)
-        # self.log('about to make a call. my keychain?',keychain)
-        # stop
-        # stop
-        # Three parts of every request:
+        # 1) unencr header
+        # telephone_pubkey_decr | op_pubkey_decr | op_privkey_decr
+        unencr_header = TELEPHONE_KEYCHAIN['pubkey_decr']
+        unencr_header += BSEP2 + OPERATOR_KEYCHAIN['pubkey_decr']
+        unencr_header += BSEP2 + OPERATOR_KEYCHAIN['privkey_decr']
 
-        # 0) Unencrypted. do not use except for very specific minimal reasons!
-        # exchange half-complete pieces of info, both of which necessary for other
-        
+        # 2) caller privkey?
+        from_caller_privkey=caller.privkey_ if caller and json_caller else None
 
-        unencr_header = OPERATOR_KEYCHAIN['privkey_decr'] + BSEP2 + TELEPHONE_KEYCHAIN['pubkey_decr']
-        self.log('unencr_header',unencr_header)
+        # encrypt data
+        encrypted_message_to_operator = self.encrypt_outgoing(
+            json_phone=json_phone,
+            json_caller=json_caller,
+            from_caller_privkey=from_caller_privkey
+        )
 
-        # ewrwerewrwerw
-        # 1) only overall encryption layer E2EE Telephone -> Operator:
-        if json_coming_from_phone:
-            json_coming_from_phone_s = json.dumps(json_coming_from_phone)
-            json_coming_from_phone_b = json_coming_from_phone_s.encode()
-            json_coming_from_phone_b_encr = SMessage(
-                TELEPHONE_KEYCHAIN['privkey'],
-                OPERATOR_KEYCHAIN['pubkey']
-            ).wrap(json_coming_from_phone_b)
-        else:
-            json_coming_from_phone_b=b''
+        # send
+        answer = self.dial_operator(encrypted_message_to_operator)
 
-        # 2) (optional) extra E2EE encrypted layer Caller -> Operator
-        if json_coming_from_caller and caller:
-            json_coming_from_caller_s = json.dumps(json_coming_from_caller)
-            json_coming_from_caller_b = json_coming_from_caller_s.encode()
-            json_coming_from_caller_b_encr = SMessage(
-                caller.privkey_,
-                OPERATOR_KEYCHAIN['pubkey']
-            ).wrap(json_coming_from_caller_b)
-        else:
-            json_coming_from_caller_b_encr = b''
-
-        
-        
-
-        req_data_encr = unencr_header + BSEP + json_coming_from_phone_b_encr + BSEP + json_coming_from_caller_b_encr
-        self.log('req_data_encr',req_data_encr)
-        # sewerwe
-        # req_data_encr = SMessage(self.privkey_,self.op.pubkey_).wrap(req_data)
-        req_data_encr_b64 = b64encode(req_data_encr)
-        self.log('req_data_encr_b64 <--',req_data_encr_b64)
-
-        # send!
-        req_data_encr_b64_str = req_data_encr_b64.decode('utf-8')
-
-        #try:
-        res_s = self.dial_operator(req_data_encr_b64_str)
-        
-        
-        # try decoding
-        
-        # res = await self.dial_operator(req_data_encr_b64_str)
-        #except TypeError:
-        #    res = None
-        self.log('result from operator?',res)
-        return res
+        self.log('result from operator?',answer)
+        return answer
 
 
 

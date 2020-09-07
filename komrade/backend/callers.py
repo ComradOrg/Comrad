@@ -45,7 +45,7 @@ class Caller(Operator):
                                     'privkey_decr_encr', 'privkey_decr_decr',
                                     'adminkey_decr_encr', 'adminkey_decr_decr']
 
-        phone_res = self.phone.req(json_coming_from_phone = req_json, caller=self)
+        phone_res = self.phone.ask_operator(json_phone = req_json, caller=self)
         name = phone_res.get('name')
         returned_keys = phone_res.get('_keychain')
         self.log('got returnd keys from Op:',returned_keys)
