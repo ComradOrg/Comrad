@@ -10,7 +10,7 @@ from komrade.backend import *
 
 # PATH_OPERATOR_WEB_KEYS_URI = hashish(b'keys')
 PATH_OPERATOR_WEB_KEYS_FILE = f'/home/ryan/www/website-komrade/.builtin.keys'
-PATH_OPERATOR_WEB_KEYS_URL = f'http://{KOMRADE_ONION}/op/.builtin.keys/'
+PATH_OPERATOR_WEB_KEYS_URL = f'http://{KOMRADE_ONION}/.builtin.keys/'
 
 # print(PATH_OPERATOR_WEB_KEYS_URL)
 
