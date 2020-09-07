@@ -9,10 +9,8 @@ def tor_request(url):
     # return tor_request_in_proxy(url)
 
 async def tor_request_async(url):
-    try:
-        return await tor_request_in_python_async(url)
-    except TypeError:
-        return None
+    return await tor_request_in_python_async(url)
+    
 
 def tor_request_in_proxy(url):
     with get_tor_proxy_session() as s:
@@ -29,13 +27,8 @@ async def tor_request_in_python_async(url):
             s.headers.update({'User-Agent': 'Mozilla/5.0'})
             s.mount('http://', adapter)
             s.mount('https://', adapter)
-            try:
-                r = await s.get(url, timeout=60)
-            except TypeError:
-                r = None
-            # raise Exception(type(r))
-            # await r
-            return r
+            return await s.get(url, timeout=60)
+
 
 def tor_request_in_python(url):
     tor = TorClient()

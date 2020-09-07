@@ -24,7 +24,8 @@ class TheTelephone(Operator):
     #     if not OPERATOR: OPERATOR=TheOperator()
     #     return OPERATOR
 
-    async def dial_operator(self,msg):
+    # async def dial_operator(self,msg):
+    def dial_operator(self,msg):
         msg=msg.replace('/','_')
         URL = OPERATOR_API_URL + msg + '/'
         self.log("DIALING THE OPERATOR:",URL)
@@ -32,13 +33,17 @@ class TheTelephone(Operator):
         # self.log(cmd)
         # os.system(cmd)
         # exit()
-        r=await tor_request_async(URL)
+        # r=await tor_request_async(URL)
+        r=tor_request(URL)
+
+        self.log('result!?!?!',r)
         return r
 
 
 
 
-    async def req(self,json_coming_from_phone={},json_coming_from_caller={},caller=None):
+    # async def req(self,json_coming_from_phone={},json_coming_from_caller={},caller=None):
+    def req(self,json_coming_from_phone={},json_coming_from_caller={},caller=None):
         if not caller: caller=self.caller
         self.log(f"""
         RING RING!
@@ -97,7 +102,8 @@ class TheTelephone(Operator):
         req_data_encr_b64_str = req_data_encr_b64.decode('utf-8')
 
         #try:
-        res = await self.dial_operator(req_data_encr_b64_str)
+        res = self.dial_operator(req_data_encr_b64_str)
+        # res = await self.dial_operator(req_data_encr_b64_str)
         #except TypeError:
         #    res = None
         self.log('result from operator?',res)
@@ -117,7 +123,8 @@ def test_call():
     # req_json_s = jsonify(req_json)
     # res = phone.req({'forge_new_keys':{'name':'marx', 'pubkey_is_public':True}})
     # print(res)
-    asyncio.run(caller.get_new_keys())
+    # asyncio.run(caller.get_new_keys())
+    caller.get_new_keys()
 
     print('YEAH COOL')
 

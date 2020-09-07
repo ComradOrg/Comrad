@@ -51,7 +51,7 @@ class Crypt(Logger):
         if not k: return b''
         # self.log('prefix???',type(prefix),prefix)
         k_b = self.force_binary(k)
-        self.log(type(k_b),k_b)
+        # self.log(type(k_b),k_b)
         # k_s = k_b.decode()
         # self.log(type(k_s),k_s)
         # k_s2 = prefix + k_s
