@@ -152,8 +152,7 @@ class Operator(Keymaker):
         to_privkey = self.privkey()
         self.log('keychain',self.keychain())
         self.log('to_privkey',to_privkey)
-        exit()
-
+        
         # get other keys from halfkeys
         phone_pubkey,op_pubkey = self.reassemble_nec_keys_using_header(unencr_header)
 
@@ -173,7 +172,7 @@ class Operator(Keymaker):
         
         self.log('data_by_phone',data_by_phone)
         # self.log('data_by_caller',data_by_caller)
-        stop
+        # stop
         
         return req_data_encr
 
