@@ -292,7 +292,18 @@ class Operator(Keymaker):
         
         phone_keychain = self.phone.keychain()
         op_keychain = self.phone.keychain()
-        
+        op_pubkey_encr = op_keychain.get('pubkey_encr')
+        op_pubkey_decr = op_keychain.get('pubkey_decr')
+        phone_pubkey_encr = phone_keychain.get('pubkey_encr')
+        phone_pubkey_decr = phone_keychain.get('pubkey_encr')
+
+        self.log('phone_keychain',phone_keychain)
+        self.log('op_keychain',op_keychain)
+        self.log('op_pubkey_encr',op_pubkey_encr)
+        self.log('op_pubkey_decr',op_pubkey_decr)
+        self.log('phone_pubkey_encr',phone_pubkey_encr)
+        self.log('phone_pubkey_decr',phone_pubkey_decr)
+
         # was this sent from Phone -> Op?
         to_phone=None
         from_phone=None
@@ -316,7 +327,6 @@ class Operator(Keymaker):
         self.log('op_fits_as_from_phone',op_fits_as_from_phone)
         self.log('tele_fits_as_from_phone',tele_fits_as_from_phone)
 
-        stop
         # get phone pubkey
         new_phone_keychain = self.phone.keychain(extra_keys={'pubkey_encr':phone_pubkey_encr},force=True)
         new_op_keychain = self.keychain(extra_keys={'pubkey_decr':op_pubkey_decr},force=True)
