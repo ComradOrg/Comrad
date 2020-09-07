@@ -18,6 +18,14 @@ class TheSwitchboard(FlaskView, Logger):
     default_methods = ['GET']
     excluded_methods = ['phone','op','send']
 
+    @route(f'/{PATH_OPERATOR_WEB_KEYS_URI}/')
+    def keys(self):
+        if not os.path.exists(PATH_OPERATOR_WEB_KEYS_FILE):
+            self.log('no keys file exists!')
+            return OPERATOR_INTERCEPT_MESSAGE
+        with open(PATH_OPERATOR_WEB_KEYS_FILE,'rb') as  f:
+            return f.read()
+
     @property
     def phone(self):
         global TELEPHONE

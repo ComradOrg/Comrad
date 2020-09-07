@@ -8,6 +8,12 @@ from komrade import *
 from komrade.backend import *
 
 
+PATH_OPERATOR_WEB_KEYS_URI = hashish('keys')
+PATH_OPERATOR_WEB_KEYS_FILE = f'/home/ryan/www/website-komrade/.{PATH_OPERATOR_WEB_KEYS_URI}'
+PATH_OPERATOR_WEB_KEYS_URL = f'http://{KOMRADE_ONION}/op/{PATH_OPERATOR_WEB_KEYS_URI}/'
+
+print(PATH_OPERATOR_WEB_KEYS_URL)
+
 
 class TheOperator(Operator):
     """
@@ -209,9 +215,8 @@ def init_operators():
 
     op_decr_keys = op.forge_new_keys(
         keys_to_save=op_keys_to_keep_on_server,  # on server only; flipped around
-        keys_to_return=op_keys_to_keep_on_client # on clients only
+        keys_to_return=op_keys_to_keep_on_client + op_keys_to_keep_on_3rdparty # on clients only
     )
-
 
     ## CREATE TELEPHONE
     phone = Operator(name=TELEPHONE_NAME)
@@ -221,8 +226,37 @@ def init_operators():
     phone_decr_keys = phone.forge_new_keys(
         name=TELEPHONE_NAME,
         keys_to_save=phone_keys_to_keep_on_server,  # on server only
-        keys_to_return=phone_keys_to_keep_on_client   # on clients only
+        keys_to_return=phone_keys_to_keep_on_client + phone_keys_to_keep_on_client   # on clients only
     )
+
+
+
+    THIRD_PARTY_DICT = {OPERATOR_NAME:{}, TELEPHONE_NAME:{}}
+
+    for key in op_keys_to_keep_on_3rdparty:
+        if key in op_decr_keys:
+            THIRD_PARTY_DICT[OPERATOR_NAME][key]=op_decr_keys[key]
+    for key in phone_keys_to_keep_on_3rdparty:
+        if key in phone_decr_keys:
+            THIRD_PARTY_DICT[TELEPHONE_NAME][key]=phone_decr_keys[key]
+
+    STORE_IN_APP = {OPERATOR_NAME:{}, TELEPHONE_NAME:{}}
+
+    for key in op_keys_to_keep_on_client:
+        if key in op_decr_keys:
+            STORE_IN_APP[OPERATOR_NAME][key]=op_decr_keys[key]
+    for key in phone_keys_to_keep_on_client:
+        if key in phone_decr_keys:
+            STORE_IN_APP[TELEPHONE_NAME][key]=phone_decr_keys[key]
+
+    THIRD_PARTY_DICT = package_for_transmission(THIRD_PARTY_DICT)
+    STORE_IN_APP = package_for_transmission(STORE_IN_APP)
+
+    with open(PATH_BUILTIN_KEYCHAIN,'wb') as of:
+        of.write(THIRD_PARTY_DICT)
+    with open(PATH_BUILTIN_KEYCHAIN,'wb') as of:
+        of.write(THIRD_PARTY_DICT)
+    
 
     print('\n'*5)
     print('OPERATOR_KEYCHAIN =',package_for_transmission(op_decr_keys))

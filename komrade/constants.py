@@ -30,8 +30,9 @@ BSEP3=b'##########'
 OPERATOR_NAME = 'TheOperator'
 TELEPHONE_NAME = 'TheTelephone'
 PATH_APP = os.path.abspath(os.path.dirname(__file__))
-PATH_BUILTIN_KEYCHAINS_ENCR = os.path.join(PATH_APP,'.builtin.keychains.encr')
-PATH_BUILTIN_KEYCHAINS_DECR = os.path.join(PATH_APP,'.builtin.keychains.decr')
+# PATH_BUILTIN_KEYCHAINS_ENCR = os.path.join(PATH_APP,'.builtin.keychains.encr')
+PATH_BUILTIN_KEYCHAIN = os.path.join(PATH_APP,'.builtin.keys')
+# PATH_BUILTIN_KEYCHAINS_DECR = os.path.join(PATH_APP,'.builtin.keychains.decr')
 
 
 # key names
@@ -125,3 +126,4 @@ WHY_MSG = 'Forge the password of memory: '
 OPERATOR_KEYCHAIN = b'eyJwdWJrZXlfZGVjciI6IkhReUE2NEk0aGkxU05sQ1lDemdMSG9QMXVUbTh4QkFidHdnTnU4VXhuWG89In0='
 
 TELEPHONE_KEYCHAIN = b'eyJwcml2a2V5IjoiVWtWRE1nQUFBQzJsSWIxZkFLb1A2UnFicTExKzlGUGU2YlliQ1R4UnRha1ROY3V4dmRYbkJvQldJN1FFIiwiYWRtaW5rZXkiOiJ1Z3RZbndEdmJpdXRFeFBzME8wbmF0MjVKQTMxRHRxYUh3UTl6U29VVlRZPSIsInB1YmtleV9kZWNyIjoiTmRuNTZsQjViTjJMV25xSFNyTVdQeE1ISStFWGhtY2JcL2k3RjNlNkVDVUk9In0='
+
