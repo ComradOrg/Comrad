@@ -82,9 +82,9 @@ def package_for_transmission(data_json):
 def dejsonize(dict):
     for k,v in dict.items():
         if type(v)==str and isBase64(v):
-            dict[k]=b64decode(v.encode())
-        if type(v)==bytes and isBase64(v):
-            dict[k]=b64decode(v)
+            dict[k]=v.encode()
+        # if type(v)==bytes and isBase64(v):
+            # dict[k]=b64decode(v)
         elif type(v)==dict:
             dict[k]=dejsonize(v)
     return dict
