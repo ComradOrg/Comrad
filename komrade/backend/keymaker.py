@@ -408,7 +408,7 @@ class Keymaker(Logger):
         return keys_returned
         
                 
-    def return_keychain(self,keychain,keys_to_return)
+    def return_keychain(self,keychain,keys_to_return):
         keychain_toreturn = {}
         for key in keys_to_return:
             if key in keychain:
