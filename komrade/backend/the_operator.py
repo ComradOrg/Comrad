@@ -37,11 +37,11 @@ class TheOperator(Operator):
         data_unencr,data_encr_by_phone,data_encr_by_caller = data.split(BSEP)
         data_unencr_by_phone,data_unencr_by_caller = None,None
 
-        my_kc = self.keychain(allow_builtin=False,force=True)
-        ph_kc = self.phone.keychain(allow_builtin=False,force=True)
-        self.log('my keychain:',my_kc)
-        self.log('phone keychain:',ph_kc)
-        weeee
+        # my_kc = self.keychain(allow_builtin=False,force=True)
+        # ph_kc = self.phone.keychain(allow_builtin=False,force=True)
+        # self.log('my keychain:',my_kc)
+        # self.log('phone keychain:',ph_kc)
+        # weeee
 
         self.log('data_unencr =',data_unencr)
         self.log('data_encr_by_phone =',data_encr_by_phone)
