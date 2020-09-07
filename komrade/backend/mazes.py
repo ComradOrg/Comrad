@@ -137,9 +137,9 @@ from torpy.hiddenservice import HiddenService
 from torpy.http.requests import TorRequests, tor_requests_session, do_request as requests_request
 from torpy.http.urlopener import do_request as urllib_request
 
-logging.getLogger('requests').setLevel(logging.CRITICAL)
-logging.basicConfig(format='[%(asctime)s] [%(threadName)-16s] %(message)s', level=logging.DEBUG)
-logger = logging.getLogger(__name__)
+# logging.getLogger('requests').setLevel(logging.CRITICAL)
+# logging.basicConfig(format='[%(asctime)s] [%(threadName)-16s] %(message)s', level=logging.DEBUG)
+# logger = logging.getLogger(__name__)
 
 
 HS_BASIC_HOST = os.getenv('HS_BASIC_HOST')

@@ -106,39 +106,39 @@ class Keymaker(Logger):
     ### STARTING WITH MOST ABSTRACT
 
     def findkey(self, keyname, keychain={}, uri=None):
-        self.log(f'looking for key {keyname}, in keychain {keychain.keys()} or under crypt uri {uri}')
+        # self.log(f'looking for key {keyname}, in keychain {keychain.keys()} or under crypt uri {uri}')
         # look in keychain, then in crypt, for this key
         given_key = keychain.get(keyname)
         if given_key:
-            self.log(f'{keyname} found in keychain: {given_key}')
+            # self.log(f'{keyname} found in keychain: {given_key}')
             return given_key
 
         found_key = self.crypt_keys.get(uri,prefix=f'/{keyname}/')
         if found_key:
-            self.log(f'{keyname} found in crypt: {given_key}')
+            # self.log(f'{keyname} found in crypt: {given_key}')
             return found_key
 
-        self.log(f'{keyname} not found!!')
+        # self.log(f'{keyname} not found!!')
             
 
     def getkey(self, keyname, keychain={}, uri=None):
-        self.log(f'keyname={keyname}, keychain={keychain.keys()}, uri={uri}')
+        # self.log(f'keyname={keyname}, keychain={keychain.keys()}, uri={uri}')
 
         # 1) I already have this key stored in either the keychain or the crypt; return straight away
         key = self.findkey(keyname, keychain, uri)
         if key:
-            self.log(f'>> I have {key} already, returning')
+            # self.log(f'>> I have {key} already, returning')
             return key
 
         ## 2) I can assemble the key
-        self.log(f'assembling key: {keyname}_encr + {keyname}_decr')
+        # self.log(f'assembling key: {keyname}_encr + {keyname}_decr')
         key_encr = self.findkey(keyname+'_encr', keychain,uri)
         key_decr = self.findkey(keyname+'_decr', keychain, uri)
         key = self.assemble_key(key_encr, key_decr)
         return key
 
     def get_cell(self, str_or_key_or_cell):
-        self.log('getting decr cell for',str_or_key_or_cell)
+        # self.log('getting decr cell for',str_or_key_or_cell)
 
         if type(str_or_key_or_cell)==SCellSeal:
             return str_or_key_or_cell
@@ -148,17 +148,17 @@ class Keymaker(Logger):
             return SCellSeal(key=str_or_key_or_cell)
 
     def assemble_key(self, key_encr, key_decr):
-        self.log(f'assembling key: {key_decr} decrypting {key_encr}')
+        # self.log(f'assembling key: {key_decr} decrypting {key_encr}')
 
         # need the encrypted half
         if not key_encr:
-            self.log('!! encrypted half not given')
+            # self.log('!! encrypted half not given')
             return
         if not key_decr:
             if self.passphrase:
                 key_decr = self.passphrase
             else:
-                self.log('!! decryptor half not given')
+                # self.log('!! decryptor half not given')
                 return
 
         # need some way to regenerate the decryptor
@@ -166,17 +166,18 @@ class Keymaker(Logger):
 
         # need the decryptor half
         if not decr_cell:
-            self.log('!! decryptor cell not regenerable')
+            # self.log('!! decryptor cell not regenerable')
             return
 
         # decrypt!
         try:
             self.log(f'>> decrypting {key_encr} with cell {decr_cell}')
             key = decr_cell.decrypt(key_encr)
-            self.log('assembled_key built:',key)
+            # self.log('assembled_key built:',key)
             return key
         except ThemisError as e:
             self.log('!! decryption failed:',e)
+            return
 
     # Concrete keys
     ## (1) Final keys
@@ -589,7 +590,7 @@ class Keymaker(Logger):
         if passphrase: self.passphrase=passphrase
 
         self._keychain = _keychain = {**extra_keys}
-        self.log('_keychain at start of keychain() =',_keychain)
+        # self.log('_keychain at start of keychain() =',_keychain)
         
         # # am I a builtin one?
         # # self.log('hello///',self.name,self.name in BUILTIN_KEYCHAIN)
@@ -605,15 +606,15 @@ class Keymaker(Logger):
         #     self.log('??',_keychain)
         #     # stop
         
-        self.log('_keychain',_keychain)
+        # self.log('_keychain',_keychain)
         # stop
         
         for keyname in keys_to_gen:
-            self.log('??',keyname,'...')
+            # self.log('??',keyname,'...')
             if hasattr(self,keyname):
                 method=getattr(self,keyname)
                 res=method(keychain=_keychain, **kwargs)
-                self.log('res <--',res)
+                # self.log('res <--',res)
                 if res:
                     _keychain[keyname]=res
         return _keychain

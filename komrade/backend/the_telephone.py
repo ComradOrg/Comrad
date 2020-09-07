@@ -37,8 +37,13 @@ class TheTelephone(Operator):
 
 
 
-    async def req(self,json_coming_from_phone={},json_coming_from_caller={},caller=None,json_unencrypted={}):
+    async def req(self,json_coming_from_phone={},json_coming_from_caller={},caller=None):
         if not caller: caller=self.caller
+        self.log(f"""
+        RING RING!
+        caller = {caller}
+        json_coming_from_phone  = {json_coming_from_phone}
+        json_coming_from_caller = {json_coming_from_caller""")
         
 
         # keychain = self.keychain(allow_builtin=self.allow_builtin, force=True)
