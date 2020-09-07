@@ -522,7 +522,8 @@ class Keymaker(Logger):
         # return in dict form
         keys_saved_d = {}
         for key_saved in keys_saved:
-            keys_saved_d[key_saved] = keychain[key_saved]
+            if key_saved in keychain:
+                keys_saved_d[key_saved] = keychain[key_saved]
         return keys_saved_d
 
 
