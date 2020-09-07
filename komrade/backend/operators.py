@@ -65,7 +65,7 @@ class Operator(Keymaker):
     def decrypt_from_send(self,msg_encr,from_pubkey,to_privkey):
         if not msg_encr or not from_pubkey or not to_privkey:
             self.log('not enough info!')
-            return b''
+            return {}
         try:
             # decrypt
             msg_b = SMessage(
@@ -80,7 +80,7 @@ class Operator(Keymaker):
             return msg_json
         except ThemisError as e:
             self.log('unable to decrypt from send!',e)
-        return b''
+        return {}
 
 
     def encrypt_outgoing(self,
@@ -151,7 +151,7 @@ class Operator(Keymaker):
         # assuming the entire message is to me, whoever I am
         my_keychain = self.keychain()
         to_privkey = my_keychain.get('privkey')
-        
+
         self.log('keychain',self.keychain())
         self.log('to_privkey',to_privkey)
         
@@ -166,17 +166,20 @@ class Operator(Keymaker):
         self.log('data_by_phone',data_by_phone)
 
         # 3) decrypt from caller
-        # caller_pubkey = self.reassemble_necessary_keys_using_decr_phone_data(data_by_phone)
-        # data_by_caller = self.decrypt_from_send(data_encr_by_caller,caller_pubkey,to_privkey)
+        caller_pubkey = self.reassemble_necessary_keys_using_decr_phone_data(data_by_phone)
+        data_by_caller = self.decrypt_from_send(data_encr_by_caller,caller_pubkey,to_privkey)
 
         # return
         # req_data_encr = unencr_header + BSEP + data_by_phone + BSEP + data_by_caller
         
         self.log('data_by_phone',data_by_phone)
-        # self.log('data_by_caller',data_by_caller)
-        # stop
-        
-        return req_data_encr
+        self.log('data_by_caller',data_by_caller)
+
+        DATA = {}
+        dict_merge(DATA,data_by_phone)
+        dict_merge(DATA,data_by_caller)
+        self.log('DATA!!!!!',DATA)
+        return DATA
 
 
 
