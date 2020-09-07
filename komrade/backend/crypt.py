@@ -11,7 +11,7 @@ import zlib
 
 
 
-LOG_GET_SET = False
+LOG_GET_SET = True
 
 
 
@@ -79,13 +79,13 @@ class Crypt(Logger):
 
 
     def set(self,k,v,prefix=''):
-        self.log('set() k -->',prefix,k)
+        # self.log('set() k -->',prefix,k)
         k_b=self.package_key(k,prefix=prefix)
-        self.log('set() k_b -->',k_b)
+        # self.log('set() k_b -->',k_b)
         k_b_hash = self.hash(k_b)
-        self.log('k_b_hash',type(k_b_hash),k_b_hash)
+        # self.log('k_b_hash',type(k_b_hash),k_b_hash)
 
-        self.log('set() v -->',v)
+        # self.log('set() v -->',v)
         v_b=self.package_val(v)
         self.log(f'set(\n\t{prefix}{k},\n\t{k_b}\n\t{k_b_hash}\n\t\n\t{v_b}\n)\n')
         # stop
