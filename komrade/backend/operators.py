@@ -242,7 +242,7 @@ def connect_phonelines():
 
     # load remote keys
     print('??',PATH_OPERATOR_WEB_KEYS_URL)
-    r = tor_request(PATH_OPERATOR_WEB_KEYS_URL)
+    r = komrade_request(PATH_OPERATOR_WEB_KEYS_URL)
     if r.status_code!=200:
         print('cannot authenticate the keymakers')
         return

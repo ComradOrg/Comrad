@@ -21,7 +21,7 @@ class TheTelephone(Operator):
         msg=msg.replace('/','_')
         URL = OPERATOR_API_URL + msg + '/'
         self.log("DIALING THE OPERATOR:",URL)
-        r=tor_request(URL)
+        r=komrade_request(URL)
         if r.status_code==200:
             return r.text
         else:
