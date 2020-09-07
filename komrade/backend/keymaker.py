@@ -123,8 +123,8 @@ class Keymaker(Logger):
 
     def getkey(self, keyname, keychain={}, uri=None):
         # cached?
-        if hasattr(self,'_'+keyname) and getattr(self,'_'+keyname):
-            return getattr(self,'_'+keyname)
+        # if hasattr(self,'_'+keyname) and getattr(self,'_'+keyname):
+            # return getattr(self,'_'+keyname)
         if keyname in self._keychain: return self._keychain[keyname]
 
         # self.log(f'keyname={keyname}, keychain={keychain.keys()}, uri={uri}')
@@ -176,30 +176,36 @@ class Keymaker(Logger):
 
         # decrypt!
         try:
-            # self.log(f'>> decrypting {key_encr_name} with {key_decr_name}\n({key_encr} with cell {decr_cell}')
+            self.log(f'>> decrypting {key_encr_name} with {key_decr_name}\n({key_encr} with cell {decr_cell}')
             key = decr_cell.decrypt(key_encr)
             # self.log('assembled_key built:',key)
             return key
         except ThemisError as e:
-            # self.log('!! decryption failed:',e)
+            self.log('!! decryption failed:',e)
             return
 
     # Concrete keys
     ## (1) Final keys
     def pubkey(self, force=False, **kwargs):
-        if force or not hasattr(self,'_pubkey') or not self._pubkey:
-            self._pubkey = self.getkey(keyname='pubkey',uri=self.name,**kwargs)
-        return self._pubkey
+        # if force or not hasattr(self,'_pubkey') or not self._pubkey:
+        #     self._pubkey = self.getkey(keyname='pubkey',uri=self.name,**kwargs)
+        # return self._pubkey
+        
+        x=self.getkey(keyname='pubkey',uri=self.name,**kwargs)
+        print('weee',x)
+        return x
 
     def privkey(self, force=False, **kwargs):
-        if force or not hasattr(self,'_privkey') or not self._privkey:
-            self._privkey=self.getkey(keyname='privkey',uri=self.pubkey(**kwargs),**kwargs)
-        return self._privkey
+        # if force or not hasattr(self,'_privkey') or not self._privkey:
+            # self._privkey=self.getkey(keyname='privkey',uri=self.pubkey(**kwargs),**kwargs)
+        # return self._privkey
+        return self.getkey(keyname='privkey',uri=self.pubkey(**kwargs),**kwargs)
 
     def adminkey(self, force=False, **kwargs):
-        if force or not hasattr(self,'_adminkey') or not self._adminkey:
-            self._adminkey=self.getkey(keyname='adminkey',uri=self.privkey(**kwargs),**kwargs)
-        return self._adminkey
+        # if force or not hasattr(self,'_adminkey') or not self._adminkey:
+            # self._adminkey=self.getkey(keyname='adminkey',uri=self.privkey(**kwargs),**kwargs)
+        # return self._adminkey
+        return self.getkey(keyname='adminkey',uri=self.privkey(**kwargs),**kwargs)
 
     ## (1-X) Encrypted halves
     def pubkey_encr(self, **kwargs):
@@ -562,22 +568,58 @@ class Keymaker(Logger):
         
         return valid_kc
 
+    def assemble(self,_keychain):
+        # last minute assemblies?
+        encr_keys = [k for k in _keychain if k.endswith('_encr')]
+        for ekey in encr_keys:
+            eval=_keychain[ekey]
+            if not eval: continue
+
+            unencrkey = ekey[:-len('_encr')]
+            if unencrkey in _keychain: continue
+            
+            decrkey = unencrkey+'_decr'
+            if decrkey not in _keychain: continue
+            
+            dval=_keychain[decrkey]
+            if not dval: continue
+
+            self.log(ekey,decrkey,'??')
+            self.log(eval,dval,'????')
+            
+            new_val = self.assemble_key(eval,dval)
+            self.log('!!#!',new_val)
+            if new_val:
+                _keychain[unencrkey] = new_val
+        return _keychain
+
+
     def keychain(self,passphrase=None,force=False,allow_builtin=True,extra_keys={},keys_to_gen=KEYMAKER_DEFAULT_KEYS_TO_GEN,**kwargs):
         # assemble as many keys as we can!
         # if not force and hasattr(self,'_keychain') and self._keychain: return self._keychain
         if passphrase: self.passphrase=passphrase
         _keychain = {**extra_keys, **self._keychain}
         self.log('_keychain at start of keychain() =',_keychain)
-        for keyname in keys_to_gen:
-            if keyname in _keychain and _keychain[keyname]: continue
-            # self.log('??',keyname,'...')
+        for keyname in keys_to_gen+keys_to_gen:
+            # if keyname in _keychain and _keychain[keyname]: continue
+            # self.log('??',keyname,keyname in self._keychain,'...')
             if hasattr(self,keyname):
                 method=getattr(self,keyname)
                 res=method(keychain=_keychain, **kwargs)
                 # self.log('res <--',res)
                 if res:
                     _keychain[keyname]=res
+        
+        
+        _keychain = self.assemble(_keychain)
+        _keychain = self.assemble(_keychain)
         self._keychain = _keychain
+        return _keychain
+
+        
+
+
+
         return _keychain
         
 

@@ -131,10 +131,14 @@ class Operator(Keymaker):
         encrypted_message_from_telephone_to_op = b''
         encrypted_message_from_caller_to_op = b''
         encrypted_message_from_caller_to_caller = b''
-        if not from_phone: from_phone=self.phone
-        if not to_phone: to_phone=self.op
 
         from_phone_keychain = from_phone.keychain()
+        self.log('from_phone',type(from_phone),'to_phone',type(to_phone))
+        self.log('from_phone_keychain',from_phone_keychain)
+        # self.log('to_phone_keychain',to_phone_keychain)
+
+        eeeee
+
         from_phone_pubkey_encr=from_phone_keychain.get('pubkey_encr')
         from_phone_privkey=from_phone_keychain.get('privkey')
         
@@ -142,9 +146,6 @@ class Operator(Keymaker):
         to_phone_pubkey_decr=to_phone_keychain.get('pubkey_decr')
         to_phone_pubkey=to_phone_keychain.get('pubkey')
 
-        self.log('data_encr_phone2phone',data_encr_phone2phone)
-        self.log('from_phone_pubkey',from_phone_pubkey,from_phone)
-        self.log('to_phone_privkey',to_phone_privkey,to_phone)
 
         ### LAYERS OF ENCRYPTION:
         # 1) unencr header
