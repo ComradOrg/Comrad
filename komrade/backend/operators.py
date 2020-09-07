@@ -165,8 +165,11 @@ class Operator(Keymaker):
             encrypted_message_from_caller_to_op,
             encrypted_message_from_caller_to_caller
         ]
+
+        self.log('\n ~~~ \n'.join(MSG_PIECES))
         MSG = BSEP.join(MSG_PIECES)
         MSG_b64 = b64encode(MSG)
+        self.log(' ~~~ ring ring ~~~ rriing ~~~',MSG_b64)
 
         return MSG_b64
 
