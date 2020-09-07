@@ -204,8 +204,10 @@ class Operator(Keymaker):
         return msg_b64_str_esc
 
     
-    def answer_phone(self,data_b64_s, from_phone=None,to_phone=None):
-        assert type(data_b64_s) == str
+    def answer_phone(self,data_b64_str_esc, from_phone=None,to_phone=None):        
+        ## escape slashes
+        data_b64_s=data_b64_str_esc.replace('_','/')
+
         self.log('Pronto!\n ... '+data_b64_s+' ...?')
 
         # if not isBase64(data_b64_s):
@@ -219,9 +221,6 @@ class Operator(Keymaker):
         # b64 -> raw bytes
         data = b64decode(data_b64_b)
         self.log('data',data)
-
-        data = b64decode(data_b64_b)
-        self.log('data2',data)
 
         # split
         self.log('BSEP count',data.count(BSEP))

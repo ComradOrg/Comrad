@@ -33,14 +33,17 @@ class Caller(Operator):
         self.log('got returnd keys from Op:',returned_keys)
 
         # better have the right keys
-        assert set(req_json['keys_to_return']) == set(returned_keys.keys())
+        assert set(KEYMAKER_DEFAULT_KEYS_TO_RETURN) == set(returned_keys.keys())
 
         # now save these keys!
+        keychain = self.keychain(extra_keys=returned_keys)
+        self.log('extra keychain??',keychain.keys())
+
         saved_keys = self.save_keychain(name,returned_keys)
         self.log('saved keys!',saved_keys)
 
         # better have the right keys
-        assert set(req_json['keys_to_return']) == set(saved_keys.keys())
+        # assert set(KEYMAKER_DEFAULT_KEYS_TO_SAVE) == set(saved_keys.keys())
 
         # success!
         self.log('yay!!!!')
