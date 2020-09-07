@@ -10,7 +10,7 @@ from komrade.backend import *
 
 # PATH_OPERATOR_WEB_KEYS_URI = hashish(b'keys')
 PATH_OPERATOR_WEB_KEYS_FILE = f'/home/ryan/www/website-komrade/.builtin.keys'
-PATH_OPERATOR_WEB_KEYS_URL = f'http://{KOMRADE_ONION}/.builtin.keys/'
+PATH_OPERATOR_WEB_KEYS_URL = f'http://{KOMRADE_ONION}/.builtin.keys'
 
 # print(PATH_OPERATOR_WEB_KEYS_URL)
 
@@ -256,15 +256,9 @@ def init_operators():
         if key in phone_decr_keys:
             STORE_IN_APP[TELEPHONE_NAME][key]=phone_decr_keys[key]
 
-    STORE_IN_APP = package_for_transmission({
-        OPERATOR_NAME:package_for_transmission(STORE_IN_APP[OPERATOR_NAME]),
-        TELEPHONE_NAME:package_for_transmission(STORE_IN_APP[TELEPHONE_NAME])
-        })
+    STORE_IN_APP_pkg = package_for_transmission(STORE_IN_APP[TELEPHONE_NAME]) + BSEP + package_for_transmission(STORE_IN_APP[OPERATOR_NAME])
 
-    THIRD_PARTY_DICT = package_for_transmission({
-        OPERATOR_NAME:package_for_transmission(THIRD_PARTY_DICT[OPERATOR_NAME]),
-        TELEPHONE_NAME:package_for_transmission(THIRD_PARTY_DICT[TELEPHONE_NAME])
-        })
+    THIRD_PARTY_DICT_pkg = package_for_transmission(THIRD_PARTY_DICT[TELEPHONE_NAME]) + BSEP + package_for_transmission(THIRD_PARTY_DICT[OPERATOR_NAME])
 
     print('store in app =',STORE_IN_APP)
     print('store in web =',THIRD_PARTY_DICT)
@@ -274,8 +268,8 @@ def init_operators():
     print('new: make omega key')
     omega_key = KomradeSymmetricKeyWithoutPassphrase()
 
-    STORE_IN_APP_encr = b64encode(omega_key.encrypt(STORE_IN_APP))
-    THIRD_PARTY_DICT_encr = b64encode(omega_key.encrypt(THIRD_PARTY_DICT))
+    STORE_IN_APP_encr = b64encode(omega_key.encrypt(STORE_IN_APP_pkg))
+    THIRD_PARTY_DICT_encr = b64encode(omega_key.encrypt(THIRD_PARTY_DICT_pkg))
     
     with open(PATH_OMEGA_KEY,'wb') as of:
         of.write(b64encode(omega_key.data))

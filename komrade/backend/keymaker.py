@@ -373,6 +373,7 @@ class Keymaker(Logger):
     def check_builtin_keys(self):
         global OMEGA_KEY,BUILTIN_KEYCHAIN
         if OMEGA_KEY and BUILTIN_KEYCHAIN: return
+        self.log('getting built in keys!')
 
         if not os.path.exists(PATH_OMEGA_KEY) or not os.path.exists(PATH_BUILTIN_KEYCHAIN):
             self.log('builtin keys not present??')
@@ -390,11 +391,49 @@ class Keymaker(Logger):
 
         from komrade.backend.mazes import tor_request
         from komrade.backend import PATH_OPERATOR_WEB_KEYS_URL
-        remote_builtin_keychain_encr = tor_request(PATH_OPERATOR_WEB_KEYS_URL)
+
+        meta_keychain={}
+        local_builtin_keychain = OMEGA_KEY.decrypt(local_builtin_keychain_encr)
+        local_builtin_keychain_phone,local_builtin_keychain_op = local_builtin_keychain.split(BSEP)
+        local_builtin_keychain_phone_json = unpackage_from_transmission(local_builtin_keychain_phone)
+        local_builtin_keychain_op_json = unpackage_from_transmission(local_builtin_keychain_op)
+        
+        self.log('local_builtin_keychain_phone_json',local_builtin_keychain_phone_json)
+        self.log('local_builtin_keychain_op_json',local_builtin_keychain_op_json)
+        
+
+
+        print('??',PATH_OPERATOR_WEB_KEYS_URL)
+        r = tor_request(PATH_OPERATOR_WEB_KEYS_URL)
+        if r.status_code!=200:
+            self.log('cannot authenticate the keymakers')
+            return
+        remote_builtin_keychain_encr = b64decode(r.text)
+        print('remote',remote_builtin_keychain_encr)
+        # stop
+
+        remote_builtin_keychain = unpackage_from_transmission(
+            OMEGA_KEY.decrypt(
+                remote_builtin_keychain_encr
+            )
+        )
+        self.log('remote_builtin_keychain',remote_builtin_keychain)
+        
+        # for nm in [OPERATOR_NAME,TELEPHONE_NAME]:
+            # local_builtin_keychain[nm]=unpackage_from_transmission(local_builtin_keychain[nm])
+            # remote_builtin_keychain[nm]=unpackage_from_transmission(remote_builtin_keychain[nm])
+
+        # self.log('unpackaged local',unpackage_from_transmission(local_builtin_keychain))
+
+        # self.log('unpackaged remote',unpackage_from_transmission(remote_builtin_keychain))
 
         
-        print('remote',remote_builtin_keychain_encr)
-        stop
+        dict_merge(meta_keychain,local_builtin_keychain)
+        dict_merge(meta_keychain,remote_builtin_keychain)
+        BUILTIN_KEYCHAIN = meta_keychain
+        self.log('meta_keychain',meta_keychain)
+        return BUILTIN_KEYCHAIN
+        
 
 
     def forge_new_keys(self,

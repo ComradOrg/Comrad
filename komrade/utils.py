@@ -75,16 +75,23 @@ def package_for_transmission(data_json):
     return b64encode(data_json_b)
 
 def unpackage_from_transmission(data_json_b):
-    data_json_s = b64decode(data_json_b).decode()
+    print(type(data_json_b),'data_json_b1???',data_json_b)
+    if type(data_json_b)==bytes and isBase64(data_json_b): data_json_b=b64decode(data_json_b)
+    print(type(data_json_b),'data_json_b???',data_json_b)
+    # print(type(data_json_b),)
+    data_json_s = data_json_b.decode()
+    print(type(data_json_s),'data_json_s???',data_json_s)
     data_json = json.loads(data_json_s)
+    print(type(data_json),'data_json???',data_json)
     for k,v in data_json.items():
         if type(v)==bytes:
-            if isBase64(v): v=b64decode(v.decode())
+            if isBase64(v):v=b64decode(v.decode())
+            data_json[k]=v
         elif type(v)==str:
             if isBase64(v): v=b64decode(v.encode())
-        elif type(v)==dict:   
-            v=unpackage_from_transmission(v)
-        data_json[k]=v
+            data_json[k]=v
+        elif type(v)==dict:
+            data_json[k]=unpackage_from_transmission(v)
     return data_json
 
 
