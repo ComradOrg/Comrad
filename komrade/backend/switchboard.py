@@ -7,8 +7,11 @@ from komrade.backend import *
 from flask import Flask, request, jsonify
 from flask_classful import FlaskView
 
-from komrade.backend.the_operator import *
 
+PATH_OPERATOR_WEB_KEYS_URI = hashish(b'keys')
+PATH_OPERATOR_WEB_KEYS_FILE = f'/home/ryan/www/website-komrade/.{PATH_OPERATOR_WEB_KEYS_URI}'
+PATH_OPERATOR_WEB_KEYS_URL = f'http://{KOMRADE_ONION}/op/{PATH_OPERATOR_WEB_KEYS_URI}/'
+print(PATH_OPERATOR_WEB_KEYS_URL)
 
 OPERATOR = None
 TELEPHONE = None
