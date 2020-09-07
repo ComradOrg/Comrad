@@ -61,6 +61,7 @@ class Operator(Keymaker):
             self.log('unable to encrypt to send!',e)
         return b''
 
+
     def decrypt_from_send(self,msg_encr,from_pubkey,to_privkey):
         if not msg_encr or not from_privkey or not to_pubkey:
             self.log('not enough info!')
@@ -103,14 +104,16 @@ class Operator(Keymaker):
 
     def reassemble_nec_keys_using_header(self,unencr_header):
         assert unencr_header.count(BSEP2)==1
-        phone_pubkey_decr,op_pubkey_decr = unencr_header.split(BSEP2)
+        phone_pubkey_encr,op_pubkey_decr = unencr_header.split(BSEP2)
         
         # get phone pubkey
-        new_phone_keychain = self.phone.keychain(extra_keys={'pubkey_decr':phone_pubkey_decr},force=True)
+        new_phone_keychain = self.phone.keychain(extra_keys={'pubkey_encr':phone_pubkey_encr},force=True)
         new_op_keychain = self.keychain(extra_keys={'pubkey_decr':op_pubkey_decr},force=True)
 
         phone_pubkey = new_phone_keychain.get('pubkey')
         op_pubkey = new_op_keychain.get('pubkey')
+
+        self.log('reassembled phone/op pubkeys:',phone_pubkey,op_pubkey)
         return (phone_pubkey,op_pubkey)
 
     def reassemble_necessary_keys_using_decr_phone_data(self,decr_phone_data):
@@ -147,17 +150,22 @@ class Operator(Keymaker):
         to_privkey = self.privkey_
 
         # get other keys from halfkeys
-        phone_pubkey,op_pubkey = self.reassemble_nec_keys_using_header(data_unencr)
+        phone_pubkey,op_pubkey = self.reassemble_nec_keys_using_header(unencr_header)
 
         # 2) decrypt from phone
-        json_phone_decr = self.decrypt_from_send(json_phone,phone_pubkey,self.privkey_)
+        data_by_phone = self.decrypt_from_send(data_encr_by_phone,phone_pubkey,to_privkey)
 
         # 3) decrypt from caller
         caller_pubkey = self.reassemble_necessary_keys_using_decr_phone_data(json_phone_decr)
-        json_caller_encr = self.decrypt_from_send(json_caller,from_caller_privkey,to_pubkey)
+        data_by_caller = self.decrypt_from_send(data_encr_by_caller,caller_pubkey,to_privkey)
 
         # return
-        req_data_encr = unencr_header + BSEP + json_phone_encr + BSEP + json_caller_encr
+        # req_data_encr = unencr_header + BSEP + data_by_phone + BSEP + data_by_caller
+        
+        self.log('data_by_phone',data_by_phone)
+        self.log('data_by_caller',data_by_caller)
+        stop
+        
         return req_data_encr
 
 
