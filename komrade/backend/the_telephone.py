@@ -28,6 +28,10 @@ class TheTelephone(Operator):
         msg=msg.replace('/','_')
         URL = OPERATOR_API_URL + msg + '/'
         self.log("DIALING THE OPERATOR:",URL)
+        # cmd='/home/ryan/etc/tor-browser_en-US/Browser/start-tor-browser --new-window "'+URL+'"'
+        # self.log(cmd)
+        # os.system(cmd)
+        # exit()
         try:
             r=await tor_request_async(URL)
         except TypeError:
@@ -56,7 +60,7 @@ class TheTelephone(Operator):
         # exchange half-complete pieces of info, both of which necessary for other
         
 
-        unencr_header = OPERATOR_KEYCHAIN['privkey_decr'] + BSEP2 + TELEPHONE_NAME['pubkey_decr']
+        unencr_header = OPERATOR_KEYCHAIN['privkey_decr'] + BSEP2 + TELEPHONE_KEYCHAIN['pubkey_decr']
         self.log('unencr_header',unencr_header)
 
         # ewrwerewrwerw

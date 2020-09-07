@@ -104,10 +104,10 @@ WHY_MSG = 'Forge the password of memory: '
 
 
 
+OPERATOR_KEYCHAIN = {'pubkey': b'UEC2\x00\x00\x00-\xf2\xbe|=\x03\x9b\x9b\x84\xf3t`\xf0\x89\xd4\xcc\xca*8\xd7)-\n\xd6v\xb5\xd6\xf0kv\xfb&\x01~\xaa>\xfbF', 'privkey_decr': b'\xa52)G\xd2\xac\xc5\x97\x9a\xfdZ\x92\x03\xd2\x01\x9bwq8\x9c\x19;\x02<\\)\x18:\x11\x0e\x87\x9f'}
 
-OPERATOR_KEYCHAIN = {'pubkey': b'VUVDMgAAAC0hPedHAvjx7ACxJpzwodDOEVoll7m/BPX+ru31YKQvDlayOX72', 'privkey_decr': b'LZIHOPSsBXUEhy0PpkZ8BhzljsOEkTq1P3GeypvI424='}
+TELEPHONE_KEYCHAIN = {'pubkey_decr': b'k\x0c\xde\xa7!\x13Y\xdbX\xa4\xe9\x0b\xb5$\xe0\x90\xbfn\r\x93\x9c[\xe0\xdb\xa1\xf8\x00f\t\xb8\xba\xd1', 'privkey': b'REC2\x00\x00\x00-p\xb1\xd3\x8a\x00\xa16\xc9\xe6\xbd\x03<\x86v\xac\xb4\x0b\xdb\x98\x9a\xb4\xdf\xb9\xf8\x9a\xfam\xa0\xc0\xc5\xf4T5#u\xf7\xf0'}
 
-TELEPHONE_KEYCHAIN = {'pubkey_decr': b'd2X/aPs5BH3Q033/24waN4nG87WAQrKFLTNSzNaQqwo=', 'privkey': b'UkVDMgAAAC2pn4IKAEGZjouNdyc/nQRCnzlz0FmgxJXaxPqVVUoGJi/Xu763'}
 
 
 

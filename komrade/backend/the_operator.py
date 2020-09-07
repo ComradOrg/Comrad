@@ -69,6 +69,10 @@ class TheOperator(Operator):
                 PHONE_PUBKEY = new_phone_keychain.get('pubkey')
                 MY_PRIVKEY = new_op_keychain.get('privkey')
 
+                print(new_phone_keychain,'new_phone_keychain')
+                print(new_op_keychain,'new_op_keychain')
+                
+
                 self.log('PHONE_PUBKEY',PHONE_PUBKEY)
                 self.log('MY_PRIVKEY',MY_PRIVKEY)
                 stopppp
