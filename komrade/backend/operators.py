@@ -30,28 +30,20 @@ class Operator(Keymaker):
     
     @property
     def phone(self):
+        if hasattr(self,'_phone'): return self._phone
         global TELEPHONE,TELEPHONE_KEYCHAIN
         if TELEPHONE: return TELEPHONE
-        self.log('!! getting telephone !!')
-        if not TELEPHONE_KEYCHAIN:
-            self.log('!! getting telephone keychain !!')
-            connect_phonelines()
-
         from komrade.backend.the_telephone import TheTelephone
-        TELEPHONE=TheTelephone(keychain=TELEPHONE_KEYCHAIN)
+        self._phone=TELEPHONE=TheTelephone()
         return TELEPHONE
 
     @property
     def op(self):
+        if hasattr(self,'_phone'): return self._phone
         global OPERATOR,OPERATOR_KEYCHAIN
         if OPERATOR: return OPERATOR
-        self.log('!! getting operator !!')
-        if not OPERATOR_KEYCHAIN:
-            self.log('!! getting operator keychain !!')
-            connect_phonelines()
-        
         from komrade.backend.the_operator import TheOperator
-        OPERATOR=TheOperator(keychain=OPERATOR_KEYCHAIN)
+        OPERATOR=TheOperator()
         return OPERATOR
 
     def encrypt_to_send(self,msg_json,from_privkey,to_pubkey):
@@ -167,15 +159,20 @@ class Operator(Keymaker):
 def create_phonelines():
     ## CREATE OPERATOR
     op = Operator(name=OPERATOR_NAME)
-    op_keys_to_keep_on_client = ['pubkey_encr']
-    op_keys_to_keep_on_3rdparty = ['pubkey_decr','privkey_decr']
-    op_keys_to_keep_on_server = ['adminkey_encr','privkey_decr_encr','privkey_decr_decr','adminkey_decr_encr','adminkey_decr_decr']
+    op_keys_to_keep_on_client = ['pubkey_decr']  # sent TO operator
+    op_keys_to_keep_on_3rdparty = ['pubkey_encr']  # dl by op
+    op_keys_to_keep_on_server = [
+        'privkey_encr','privkey_decr_encr','privkey_decr_decr',
+        'adminkey_encr','adminkey_decr_encr','adminkey_decr_decr']
 
     ## create phone
     phone = Operator(name=TELEPHONE_NAME)
-    phone_keys_to_keep_on_client = ['privkey_encr']
-    phone_keys_to_keep_on_3rdparty = ['privkey_decr','pubkey_decr']
-    phone_keys_to_keep_on_server = ['pubkey_encr']
+    phone_keys_to_keep_on_client = [
+        'privkey_encr', 'privkey_decr_encr','privkey_decr_decr',
+        'adminkey_encr', 'adminkey_decr_encr','adminkey_decr_decr']
+
+    phone_keys_to_keep_on_3rdparty = ['pubkey_encr']  # dl by phone
+    phone_keys_to_keep_on_server = ['pubkey_decr']  # sent to phone
 
     # create keys for Op
     op_decr_keys = op.forge_new_keys(
@@ -232,6 +229,8 @@ def connect_phonelines():
     global OMEGA_KEY,OPERATOR_KEYCHAIN,TELEPHONE_KEYCHAIN
     if OMEGA_KEY and OPERATOR_KEYCHAIN and TELEPHONE_KEYCHAIN:
         return (OPERATOR_KEYCHAIN,TELEPHONE_KEYCHAIN)
+
+    print('\n\n\n\nCONNECTING PHONELINES!\n\n\n\n')
 
     # import
     from komrade.backend.mazes import tor_request

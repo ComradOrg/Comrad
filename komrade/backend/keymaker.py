@@ -564,13 +564,12 @@ class Keymaker(Logger):
 
     def keychain(self,passphrase=None,force=False,allow_builtin=True,extra_keys={},keys_to_gen=KEYMAKER_DEFAULT_KEYS_TO_GEN,**kwargs):
         # assemble as many keys as we can!
-        if not force and hasattr(self,'_keychain') and self._keychain: return self._keychain
+        # if not force and hasattr(self,'_keychain') and self._keychain: return self._keychain
         if passphrase: self.passphrase=passphrase
-
-        self._keychain = _keychain = {**extra_keys}
+        _keychain = {**extra_keys, **self._keychain}
         self.log('_keychain at start of keychain() =',_keychain)
-        
         for keyname in keys_to_gen:
+            if keyname in _keychain and _keychain[keyname]: continue
             # self.log('??',keyname,'...')
             if hasattr(self,keyname):
                 method=getattr(self,keyname)
@@ -578,6 +577,7 @@ class Keymaker(Logger):
                 # self.log('res <--',res)
                 if res:
                     _keychain[keyname]=res
+        self._keychain = _keychain
         return _keychain
         
 

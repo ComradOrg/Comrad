@@ -10,15 +10,25 @@ class TheTelephone(Operator):
     """
     def __init__(self, caller=None):
         global OPERATOR_KEYCHAIN,TELEPHONE_KEYCHAIN
-        if not TELEPHONE_KEYCHAIN or not OPERATOR_KEYCHAIN:
-            OPERATOR_KEYCHAIN,TELEPHONE_KEYCHAIN = connect_phonelines()
+        print('OP???',OPERATOR_KEYCHAIN)
+        print('PH???',TELEPHONE_KEYCHAIN)
+        
         super().__init__(
             name=TELEPHONE_NAME,
-            keychain=TELEPHONE_KEYCHAIN,
             path_crypt_keys=PATH_CRYPT_CA_KEYS,
             path_crypt_data=PATH_CRYPT_CA_KEYS
         )
+        
+        if not TELEPHONE_KEYCHAIN or not OPERATOR_KEYCHAIN:
+            OPERATOR_KEYCHAIN,TELEPHONE_KEYCHAIN = connect_phonelines()
+        
+        print('OP2???',OPERATOR_KEYCHAIN)
+        print('PH2???',TELEPHONE_KEYCHAIN)
+        
         self.caller=caller
+        self._keychain = TELEPHONE_KEYCHAIN
+        print(type(self._keychain), self._keychain)
+        
 
     def dial_operator(self,msg):
         msg=msg.replace('/','_')
@@ -51,14 +61,16 @@ class TheTelephone(Operator):
         json_phone  = {json_phone}
         json_caller = {json_caller}""")
 
-        print(type(self),self._keychain,self.keychain())
+        print('XXXXX',type(self),self._keychain)
+        print('YYYYY',self.keychain())
+        # stop
 
-        self.log('op_keychain',op_keychain)
+        self.log('op_keychain',self.op.keychain())
 
 
         # 1) unencr header
         # telephone_pubkey_decr | op_pubkey_decr | op_privkey_decr
-        unencr_header = phone_keychain['pubkey_decr'] + BSEP2 + op_keychain['pubkey_encr']
+        unencr_header = self.pubkey_decr_ + BSEP2 + self.op.pubkey_encr_
 
         # 2) caller privkey?
         from_caller_privkey=caller.privkey_ if caller and json_caller else None
