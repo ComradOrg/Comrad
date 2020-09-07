@@ -30,15 +30,7 @@ class TheTelephone(Operator):
         print(type(self._keychain), self._keychain)
         
 
-    def send_and_receive(self,msg):
-        self.log(msg,'msg!?')
-        msg_b64=b64encode(msg)
-        
-        self.log(msg_b64,'msg_b64!?')
-
-        msg_b64_str = msg_b64.decode()
-        self.log(msg_b64_str,'msg_b64_str!?')
-
+    def send_and_receive(self,msg_b64_str):
         msg=msg_b64_str.replace('/','_')
         URL = OPERATOR_API_URL + msg + '/'
         self.log("DIALING THE OPERATOR:",URL)

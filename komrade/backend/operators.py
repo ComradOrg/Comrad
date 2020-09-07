@@ -172,7 +172,11 @@ class Operator(Keymaker):
         MSG_b64 = b64encode(MSG)
         self.log(b' ~~~ ring ring ~~~ rriing ~~~',MSG_b64)
 
-        return MSG_b64
+        msg_b64_str = MSG_b64.decode()
+        self.log(b' ~~~ rirrrrng ring ~~~~  ring ~~ rrrrriing ~~~',msg_b64_str)
+
+
+        return msg_b64_str
 
     
     def answer_phone(self,data_b64_s):
