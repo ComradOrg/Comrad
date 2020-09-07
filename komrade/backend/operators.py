@@ -225,7 +225,7 @@ class Operator(Keymaker):
 
         # split
         self.log('BSEP count',data.count(BSEP))
-        self.log(datat.split(BSEP))
+        self.log(data.split(BSEP))
         assert data.count(BSEP) == 3
         (
             unencr_header,  # Tele.pubkey_encr|Op.pubkey_decr
