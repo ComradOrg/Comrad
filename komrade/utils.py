@@ -64,7 +64,8 @@ def package_for_transmission(data_json):
             if not isBase64(v): v=b64encode(v)
             v=v.decode()
         elif type(v)==str:
-            if not isBase64(v): v=b64encode(v.encode())
+            # if not isBase64(v): v=b64encode(v.encode())
+            pass
         elif type(v)==dict:
             v=package_for_transmission(v)
         data_json[k]=v
