@@ -135,9 +135,9 @@ class Operator(Keymaker):
         from_phone_keychain = from_phone.keychain()
         self.log('from_phone',type(from_phone),'to_phone',type(to_phone))
         self.log('from_phone_keychain',from_phone_keychain)
-        # self.log('to_phone_keychain',to_phone_keychain)
+        self.log('to_phone_keychain',to_phone_keychain)
 
-        eeeee
+        
 
         from_phone_pubkey_encr=from_phone_keychain.get('pubkey_encr')
         from_phone_privkey=from_phone_keychain.get('privkey')

@@ -58,11 +58,12 @@ def hashish(binary_data):
 
 from base64 import b64encode,b64decode
 import ujson as json
+import pickle
 def package_for_transmission(data_json):
     # print('package_for_transmission.data_json =',data_json)
-    data_json_bstr = json.dumps(data_json,reject_bytes=False)
+    data_json_b = pickle.dumps(data_json)
     # print('package_for_transmission.data_json_b =',data_json_bstr)
-    return b64encode(data_json_bstr.encode())
+    return b64encode(data_json_b)
 
 
 def dejsonize(dict):
@@ -76,15 +77,15 @@ def dejsonize(dict):
     return dict
 
 def unpackage_from_transmission(data_json_b64):
-    print('unpackage_from_transmission.data_json_b64 =',data_json_b64)
-    data_json_bstr = b64decode(data_json_b64).decode()
-    print('unpackage_from_transmission.data_json_bstr =',data_json_bstr)
+    # print('unpackage_from_transmission.data_json_b64 =',data_json_b64)
+    data_json_b = b64decode(data_json_b64)
+    print('unpackage_from_transmission.data_json_bstr =',data_json_b)
     
-    data_json = json.loads(data_json_bstr)
-    print('unpackage_from_transmission.data_json =',data_json)
+    data_json = pickle.loads(data_json_b)
+    # print('unpackage_from_transmission.data_json =',data_json)
 
-    data_json_dejson = dejsonize(data_json)
-    print('unpackage_from_transmission.data_json =',data_json_dejson)
+    # data_json_dejson = dejsonize(data_json)
+    # print('unpackage_from_transmission.data_json =',data_json_dejson)
 
     return data_json
 
