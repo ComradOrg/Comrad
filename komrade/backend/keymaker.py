@@ -393,36 +393,15 @@ class Keymaker(Logger):
         self.log('keychain 1 =',keychain)
         keychain = self.gen_encr_keys(keychain,keys_to_gen)
         self.log('keychain 2 =',keychain)
-        exit()
-        
 
-        # self.log('!!!!',keychain)
-        # stop
-        #keychain_tosave = {}
-        #keychain_toreturn = {}
-        # self.log('keys_to_save =',keys_to_save)
-        # self.log('keys_to_return =',keys_to_return)
-        
-
-        
-        
 
         # filter for transfer
         for k,v in keychain.items():
             if issubclass(type(v),KomradeKey):
                 v=v.data
-            # v=b64encode(v)
             keychain[k]=v
-            # self.log('-->',v)
-            # stop
-        # self.log('once more, with encryption!',keychain)
 
-
-        # keychain_tosave = dict([(k,keychain[k]) for k in keys_to_save if k in keychain])
-        
-
-        # for k,v in keychain_tosave.items():
-        
+        # for k,v in keychain_tosave.items():        
         if 'pubkey' in keys_to_save or 'privkey' in keys_to_save or 'adminkey' in keys_to_save:
             # unless we're the operator or the telephone
             if not self.name in {OPERATOR_NAME,TELEPHONE_NAME}:
@@ -436,10 +415,7 @@ class Keymaker(Logger):
                     self.crypt_keys.set(keychain['privkey'],keychain['adminkey'],prefix='/adminkey/')
                 
 
-        ### SAVE ENCRYPTED KEYS?
-        self.log('KEYCHAIN AS OF NOW:',keychain)
-        self.log('keys_to_save')
-        
+        ### SAVE ENCRYPTED KEYS?        
         if 'pubkey_encr' in keys_to_save and 'pubkey_encr' in keychain:
             self.crypt_keys.set(name,keychain['pubkey_encr'],prefix='/pubkey_encr/')
         if 'privkey_encr' in keys_to_save and 'privkey_encr' in keychain:
@@ -489,7 +465,6 @@ class Keymaker(Logger):
         keychain_toreturn = {}
         for key in keys_to_return:
             if key in keychain:
-                # print('adding',key,'to returned keychain')
                 keychain_toreturn[key]=keychain[key]
 
         return keychain_toreturn
