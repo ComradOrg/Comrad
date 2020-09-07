@@ -42,8 +42,8 @@ class KomradeSymmetricKeyWithPassphrase(KomradeSymmetricKey):
     def data(self): return KEY_TYPE_SYMMETRIC_WITH_PASSPHRASE.encode('utf-8')
 
 class KomradeSymmetricKeyWithoutPassphrase(KomradeSymmetricKey):
-    def __init__(self):
-        self.key = GenerateSymmetricKey()
+    def __init__(self,key=None):
+        self.key = GenerateSymmetricKey() if not key else key
     @property
     def data(self): return self.key
 
@@ -386,11 +386,15 @@ class Keymaker(Logger):
         with open(PATH_BUILTIN_KEYCHAIN,'rb') as f:
             local_builtin_keychain_encr = b64decode(f.read())
 
-        from mazes import tor_request
+        print('local',local_builtin_keychain_encr)
+
+        from komrade.backend.mazes import tor_request
+        from komrade.backend import PATH_OPERATOR_WEB_KEYS_URL
         remote_builtin_keychain_encr = tor_request(PATH_OPERATOR_WEB_KEYS_URL)
 
-        print(local_builtin_keychain_encr)
-        print(remote_builtin_keychain_encr)
+        
+        print('remote',remote_builtin_keychain_encr)
+        stop
 
 
     def forge_new_keys(self,
