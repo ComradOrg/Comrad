@@ -47,13 +47,13 @@ class TheOperator(Operator):
         data_in = self.decrypt_incoming(data)
 
         # route
-        result = self.route(data_json)
+        result = self.route(data_in)
         
         # encrypt
         data_out = self.encrypt_outgoing(result)
 
         # send
-        return self.send(res)
+        return self.send(data_out)
 
 
     def send(self,res):
