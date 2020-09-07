@@ -36,54 +36,37 @@ class TheOperator(Operator):
         # step 1 split:
         data_unencr,data_encr_by_phone,data_encr_by_caller = data.split(BSEP)
         data_unencr_by_phone,data_unencr_by_caller = None,None
-
-        # my_kc = self.keychain(allow_builtin=False,force=True)
-        # ph_kc = self.phone.keychain(allow_builtin=False,force=True)
-        # self.log('my keychain:',my_kc)
-        # self.log('phone keychain:',ph_kc)
-        # weeee
-
+        
         self.log('data_unencr =',data_unencr)
         self.log('data_encr_by_phone =',data_encr_by_phone)
         self.log('data_encr_by_caller =',data_encr_by_caller)
 
         DATA = {}
-        KEYCHAIN = self.keychain(allow_builtin=False,force=True)
-        self.log('as of now 1, I the operator have these keys:',KEYCHAIN.keys())
         # stop1
         PHONE_PUBKEY=None
         MY_PRIVKEY=None
         
+        # Scan unencrypted area for half-keys
         if data_unencr:
             self.log('unencrypted data:',data_unencr)
+            assert data_unencr.count(BSEP2)==1
+            my_privkey_decr,phone_pubkey_decr = data_unencr.split(BSEP2)
+            self.log('my_privkey_decr',my_privkey_decr)
+            self.log('phone_pubkey_decr',phone_pubkey_decr)
+
+            # get phone pubkey
+            new_phone_keychain = self.phone.keychain(extra_keys={'pubkey_decr':phone_pubkey_decr},force=True)
+            new_op_keychain = self.keychain(extra_keys={'privkey_decr':my_privkey_decr},force=True)
+
+            PHONE_PUBKEY = new_phone_keychain.get('pubkey')
+            MY_PRIVKEY = new_op_keychain.get('privkey')
             
-            if BSEP2 in data_unencr:
-                my_privkey_decr,phone_pubkey_decr = data_unencr.split(BSEP2)
-                self.log('my_privkey_decr',my_privkey_decr)
-                self.log('phone_pubkey_decr',phone_pubkey_decr)
-
-                # get phone pubkey
-                new_phone_keychain = self.phone.keychain(extra_keys={'pubkey_decr':phone_pubkey_decr},force=True)
-                new_op_keychain = self.keychain(extra_keys={'privkey_decr':my_privkey_decr},force=True)
-
-                PHONE_PUBKEY = new_phone_keychain.get('pubkey')
-                MY_PRIVKEY = new_op_keychain.get('privkey')
-
-                # print(new_phone_keychain,'new_phone_keychain')
-                # print(new_op_keychain,'new_op_keychain')
-                
-
-                # self.log('PHONE_PUBKEY',PHONE_PUBKEY)
-                # self.log('MY_PRIVKEY',MY_PRIVKEY)
-                # stopppp
-                
+        # Scan phone-encrypted area for json dictionary
         if data_encr_by_phone:
-            
             # then try to unwrap telephone encryption
             if not MY_PRIVKEY or not PHONE_PUBKEY:
                 self.log('!! could not assemble my or phone\'s keys. failing.')
                 return OPERATOR_INTERCEPT_MESSAGE
-            
             try:
                 data_unencr_by_phone = SMessage(MY_PRIVKEY, PHONE_PUBKEY).unwrap(data_encr_by_phone)
                 self.log('decrypted data !!!:',data_unencr_by_phone)
@@ -91,77 +74,78 @@ class TheOperator(Operator):
                 self.log('not really from the telephone?',e)
                 return OPERATOR_INTERCEPT_MESSAGE
             
-            data_unencr_by_phone_json = json.loads(data_unencr_by_phone.decode())
-            self.log('data_unencr_by_phone_json',data_unencr_by_phone_json)
-            if type(data_unencr_by_phone_json)== dict:
-                dict_merge(DATA, data_unencr_by_phone_json)
+            data_unencr_by_phone_json = unpackage_from_transmission(data_unencr_by_phone)
+            assert type(data_unencr_by_phone_json) == dict
+            dict_merge(DATA, data_unencr_by_phone_json)
 
 
         if data_encr_by_caller and 'name' in data_unencr_by_phone:
             name=data_unencr_by_phone['name']
-            keychain=data_unencr_by_phone.get('_keychain',{})
 
-            # decrypt using this user's pubkey on record
-            caller = Caller(name)
-            data_unencr2 = SMessage(MY_PRIVKEY, caller.pubkey_).unwrap(data_encr_by_caller)
+            try:
+                caller = Caller(name)
+                self.log('got caller on phone',name,caller)
+                data_unencr_by_caller = SMessage(MY_PRIVKEY, caller.pubkey_).unwrap(data_encr_by_caller)
+                self.log('decrypted data from caller!!!:',data_unencr_by_caller)
+            except ThemisError as e:
+                self.log('not really from caller?',e)
+                return OPERATOR_INTERCEPT_MESSAGE
 
-            if type(data_unencr_by_phone)==dict and type(data_encr_by_caller)==dict:
-                data = data_unencr_by_phone
-                dict_merge(data_encr_by_caller, data)
-            else:
-                data=(data_unencr_by_phone,data_encr_by_caller)
-        else:
-            data = data_unencr_by_phone
-        return data
+            data_unencr_by_caller_json = unpackage_from_transmission(data_unencr_by_caller)
+            assert type(data_unencr_by_caller_json) == dict
+            dict_merge(DATA, data_unencr_by_caller_json)
+
+        return DATA
 
 
-    def encrypt_information(self,json_going_to_phone={},json_going_to_caller={},caller=None):
+    def encrypt_outgoing(self,json_going_to_phone={},json_going_to_caller={},caller=None):
         # 1)
         unencr_header = self.privkey_encr_ + BSEP2 + self.phone.pubkey_encr_
+        self.log('unencr_header',unencr_header)
 
         # 2) encrypt to phone
         if json_going_to_phone:
-            json_going_to_phone_s = json.dumps(json_going_to_phone)
-            json_going_to_phone_b = json_going_to_phone_s.encode()
-            json_going_to_phone_b_encr = SMessage(
-                self.privkey_,
-                self.phone.pubkey_
-            ).wrap(json_going_to_phone_b)
+            json_going_to_phone_b = package_for_transmission(json_going_to_phone)
+            try:
+                json_going_to_phone_b_encr = SMessage(
+                    self.privkey_,
+                    self.phone.pubkey_
+                ).wrap(json_going_to_phone_b)
+            except ThemisError as e:
+                self.log('unable to send to phone!',e)
+                return OPERATOR_INTERCEPT_MESSAGE
         else:
             json_going_to_phone_b=b''
 
         # 3) to caller
         if json_going_to_caller and caller:
-            json_going_to_caller_s = json.dumps(json_going_to_caller)
-            json_going_to_caller_b = json_going_to_caller_s.encode()
-            json_going_to_caller_b_encr = SMessage(
-                caller.privkey_,
-                self.pubkey_
-            ).wrap(json_going_to_caller_b)
+            json_going_to_caller_b = package_for_transmission(json_going_to_caller)
+            try:
+                json_going_to_caller_b_encr = SMessage(
+                    caller.privkey_,
+                    self.pubkey_
+                ).wrap(json_going_to_caller_b)
+            except ThemisError as e:
+                self.log('unable to send to caller!',e)
+                return OPERATOR_INTERCEPT_MESSAGE
         else:
             json_going_to_caller_b_encr = b''
 
-        req_data_encr = unencr_header + BSEP + json_coming_from_phone_b_encr + BSEP + json_coming_from_caller_b_encr
+        req_data_encr = unencr_header + BSEP + json_going_to_phone_b_encr + BSEP + json_going_to_caller_b_encr
         return req_data_encr
 
 
     def recv(self,data):
         # decrypt
-        data = self.decrypt_incoming(data)
+        data_in = self.decrypt_incoming(data)
 
-        # decode
-        data_s = data.decode()
-        data_json = json.loads(data_s)
-
-
-        self.log('DATA =',type(data),data)
-        self.log('DATA_s =',type(data_s),data_s)
-        self.log('DATA_json =',type(data_json),data_s)
+        # route
+        result = self.route(data_json)
         
-        res = self.route(data_json)
-        self.log('result from routing =',res)
+        # encrypt
+        data_out = self.encrypt_outgoing(result)
 
-        # send back!
+        # send
         return self.send(res)
 
 

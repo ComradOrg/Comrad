@@ -26,6 +26,7 @@ class Operator(Keymaker):
         # load keychain into memory
         self._keychain = self.keychain(force = True)
 
+    
     # ### BASE STORAGE
     # @property
     # def crypt_keys(self):

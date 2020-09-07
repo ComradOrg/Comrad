@@ -33,12 +33,6 @@ class TheSwitchboard(FlaskView, Logger):
         return OPERATOR
 
     def send(self,res):
-        # package and send back
-        self.log('res1',res)
-        for k,v in res.items():
-            if type(v)==bytes:
-                res[k]=b64encode(res[k]).decode()
-        self.log('res2',res)
         return res
 
     def get(self,msg):
