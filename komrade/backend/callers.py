@@ -39,12 +39,6 @@ class Caller(Operator):
             'passphrase':hashish(passphrase.encode())
         }
 
-        req_json['key_types'] = {**KEYMAKER_DEFAULT_KEY_TYPES}
-        req_json['keys_to_save']=['pubkey_encr','privkey_encr','adminkey_encr']
-        req_json['keys_to_return']=['pubkey_decr',
-                                    'privkey_decr_encr', 'privkey_decr_decr',
-                                    'adminkey_decr_encr', 'adminkey_decr_decr']
-
         phone_res = self.phone.ask_operator(json_phone = req_json, caller=self)
         name = phone_res.get('name')
         returned_keys = phone_res.get('_keychain')

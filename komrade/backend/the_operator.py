@@ -189,19 +189,32 @@ class TheOperator(Operator):
 
 
 def init_operators():
-    op = Operator(name=OPERATOR_NAME)
-    phone = Operator(name=OPERATOR_NAME)
 
+    ## CREATE OPERATOR
+    op = Operator(name=OPERATOR_NAME)
+    
     # save what we normally save for a client on the server -- The Op is a client from our pov
+    op_keys_to_keep_on_client = ['pubkey_decr']  # we only store one half of one key about Op on clients
+
+    # rest we keep on server, except for one we kept on client
+    op_keys_to_keep_on_server = [x for x in KEYMAKER_DEFAULT_KEYS_TO_RETURN if x not in op_keys_to_keep_on_client]
+    op_keys_to_keep_on_server.append('pubkey_encr')
 
     op_decr_keys = op.forge_new_keys(
-        keys_to_save=KEYMAKER_DEFAULT_KEYS_TO_RETURN,  # on server only; flipped around
-        keys_to_return=KEYMAKER_DEFAULT_KEYS_TO_SAVE+['pubkey'] # on clients only
+        keys_to_save=op_keys_to_keep_on_server,  # on server only; flipped around
+        keys_to_return=op_keys_to_keep_on_client # on clients only
     )
 
+
+    ## CREATE TELEPHONE
+    phone = Operator(name=OPERATOR_NAME)
+
+    phone_keys_to_keep_on_server = KEYMAKER_DEFAULT_KEYS_TO_SAVE
+    phone_keys_to_keep_on_client = ['privkey','adminkey','pubkey_decr']
+
     phone_decr_keys = phone.forge_new_keys(
-        keys_to_save=KEYMAKER_DEFAULT_KEYS_TO_SAVE,  # on server only
-        keys_to_return=KEYMAKER_DEFAULT_KEYS_TO_RETURN+['privkey']   # on clients only
+        keys_to_save=phone_keys_to_keep_on_server,  # on server only
+        keys_to_return=phone_keys_to_keep_on_client   # on clients only
     )
 
     print('\n'*5)
