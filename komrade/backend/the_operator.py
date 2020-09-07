@@ -44,13 +44,18 @@ class TheOperator(Operator):
 
     def recv(self,data):
         # decrypt
+        self.log('recv 1: got',data)
+
         data_in = self.decrypt_incoming(data)
+        self.log('recv 2: decrypt gave me',data_in)
 
         # route
         result = self.route(data_in)
+        self.log('recv 3: route gave me',result)
         
         # encrypt
         data_out = self.encrypt_outgoing(result)
+        self.log('recv 4: encrypt gave me',data_out)
 
         # send
         return self.send(data_out)
