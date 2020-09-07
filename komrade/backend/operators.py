@@ -73,7 +73,9 @@ class Operator(Keymaker):
                 from_pubkey,
             ).unwrap(msg_encr)
             # decode
+            self.log('msg_b??',msg_b)
             msg_json = unpackage_from_transmission(msg_b)
+            self.log('msg_json??',msg_json)
             # return
             return msg_json
         except ThemisError as e:
