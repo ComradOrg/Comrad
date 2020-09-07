@@ -139,7 +139,7 @@ class Keymaker(Logger):
         # self.log(f'assembling key: {keyname}_encr + {keyname}_decr')
         key_encr = self.findkey(keyname+'_encr', keychain,uri)
         key_decr = self.findkey(keyname+'_decr', keychain, uri)
-        key = self.assemble_key(key_encr, key_decr)
+        key = self.assemble_key(key_encr, key_decr, keyname+'_encr', keyname+'_decr')
         return key
 
     def get_cell(self, str_or_key_or_cell):
@@ -152,7 +152,7 @@ class Keymaker(Logger):
         elif type(str_or_key_or_cell)==bytes:
             return SCellSeal(key=str_or_key_or_cell)
 
-    def assemble_key(self, key_encr, key_decr):
+    def assemble_key(self, key_encr, key_decr, key_encr_name=None, key_decr_name=None):
         # self.log(f'assembling key: {key_decr} decrypting {key_encr}')
 
         # need the encrypted half
@@ -176,7 +176,7 @@ class Keymaker(Logger):
 
         # decrypt!
         try:
-            self.log(f'>> decrypting {key_encr} with cell {decr_cell}')
+            self.log(f'>> decrypting {key_encr_name} with {key_decr_name}\n({key_encr} with cell {decr_cell}')
             key = decr_cell.decrypt(key_encr)
             # self.log('assembled_key built:',key)
             return key
