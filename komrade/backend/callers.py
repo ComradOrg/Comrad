@@ -24,24 +24,22 @@ class Caller(Operator):
         if not OPERATOR: OPERATOR=TheOperator()
         return OPERATOR
 
-    def get_new_keys(self,pubkey_pass = None, privkey_pass = None, adminkey_pass = None):
-        """
-        This is the local caller's version.
-        He never touches the encrypted keys. Only the Operator does!
-        """
-
-        # Get decryptor keys back from The Operator (one half of the Keymaker)
-        keychain = self.forge_new_keys(self.name)
-        self.log('create_keys() res from Operator? <-',keychain)
-
-        # Now lock the decryptor keys away, sealing it with a password of memory!
-        self.lock_new_keys(keychain)
-
-    async def forge_new_keys(self, name = None, pubkey_is_public=False):
+    async def get_new_keys(self, name = None, passphrase = None, is_group=None):
         if not name: name=self.name
-        if not name: return
+        if name is None: 
+            name = input('\nWhat is the name for this account? ')
+        if passphrase is None:
+            passphrase = getpass.getpass('\nEnter a memborable password: ')
+        # if is_group is None:
+            # is_group = input('\nIs this a group account? [y/N]').strip().lower() == 'y'
 
-        req_json = {'_route':'forge_new_keys','name':name}
+        req_json = {
+            '_route':'forge_new_keys',
+            'name':name,
+            'passphrase':hashish(passphrase)
+        }
+
+        req_json['key_types'] = {**KEYMAKER_DEFAULT_KEY_TYPES}
         req_json['keys_to_save']=['pubkey_encr','privkey_encr','adminkey_encr']
         req_json['keys_to_return']=['pubkey_decr',
                                     'privkey_decr_encr', 'privkey_decr_decr',

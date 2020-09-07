@@ -133,12 +133,12 @@ class TheOperator(Operator):
         if data.get('_route') == 'forge_new_keys':
             del data['_route']
             res = self.forge_new_keys(**data)
-            testres = Operator(name=data.get('name')).keychain(force=True)
-            testres_full = Operator(name=data.get('name')).keychain(force=True,extra_keys=res)
+            # testres = Operator(name=data.get('name')).keychain(force=True)
+            # testres_full = Operator(name=data.get('name')).keychain(force=True,extra_keys=res)
             
             self.log('returned keys from route:','\n'.join(res.keys()))
-            self.log('saved keys within rote:','\n'.join(testres.keys()))
-            self.log('keys which can be assembled:','\n'.join(testres_full.keys()))
+            # self.log('saved keys within rote:','\n'.join(testres.keys()))
+            # self.log('keys which can be assembled:','\n'.join(testres_full.keys()))
         return data# 'success!'
 
 

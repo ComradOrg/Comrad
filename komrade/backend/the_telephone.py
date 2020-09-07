@@ -120,7 +120,7 @@ def test_call():
     # req_json_s = jsonify(req_json)
     # res = phone.req({'forge_new_keys':{'name':'marx', 'pubkey_is_public':True}})
     # print(res)
-    asyncio.run(caller.forge_new_keys())
+    asyncio.run(caller.get_new_keys())
 
     print('YEAH COOL')
 

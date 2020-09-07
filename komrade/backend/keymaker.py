@@ -372,6 +372,7 @@ class Keymaker(Logger):
 
     def forge_new_keys(self,
                         name=None,
+                        passphrase=None,
                         keys_to_save = KEYMAKER_DEFAULT_KEYS_TO_SAVE,
                         keys_to_return = KEYMAKER_DEFAULT_KEYS_TO_RETURN,
                         keys_to_gen = KEYMAKER_DEFAULT_KEYS_TO_GEN,
@@ -390,9 +391,9 @@ class Keymaker(Logger):
         key_types = dict([(k,key_types[k]) for k in keys_to_gen])
         self.log('key_types =',key_types)
 
-        keychain = self.gen_keys_from_types(key_types)
+        keychain = self.gen_keys_from_types(key_types,passphrase=passphrase)
         self.log('keychain 1 =',keychain)
-        keychain = self.gen_encr_keys(keychain,keys_to_gen)
+        keychain = self.gen_encr_keys(keychain,keys_to_gen,passphrase=passphrase)
         self.log('keychain 2 =',keychain)
 
 
@@ -498,75 +499,6 @@ class Keymaker(Logger):
                 valid_kc[k]=data
         
         return valid_kc
-        
-    @property
-    def cell_dblencr(self):
-        if not hasattr(self,'_cell_dblencr'):
-            self._dbl_encr = get_cell_dblencr()
-        return self._dbl_encr
-
-    def get_cell_dblencr(self,passphrase=None):
-        if not passphrase:
-            if self.passphrase:
-                passphrase=self.passphrase
-            else:
-                self.passphrase=passphrase=getpass.getpass('Forge the password of memory: ')
-        cell = SCellSeal(passphrase=passphrase)
-        return cell
-
-        
-    def lock_new_keys(self,
-                        keychain,
-                        passphrase=None,
-                        save_encrypted = True, return_encrypted = False,
-                        save_decrypted = False, return_decrypted = True):
-        # we're not going to store the decryptor keys directly though
-        
-
-        # encrypt the decryptor keys
-        pubkey_decr_encr = cell.encrypt(keychain['pubkey_decr'])
-        privkey_decr_encr = cell.encrypt(keychain['privkey_decr'])
-        adminkey_decr_encr = cell.encrypt(keychain['adminkey_decr'])
-        
-        # set to crypt and keychain
-        if save_decrypted:
-            self.crypt_keys.set(self.name,pubkey_decr_encr,prefix='/pubkey_decr_encr/')
-            self.crypt_keys.set(keychain['pubkey_decr'],privkey_decr_encr,prefix='/privkey_decr_encr/')
-            #keychain['privkey_decr_encr']=privkey_decr_encr
-        
-            self.crypt_keys.set(keychain['privkey_decr'],adminkey_decr_encr,prefix='/adminkey_decr_encr/')
-            #keychain['adminkey_decr_encr']=adminkey_decr_encr
-        
-        # store decryption keys if not passworded?
-        pub_ddk,priv_ddk,admin_ddk=[x+'key_decr_decr_key' for x in ['pub','priv','admin']]
-        if pub_ddk in keychain:
-            self.crypt_keys.set(self.name, keychain[pub_ddk], prefix=f'/{pub_ddk}/')
-        if priv_ddk in keychain:
-            self.crypt_keys.set(self.name, keychain[priv_ddk], prefix=f'/{priv_ddk}/')
-        if admin_ddk in keychain:
-            self.crypt_keys.set(self.name, keychain[admin_ddk], prefix=f'/{admin_ddk}/')
-        
-        # # return protected keychain
-        # todel = ['pubkey_decr','privkey_decr','adminkey_decr']
-        # for x in todel:
-        #     if x in keychain:
-        #         del keychain[x]
-
-        # # add encr versions
-        # keychain
-
-        # del keychain['pubkey_decr']
-        # del keychain['privkey_decr']
-        # del keychain['adminkey_decr']
-        
-
-        # return ()
-        return passphrase
-
-    # def load_concrete_keychain():
-    #     keychain = {}
-    #     for keyname in KEYNAMES:
-    #         keychain=self.findkey(keyname, keychain, uri)
 
     def keychain(self,passphrase=None,force=False,allow_builtin=True,extra_keys={},keys_to_gen=KEYMAKER_DEFAULT_KEYS_TO_GEN,**kwargs):
         # assemble as many keys as we can!
