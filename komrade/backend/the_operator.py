@@ -130,15 +130,18 @@ class TheOperator(Operator):
         return self.route(data_json)
 
     def route(self, data):
+        res=None
         if data.get('_route') == 'forge_new_keys':
             del data['_route']
             res = self.forge_new_keys(**data)
-            # testres = Operator(name=data.get('name')).keychain(force=True)
-            # testres_full = Operator(name=data.get('name')).keychain(force=True,extra_keys=res)
-            
             self.log('returned keys from route:','\n'.join(res.keys()))
-            # self.log('saved keys within rote:','\n'.join(testres.keys()))
-            # self.log('keys which can be assembled:','\n'.join(testres_full.keys()))
+            self.log('res1',res)
+            for k,v in res.items():
+                if type(v)==bytes:
+                    res[k]=b64encode(res[k]).decode()
+            sef.log('res2',res)
+        else:
+            res = OPERATOR_INTERCEPT_MESSAGE
         return res# 'success!'
 
 
