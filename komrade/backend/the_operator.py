@@ -51,7 +51,7 @@ class TheOperator(Operator):
 
         # route
         encr_result = self.route(data_in)
-        self.log('recv 3: route gave me',result)
+        self.log('recv 3: route gave me',encr_result)
 
         # send
         return self.send(encr_result)
