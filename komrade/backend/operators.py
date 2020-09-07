@@ -58,7 +58,7 @@ class Operator(Keymaker):
 
     def encrypt_to_send(self,msg_json,from_privkey,to_pubkey):
         if not msg_json or not from_privkey or not to_pubkey:
-            self.log('not enough info!')
+            self.log('not enough info!',msg_json,from_privkey,to_pubkey)
             return b''
         msg_b = package_for_transmission(msg_json)
         try:
@@ -74,7 +74,7 @@ class Operator(Keymaker):
 
     def decrypt_from_send(self,msg_encr,from_pubkey,to_privkey):
         if not msg_encr or not from_pubkey or not to_privkey:
-            self.log('not enough info!')
+            self.log('not enough info!',msg_encr,from_pubkey,to_privkey)
             return {}
         try:
             # decrypt
@@ -136,8 +136,8 @@ class Operator(Keymaker):
         if json_phone2phone:
             encrypted_message_from_telephone_to_op = self.encrypt_to_send(
                 msg_json = json_phone2phone,
-                from_privkey = self.phone.privkey_,
-                to_pubkey = self.op.pubkey_
+                from_privkey = from_phone.privkey_,
+                to_pubkey = to_phone.pubkey_
             )
             self.log('Layer 2: Phone 2 op:',encrypted_message_from_telephone_to_op)
 
@@ -146,7 +146,7 @@ class Operator(Keymaker):
             encrypted_message_from_caller_to_op = self.encrypt_to_send(
                 msg_json = json_caller2phone,
                 from_privkey = from_caller.privkey_,
-                to_pubkey = self.op.pubkey_
+                to_pubkey = to_phone.pubkey_
             )
             self.log('Layer 3: Caller 2 op:',encrypted_message_from_telephone_to_op)
         
@@ -225,7 +225,7 @@ class Operator(Keymaker):
         to_phone_keychain = to_phone.keychain()
         to_phone_privkey=to_phone_keychain.get('privkey')
 
-        self.log('data_encr_phone2phone',from_phone_pubkey,from_phone)
+        self.log('data_encr_phone2phone',data_encr_phone2phone)
         self.log('from_phone_pubkey',from_phone_pubkey,from_phone)
         self.log('to_phone_privkey',to_phone_privkey,to_phone)
 
