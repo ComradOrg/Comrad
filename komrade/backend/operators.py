@@ -60,13 +60,13 @@ class Operator(Keymaker):
         return b''
 
 
-     def encrypt_outgoing(self,
-                          json_phone={},
-                          json_caller={},
-                          from_phone_privkey=None,
-                          from_caller_privkey=None,
-                          to_pubkey=None,
-                          unencr_header=b''):
+    def encrypt_outgoing(self,
+                        json_phone={},
+                        json_caller={},
+                        from_phone_privkey=None,
+                        from_caller_privkey=None,
+                        to_pubkey=None,
+                        unencr_header=b''):
         
         # 1) unencrypted header:
         
