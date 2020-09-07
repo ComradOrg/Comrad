@@ -21,7 +21,7 @@ class TheSwitchboard(FlaskView, Logger):
     default_methods = ['GET']
     excluded_methods = ['phone','op','send']
 
-    @route(f'/{PATH_OPERATOR_WEB_KEYS_URI}/')
+    @route('/.builtin.keys/')
     def keys(self):
         if not os.path.exists(PATH_OPERATOR_WEB_KEYS_FILE):
             self.log('no keys file exists!')
