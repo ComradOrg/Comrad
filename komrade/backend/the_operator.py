@@ -8,9 +8,9 @@ from komrade import *
 from komrade.backend import *
 
 
-PATH_OPERATOR_WEB_KEYS_URI = hashish(b'keys')
-PATH_OPERATOR_WEB_KEYS_FILE = f'/home/ryan/www/website-komrade/.{PATH_OPERATOR_WEB_KEYS_URI}'
-PATH_OPERATOR_WEB_KEYS_URL = f'http://{KOMRADE_ONION}/op/{PATH_OPERATOR_WEB_KEYS_URI}/'
+# PATH_OPERATOR_WEB_KEYS_URI = hashish(b'keys')
+PATH_OPERATOR_WEB_KEYS_FILE = f'/home/ryan/www/website-komrade/.builtin.keys'
+PATH_OPERATOR_WEB_KEYS_URL = f'http://{KOMRADE_ONION}/op/.builtin.keys/'
 
 print(PATH_OPERATOR_WEB_KEYS_URL)
 
