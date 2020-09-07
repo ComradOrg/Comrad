@@ -224,7 +224,7 @@ class Operator(Keymaker):
 
         # 2) decrypt from phone
         data_phone2phone = self.decrypt_from_send(
-            msg_encr=data_encr_phone2op,
+            msg_encr=data_encr_phone2phone,
             from_pubkey=from_phone_pubkey,
             to_privkey=to_phone_privkey
         )
@@ -233,7 +233,7 @@ class Operator(Keymaker):
         # 3) decrypt from caller
         from_caller_pubkey = self.reassemble_necessary_keys_using_decr_phone_data(data_phone2phone)
         data_caller2phone = self.decrypt_from_send(
-            msg_encr=data_encr_caller2caller,
+            msg_encr=data_encr_caller2phone,
             from_pubkey=from_caller_pubkey,
             to_privkey=to_phone_privkey
         )
