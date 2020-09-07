@@ -30,20 +30,30 @@ class Operator(Keymaker):
     
     @property
     def phone(self):
+        from komrade.backend.the_telephone import TheTelephone
+        if type(self)==TheTelephone: return self
+
         if hasattr(self,'_phone'): return self._phone
+
         global TELEPHONE,TELEPHONE_KEYCHAIN
         if TELEPHONE: return TELEPHONE
-        from komrade.backend.the_telephone import TheTelephone
+
         self._phone=TELEPHONE=TheTelephone()
+
         return TELEPHONE
 
     @property
     def op(self):
-        if hasattr(self,'_phone'): return self._phone
+        from komrade.backend.the_operator import TheOperator
+        if type(self)==TheOperator: return self
+
+        if hasattr(self,'_op'): return self._op
+
         global OPERATOR,OPERATOR_KEYCHAIN
         if OPERATOR: return OPERATOR
-        from komrade.backend.the_operator import TheOperator
-        OPERATOR=TheOperator()
+        
+        self._op=OPERATOR=TheOperator()
+        
         return OPERATOR
 
     def encrypt_to_send(self,msg_json,from_privkey,to_pubkey):
@@ -81,6 +91,150 @@ class Operator(Keymaker):
         except ThemisError as e:
             self.log('unable to decrypt from send!',e)
         return {}
+
+
+
+
+
+    # async def req(self,json_phone={},json_caller={},caller=None):
+    def dial_number(self,
+            from_phone=None,
+            to_phone=None,
+            
+            from_caller=None,
+            to_caller=None,
+            
+            json_phone2phone={}, 
+            json_caller2phone={},   # (person) -> operator or operator -> (person)
+            json_caller2caller={}):
+            
+        
+        self.log(f"""
+        RING RING!
+            from_phone={from_phone}, to_phone={to_phone},
+            from_caller={from_caller}, to_caller={to_caller},
+            json_phone2phone={json_phone2phone},
+            json_caller2phone={json_caller2phone},
+            json_caller2caller={json_caller2caller},
+        """)
+
+        ## defaults
+        unencr_header=b''
+        encrypted_message_from_telephone_to_op = b''
+        encrypted_message_from_caller_to_op = b''
+        encrypted_message_from_caller_to_caller = b''
+        if not from_phone: from_phone=self.phone
+        if not to_phone: to_phone=self.op
+
+        ### LAYERS OF ENCRYPTION:
+        # 1) unencr header
+        # Telephone sends half its and the operator's public keys
+        unencr_header = from_phone.pubkey_encr_ + BSEP2 + to_phone.pubkey_decr_
+        self.log('Layer 1: Unencrypted header:',unencr_header)
+
+        ## Encrypt level 1: from Phone to Op
+        if json_phone2phone:
+            encrypted_message_from_telephone_to_op = self.encrypt_to_send(
+                msg_json = json_phone2phone,
+                from_privkey = self.phone.privkey_,
+                to_pubkey = self.op.pubkey_
+            )
+            self.log('Layer 2: Phone 2 op:',encrypted_message_from_telephone_to_op)
+
+        ## Level 2: from Caller to Op
+        if json_caller2phone and from_caller:
+            encrypted_message_from_caller_to_op = self.encrypt_to_send(
+                msg_json = json_caller2phone,
+                from_privkey = from_caller.privkey_,
+                to_pubkey = self.op.pubkey_
+            )
+            self.log('Layer 3: Caller 2 op:',encrypted_message_from_telephone_to_op)
+        
+        # 2) Level 3: from Caller to Caller
+        if json_caller2caller and from_caller and to_caller:
+            encrypted_message_from_caller_to_caller = self.encrypt_to_send(
+                msg_json = json_caller2caller,
+                from_privkey = from_caller.privkey_,
+                to_pubkey = to_caller.pubkey_
+            )
+            self.log('Layer 3: Caller 2 Caller:',encrypted_message_from_telephone_to_op)
+        
+        MSG_PIECES = [
+            unencr_header,
+            encrypted_message_from_telephone_to_op,
+            encrypted_message_from_caller_to_op,
+            encrypted_message_from_caller_to_caller
+        ]
+        MSG = BSEP.join(MSG_PIECES)
+        MSG_b64 = b64encode(MSG)
+
+        return MSG_b64
+
+    
+    def answer_phone(self,data_b64_s):
+        assert type(data_b64_s) == str
+        self.log('Pronto!\n ... '+data_b64_s+' ...?')
+
+        if not isBase64(data_b64_s):
+            self.log('incoming data not b64')
+            return OPERATOR_INTERCEPT_MESSAGE
+
+        # string -> b64 bytes
+        data_b64_b = data_b64_s.encode()
+        self.log('data_b64_b',data_b64_b)
+
+        # b64 -> raw bytes
+        data = b64decode(data_b64_b)
+        self.log('data',data)
+
+        # split
+        assert data.count(BSEP) == 3
+        (
+            unencr_header,  # Tele.pubkey_encr|Op.pubkey_decr
+            data_encr_phone2op,
+            data_encr_caller2op,
+            data_encr_caller2caller
+        ) = data.split(BSEP)
+
+        # set up
+        DATA = {}
+
+        # get other keys from halfkeys
+        phone_pubkey,op_pubkey = self.reassemble_nec_keys_using_header(unencr_header)
+
+        # assuming the entire message is to me, whoever I am
+        op_keychain = self.keychain()
+        op_privkey = my_keychain.get('privkey')
+
+        self.log('keychain',self.keychain())
+        self.log('to_privkey',to_privkey)
+        
+
+        # 2) decrypt from phone
+        self.log('data_encr_by_phone',data_encr_phone2op)
+        self.log('phone_pubkey',phone_pubkey)
+
+        data_by_phone = self.decrypt_from_send(data_encr_phone2op,phone_pubkey,op_privkey)
+        self.log('data_by_phone',data_by_phone)
+
+        # 3) decrypt from caller
+        caller_pubkey = self.reassemble_necessary_keys_using_decr_phone_data(data_by_phone)
+        data_by_caller = self.decrypt_from_send(data_encr_by_caller,caller_pubkey,to_privkey)
+
+        # return
+        # req_data_encr = unencr_header + BSEP + data_by_phone + BSEP + data_by_caller
+        
+        self.log('data_by_phone',data_by_phone)
+        self.log('data_by_caller',data_by_caller)
+
+        DATA = {}
+        dict_merge(DATA,data_by_phone)
+        dict_merge(DATA,data_by_caller)
+        self.log('DATA!!!!!',DATA)
+        return DATA
+
+
+
 
 
     # def encrypt_outgoing(self,
@@ -130,57 +284,7 @@ class Operator(Keymaker):
             return
 
         
-    def decrypt_incoming(self,data_b64_s):
-        assert type(data_b64_s) == str
-
-        if not isBase64(data_b64_s):
-            self.log('incoming data not b64')
-            return OPERATOR_INTERCEPT_MESSAGE
-
-        data_b64_b = data_b64_s.encode()
-        data = b64decode(data_b64_b)
-
-        # step 1 split:
-        print('!?!?!?',type(data),data)
-        unencr_header,data_encr_by_phone,data_encr_by_caller = data.split(BSEP)
-        data_unencr_by_phone,data_unencr_by_caller = None,None
-
-        # set up
-        DATA = {}
-
-        # assuming the entire message is to me, whoever I am
-        my_keychain = self.keychain()
-        to_privkey = my_keychain.get('privkey')
-
-        self.log('keychain',self.keychain())
-        self.log('to_privkey',to_privkey)
-        
-        # get other keys from halfkeys
-        phone_pubkey,op_pubkey = self.reassemble_nec_keys_using_header(unencr_header)
-
-        # 2) decrypt from phone
-        self.log('data_encr_by_phone',data_encr_by_phone)
-        self.log('phone_pubkey',phone_pubkey)
-        self.log('to_privkey',to_privkey)
-        data_by_phone = self.decrypt_from_send(data_encr_by_phone,phone_pubkey,to_privkey)
-        self.log('data_by_phone',data_by_phone)
-
-        # 3) decrypt from caller
-        caller_pubkey = self.reassemble_necessary_keys_using_decr_phone_data(data_by_phone)
-        data_by_caller = self.decrypt_from_send(data_encr_by_caller,caller_pubkey,to_privkey)
-
-        # return
-        # req_data_encr = unencr_header + BSEP + data_by_phone + BSEP + data_by_caller
-        
-        self.log('data_by_phone',data_by_phone)
-        self.log('data_by_caller',data_by_caller)
-
-        DATA = {}
-        dict_merge(DATA,data_by_phone)
-        dict_merge(DATA,data_by_caller)
-        self.log('DATA!!!!!',DATA)
-        return DATA
-
+    
 
 
 

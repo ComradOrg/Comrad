@@ -41,14 +41,13 @@ class TheOperator(Operator):
         self._keychain = OPERATOR_KEYCHAIN
         
 
-
     def recv(self,data):
         # decrypt
         self.log('recv 1: got',data)
 
-        # decrypt from phone
-        data_in = self.decrypt_incoming(data)
-        self.log('recv 2: decrypt gave me',data_in)
+        # answer the phone!
+        data_in = self.answer_phone(data)
+        self.log('recv 2: answer_phone gave me',data_in)
 
         # route
         encr_result = self.route(data_in)

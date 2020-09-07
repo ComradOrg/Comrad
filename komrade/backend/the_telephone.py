@@ -61,77 +61,24 @@ class TheTelephone(Operator):
         return self.send(res)
 
 
-    # async def req(self,json_phone={},json_caller={},caller=None):
-    def ask_operator(self,
-                    json_phone2op={},
-                    json_caller2op={},
-                    json_caller2caller={},from_caller=None,to_caller=None):
+    def ring_operator(self,
+            from_caller=None,
+            to_caller=None,
+            json_phone2phone={}, 
+            json_caller2phone={},   # (person) -> operator or operator -> (person)
+            json_caller2caller={}):
         
+        encr_msg_to_send = self.ring_ring(
+            from_phone=self,
+            to_phone=self.op,
+            from_caller=from_caller,
+            to_caller=to_caller,
+            json_phone2phone=json_caller2phone, 
+            json_caller2phone=json_caller2phone,   # (person) -> operator
+            json_caller2caller=json_caller2caller)
+
+        self.send_and_receive(encr_msg_to_send)
         
-        self.log(f"""
-        RING RING!
-            json_phone2op={json_phone2op},
-            json_caller2op={json_caller2op},
-            json_caller2caller={json_caller2caller},
-            from_caller={from_caller},
-            to_caller={to_caller}
-        """)
-
-        ## defaults
-        unencr_header=b''
-        encrypted_message_from_telephone_to_op = b''
-        encrypted_message_from_caller_to_op = b''
-        encrypted_message_from_caller_to_caller = b''
-
-        ### LAYERS OF ENCRYPTION:
-        # 1) unencr header
-        # Telephone sends half its and the operator's public keys
-        unencr_header = self.pubkey_encr_ + BSEP2 + self.op.pubkey_decr_
-        self.log('Layer 1: Unencrypted header:',unencr_header)
-
-        ## Encrypt level 1: from Phone to Op
-        if json_phone2op:
-            encrypted_message_from_telephone_to_op = self.encrypt_to_send(
-                msg_json = json_phone2op,
-                from_privkey = self.privkey_,
-                to_pubkey = self.op.pubkey_
-            )
-            self.log('Layer 2: Phone 2 op:',encrypted_message_from_telephone_to_op)
-
-        ## Level 2: from Caller to Op
-        if json_caller2op and from_caller:
-            encrypted_message_from_caller_to_op = self.encrypt_to_send(
-                msg_json = json_caller2op,
-                from_privkey = from_caller.privkey_,
-                to_pubkey = self.op.pubkey_
-            )
-            self.log('Layer 3: Caller 2 op:',encrypted_message_from_telephone_to_op)
-        
-        # 2) Level 3: from Caller to Caller
-        if json_caller2caller and from_caller and to_caller:
-            encrypted_message_from_caller_to_caller = self.encrypt_to_send(
-                msg_json = json_caller,
-                from_privkey = from_caller.privkey_,
-                to_pubkey = to_caller.pubkey_
-            )
-            self.log('Layer 3: Caller 2 Caller:',encrypted_message_from_telephone_to_op)
-        
-        MSG_PIECES = [
-            unencr_header,
-            encrypted_message_from_telephone_to_op,
-            encrypted_message_from_caller_to_op,
-            encrypted_message_from_caller_to_caller
-        ]
-        MSG = BSEP.join(MSG_PIECES)
-        MSG_b64 = b64encode(MSG)
-
-        answer = self.send_and_receive(MSG_b64)
-
-        self.log('result from operator?',answer)
-        return answer
-
-
-
 
 
     
