@@ -208,9 +208,9 @@ class Operator(Keymaker):
         assert type(data_b64_s) == str
         self.log('Pronto!\n ... '+data_b64_s+' ...?')
 
-        if not isBase64(data_b64_s):
-            self.log('incoming data not b64')
-            return OPERATOR_INTERCEPT_MESSAGE
+        # if not isBase64(data_b64_s):
+            # self.log('incoming data not b64')
+            # return OPERATOR_INTERCEPT_MESSAGE
 
         # string -> b64 bytes
         data_b64_b = data_b64_s.encode()

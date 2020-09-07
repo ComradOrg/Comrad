@@ -76,6 +76,7 @@ class TheOperator(Operator):
 
 
     def send(self,encr_data_b):
+        self.log(type(encr_data_b),encr_data_b,'sending!')
         return encr_data_b
 
 
