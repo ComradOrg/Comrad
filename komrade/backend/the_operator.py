@@ -80,6 +80,7 @@ class TheOperator(Operator):
         # unencr_header = self.pubkey_encr_ + BSEP2 + self.op.pubkey_decr_
         unencr_header = self.phone.pubkey_decr_ + BSEP2 + self.op.pubkey_encr_
         self.log('unencr_header',unencr_header)
+        self.log('encr_data_b',encr_data_b)
         
         total_pkg = unencr_header + BSEP + encr_data_b
         self.log('total_pkg',total_pkg)
