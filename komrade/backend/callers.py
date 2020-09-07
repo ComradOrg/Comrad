@@ -24,7 +24,7 @@ class Caller(Operator):
         if not OPERATOR: OPERATOR=TheOperator()
         return OPERATOR
 
-    async def get_new_keys(self, name = None, passphrase = None, is_group=None):
+    def get_new_keys(self, name = None, passphrase = None, is_group=None):
         if not name: name=self.name
         if name is None: 
             name = input('\nWhat is the name for this account? ')
@@ -45,7 +45,6 @@ class Caller(Operator):
                                     'privkey_decr_encr', 'privkey_decr_decr',
                                     'adminkey_decr_encr', 'adminkey_decr_decr']
 
-        try:
-            return await self.phone.req(json_coming_from_phone = req_json, caller=self)
-        except TypeError:
-            return None
+        return self.phone.req(json_coming_from_phone = req_json, caller=self)
+        # return await self.phone.req(json_coming_from_phone = req_json, caller=self)
+        

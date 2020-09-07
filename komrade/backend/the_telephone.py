@@ -37,7 +37,13 @@ class TheTelephone(Operator):
         r=tor_request(URL)
 
         self.log('result!?!?!',r)
-        return r
+        
+        if r.status_code==200:
+            return r.text
+        else:
+            self.log('!! error in request',r.status_code,r.text)
+            return None
+        
 
 
 
@@ -124,9 +130,9 @@ def test_call():
     # res = phone.req({'forge_new_keys':{'name':'marx', 'pubkey_is_public':True}})
     # print(res)
     # asyncio.run(caller.get_new_keys())
-    caller.get_new_keys()
+    x=caller.get_new_keys()
 
-    print('YEAH COOL')
+    print('YEAH COOL',x)
 
 ## main
 if __name__=='__main__': test_call()
