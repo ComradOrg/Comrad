@@ -215,12 +215,18 @@ class Operator(Keymaker):
         # from_phone_pubkey,to_phone_pubkey = self.reassemble_nec_keys_using_header(unencr_header)
         if not from_phone or not to_phone:
             from_phone,to_phone = self.discover_which_phones_from_header(unencr_header)
+
+
+        self.log(f'I am {to_phone} and I am answering the phone! from {from_phone}')
         
         # layer 2: I know I (either Telephone or Operator) am the recipient of this msg
         from_phone_keychain = from_phone.keychain()
         from_phone_pubkey=from_phone_keychain.get('pubkey')
         to_phone_keychain = to_phone.keychain()
         to_phone_privkey=to_phone_keychain.get('privkey')
+
+        self.log('from_phone_pubkey',from_phone_pubkey,from_phone)
+        self.log('to_phone_privkey',to_phone_privkey,to_phone)
 
         # 2) decrypt from phone
         data_phone2phone = self.decrypt_from_send(
