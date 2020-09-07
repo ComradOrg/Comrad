@@ -218,8 +218,6 @@ def init_operators():
         keys_to_return=op_keys_to_keep_on_client + op_keys_to_keep_on_3rdparty # on clients only
     )
     from pprint import pprint
-    print('OP KEYS RETURNED')
-    pprint(op_decr_keys)
 
     ## CREATE TELEPHONE
     phone = Operator(name=TELEPHONE_NAME)
@@ -229,8 +227,12 @@ def init_operators():
     phone_decr_keys = phone.forge_new_keys(
         name=TELEPHONE_NAME,
         keys_to_save=phone_keys_to_keep_on_server,  # on server only
-        keys_to_return=phone_keys_to_keep_on_client + phone_keys_to_keep_on_client   # on clients only
+        keys_to_return=phone_keys_to_keep_on_client + phone_keys_to_keep_on_3rdparty   # on clients only
     )
+
+    print('OP KEYS RETURNED')
+    pprint(op_decr_keys)
+
 
     print('PHONE KEYS RETURNED')
     pprint(phone_decr_keys)
