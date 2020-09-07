@@ -27,7 +27,7 @@ class Caller(Operator):
             'passphrase':hashish(passphrase.encode())
         }
 
-        phone_res = self.phone.ask_operator(json_phone = req_json, caller=self)
+        phone_res = self.phone.ask_operator(json_phone2op=req_json)
         name = phone_res.get('name')
         returned_keys = phone_res.get('_keychain')
         self.log('got returnd keys from Op:',returned_keys)

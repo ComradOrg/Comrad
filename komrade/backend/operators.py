@@ -83,26 +83,26 @@ class Operator(Keymaker):
         return {}
 
 
-    def encrypt_outgoing(self,
-                        data_from_sender1={},
-                        data_from_sender2={},
-                        privkey_from_sender1=None,
-                        privkey_from_sender2=None,
-                        to_pubkey=None,
-                        unencr_header=b''):
+    # def encrypt_outgoing(self,
+    #                     data_from_sender1={},
+    #                     data_from_sender2={},
+    #                     privkey_from_sender1=None,
+    #                     privkey_from_sender2=None,
+    #                     to_pubkey=None,
+    #                     unencr_header=b''):
         
         
-        # 2) encrypt to phone
-        json_phone_encr = self.encrypt_to_send(data_from_sender1,from_phone_privkey,to_pubkey)
-        self.log('json_phone_encr',json_phone_encr)
+    #     # 2) encrypt to phone
+    #     json_phone_encr = self.encrypt_to_send(data_from_sender1,from_phone_privkey,to_pubkey)
+    #     self.log('json_phone_encr',json_phone_encr)
 
-        # 3) to caller
-        json_caller_encr = self.encrypt_to_send(json_caller,from_caller_privkey,to_pubkey)
-        self.log()
+    #     # 3) to caller
+    #     json_caller_encr = self.encrypt_to_send(json_caller,from_caller_privkey,to_pubkey)
+    #     self.log()
 
-        # return
-        req_data_encr = unencr_header + BSEP + json_phone_encr + BSEP + json_caller_encr
-        return req_data_encr
+    #     # return
+    #     req_data_encr = unencr_header + BSEP + json_phone_encr + BSEP + json_caller_encr
+    #     return req_data_encr
 
     def reassemble_nec_keys_using_header(self,unencr_header):
         assert unencr_header.count(BSEP2)==1
