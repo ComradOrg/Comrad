@@ -97,7 +97,7 @@ class Operator(Keymaker):
 
 
     # async def req(self,json_phone={},json_caller={},caller=None):
-    def dial_number(self,
+    def ring_ring(self,
             from_phone=None,
             to_phone=None,
             
