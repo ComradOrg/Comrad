@@ -43,7 +43,7 @@ class TheTelephone(Operator):
         RING RING!
         caller = {caller}
         json_coming_from_phone  = {json_coming_from_phone}
-        json_coming_from_caller = {json_coming_from_caller""")
+        json_coming_from_caller = {json_coming_from_caller}""")
         
 
         # keychain = self.keychain(allow_builtin=self.allow_builtin, force=True)
