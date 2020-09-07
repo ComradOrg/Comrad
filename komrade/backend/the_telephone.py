@@ -48,11 +48,15 @@ class TheTelephone(Operator):
         json_phone  = {json_phone}
         json_caller = {json_caller}""")
 
+        op_keychain = unpackage_from_transmission(OPERATOR_KEYCHAIN)
+        self.log('op_keychain',op_keychain)
+
+
         # 1) unencr header
         # telephone_pubkey_decr | op_pubkey_decr | op_privkey_decr
         unencr_header = TELEPHONE_KEYCHAIN['pubkey_decr']
-        unencr_header += BSEP2 + OPERATOR_KEYCHAIN['pubkey_decr']
-        unencr_header += BSEP2 + OPERATOR_KEYCHAIN['privkey_decr']
+        unencr_header += BSEP2 + op_keychain['pubkey_decr']
+        unencr_header += BSEP2 + op_keychain['privkey_decr']
 
         # 2) caller privkey?
         from_caller_privkey=caller.privkey_ if caller and json_caller else None
