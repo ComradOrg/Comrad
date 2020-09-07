@@ -71,10 +71,10 @@ def package_for_transmission(data_json):
             data_json[k]=v
     data_json_s = json.dumps(data_json)
     data_json_b = data_json_s.encode()
-    return data_json_b
+    return b64encode(data_json_b)
 
 def unpackage_from_transmission(data_json_b):
-    data_json_s = data_json_b.decode()
+    data_json_s = b64decode(data_json_b).decode()
     data_json = json.loads(data_json_s)
     for k,v in data_json.items():
         if isBase64(v):

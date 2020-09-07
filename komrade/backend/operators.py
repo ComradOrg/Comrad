@@ -42,7 +42,7 @@ class Operator(Keymaker):
         return b''
 
     def decrypt_from_send(self,msg_encr,from_pubkey,to_privkey):
-        if not msg_b_encr or not from_privkey or not to_pubkey:
+        if not msg_encr or not from_privkey or not to_pubkey:
             self.log('not enough info!')
             return b''
         try:
@@ -50,7 +50,7 @@ class Operator(Keymaker):
             msg_b = SMessage(
                 to_privkey,
                 from_pubkey,
-            ).unwrap(msg_b_encr)
+            ).unwrap(msg_encr)
             # decode
             msg_json = unpackage_from_transmission(msg_b)
             # return
