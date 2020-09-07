@@ -262,12 +262,12 @@ def init_operators():
     print('store in web =',THIRD_PARTY_DICT)
     print()
 
+    import pickle
     with open(PATH_BUILTIN_KEYCHAIN,'wb') as of:
-        of.write(THIRD_PARTY_DICT)
+        pickle.dump(STORE_IN_APP,of)
     with open(PATH_OPERATOR_WEB_KEYS_FILE,'wb') as of:
-        of.write(THIRD_PARTY_DICT)
+        pickle.dump(THIRD_PARTY_DICT,of)
     
-
 
 
 def test_op():
