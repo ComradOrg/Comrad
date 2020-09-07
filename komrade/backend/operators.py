@@ -62,6 +62,7 @@ class Operator(Keymaker):
         self.log('to_pubkey',to_pubkey)
         if not msg_json or not from_privkey or not to_pubkey:
             self.log('not enough info!',msg_json,from_privkey,to_pubkey)
+            whattttttt
             return b''
         self.log('packing for transmission: msg_json',type(msg_json),msg_json)
         msg_b = package_for_transmission(msg_json)
@@ -71,6 +72,8 @@ class Operator(Keymaker):
             from_privkey,
             to_pubkey,
         ).wrap(msg_b)
+        self.log('msg_encr',msg_encr)
+        stop
         return msg_encr
         # except ThemisError as e:
             # self.log('unable to encrypt to send!',e)
