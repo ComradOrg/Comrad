@@ -16,6 +16,7 @@ class TheTelephone(Operator):
         )
         self.caller=caller
         self.allow_builtin=allow_builtin
+        self.check_builtin_keys()
 
     def dial_operator(self,msg):
         msg=msg.replace('/','_')

@@ -121,3 +121,4 @@ WHY_MSG = 'Forge the password of memory: '
 
 
 BUILTIN_KEYCHAIN = None
+OMEGA_KEY = None

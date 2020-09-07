@@ -370,9 +370,27 @@ class Keymaker(Logger):
                     keychain[key_name]=_key_encr
         return keychain
 
-    def init_builtin_keys(self):
+    def check_builtin_keys(self):
+        global OMEGA_KEY,BUILTIN_KEYCHAIN
+        if OMEGA_KEY and BUILTIN_KEYCHAIN: return
+
+        if not os.path.exists(PATH_OMEGA_KEY) or not os.path.exists(PATH_BUILTIN_KEYCHAIN):
+            self.log('builtin keys not present??')
+            return
         
-        with open()
+        with open(PATH_OMEGA_KEY,'rb') as f:
+            OMEGA_KEY = KomradeSymmetricKeyWithoutPassphrase(
+                key=b64decode(f.read())
+            )
+        
+        with open(PATH_BUILTIN_KEYCHAIN,'rb') as f:
+            local_builtin_keychain_encr = b64decode(f.read())
+
+        from mazes import tor_request
+        remote_builtin_keychain_encr = tor_request(PATH_OPERATOR_WEB_KEYS_URL)
+
+        print(local_builtin_keychain_encr)
+        print(remote_builtin_keychain_encr)
 
 
     def forge_new_keys(self,
