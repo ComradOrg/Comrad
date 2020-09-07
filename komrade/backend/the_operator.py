@@ -202,7 +202,7 @@ def init_operators():
     # save what we normally save for a client on the server -- The Op is a client from our pov
     op_keys_to_keep_on_client = ['pubkey_decr']
     op_keys_to_keep_on_3rdparty = ['pubkey_encr','privkey_encr']
-    op_keys_to_keep_on_server = ['privkey_encr',
+    op_keys_to_keep_on_server = [
                                 'adminkey_encr',
                                 'privkey_decr_encr',
                                 'privkey_decr_decr',
