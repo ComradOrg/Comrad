@@ -187,10 +187,8 @@ def create_phonelines():
     ## CREATE OPERATOR
     op = Operator(name=OPERATOR_NAME)
     op_keys_to_keep_on_client = ['pubkey_decr']  # sent TO operator
-    op_keys_to_keep_on_3rdparty = ['pubkey_encr']  # dl by op
-    op_keys_to_keep_on_server = [
-        'privkey_encr','privkey_decr_encr','privkey_decr_decr',
-        'adminkey_encr','adminkey_decr_encr','adminkey_decr_decr']
+    op_keys_to_keep_on_3rdparty = ['pubkey_encr','privkey_encr']  # dl by op
+    op_keys_to_keep_on_server = ['privkey_decr','adminkey_encr','adminkey_decr_encr','adminkey_decr_decr']
 
     ## create phone
     phone = Operator(name=TELEPHONE_NAME)
