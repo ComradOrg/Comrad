@@ -212,6 +212,11 @@ class Operator(Keymaker):
             data_encr_caller2caller
         ) = data.split(BSEP)
 
+        self.log('unencr_header',unencr_header)
+        self.log('data_encr_phone2phone',data_encr_phone2phone)
+        self.log('data_encr_caller2phone',data_encr_caller2phone)
+        self.log('data_encr_caller2caller',data_encr_caller2caller)
+
         # set up
         DATA = {}
 
