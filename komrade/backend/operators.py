@@ -159,14 +159,14 @@ class Operator(Keymaker):
         self.log('data_by_phone',data_by_phone)
 
         # 3) decrypt from caller
-        caller_pubkey = self.reassemble_necessary_keys_using_decr_phone_data(data_by_phone)
-        data_by_caller = self.decrypt_from_send(data_encr_by_caller,caller_pubkey,to_privkey)
+        # caller_pubkey = self.reassemble_necessary_keys_using_decr_phone_data(data_by_phone)
+        # data_by_caller = self.decrypt_from_send(data_encr_by_caller,caller_pubkey,to_privkey)
 
         # return
         # req_data_encr = unencr_header + BSEP + data_by_phone + BSEP + data_by_caller
         
         self.log('data_by_phone',data_by_phone)
-        self.log('data_by_caller',data_by_caller)
+        # self.log('data_by_caller',data_by_caller)
         stop
         
         return req_data_encr
