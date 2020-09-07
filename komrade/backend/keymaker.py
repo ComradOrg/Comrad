@@ -591,19 +591,19 @@ class Keymaker(Logger):
         self._keychain = _keychain = {**extra_keys}
         self.log('_keychain at start of keychain() =',_keychain)
         
-        # am I a builtin one?
-        # self.log('hello///',self.name,self.name in BUILTIN_KEYCHAIN)
-        if hasattr(self,'allow_builtin'):
-            allow_builtin = allow_builtin and self.allow_builtin
+        # # am I a builtin one?
+        # # self.log('hello///',self.name,self.name in BUILTIN_KEYCHAIN)
+        # if hasattr(self,'allow_builtin'):
+        #     allow_builtin = allow_builtin and self.allow_builtin
 
-        if self.name in BUILTIN_KEYCHAIN and allow_builtin:
-            self.log('??',_keychain)
+        # if self.name in BUILTIN_KEYCHAIN and allow_builtin:
+        #     self.log('??',_keychain)
             
-            # if self.name!=OPERATOR_NAME:
-            for k,v in BUILTIN_KEYCHAIN[self.name].items():
-                _keychain[k]=v
-            self.log('??',_keychain)
-            # stop
+        #     # if self.name!=OPERATOR_NAME:
+        #     for k,v in BUILTIN_KEYCHAIN[self.name].items():
+        #         _keychain[k]=v
+        #     self.log('??',_keychain)
+        #     # stop
         
         self.log('_keychain',_keychain)
         # stop

@@ -17,12 +17,12 @@ class TheTelephone(Operator):
         self.caller=caller
         self.allow_builtin=allow_builtin
 
-    @property
-    def op(self):
-        global OPERATOR
-        from komrade.backend.the_operator import TheOperator
-        if not OPERATOR: OPERATOR=TheOperator()
-        return OPERATOR
+    # @property
+    # def op(self):
+    #     global OPERATOR
+    #     from komrade.backend.the_operator import TheOperator
+    #     if not OPERATOR: OPERATOR=TheOperator()
+    #     return OPERATOR
 
     async def dial_operator(self,msg):
         msg=msg.replace('/','_')
@@ -41,7 +41,7 @@ class TheTelephone(Operator):
         if not caller: caller=self.caller
         
 
-        keychain = self.keychain(allow_builtin=self.allow_builtin, force=True)
+        # keychain = self.keychain(allow_builtin=self.allow_builtin, force=True)
         # self.log('about to make a call. my keychain?',keychain)
         # stop
         # stop
@@ -49,7 +49,8 @@ class TheTelephone(Operator):
 
         # 0) Unencrypted. do not use except for very specific minimal reasons!
         # exchange half-complete pieces of info, both of which necessary for other
-        unencr_header = self.op.privkey_decr_ + BSEP2 + self.pubkey_decr_
+
+        unencr_header = OPERATOR_KEYCHAIN['privkey_decr'] + BSEP2 + TELEPHONE_NAME['pubkey_decr']
         # self.log('unencr_header',unencr_header)
 
         # ewrwerewrwerw
@@ -57,7 +58,10 @@ class TheTelephone(Operator):
         if json_coming_from_phone:
             json_coming_from_phone_s = json.dumps(json_coming_from_phone)
             json_coming_from_phone_b = json_coming_from_phone_s.encode()
-            json_coming_from_phone_b_encr = SMessage(self.privkey_,self.op.pubkey_).wrap(json_coming_from_phone_b)
+            json_coming_from_phone_b_encr = SMessage(
+                TELEPHONE_KEYCHAIN['privkey'],
+                OPERATOR_KEYCHAIN['pubkey']
+            ).wrap(json_coming_from_phone_b)
         else:
             json_coming_from_phone_b=b''
 
@@ -65,7 +69,10 @@ class TheTelephone(Operator):
         if json_coming_from_caller and caller:
             json_coming_from_caller_s = json.dumps(json_coming_from_caller)
             json_coming_from_caller_b = json_coming_from_caller_s.encode()
-            json_coming_from_caller_b_encr = SMessage(caller.privkey_,self.op.pubkey_).wrap(json_coming_from_caller_b)
+            json_coming_from_caller_b_encr = SMessage(
+                caller.privkey_,
+                OPERATOR_KEYCHAIN['pubkey']
+            ).wrap(json_coming_from_caller_b)
         else:
             json_coming_from_caller_b_encr = b''
 
@@ -81,9 +88,6 @@ class TheTelephone(Operator):
 
         # send!
         req_data_encr_b64_str = req_data_encr_b64.decode('utf-8')
-        
-        # escape slashes
-        req_data_encr_b64_str_esc = req_data_encr_b64_str.replace('/','_')
 
         try:
             res = await self.dial_operator(req_data_encr_b64_str)
