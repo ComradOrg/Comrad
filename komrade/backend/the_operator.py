@@ -205,9 +205,10 @@ def init_operators():
     )
 
     print('\n'*5)
-    print('OPERATOR_KEYCHAIN =',op_decr_keys)
+    print('OPERATOR_KEYCHAIN =',package_for_transmission(op_decr_keys))
     print()
-    print('TELEPHONE_KEYCHAIN =',phone_decr_keys)
+    print('TELEPHONE_KEYCHAIN =',package_for_transmission(phone_decr_keys))
+    print()
 
 
 
