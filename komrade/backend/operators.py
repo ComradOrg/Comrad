@@ -63,7 +63,7 @@ class Operator(Keymaker):
 
 
     def decrypt_from_send(self,msg_encr,from_pubkey,to_privkey):
-        if not msg_encr or not from_privkey or not to_pubkey:
+        if not msg_encr or not from_pubkey or not to_privkey:
             self.log('not enough info!')
             return b''
         try:
