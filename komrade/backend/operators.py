@@ -73,7 +73,7 @@ class Operator(Keymaker):
             to_pubkey,
         ).wrap(msg_b)
         self.log('msg_encr',msg_encr)
-        stop
+        # stop
         return msg_encr
         # except ThemisError as e:
             # self.log('unable to encrypt to send!',e)
@@ -133,9 +133,6 @@ class Operator(Keymaker):
         encrypted_message_from_caller_to_caller = b''
 
         from_phone_keychain = from_phone.keychain()
-        self.log('from_phone',type(from_phone),'to_phone',type(to_phone))
-        self.log('from_phone_keychain',from_phone_keychain)
-        self.log('to_phone_keychain',to_phone_keychain)
 
         
 
@@ -145,6 +142,10 @@ class Operator(Keymaker):
         to_phone_keychain = to_phone.keychain()
         to_phone_pubkey_decr=to_phone_keychain.get('pubkey_decr')
         to_phone_pubkey=to_phone_keychain.get('pubkey')
+
+        self.log('from_phone',type(from_phone),'to_phone',type(to_phone))
+        self.log('from_phone_keychain',from_phone_keychain)
+        self.log('to_phone_keychain',to_phone_keychain)
 
 
         ### LAYERS OF ENCRYPTION:
