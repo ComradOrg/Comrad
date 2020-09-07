@@ -190,20 +190,20 @@ class TheOperator(Operator):
 
 def init_operators():
 
-    # ## CREATE OPERATOR
-    # op = Operator(name=OPERATOR_NAME)
+    ## CREATE OPERATOR
+    op = Operator(name=OPERATOR_NAME)
     
-    # # save what we normally save for a client on the server -- The Op is a client from our pov
-    # op_keys_to_keep_on_client = ['pubkey_decr']  # we only store one half of one key about Op on clients
+    # save what we normally save for a client on the server -- The Op is a client from our pov
+    op_keys_to_keep_on_client = ['pubkey_decr']  # we only store one half of one key about Op on clients
 
-    # # rest we keep on server, except for one we kept on client
-    # op_keys_to_keep_on_server = [x for x in KEYMAKER_DEFAULT_KEYS_TO_RETURN if x not in op_keys_to_keep_on_client]
-    # op_keys_to_keep_on_server.append('pubkey_encr')
+    # rest we keep on server, except for one we kept on client
+    op_keys_to_keep_on_server = [x for x in KEYMAKER_DEFAULT_KEYS_TO_RETURN if x not in op_keys_to_keep_on_client]
+    op_keys_to_keep_on_server.append('pubkey_encr')
 
-    # op_decr_keys = op.forge_new_keys(
-    #     keys_to_save=op_keys_to_keep_on_server,  # on server only; flipped around
-    #     keys_to_return=op_keys_to_keep_on_client # on clients only
-    # )
+    op_decr_keys = op.forge_new_keys(
+        keys_to_save=op_keys_to_keep_on_server,  # on server only; flipped around
+        keys_to_return=op_keys_to_keep_on_client # on clients only
+    )
 
 
     ## CREATE TELEPHONE
