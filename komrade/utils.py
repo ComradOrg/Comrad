@@ -69,6 +69,7 @@ def package_for_transmission(data_json):
         elif type(v)==dict:
             v=package_for_transmission(v)
         data_json[k]=v
+    print(type(data_json), data_json)
     data_json_s = json.dumps(data_json)
     data_json_b = data_json_s.encode()
     return b64encode(data_json_b)
