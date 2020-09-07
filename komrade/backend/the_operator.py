@@ -12,7 +12,7 @@ from komrade.backend import *
 PATH_OPERATOR_WEB_KEYS_FILE = f'/home/ryan/www/website-komrade/.builtin.keys'
 PATH_OPERATOR_WEB_KEYS_URL = f'http://{KOMRADE_ONION}/op/.builtin.keys/'
 
-print(PATH_OPERATOR_WEB_KEYS_URL)
+# print(PATH_OPERATOR_WEB_KEYS_URL)
 
 
 class TheOperator(Operator):
