@@ -76,18 +76,7 @@ class TheOperator(Operator):
 
 
     def send(self,encr_data_b):
-        # telephone v:
-        # unencr_header = self.pubkey_encr_ + BSEP2 + self.op.pubkey_decr_
-        unencr_header = self.phone.pubkey_decr_ + BSEP2 + self.op.pubkey_encr_
-        self.log('unencr_header',unencr_header)
-        self.log('encr_data_b',encr_data_b)
-        
-        total_pkg = unencr_header + BSEP + encr_data_b.encode()
-        self.log('total_pkg',total_pkg)
-        total_pkg_b64 = b64encode(total_pkg)
-        self.log('total_pkg_b64',total_pkg_b64)
-
-        return total_pkg_b64
+        return encr_data_b
 
 
     def route(self, data):
