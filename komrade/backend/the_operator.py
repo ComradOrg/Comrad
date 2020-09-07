@@ -168,6 +168,7 @@ def init_operators():
     print('OPERATOR_KEYCHAIN =',op_decr_keys)
     print()
     print('TELEPHONE_KEYCHAIN =',phone_decr_keys)
+    stop
 
     # stringify
     for k,v in phone_decr_keys.items():
