@@ -96,8 +96,6 @@ class TheOperator(Operator):
             if type(data_unencr_by_phone_json)== dict:
                 dict_merge(DATA, data_unencr_by_phone_json)
 
-        self.log('DATA as of now 3!?',DATA)
-        stop3
 
         if data_encr_by_caller and 'name' in data_unencr_by_phone:
             name=data_unencr_by_phone['name']
