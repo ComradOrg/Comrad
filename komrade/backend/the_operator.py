@@ -200,17 +200,31 @@ def init_operators():
     op = Operator(name=OPERATOR_NAME)
     
     # save what we normally save for a client on the server -- The Op is a client from our pov
-    op_keys_to_keep_on_client = ['pubkey_decr']
-    op_keys_to_keep_on_3rdparty = ['pubkey_encr','privkey_encr']
+    
+    # take 1
+    # op_keys_to_keep_on_client = ['pubkey_decr']
+    # op_keys_to_keep_on_3rdparty = ['pubkey_encr','privkey_encr']
+    # op_keys_to_keep_on_server = ['adminkey_encr',
+    #                             'privkey_decr_encr',
+    #                             'privkey_decr_decr',
+    #                             'adminkey_decr_encr',
+    #                             'adminkey_decr_decr']
+
+    # phone_keys_to_keep_on_client = ['privkey_decr']
+    # phone_keys_to_keep_on_3rdparty = ['privkey_encr','pubkey_encr']
+    # phone_keys_to_keep_on_server = ['pubkey_decr']
+
+    op_keys_to_keep_on_client = ['pubkey_encr']
+    op_keys_to_keep_on_3rdparty = ['pubkey_decr','privkey_decr']
     op_keys_to_keep_on_server = ['adminkey_encr',
                                 'privkey_decr_encr',
                                 'privkey_decr_decr',
                                 'adminkey_decr_encr',
                                 'adminkey_decr_decr']
 
-    phone_keys_to_keep_on_client = ['privkey_decr']
-    phone_keys_to_keep_on_3rdparty = ['privkey_encr','pubkey_encr']
-    phone_keys_to_keep_on_server = ['pubkey_decr']
+    phone_keys_to_keep_on_client = ['privkey_encr']
+    phone_keys_to_keep_on_3rdparty = ['privkey_decr','pubkey_decr']
+    phone_keys_to_keep_on_server = ['pubkey_encr']
 
     op_decr_keys = op.forge_new_keys(
         keys_to_save=op_keys_to_keep_on_server,  # on server only; flipped around
@@ -269,16 +283,16 @@ def init_operators():
     omega_key = KomradeSymmetricKeyWithoutPassphrase()
 
     STORE_IN_APP_encr = b64encode(omega_key.encrypt(STORE_IN_APP_pkg))
-    THIRD_PARTY_DICT_encr = b64encode(omega_key.encrypt(THIRD_PARTY_DICT_pkg))
+    THIRD_PARTY_totalpkg = b64encode(omega_key.data + BSEP + omega_key.encrypt(THIRD_PARTY_DICT_pkg))
     
     with open(PATH_OMEGA_KEY,'wb') as of:
-        of.write(b64encode(omega_key.data))
+        of.write()
     with open(PATH_BUILTIN_KEYCHAIN,'wb') as of:
         of.write(STORE_IN_APP_encr)
         print('STORE_IN_APP_encr',STORE_IN_APP_encr)
     with open(PATH_OPERATOR_WEB_KEYS_FILE,'wb') as of:
-        of.write(THIRD_PARTY_DICT_encr)
-        print('THIRD_PARTY_DICT_encr',THIRD_PARTY_DICT_encr)
+        of.write(THIRD_PARTY_totalpkg)
+        print('THIRD_PARTY_DICT_encr',THIRD_PARTY_totalpkg)
 
 
 def test_op():

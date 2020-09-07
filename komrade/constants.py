@@ -119,6 +119,6 @@ WHY_MSG = 'Forge the password of memory: '
 
 
 
-
-BUILTIN_KEYCHAIN = None
+TELEPHONE_KEYCHAIN = None
+OPERATOR_KEYCHAIN = None
 OMEGA_KEY = None

@@ -371,8 +371,8 @@ class Keymaker(Logger):
         return keychain
 
     def check_builtin_keys(self):
-        global OMEGA_KEY,BUILTIN_KEYCHAIN
-        if OMEGA_KEY and BUILTIN_KEYCHAIN: return
+        global OMEGA_KEY,OPERATOR_KEYCHAIN,TELEPHONE_KEYCHAIN
+        if OMEGA_KEY and OPERATOR_KEYCHAIN and TELEPHONE_KEYCHAIN: return
         self.log('getting built in keys!')
 
         if not os.path.exists(PATH_OMEGA_KEY) or not os.path.exists(PATH_BUILTIN_KEYCHAIN):
@@ -409,29 +409,24 @@ class Keymaker(Logger):
             self.log('cannot authenticate the keymakers')
             return
         remote_builtin_keychain_encr = b64decode(r.text)
-        print('remote',remote_builtin_keychain_encr)
-        # stop
-
-        remote_builtin_keychain = unpackage_from_transmission(
-            OMEGA_KEY.decrypt(
-                remote_builtin_keychain_encr
-            )
-        )
-        self.log('remote_builtin_keychain',remote_builtin_keychain)
+        remote_builtin_keychain = OMEGA_KEY.decrypt(remote_builtin_keychain_encr)
+        remote_builtin_keychain_phone,remote_builtin_keychain_op = remote_builtin_keychain.split(BSEP)
+        remote_builtin_keychain_phone_json = unpackage_from_transmission(remote_builtin_keychain_phone)
+        remote_builtin_keychain_op_json = unpackage_from_transmission(remote_builtin_keychain_op)
         
-        # for nm in [OPERATOR_NAME,TELEPHONE_NAME]:
-            # local_builtin_keychain[nm]=unpackage_from_transmission(local_builtin_keychain[nm])
-            # remote_builtin_keychain[nm]=unpackage_from_transmission(remote_builtin_keychain[nm])
-
-        # self.log('unpackaged local',unpackage_from_transmission(local_builtin_keychain))
-
-        # self.log('unpackaged remote',unpackage_from_transmission(remote_builtin_keychain))
-
+        self.log('remote_builtin_keychain_phone_json',remote_builtin_keychain_phone_json)
+        self.log('remote_builtin_keychain_op_json',remote_builtin_keychain_op_json)
         
-        dict_merge(meta_keychain,local_builtin_keychain)
-        dict_merge(meta_keychain,remote_builtin_keychain)
-        BUILTIN_KEYCHAIN = meta_keychain
-        self.log('meta_keychain',meta_keychain)
+        TELEPHONE_KEYCHAIN={}
+        OPERATOR_KEYCHAIN={}
+        dict_merge(TELEPHONE_KEYCHAIN,local_builtin_keychain_phone_json)
+        dict_merge(OPERATOR_KEYCHAIN,local_builtin_keychain_op_json)
+        dict_merge(TELEPHONE_KEYCHAIN,remote_builtin_keychain_phone_json)
+        dict_merge(OPERATOR_KEYCHAIN,remote_builtin_keychain_op_json)
+        # BUILTIN_KEYCHAIN = meta_keychain
+        self.log('OPERATOR_KEYCHAIN',OPERATOR_KEYCHAIN)
+        self.log('TELEPHONE_KEYCHAIN',TELEPHONE_KEYCHAIN)
+        stop
         return BUILTIN_KEYCHAIN
         
 
