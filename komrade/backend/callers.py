@@ -36,7 +36,7 @@ class Caller(Operator):
         req_json = {
             '_route':'forge_new_keys',
             'name':name,
-            'passphrase':hashish(passphrase)
+            'passphrase':hashish(passphrase.encode())
         }
 
         req_json['key_types'] = {**KEYMAKER_DEFAULT_KEY_TYPES}

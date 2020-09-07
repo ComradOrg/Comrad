@@ -139,7 +139,7 @@ class TheOperator(Operator):
             self.log('returned keys from route:','\n'.join(res.keys()))
             # self.log('saved keys within rote:','\n'.join(testres.keys()))
             # self.log('keys which can be assembled:','\n'.join(testres_full.keys()))
-        return data# 'success!'
+        return res# 'success!'
 
 
 def init_operators():
@@ -160,60 +160,7 @@ def init_operators():
     print('OPERATOR_KEYCHAIN =',op_decr_keys)
     print()
     print('TELEPHONE_KEYCHAIN =',phone_decr_keys)
-    # stop
 
-    # # stringify
-    # for k,v in phone_decr_keys.items():
-    #     v_s = b64encode(v) #.decode('utf-8')
-    #     phone_decr_keys[k]=v_s
-    # for k,v in op_decr_keys.items():
-    #     v_s = b64encode(v) #.decode('utf-8')
-    #     op_decr_keys[k]=v_s
-
-    print('\n'*5)
-    print('OPERATOR_KEYCHAIN =',op_decr_keys)
-    print()
-    print('TELEPHONE_KEYCHAIN =',phone_decr_keys)
-    print('\n'*5)
-    # stoppwppepe
-
-    # # print('total_d',total_d)
-    # builtin_keychains = {OPERATOR_NAME:op_decr_keys, TELEPHONE_NAME:phone_decr_keys}
-    # builtin_keychains_s = json.dumps(builtin_keychains)
-
-    # print('builtin_keychains =',builtin_keychains)
-
-    # print('builtin_keychains_s =',builtin_keychains_s)
-    # builtin_keychains_b = builtin_keychains_s.encode('utf-8')
-    
-    # builtin_keychains_b_decr = KomradeSymmetricKeyWithoutPassphrase()
-    # builtin_keychains_b_encr = builtin_keychains_b_decr.encrypt(builtin_keychains_b)
-
-    # builtin_keychains_b_decr_b64 = b64encode(builtin_keychains_b_decr.key)
-    # builtin_keychains_b_encr_b64 = b64encode(builtin_keychains_b_encr) 
-
-    # with open(PATH_BUILTIN_KEYCHAINS_ENCR,'wb') as of:
-    #     of.write(builtin_keychains_b_encr_b64)
-    #     print('>> saved:',PATH_BUILTIN_KEYCHAINS_ENCR)
-    #     print(builtin_keychains_b_encr_b64,'\n\n')
-    # with open(PATH_BUILTIN_KEYCHAINS_DECR,'wb') as of:
-    #     of.write(builtin_keychains_b_decr_b64)
-    #     print('>> saved:',PATH_BUILTIN_KEYCHAINS_DECR)
-    #     print(builtin_keychains_b_decr_b64,'\n')
-        
-
-
-    # op_pub = op.pubkey_decr_
-    # phone_pub = phone.pubkey_decr_
-    # phone_priv = phone.privkey_decr_
-
-    # print('OPERATOR_PUBKEY_DECR =',b64encode(op_pub))
-    # print('TELEPHONE_PUBKEY_DECR =',b64encode(phone_pub))
-    # print('TELEPHONE_PRIVKEY_DECR =',b64encode(phone_priv))
-    # return {
-        # 'op.keychain()':op.keychain(),
-        # 'phone.keychain()':phone.keychain()
-    # }
 
 
 def test_op():
