@@ -7,11 +7,12 @@ from komrade.backend import *
 from flask import Flask, request, jsonify
 from flask_classful import FlaskView
 
+# PATH_OPERATOR_WEB_KEYS_URI = hashish(b'keys')
+PATH_OPERATOR_WEB_KEYS_FILE = f'/home/ryan/www/website-komrade/.builtin.keys'
+PATH_OPERATOR_WEB_KEYS_URL = f'http://{KOMRADE_ONION}/op/.builtin.keys/'
 
-PATH_OPERATOR_WEB_KEYS_URI = hashish(b'keys')
-PATH_OPERATOR_WEB_KEYS_FILE = f'/home/ryan/www/website-komrade/.{PATH_OPERATOR_WEB_KEYS_URI}'
-PATH_OPERATOR_WEB_KEYS_URL = f'http://{KOMRADE_ONION}/op/{PATH_OPERATOR_WEB_KEYS_URI}/'
-print(PATH_OPERATOR_WEB_KEYS_URL)
+# print(PATH_OPERATOR_WEB_KEYS_URL)
+
 
 OPERATOR = None
 TELEPHONE = None
@@ -24,7 +25,7 @@ class TheSwitchboard(FlaskView, Logger):
     @route('/.builtin.keys/')
     def keys(self):
         if not os.path.exists(PATH_OPERATOR_WEB_KEYS_FILE):
-            self.log('no keys file exists!')
+            self.log('no keys file exists!',PATH_OPERATOR_WEB_KEYS_FILE)
             return OPERATOR_INTERCEPT_MESSAGE
         with open(PATH_OPERATOR_WEB_KEYS_FILE,'rb') as  f:
             return f.read()
