@@ -175,8 +175,11 @@ class Operator(Keymaker):
         msg_b64_str = MSG_b64.decode()
         self.log(b' ~~~ rirrrrng ring ~~~~  ring ~~ rrrrriing ~~~',msg_b64_str)
 
+        ## escape slashes
+        msg_b64_str_esc=msg_b64_str.replace('/','_')
+        
 
-        return msg_b64_str
+        return msg_b64_str_esc
 
     
     def answer_phone(self,data_b64_s, from_phone=None,to_phone=None):

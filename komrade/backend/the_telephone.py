@@ -30,37 +30,28 @@ class TheTelephone(Operator):
         print(type(self._keychain), self._keychain)
         
 
-    def send_and_receive(self,msg_b64_str):
-        msg=msg_b64_str.replace('/','_')
-        URL = OPERATOR_API_URL + msg + '/'
+    def send_and_receive(self,msg_b64_str_esc):
+        URL = OPERATOR_API_URL + msg_b64_str_esc + '/'
         self.log("DIALING THE OPERATOR:",URL)
-        # stop
-        r=komrade_request(URL)
-        if r.status_code==200:
-            return r.text
+        ringring=komrade_request(URL)
+        if ringring.status_code==200:
+            um_yes_hello = ringring.text
+            return self.answer_phone(um_yes_hello,
+                from_phone=self.op,
+                to_phone=self
+            )
         else:
-            self.log('!! error in request',r.status_code,r.text)
+            self.log('!! error in request',ringring.status_code,ringring.text)
             return None
-        
-    def recv(self,data):
-        # decrypt
-        data_in = self.decrypt_incoming(data)
-        # route
-        result = self.route(data_json)
-        # encrypt
-        data_out = self.encrypt_outgoing(result)
-        # send
-        return self.send(res)
 
-
-    def ring_operator(self,
+    def ring_ring(self,
             from_caller=None,
             to_caller=None,
             json_phone2phone={}, 
             json_caller2phone={},   # (person) -> operator or operator -> (person)
             json_caller2caller={}):
         
-        encr_msg_to_send = self.ring_ring(
+        encr_msg_to_send = super().ring_ring(
             from_phone=self,
             to_phone=self.op,
             from_caller=from_caller,
@@ -69,10 +60,8 @@ class TheTelephone(Operator):
             json_caller2phone=json_caller2phone,   # (person) -> operator
             json_caller2caller=json_caller2caller)
 
-        self.send_and_receive(encr_msg_to_send)
+        return self.send_and_receive(encr_msg_to_send)
         
-
-
     
 def test_call():
     caller = Caller('marx33') #Caller('marx')

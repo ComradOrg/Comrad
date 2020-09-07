@@ -40,6 +40,24 @@ class TheOperator(Operator):
             path_crypt_data=PATH_CRYPT_OP_DATA)
         self._keychain = OPERATOR_KEYCHAIN
         
+    def ring_ring(self,
+        from_caller=None,
+        to_caller=None,
+        json_phone2phone={}, 
+        json_caller2phone={},   # (person) -> operator or operator -> (person)
+        json_caller2caller={}):
+        
+        encr_msg_to_send = super().ring_ring(
+            from_phone=self,
+            to_phone=self.phone,
+            from_caller=from_caller,
+            to_caller=to_caller,
+            json_phone2phone=json_phone2phone, 
+            json_caller2phone=json_caller2phone,   # (person) -> operator
+            json_caller2caller=json_caller2caller)
+
+        return self.send(encr_msg_to_send)
+
 
     def recv(self,data):
         # decrypt
@@ -50,11 +68,11 @@ class TheOperator(Operator):
         self.log('recv 2: answer_phone gave me',data_in)
 
         # route
-        encr_result = self.route(data_in)
-        self.log('recv 3: route gave me',encr_result)
+        return self.route(data_in)
+        # self.log('recv 3: route gave me',encr_result)
 
-        # send
-        return self.send(encr_result)
+        # # send
+        # return self.send(encr_result)
 
 
     def send(self,encr_data_b):
@@ -78,10 +96,8 @@ class TheOperator(Operator):
         del data['_route']
 
         if route == 'forge_new_keys':
-            res = self.forge_new_keys(**data)
-        else:
-            res = OPERATOR_INTERCEPT_MESSAGE
-        return res# 'success!'
+            return self.forge_new_keys(**data)
+        return OPERATOR_INTERCEPT_MESSAGE
 
     def forge_new_keys(self,**data):
         # get keys
@@ -91,6 +107,9 @@ class TheOperator(Operator):
         pkg['_keychain']=res
 
         self.log('returned keys from keymaker.forge_new_keys:','\n'.join(res.keys()))
+
+        return self.ring_ring(json_phone2phone=pkg)
+
         
         
 
