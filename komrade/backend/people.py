@@ -25,7 +25,7 @@ class Person(Caller):
 
     def ring_ring(self,with_msg,to_whom = None):
         # if no one intended, call the operator
-        to_whom = self.op
+        return super().ring_ring(with_msg,to_phone=self.op)
 
         # msg should be unencrypted
         msg_unencr = with_msg
@@ -53,7 +53,7 @@ class Person(Caller):
         return resp_msg_unencr
 
 
-    def register(self):
+    def register(self,name=None,passphrase=DEBUG_DEFAULT_PASSPHRASE, is_group=None):
         # get needed metadata
         if not name: name=self.name
         if name is None: 
@@ -67,10 +67,12 @@ class Person(Caller):
         msg_to_op = {'_please':'forge_new_keys'}
 
         # call and ask operator to register us
-        resp = self.ring(
-            whom=self.op,
-            with_msg=msg_to_op
-        )
+        
+        # for only this one! we skip to Caller
+
+        resp = self.ring_ring(msg_to_op)
+
+        return resp
 
 
     def get_new_keys(self, name = None, passphrase = DEBUG_DEFAULT_PASSPHRASE, is_group=None):
@@ -108,3 +110,9 @@ class Person(Caller):
         # success!
         self.log('yay!!!!')
         return saved_keys
+
+
+if __name__=='__main__':
+    person = Person('marx')
+
+    person.register()

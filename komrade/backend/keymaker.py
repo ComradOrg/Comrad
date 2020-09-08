@@ -98,30 +98,34 @@ class Keymaker(Logger):
         return self._pubkey
 
     def keychain(self,look_for=KEYMAKER_DEFAULT_ALL_KEY_NAMES):
-        keys = {'pubkey':self.pubkey}
+        self._keychain = keys = {**{'pubkey':self.pubkey}, **self._keychain}
         uri = self.uri_id
 
         # get from cache
         for keyname in look_for:
+            if keyname in keys and keys[keyname]: continue
+            
+            self.log('??',keyname)
             key = self.crypt_keys.get(uri,prefix=f'/{keyname}/')
-            if key:
-                keys[keyname]=key
+            if key: keys[keyname]=key
+        
+        self.log('keys 1!',self._keychain)
 
         # try to assemble
         keys = self.assemble(self.assemble(keys))
-
+        self.log('keys 2!',self._keychain)
         return keys
 
 
     @property
     def pubkey(self):
         if not self._pubkey: self._pubkey = self.crypt_keys.get(self.name, prefix='/pubkey/')
-        if not self._pubkey: self._pubkey = b64decode(self.load_qr.get(self.name, prefix='/pubkey/').encode())
+        if not self._pubkey: self._pubkey = self.load_qr(self.name)
         return self._pubkey
     @property
-    def privkey(self): return self.keychain()['privkey']
+    def privkey(self): return self.keychain().get('privkey')
     @property
-    def adminkey(self): return self.keychain()['adminkey']
+    def adminkey(self): return self.keychain().get('adminkey')
 
 
 
@@ -133,13 +137,16 @@ class Keymaker(Logger):
         # with open(contact_fnfn,'rb') as f: dat=f.read()
         from pyzbar.pyzbar import decode
         from PIL import Image
-        return decode(Image.open(contact_fnfn))[0].data
+        res= decode(Image.open(contact_fnfn))[0].data
 
+        # self.log('QR??',res,b64decode(res))
+        return b64decode(res)
 
     @property
     def uri_id(self):
-        if not hasattr(self,'_uri_id') or not self._uri_id:
-            self._uri_id = b64encode(self.pubkey)
+        if not self._uri_id:
+            if self.pubkey:
+                self._uri_id = b64encode(self.pubkey)
         return self._uri_id
 
 

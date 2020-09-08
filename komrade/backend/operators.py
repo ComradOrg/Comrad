@@ -65,6 +65,9 @@ class Operator(Keymaker):
         msg_b = package_for_transmission(msg_json)
         self.log('packing for transmission: msg_b',type(msg_b),msg_b)
         # try:
+        self.log('from privkey =',from_privkey)
+        self.log('to pubkey =',to_pubkey)
+
         msg_encr = SMessage(
             from_privkey,
             to_pubkey,
@@ -100,13 +103,22 @@ class Operator(Keymaker):
 
 
     def package_msg_to(self,msg,another):
+        if not self.privkey or not self.pubkey:
+            self.log('why do I have no pub/privkey pair!?',self.privkey,self,self.name)
+            return b''
+        if not another.name or not another.pubkey:
+            self.log('why do I not know whom I\'m writing to?')
+            return b''
+
+        # otherwise send msg
         msg = {
             '_from_pub':self.pubkey,
             '_from_name':self.name,
             '_to_pub':another.pubkey,
-            '_to_name':another.name
+            '_to_name':another.name,
             '_msg':msg,
         }
+        self.log(f'I am a {type(self)} packaging a message to {another}')
         return self.encrypt_to_send(msg, self.privkey, another.pubkey)
 
     

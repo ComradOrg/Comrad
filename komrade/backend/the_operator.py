@@ -30,6 +30,8 @@ class TheOperator(Operator):
         # init req paths
         # if not os.path.exists(PATH_OPERATOR): os.makedirs(PATH_OPERATOR)
         global OPERATOR_KEYCHAIN,TELEPHONE_KEYCHAIN
+        
+        from komrade.backend.phonelines import connect_phonelines
         if not TELEPHONE_KEYCHAIN or not OPERATOR_KEYCHAIN:
             OPERATOR_KEYCHAIN,TELEPHONE_KEYCHAIN = connect_phonelines()
         if not passphrase: self.passphrase=passphrase=getpass.getpass('Hello, this is the Operator speaking. What is the passphrase?\n> ')
@@ -66,7 +68,9 @@ class TheOperator(Operator):
 
     def route(self, data):
         # route incoming call from the switchboard
+        self.log('Hello, this is the Operator. You said: ',data)
 
+        stop
 
         res=None
         route = data.get('_please')

@@ -2,6 +2,7 @@
 import os,sys; sys.path.append(os.path.abspath(os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__),'..')),'..')))
 from komrade import *
 from komrade.backend import *
+from komrade.backend.phonelines import *
 
 ### ACTUAL PHONE CONNECTIONS
 class TheTelephone(Operator):
@@ -41,7 +42,7 @@ class TheTelephone(Operator):
             encr_str_response_from_op = ringring.text
             self.log('encr_str_response_from_op',encr_str_response_from_op)
 
-            return encr_str_response_from_op.encode()
+            return encr_str_response_from_op #.encode()
         else:
             self.log('!! error in request',ringring.status_code,ringring.text)
             return None
@@ -50,18 +51,21 @@ class TheTelephone(Operator):
         if not to_phone: to_phone=self.op
         to_whom = to_phone
 
+        # msg is of type
+        msg_encr_caller2caller_caller2phone = with_msg
+
         # ring 1: encrypt
         msg_encr_caller2caller_caller2phone_phone2phone = self.package_msg_to(
-            msg_encr_caller2caller,
+            msg_encr_caller2caller_caller2phone,
             to_whom
         )
         self.log('final form of encr msg!',msg_encr_caller2caller_caller2phone_phone2phone)
 
         # ring 2: dial and get response
         resp_msg_encr_caller2caller_caller2phone_phone2phone = self.send_and_receive(
-            msg_encr_caller2caller_phone2phone
+            msg_encr_caller2caller_caller2phone_phone2phone
         )
-        msg_encr_caller2caller_caller2phone_phone2phone: return
+        # msg_encr_caller2caller_caller2phone_phone2phone: return
 
         # ring 3: decrypt
         resp_msg_encr_caller2caller_caller2phone = self.unpackage_msg_from(
@@ -73,7 +77,11 @@ class TheTelephone(Operator):
 
     
 def test_call():
-    caller = Caller('marx33') #Caller('marx')
+    phone = TheTelephone()
+    pprint(phone.keychain())
+
+
+    # caller = Caller('marx33') #Caller('marx')
     # caller.boot(create=True)
     # print(caller.keychain())
     # phone = TheTelephone()
@@ -82,9 +90,9 @@ def test_call():
     # res = phone.req({'forge_new_keys':{'name':'marx', 'pubkey_is_public':True}})
     # print(res)
     # asyncio.run(caller.get_new_keys())
-    x=caller.get_new_keys(passphrase='1869')
+    # x=caller.get_new_keys(passphrase='1869')
 
-    print('YEAH COOL',x)
+    # print('YEAH COOL',x)
 
 ## main
 if __name__=='__main__': test_call()

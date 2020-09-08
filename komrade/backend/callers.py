@@ -14,10 +14,13 @@ class Caller(Operator):
 
 
     def ring_ring(self,with_msg,to_phone=None):
+        
+
         # message should be encrypted caller2caller (by Person.ring)
         msg_encr_caller2caller = with_msg
 
         # Caller can only encrypt for Operator (end phone)
+        if not to_phone: to_phone=self.op
         to_whom = to_phone
 
         # ring 1: encrypt caller2phone
