@@ -135,8 +135,6 @@ PATH_OPERATOR_WEB_KEYS_FILE = f'/home/ryan/www/website-komrade/.builtin.keys'
 PATH_OPERATOR_WEB_KEYS_URL = f'http://{KOMRADE_URL}/.builtin.keys'
 
 
-PATH_URI_CODES = 
-
 
 # dangerous! leave on only if absolutely necessary for initial dev
 ALLOW_CLEARNET = True
