@@ -60,17 +60,36 @@ class TheOperator(Operator):
 
         return self.send(encr_msg_to_send)
 
+    # ends the ring_ring() chain
+    def answer_phone(self,data_b64_str):
+        # route incoming call from the switchboard
+        self.log('Hello, this is the Operator. You said: ',data_b64_str)
+
+        # decode
+        data_b64 = data_b64_str.encode()
+        data = b64decode(data_b64)
+        msg_encr_caller2caller_caller2phone_phone2phone = data
+        self.log('msg_encr_caller2caller_caller2phone_phone2phone incoming',msg_encr_caller2caller_caller2phone_phone2phone)
+
+        TOTAL_MSG = {}
+
+        # top layer: phone -> me, the op
+        msg_encr_caller2caller_caller2phone = self.unpackage_msg_from(
+            msg_encr_caller2caller_caller2phone_phone2phone,
+            self.phone
+        )
+        self.log('Operator unrolled the first layer of encryption:',msg_encr_caller2caller_caller2phone)
+
+        # is there another layer,
+
 
     def send(self,encr_data_b):
         self.log(type(encr_data_b),encr_data_b,'sending!')
         return encr_data_b
 
 
-    def route(self, data):
-        # route incoming call from the switchboard
-        self.log('Hello, this is the Operator. You said: ',data)
-
-        stop
+    def route(self, data_b64_str):
+        return self.answer_phone(data_b64_str)
 
         res=None
         route = data.get('_please')
@@ -82,6 +101,8 @@ class TheOperator(Operator):
         return OPERATOR_INTERCEPT_MESSAGE
 
     def forge_new_keys(self,**data):
+        self.log('about to make some new keys!',data)
+        
         # get keys
         forged_keys_plus_id = super().forge_new_keys(**data)
 

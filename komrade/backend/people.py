@@ -5,22 +5,6 @@ from komrade.backend import *
 
 class Person(Caller):
 
-    # def ring_person(self,with_msg,to_whom):
-    #     res = self.ring(
-    #         with_msg,
-    #         to_whom,
-    #         )
-    #     self.log('<--',res)
-    #     return res
-
-
-    # def ring_ring(self,with_msg,to_whom = None):
-    #     # if no one intended, call the operator
-    #     if to_whom is None:
-    #         return self.ring_operator(with_msg)
-    #     elif type(to_whom)==Person:
-    #         return self.ring_person(with_msg,to_whom)
-    #     raise KomradeException('Ring whom?')
 
 
     def ring_ring(self,with_msg,to_whom = None):
