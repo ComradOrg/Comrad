@@ -204,9 +204,10 @@ class Keymaker(Logger):
 
         # save keys!
         # get URI id to save under (except for pubkeys, accessible by name)
-        uri_id,keys_saved = self.save_keychain(name,keychain,keys_to_save)
+        uri_id,keys_saved,keychain = self.save_keychain(name,keychain,keys_to_save)
         self.log('uri_id =',uri_id)
         self.log('keys_saved =',keys_saved)
+        self.log('keychain =',keychain)
 
         # return keys!
         keys_returned = self.return_keychain(keychain,keys_to_return)
@@ -252,7 +253,7 @@ class Keymaker(Logger):
                 self.crypt_keys.set(uri_id,keychain[keyname],prefix=f'/{keyname}/')
                 keys_saved_d[keyname] = keychain[keyname]
 
-        return (uri_id,keys_saved_d)
+        return (uri_id,keys_saved_d,keychain)
 
     def assemble(self,_keychain):
         # last minute assemblies?
