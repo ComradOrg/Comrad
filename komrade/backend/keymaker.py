@@ -216,7 +216,7 @@ class Keymaker(Logger):
                 
     def return_keychain(self,keychain,keys_to_return=None):
         keychain_toreturn = {}
-        if not keychain_toreturn: keychain_toreturn = list(keychain.keys())
+        if not keys_toreturn: keys_toreturn = list(keychain.keys())
         for key in keys_to_return:
             if key in keychain:
                 keychain_toreturn[key]=keychain[key]
