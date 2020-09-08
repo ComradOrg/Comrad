@@ -60,11 +60,13 @@ OPERATOR_INTERCEPT_MESSAGE = "If you'd like to make a call, please hang up and t
 
 
 # defaults oriented to Callers
-KEYMAKER_DEFAULT_KEYS_TO_SAVE = ['pubkey_encr']
+# KEYMAKER_DEFAULT_KEYS_TO_SAVE = ['pubkey_encr']
+KEYMAKER_DEFAULT_KEYS_TO_SAVE = ['pubkey']
 
-KEYMAKER_DEFAULT_KEYS_TO_RETURN = ['privkey_encr',
+# KEYMAKER_DEFAULT_KEYS_TO_RETURN = ['privkey_encr',
+KEYMAKER_DEFAULT_KEYS_TO_RETURN = ['pubkey',
+                                   'privkey_encr',
                                    'adminkey_encr',
-                                   'pubkey_decr',
                                    'privkey_decr_encr',
                                    'privkey_decr_decr',
                                    'adminkey_decr_encr',

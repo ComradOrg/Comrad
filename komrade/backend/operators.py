@@ -99,6 +99,8 @@ class Operator(Keymaker):
 
 
 
+    def write_to(self,another):
+        pass
 
 
     # async def req(self,json_phone={},json_caller={},caller=None):
@@ -411,19 +413,23 @@ class Operator(Keymaker):
 def create_phonelines():
     ## CREATE OPERATOR
     op = Operator(name=OPERATOR_NAME)
-    op_keys_to_keep_on_client = ['pubkey_decr']  # sent TO operator
-    op_keys_to_keep_on_3rdparty = ['pubkey_encr','privkey_encr']  # dl by op
-    op_keys_to_keep_on_server = ['privkey_decr','adminkey_encr','adminkey_decr_encr','adminkey_decr_decr']
+    op_keys_to_keep_on_client = ['pubkey']  # kept on app
+    op_keys_to_keep_on_3rdparty = ['privkey_decr']  # kept on .onion site
+    op_keys_to_keep_on_server = ['pubkey',
+                                'privkey_encr',
+                                'adminkey_encr',
+                                'adminkey_decr_encr',
+                                'adminkey_decr_decr']   # kept on op server
 
     ## create phone
     phone = Operator(name=TELEPHONE_NAME)
-    phone_keys_to_keep_on_client = ['privkey_decr']
-    phone_keys_to_keep_on_3rdparty = ['pubkey_encr','privkey_encr']  # dl by phone
-    phone_keys_to_keep_on_server = ['pubkey_decr']  # sent to phone
+    phone_keys_to_keep_on_client = ['pubkey','privkey_encr'] # kept on app; need both to init connection 
+    phone_keys_to_keep_on_3rdparty = ['privkey_decr']  # dl by phone
+    phone_keys_to_keep_on_server = ['pubkey']  # kept on op server
 
     # create keys for Op
     op_uri,op_decr_keys = op.forge_new_keys(
-        keys_to_save=op_keys_to_keep_on_server,  # on server only; flipped around
+        keys_to_save=op_keys_to_keep_on_server,
         keys_to_return=op_keys_to_keep_on_client + op_keys_to_keep_on_3rdparty # on clients only
     )
 
