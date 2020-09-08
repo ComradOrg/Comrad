@@ -93,35 +93,39 @@ class Keymaker(Logger):
 
     @property
     def pubkey(self):
-        if not self._pubkey: self._pubkey = self.crypt_keys.get(self.name, prefix='/pubkey/')
-        if not self._pubkey: self._pubkey = b64decode(self.load_qr.get(self.name, prefix='/pubkey/').encode())
-        return self._pubkey
+        #self.log('keychain?',self.keychain())
+        if 'pubkey' in self._keychain and self._keychain['pubkey']:
+            return self._keychain['pubkey']
+
+        res = self.crypt_keys.get(self.name, prefix='/pubkey/')
+        if res: return res
+        
+        res = b64decode(self.load_qr(self.name).encode())
+        if res: return res
+
+        self.log('I don\'t know my public key!')
+        return None
 
     def keychain(self,look_for=KEYMAKER_DEFAULT_ALL_KEY_NAMES):
-        self._keychain = keys = {**{'pubkey':self.pubkey}, **self._keychain}
+        keys = self._keychain #self._keychain = keys = {**self._keychain}
         uri = self.uri_id
 
         # get from cache
         for keyname in look_for:
             if keyname in keys and keys[keyname]: continue
             
-            self.log('??',keyname)
+            # self.log('??',keyname)
             key = self.crypt_keys.get(uri,prefix=f'/{keyname}/')
             if key: keys[keyname]=key
         
-        self.log('keys 1!',self._keychain)
+        # self.log('keys 1!',self._keychain)
 
         # try to assemble
         keys = self.assemble(self.assemble(keys))
-        self.log('keys 2!',self._keychain)
+        # self.log('keys 2!',self._keychain)
         return keys
 
 
-    @property
-    def pubkey(self):
-        if not self._pubkey: self._pubkey = self.crypt_keys.get(self.name, prefix='/pubkey/')
-        if not self._pubkey: self._pubkey = self.load_qr(self.name)
-        return self._pubkey
     @property
     def privkey(self): return self.keychain().get('privkey')
     @property
@@ -133,7 +137,7 @@ class Keymaker(Logger):
         # try to load?
         contact_fnfn = os.path.join(PATH_QRCODES,name+'.png')
         print(contact_fnfn,os.path.exists(contact_fnfn))
-        if not os.path.exists(contact_fnfn): return
+        if not os.path.exists(contact_fnfn): return ''
         # with open(contact_fnfn,'rb') as f: dat=f.read()
         from pyzbar.pyzbar import decode
         from PIL import Image

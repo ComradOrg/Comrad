@@ -103,6 +103,9 @@ class Operator(Keymaker):
 
 
     def package_msg_to(self,msg,another):
+        self.log('KEYCHAINNN ',self.keychain())
+        self.log('my privkey',self.privkey)
+        self.log('my pubkey',self.pubkey,self.keychain().get('pubkey','!!!?!!?!?!?!?'))
         if not self.privkey or not self.pubkey:
             self.log('why do I have no pub/privkey pair!?',self.privkey,self,self.name)
             return b''
