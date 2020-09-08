@@ -126,7 +126,11 @@ class Operator(Keymaker):
 
     
     def unpackage_msg_from(self,msg_encr_b,another):
-        return self.decrypt_from_send(msg_encr_b,another)
+        return self.decrypt_from_send(
+            msg_encr_b,
+            from_pubkey=another.pubkey,
+            to_privkey=self.privkey
+        )
         
 
     # def ring(self,with_msg,to_whom=None,by_way_of=None):

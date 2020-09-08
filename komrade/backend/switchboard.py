@@ -10,6 +10,17 @@ from flask_classful import FlaskView
 class TheSwitchboard(FlaskView, Logger):
     default_methods = ['GET']
     excluded_methods = ['phone','op','send']
+
+    @property
+    def op(self):
+        from komrade.backend.the_operator import TheOperator
+        if type(self)==TheOperator: return self
+        if hasattr(self,'_op'): return self._op
+        global OPERATOR,OPERATOR_KEYCHAIN
+        if OPERATOR: return OPERATOR
+        self._op=OPERATOR=TheOperator()        
+        return OPERATOR
+
     
     def get(self,msg):
         self.log('Incoming call!:',msg)
@@ -19,7 +30,7 @@ class TheSwitchboard(FlaskView, Logger):
         # unenescape
         msg = msg.replace('_','/')
         str_msg_from_op = self.op.route(msg)
-        str_msg_from_op = msg.replace('_','/')
+        # str_msg_from_op = msg.replace('_','/')
         self.log('Switchboard got msg back from Operator:',str_msg_from_op)
         return str_msg_from_op
 

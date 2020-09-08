@@ -34,8 +34,9 @@ class TheTelephone(Operator):
 
     def send_and_receive(self,msg):
         msg_b64_str = b64encode(msg).decode()
-        self.log('msg_b64_str',type(msg_b64_str),msg_b64_str)
-        URL = OPERATOR_API_URL + msg_b64_str + '/'
+        msg_b64_str_esc = msg_b64_str.replace('/','_')
+        self.log('msg_b64_str_esc',type(msg_b64_str_esc),msg_b64_str_esc)
+        URL = OPERATOR_API_URL + msg_b64_str_esc + '/'
         self.log("DIALING THE OPERATOR:",URL)
         ringring=komrade_request(URL)
         if ringring.status_code==200:
