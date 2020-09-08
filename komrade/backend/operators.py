@@ -456,6 +456,8 @@ def create_phonelines():
         if key in phone_decr_keys:
             THIRD_PARTY_DICT[TELEPHONE_NAME][key]=phone_decr_keys[key]
 
+    print('THIRD_PARTY_DICT',THIRD_PARTY_DICT)
+
     # store local keys
     STORE_IN_APP = {OPERATOR_NAME:{}, TELEPHONE_NAME:{}}
     for key in op_keys_to_keep_on_client:
@@ -464,15 +466,22 @@ def create_phonelines():
     for key in phone_keys_to_keep_on_client:
         if key in phone_decr_keys:
             STORE_IN_APP[TELEPHONE_NAME][key]=phone_decr_keys[key]
+    print('STORE_IN_APP',STORE_IN_APP)
 
     # package
     STORE_IN_APP_pkg = package_for_transmission(STORE_IN_APP) #package_for_transmission(STORE_IN_APP[TELEPHONE_NAME]) + BSEP + package_for_transmission(STORE_IN_APP[OPERATOR_NAME])
     THIRD_PARTY_DICT_pkg = package_for_transmission(THIRD_PARTY_DICT) #package_for_transmission(THIRD_PARTY_DICT[TELEPHONE_NAME]) + BSEP + package_for_transmission(THIRD_PARTY_DICT[OPERATOR_NAME])
+    print('THIRD_PARTY_DICT_pkg',THIRD_PARTY_DICT_pkg)
+    print('THIRD_PARTY_DICT_pkg',THIRD_PARTY_DICT_pkg)
+
 
     # encrypt
     omega_key = KomradeSymmetricKeyWithoutPassphrase()
     STORE_IN_APP_encr = b64encode(omega_key.encrypt(STORE_IN_APP_pkg))
+    print('STORE_IN_APP_encr',STORE_IN_APP_encr)
+
     THIRD_PARTY_totalpkg = b64encode(omega_key.data + BSEP + omega_key.encrypt(THIRD_PARTY_DICT_pkg))
+    print('THIRD_PARTY_totalpkg',THIRD_PARTY_totalpkg)
 
     # save
     with open(PATH_BUILTIN_KEYCHAIN,'wb') as of:
@@ -525,7 +534,8 @@ def connect_phonelines():
     OMEGA_KEY = KomradeSymmetricKeyWithoutPassphrase(key=OMEGA_KEY_b)
 
     print('loaded Omega',OMEGA_KEY)
-    remote_builtin_keychain = OMEGA_KEY.decrypt(remote_builtin_keychain_encr)
+    # from komrade.utils import unpackage_from_transmission
+    remote_builtin_keychain = unpackage_from_transmission(OMEGA_KEY.decrypt(remote_builtin_keychain_encr))
     
     print('remote_builtin_keychain',remote_builtin_keychain)
     
