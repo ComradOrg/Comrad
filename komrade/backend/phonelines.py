@@ -1,9 +1,6 @@
 import os,sys; sys.path.append(os.path.abspath(os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__),'..')),'..')))
 from komrade import *
-from komrade.backend.crypt import *
-from komrade.backend.keymaker import *
-from komrade.backend.mazes import *
-from komrade.backend.switchboard import *
+from komrade.backend import *
 
 
 
