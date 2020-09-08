@@ -31,6 +31,7 @@ plyer==1.4.3
 pycparser==2.20
 Pygments==2.6.1
 pylint==2.6.0
+pypng==0.0.20
 PyQRCode==1.2.1
 PySocks==1.7.1
 pythemis==0.13.0

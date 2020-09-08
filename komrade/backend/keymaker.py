@@ -169,10 +169,6 @@ class Keymaker(Logger):
                     keychain[key_name]=_key_encr
         return keychain
 
-    def make_qr_id(self,qri_id):
-        import pyqrcode
-        pyqrcode.create('http://uca.edu')
-        pass
 
     def forge_new_keys(self,
                         name=None,
@@ -231,7 +227,7 @@ class Keymaker(Logger):
         import pyqrcode
         qr = pyqrcode.create(uri_id)
         ofnfn = os.path.join(PATH_QRCODES,self.name+'.png')
-        qr.png(ofnfn)
+        qr.png(ofnfn,scale=25)
         self.log('>> saved:',ofnfn)
 
     def save_keychain(self,name,keychain,keys_to_save=None,uri_id=None):
