@@ -212,13 +212,18 @@ class Keymaker(Logger):
         # gen encrypted keys!
         keychain = self.gen_encr_keys(keychain,keys_to_gen,passphrase=passphrase)
         self.log('keychain 2 =',keychain)
-
+        
         # save keys!
         # get URI id to save under (except for pubkeys, accessible by name)
         uri_id,keys_saved,keychain = self.save_keychain(name,keychain,keys_to_save)
         self.log('uri_id =',uri_id)
         self.log('keys_saved =',keys_saved)
         self.log('keychain =',keychain)
+
+        # save pubkey as QR
+        if not 'pubkey' in keys_saved:
+            self.log('did not save pubkey in crypt, storing as QR...')
+            self.save_uri_as_qrcode(name=name, uri_id=uri_id, odir=PATH_QRCODES)
 
         # return keys!
         keys_returned = self.return_keychain(keychain,keys_to_return)
@@ -263,7 +268,9 @@ class Keymaker(Logger):
             if not '_' in keyname and keyname!='pubkey':
                 raise KomradeException('there is no private property in a socialist network! all keys must be split between komrades')
             if keyname in keychain:
-                self.crypt_keys.set(uri_id,keychain[keyname],prefix=f'/{keyname}/')
+                # uri = uri_id
+                uri = uri_id if name!='pubkey' else name
+                self.crypt_keys.set(uri,keychain[keyname],prefix=f'/{keyname}/')
                 keys_saved_d[keyname] = keychain[keyname]
 
         return (uri_id,keys_saved_d,keychain)

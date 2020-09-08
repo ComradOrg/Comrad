@@ -60,11 +60,14 @@ OPERATOR_INTERCEPT_MESSAGE = "If you'd like to make a call, please hang up and t
 
 
 # defaults oriented to Callers
-# KEYMAKER_DEFAULT_KEYS_TO_SAVE = ['pubkey_encr']
-KEYMAKER_DEFAULT_KEYS_TO_SAVE = ['pubkey']
 
-# KEYMAKER_DEFAULT_KEYS_TO_RETURN = ['privkey_encr',
-KEYMAKER_DEFAULT_KEYS_TO_RETURN = ['privkey_encr',  # pubkey returnd as QR
+# kept on server
+KEYMAKER_DEFAULT_KEYS_TO_SAVE_ON_SERVER = ['pubkey']   # stored under QR URI
+
+# kept on client
+KEYMAKER_DEFAULT_KEYS_TO_SAVE_ON_CLIENT = [
+                                   #'pubkey'  # as QR
+                                   'privkey_encr',  
                                    'adminkey_encr',
                                    'privkey_decr_encr',
                                    'privkey_decr_decr',

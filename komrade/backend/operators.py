@@ -413,9 +413,9 @@ class Operator(Keymaker):
 def create_phonelines():
     ## CREATE OPERATOR
     op = Operator(name=OPERATOR_NAME)
-    op_keys_to_keep_on_client = ['pubkey']  # kept on app
+    op_keys_to_keep_on_client = ['pubkey']  # kept on app, stored under name
     op_keys_to_keep_on_3rdparty = ['privkey_decr']  # kept on .onion site
-    op_keys_to_keep_on_server = ['pubkey',
+    op_keys_to_keep_on_server = ['pubkey',   # stored under name
                                 'privkey_encr',
                                 'adminkey_encr',
                                 'adminkey_decr_encr',
@@ -441,10 +441,10 @@ def create_phonelines():
     )
 
     # store URIs
-    op.save_uri_as_qrcode(odir=PATH_OPERATOR_WEB_CONTACTS_DIR)
+    # op.save_uri_as_qrcode(odir=PATH_OPERATOR_WEB_CONTACTS_DIR)
     # op.save_uri_as_qrcode()
     
-    phone.save_uri_as_qrcode(odir=PATH_OPERATOR_WEB_CONTACTS_DIR)
+    # phone.save_uri_as_qrcode(odir=PATH_OPERATOR_WEB_CONTACTS_DIR)
     # phone.save_uri_as_qrcode()
 
     ## store remote keys
@@ -493,27 +493,27 @@ def connect_phonelines():
     print('\n\n\n\nCONNECTING PHONELINES!\n\n\n\n')
 
     # save QR
-    import shutil
-    qrfn_op = os.path.join(PATH_QRCODES,OPERATOR_NAME+'.png')
-    qrfn_ph = os.path.join(PATH_QRCODES,TELEPHONE_NAME+'.png')
-    if not os.path.exists(qrfn_op):
-        r1 = komrade_request(PATH_OPERATOR_WEB_CONTACT_OP_URL)
-        if r1.status_code==200:
-            with open(qrfn_op,'wb') as of:
-                print('hello')
-                # shutil.copyfileobj(r1.raw, of)
-                of.write(r1.content)
-                print('>> saved:',qrfn_op)
+    # import shutil
+    # qrfn_op = os.path.join(PATH_QRCODES,OPERATOR_NAME+'.png')
+    # qrfn_ph = os.path.join(PATH_QRCODES,TELEPHONE_NAME+'.png')
+    # if not os.path.exists(qrfn_op):
+    #     r1 = komrade_request(PATH_OPERATOR_WEB_CONTACT_OP_URL)
+    #     if r1.status_code==200:
+    #         with open(qrfn_op,'wb') as of:
+    #             print('hello')
+    #             # shutil.copyfileobj(r1.raw, of)
+    #             of.write(r1.content)
+    #             print('>> saved:',qrfn_op)
 
-    # stop
-    if not os.path.exists(qrfn_ph):
-        r2 = komrade_request(PATH_OPERATOR_WEB_CONTACT_PH_URL)
-        if r2.status_code==200:
-            with open(qrfn_ph,'wb') as of:
-                print('hello')
-                # shutil.copyfileobj(r2.raw, of)
-                of.write(r2.content)
-                print('>> saved:',qrfn_ph)
+    # # stop
+    # if not os.path.exists(qrfn_ph):
+    #     r2 = komrade_request(PATH_OPERATOR_WEB_CONTACT_PH_URL)
+    #     if r2.status_code==200:
+    #         with open(qrfn_ph,'wb') as of:
+    #             print('hello')
+    #             # shutil.copyfileobj(r2.raw, of)
+    #             of.write(r2.content)
+    #             print('>> saved:',qrfn_ph)
 
     # import
     from komrade.backend.mazes import tor_request
