@@ -112,6 +112,7 @@ class TheOperator(Operator):
 
 
     def route(self, msg_d, route):
+        self.log(f'route() got incoming msg_d = {msg_d} and route = {route}')
         if route == 'forge_new_keys':
             return self.forge_new_keys(**data)
         return OPERATOR_INTERCEPT_MESSAGE
