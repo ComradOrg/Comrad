@@ -24,6 +24,7 @@ class TheTelephone(Operator):
         
         print('OP2???',OPERATOR_KEYCHAIN)
         print('PH2???',TELEPHONE_KEYCHAIN)
+        stop
         
         self.caller=caller
         self._keychain = TELEPHONE_KEYCHAIN

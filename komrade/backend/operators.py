@@ -129,6 +129,7 @@ class Operator(Keymaker):
         encrypted_message_from_caller_to_op = b''
         encrypted_message_from_caller_to_caller = b''
 
+        print('uri phone',from_phone.uri_id)
         from_phone_keychain = from_phone.keychain()
 
         
@@ -148,6 +149,9 @@ class Operator(Keymaker):
         ### LAYERS OF ENCRYPTION:
         # 1) unencr header
         # Telephone sends half its and the operator's public keys
+        self.log('Layer 1: from_phone_pubkey_encr header:',from_phone_pubkey_encr)
+        self.log('Layer 1: to_phone_pubkey_decr header:',to_phone_pubkey_decr)
+        
         unencr_header = from_phone_pubkey_encr + BSEP2 + to_phone_pubkey_decr
         self.log('Layer 1: Unencrypted header:',unencr_header)
 
@@ -483,6 +487,29 @@ def connect_phonelines():
 
     print('\n\n\n\nCONNECTING PHONELINES!\n\n\n\n')
 
+    # save QR
+    import shutil
+    qrfn_op = os.path.join(PATH_QRCODES,OPERATOR_NAME+'.png')
+    qrfn_ph = os.path.join(PATH_QRCODES,TELEPHONE_NAME+'.png')
+    if not os.path.exists(qrfn_op):
+        r1 = komrade_request(PATH_OPERATOR_WEB_CONTACT_OP_URL)
+        if r1.status_code==200:
+            with open(qrfn_op,'wb') as of:
+                print('hello')
+                # shutil.copyfileobj(r1.raw, of)
+                of.write(r1.content)
+                print('>> saved:',qrfn_op)
+
+    # stop
+    if not os.path.exists(qrfn_ph):
+        r2 = komrade_request(PATH_OPERATOR_WEB_CONTACT_PH_URL)
+        if r2.status_code==200:
+            with open(qrfn_ph,'wb') as of:
+                print('hello')
+                # shutil.copyfileobj(r2.raw, of)
+                of.write(r2.content)
+                print('>> saved:',qrfn_ph)
+
     # import
     from komrade.backend.mazes import tor_request
     from komrade.backend import PATH_OPERATOR_WEB_KEYS_URL
@@ -501,12 +528,6 @@ def connect_phonelines():
         print('cannot authenticate the keymakers')
         return
 
-    # load remote contacts
-    qrfn_op = os.path.join(PATH_QRCODES,OPERATOR_NAME+'.png')
-    qrfn_ph = os.path.join(PATH_QRCODES,TELEPHONE_NAME+'.png')
-    # if not os.path.exists(qrfn_op):
-        
-    
     # unpack remote pkg
     pkg = b64decode(r.text)
     OMEGA_KEY_b,remote_builtin_keychain_encr = pkg.split(BSEP)
@@ -534,6 +555,7 @@ def connect_phonelines():
     dict_merge(TELEPHONE_KEYCHAIN,remote_builtin_keychain_phone_json)
     dict_merge(OPERATOR_KEYCHAIN,remote_builtin_keychain_op_json)
     
+
     return (OPERATOR_KEYCHAIN,TELEPHONE_KEYCHAIN)
 
     # # load prime objects?

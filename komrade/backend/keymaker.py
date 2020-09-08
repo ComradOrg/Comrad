@@ -84,11 +84,25 @@ class Keymaker(Logger):
         
         # set defaults
         self.name=name
-        self.uri_id=uri_id
+        self._uri_id=uri_id
         self._keychain=keychain
         self.passphrase=passphrase
         self.path_crypt_keys=path_crypt_keys
         self.path_crypt_data=path_crypt_data
+
+    @property
+    def uri_id(self):
+        if not hasattr(self,'_uri_id') or not self._uri_id:
+            # try to load?
+            contact_fnfn = os.path.join(PATH_QRCODES,self.name+'.png')
+            print(contact_fnfn,os.path.exists(contact_fnfn))
+            if not os.path.exists(contact_fnfn): return
+
+            # with open(contact_fnfn,'rb') as f: dat=f.read()
+            from pyzbar.pyzbar import decode
+            from PIL import Image
+            self._uri_id = uri_id = decode(Image.open(contact_fnfn))[0].data
+        return self._uri_id
 
 
     ### BASE STORAGE
@@ -234,7 +248,7 @@ class Keymaker(Logger):
     def save_keychain(self,name,keychain,keys_to_save=None,uri_id=None):
         if not keys_to_save: keys_to_save = list(keychain.keys())
         if not uri_id: uri_id = get_random_id() + get_random_id()
-        self.uri_id = uri_id
+        self._uri_id = uri_id
         # filter for transfer
         for k,v in keychain.items():
             if issubclass(type(v),KomradeKey):
@@ -322,17 +336,24 @@ class Keymaker(Logger):
 
     def keychain(self,
                 passphrase=DEBUG_DEFAULT_PASSPHRASE,
-                force=False,
-                allow_builtin=True,
                 extra_keys={},
                 keys_to_gen=KEYMAKER_DEFAULT_KEYS_TO_GEN,
                 uri_id=None,
                 **kwargs):
 
         # assemble as many keys as we can!
+        self.log(f'''keychain(
+            passphrase={passphrase},
+            extra_keys={extra_keys},
+            keys_to_gen={keys_to_gen},
+            uri_id={uri_id},
+            **kwargs = {kwargs}
+        )''')
+
         if not uri_id: uri_id = self.uri_id
         if not uri_id and not self.uri_id: 
             raise KomradeException('Need URI id to complete finding of keys!')
+        self.log('getting keychain for uri ID:',uri_id)
 
         # if not force and hasattr(self,'_keychain') and self._keychain: return self._keychain
         if passphrase: self.passphrase=passphrase

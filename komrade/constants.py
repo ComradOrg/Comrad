@@ -134,6 +134,8 @@ TELEPHONE = None
 PATH_OPERATOR_WEB_KEYS_FILE = f'/home/ryan/www/website-komrade/.builtin.keys'
 PATH_OPERATOR_WEB_KEYS_URL = f'http://{KOMRADE_URL}/.builtin.keys'
 PATH_OPERATOR_WEB_CONTACTS_DIR = '/home/ryan/www/website-komrade/.contacts'
+PATH_OPERATOR_WEB_CONTACT_OP_URL = f'http://{KOMRADE_URL}/.contacts/TheOperator.png'
+PATH_OPERATOR_WEB_CONTACT_PH_URL = f'http://{KOMRADE_URL}/.contacts/TheTelephone.png'
 
 
 
