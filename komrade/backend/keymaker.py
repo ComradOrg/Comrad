@@ -227,7 +227,7 @@ class Keymaker(Logger):
         import pyqrcode
         qr = pyqrcode.create(uri_id)
         ofnfn = os.path.join(PATH_QRCODES,self.name+'.png')
-        qr.png(ofnfn,scale=25)
+        qr.png(ofnfn,scale=10)
         self.log('>> saved:',ofnfn)
 
     def save_keychain(self,name,keychain,keys_to_save=None,uri_id=None):
