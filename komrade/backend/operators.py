@@ -466,13 +466,13 @@ def create_phonelines():
             STORE_IN_APP[TELEPHONE_NAME][key]=phone_decr_keys[key]
 
     # package
-    STORE_IN_APP_pkg = package_for_transmission(STORE_IN_APP[TELEPHONE_NAME]) + BSEP + package_for_transmission(STORE_IN_APP[OPERATOR_NAME])
-    THIRD_PARTY_DICT_pkg = package_for_transmission(THIRD_PARTY_DICT[TELEPHONE_NAME]) + BSEP + package_for_transmission(THIRD_PARTY_DICT[OPERATOR_NAME])
+    STORE_IN_APP_pkg = package_for_transmission(STORE_IN_APP) #package_for_transmission(STORE_IN_APP[TELEPHONE_NAME]) + BSEP + package_for_transmission(STORE_IN_APP[OPERATOR_NAME])
+    THIRD_PARTY_DICT_pkg = package_for_transmission(THIRD_PARTY_DICT) #package_for_transmission(THIRD_PARTY_DICT[TELEPHONE_NAME]) + BSEP + package_for_transmission(THIRD_PARTY_DICT[OPERATOR_NAME])
 
     # encrypt
     omega_key = KomradeSymmetricKeyWithoutPassphrase()
     STORE_IN_APP_encr = b64encode(omega_key.encrypt(STORE_IN_APP_pkg))
-    THIRD_PARTY_totalpkg = b64encode(omega_key.data + BSEP + THIRD_PARTY_DICT_pkg)
+    THIRD_PARTY_totalpkg = b64encode(omega_key.data + BSEP + omega_key.encrypt(THIRD_PARTY_DICT_pkg))
 
     # save
     with open(PATH_BUILTIN_KEYCHAIN,'wb') as of:
