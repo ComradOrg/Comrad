@@ -12,7 +12,7 @@ class Caller(Operator):
     """
 
 
-    def get_new_keys(self, name = None, passphrase = None, is_group=None):
+    def get_new_keys(self, name = None, passphrase = DEBUG_DEFAULT_PASSPHRASE, is_group=None):
         if not name: name=self.name
         if name is None: 
             name = input('\nWhat is the name for this account? ')

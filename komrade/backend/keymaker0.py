@@ -33,7 +33,7 @@ class KomradeSymmetricKey(KomradeKey):
 
         
 class KomradeSymmetricKeyWithPassphrase(KomradeSymmetricKey):
-    def __init__(self,passphrase=None, why=WHY_MSG):
+    def __init__(self,passphrase=DEBUG_DEFAULT_PASSPHRASE, why=WHY_MSG):
         self.passphrase=passphrase
         if not self.passphrase:
             self.passphrase=getpass.getpass(why)
@@ -74,7 +74,7 @@ class KomradeAsymmetricPrivateKey(KomradeAsymmetricKey):
 
 
 class Keymaker(Logger):
-    def __init__(self,name=None,passphrase=None,keychain={}, path_crypt_keys=None, path_crypt_data=None, allow_builtin=True):
+    def __init__(self,name=None,passphrase=DEBUG_DEFAULT_PASSPHRASE,keychain={}, path_crypt_keys=None, path_crypt_data=None, allow_builtin=True):
         self.name=name
         self._keychain=keychain
         self.passphrase=passphrase
@@ -341,7 +341,7 @@ class Keymaker(Logger):
     def get_new_keys(self):
         raise KomradeException('Every keymaker must make their own get_new_keys() !')
 
-    def gen_keys_from_types(self,key_types,passphrase=None):
+    def gen_keys_from_types(self,key_types,passphrase=DEBUG_DEFAULT_PASSPHRASE):
         asymmetric_pubkey=None
         asymmetric_privkey=None
         keychain = {}
@@ -364,7 +364,7 @@ class Keymaker(Logger):
                 keychain[key_name]=KomradeSymmetricKeyWithPassphrase(passphrase=passphrase)
         return keychain
 
-    def gen_encr_keys(self,keychain,keys_to_gen,passphrase=None):
+    def gen_encr_keys(self,keychain,keys_to_gen,passphrase=DEBUG_DEFAULT_PASSPHRASE):
         # generate encrypted keys too
         for key_name in keys_to_gen:
             if key_name.endswith('_encr') and key_name not in keychain:
@@ -385,7 +385,7 @@ class Keymaker(Logger):
 
     def forge_new_keys(self,
                         name=None,
-                        passphrase=None,
+                        passphrase=DEBUG_DEFAULT_PASSPHRASE,
                         keys_to_save = KEYMAKER_DEFAULT_KEYS_TO_SAVE,
                         keys_to_return = KEYMAKER_DEFAULT_KEYS_TO_RETURN,
                         keys_to_gen = KEYMAKER_DEFAULT_KEYS_TO_GEN,
@@ -596,7 +596,7 @@ class Keymaker(Logger):
         return _keychain
 
 
-    def keychain(self,passphrase=None,force=False,allow_builtin=True,extra_keys={},keys_to_gen=KEYMAKER_DEFAULT_KEYS_TO_GEN,**kwargs):
+    def keychain(self,passphrase=DEBUG_DEFAULT_PASSPHRASE,force=False,allow_builtin=True,extra_keys={},keys_to_gen=KEYMAKER_DEFAULT_KEYS_TO_GEN,**kwargs):
         # assemble as many keys as we can!
         # if not force and hasattr(self,'_keychain') and self._keychain: return self._keychain
         if passphrase: self.passphrase=passphrase

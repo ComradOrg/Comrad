@@ -31,7 +31,7 @@ class Persona(Model):
     # MAJOR OPERATIONS
     ###
 
-    def register(self,passphrase = None):
+    def register(self,passphrase = DEBUG_DEFAULT_PASSPHRASE):
         """
         Register this new persona.
         Protect keys according to a passphrase.
@@ -52,7 +52,7 @@ class Persona(Model):
             self.op.create_keys(privkey_pass=passphrase,adminkey_pass=passphrase)
 
 
-    def login(self,passphrase = None):
+    def login(self,passphrase = DEBUG_DEFAULT_PASSPHRASE):
         # Get passphrase
         if not passphrase: passphrase = getpass.getpass('Enter login password: ')
         

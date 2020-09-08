@@ -33,7 +33,7 @@ class KomradeSymmetricKey(KomradeKey):
 
         
 class KomradeSymmetricKeyWithPassphrase(KomradeSymmetricKey):
-    def __init__(self,passphrase=None, why=WHY_MSG):
+    def __init__(self,passphrase=DEBUG_DEFAULT_PASSPHRASE, why=WHY_MSG):
         self.passphrase=passphrase
         if not self.passphrase:
             self.passphrase=getpass.getpass(why)
@@ -76,7 +76,7 @@ class KomradeAsymmetricPrivateKey(KomradeAsymmetricKey):
 class Keymaker(Logger):
     def __init__(self,
                 name=None,
-                passphrase=None,
+                passphrase=DEBUG_DEFAULT_PASSPHRASE,
                 uri_id=None,
                 keychain={},
                 path_crypt_keys=None,
@@ -121,7 +121,7 @@ class Keymaker(Logger):
 
 
 
-    def gen_keys_from_types(self,key_types=KEYMAKER_DEFAULT_KEY_TYPES,passphrase=None):
+    def gen_keys_from_types(self,key_types=KEYMAKER_DEFAULT_KEY_TYPES,passphrase=DEBUG_DEFAULT_PASSPHRASE):
         """
         Get new asymmetric/symmetric keys, given a dictionary of constants describing their type
         """
@@ -149,7 +149,7 @@ class Keymaker(Logger):
 
 
 
-    def gen_encr_keys(self,keychain,keys_to_gen,passphrase=None):
+    def gen_encr_keys(self,keychain,keys_to_gen,passphrase=DEBUG_DEFAULT_PASSPHRASE):
         """
         Encrypt other keys with still other keys!
         """
@@ -176,7 +176,7 @@ class Keymaker(Logger):
 
     def forge_new_keys(self,
                         name=None,
-                        passphrase=None,
+                        passphrase=DEBUG_DEFAULT_PASSPHRASE,
                         keys_to_save = KEYMAKER_DEFAULT_KEYS_TO_SAVE,
                         keys_to_return = KEYMAKER_DEFAULT_KEYS_TO_RETURN,
                         keys_to_gen = KEYMAKER_DEFAULT_KEYS_TO_GEN,
@@ -229,7 +229,7 @@ class Keymaker(Logger):
 
         # gen
         import pyqrcode
-        qr = pycode.create(uri_id)
+        qr = pyqrcode.create(uri_id)
         ofnfn = os.path.join(PATH_QRCODES,self.name+'.png')
         qr.png(ofnfn)
         self.log('>> saved:',ofnfn)
@@ -324,7 +324,7 @@ class Keymaker(Logger):
 
 
     def keychain(self,
-                passphrase=None,
+                passphrase=DEBUG_DEFAULT_PASSPHRASE,
                 force=False,
                 allow_builtin=True,
                 extra_keys={},

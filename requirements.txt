@@ -1,3 +1,4 @@
+as==0.1
 astroid==2.4.2
 certifi==2020.6.20
 cffi==1.14.2
@@ -7,7 +8,13 @@ cryptography==3.0
 docutils==0.16
 Flask==1.1.2
 Flask-Classful==0.14.2
+h11==0.8.1
+h2==3.2.0
+hpack==3.0.0
+http3==0.6.7
+hyperframe==5.2.0
 idna==2.10
+import==0.0.1
 isort==5.4.2
 itsdangerous==1.1.0
 Jinja2==2.11.2
@@ -24,9 +31,14 @@ plyer==1.4.3
 pycparser==2.20
 Pygments==2.6.1
 pylint==2.6.0
+PyQRCode==1.2.1
+PySocks==1.7.1
 pythemis==0.13.0
+pyzbar==0.1.8
 redis==3.5.3
 requests==2.24.0
+requests-async==0.6.2
+rfc3986==1.4.0
 rpcudp==4.0.1
 simplekv==0.14.1
 six==1.15.0

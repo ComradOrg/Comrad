@@ -334,7 +334,7 @@ class Persona(object):
             
     #         signed_public_key_file.write(encrypted_pubkey_b64)
 
-    def gen_keys(self,passphrase=None):
+    def gen_keys(self,passphrase=DEBUG_DEFAULT_PASSPHRASE):
         """
         Generate private/public key pair
         Secure that with passphrase

@@ -138,3 +138,6 @@ PATH_OPERATOR_WEB_KEYS_URL = f'http://{KOMRADE_URL}/.builtin.keys'
 
 # dangerous! leave on only if absolutely necessary for initial dev
 ALLOW_CLEARNET = True
+
+
+DEBUG_DEFAULT_PASSPHRASE = 'all your base are belong to us'
