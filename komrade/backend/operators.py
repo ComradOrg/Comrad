@@ -546,20 +546,17 @@ def connect_phonelines():
     print('loaded Omega',OMEGA_KEY)
     # from komrade.utils import unpackage_from_transmission
     remote_builtin_keychain = unpackage_from_transmission(OMEGA_KEY.decrypt(remote_builtin_keychain_encr))
-    
     print('remote_builtin_keychain',remote_builtin_keychain)
     
-    remote_builtin_keychain_phone,remote_builtin_keychain_op = remote_builtin_keychain.split(BSEP)
-    remote_builtin_keychain_phone_json = unpackage_from_transmission(remote_builtin_keychain_phone)
-    remote_builtin_keychain_op_json = unpackage_from_transmission(remote_builtin_keychain_op)    
+    remote_builtin_keychain_phone_json,remote_builtin_keychain_op_json = remote_builtin_keychain[TELEPHONE_NAME],remote_builtin_keychain[OPERATOR_NAME]
     print('remote_builtin_keychain_phone_json',remote_builtin_keychain_phone_json)
     print('remote_builtin_keychain_op_json',remote_builtin_keychain_op_json)
     
     # unpack local pkg
-    local_builtin_keychain = OMEGA_KEY.decrypt(local_builtin_keychain_encr)
-    local_builtin_keychain_phone,local_builtin_keychain_op = local_builtin_keychain.split(BSEP)
-    local_builtin_keychain_phone_json = unpackage_from_transmission(local_builtin_keychain_phone)
-    local_builtin_keychain_op_json = unpackage_from_transmission(local_builtin_keychain_op)
+    local_builtin_keychain = unpackage_from_transmission(OMEGA_KEY.decrypt(local_builtin_keychain_encr))
+    print('local_builtin_keychain',local_builtin_keychain)
+
+    local_builtin_keychain_phone_json,local_builtin_keychain_op_json = local_builtin_keychain[TELEPHONE_NAME],local_builtin_keychain[OPERATOR_NAME]
     print('local_builtin_keychain_phone_json',local_builtin_keychain_phone_json)
     print('local_builtin_keychain_op_json',local_builtin_keychain_op_json)
 
@@ -573,13 +570,4 @@ def connect_phonelines():
     
     print('>>>> loaded OPERATOR_KEYCHAIN',OPERATOR_KEYCHAIN)
     print('>>>> loaded TELEPHONE_KEYCHAIN',TELEPHONE_KEYCHAIN)
-    stop
     return (OPERATOR_KEYCHAIN,TELEPHONE_KEYCHAIN)
-
-    # # load prime objects?
-    # from komrade.backend.the_operator import TheOperator
-    # from komrade.backend.the_telephone import TheTelephone
-    # OPERATOR = TheOperator(keychain=OPERATOR_KEYCHAIN)
-    # TELEPHONE = TheTelephone(keychain=TELEPHONE_KEYCHAIN)
-    
-    # return (OPERATOR,TELEPHONE)
