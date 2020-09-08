@@ -472,7 +472,7 @@ def create_phonelines():
     # encrypt
     omega_key = KomradeSymmetricKeyWithoutPassphrase()
     STORE_IN_APP_encr = b64encode(omega_key.encrypt(STORE_IN_APP_pkg))
-    THIRD_PARTY_totalpkg = b64encode(omega_key.data + BSEP + omega_key.encrypt(THIRD_PARTY_DICT_pkg))
+    THIRD_PARTY_totalpkg = b64encode(omega_key.data + BSEP + THIRD_PARTY_DICT_pkg)
 
     # save
     with open(PATH_BUILTIN_KEYCHAIN,'wb') as of:
@@ -491,29 +491,6 @@ def connect_phonelines():
         return (OPERATOR_KEYCHAIN,TELEPHONE_KEYCHAIN)
 
     print('\n\n\n\nCONNECTING PHONELINES!\n\n\n\n')
-
-    # save QR
-    # import shutil
-    # qrfn_op = os.path.join(PATH_QRCODES,OPERATOR_NAME+'.png')
-    # qrfn_ph = os.path.join(PATH_QRCODES,TELEPHONE_NAME+'.png')
-    # if not os.path.exists(qrfn_op):
-    #     r1 = komrade_request(PATH_OPERATOR_WEB_CONTACT_OP_URL)
-    #     if r1.status_code==200:
-    #         with open(qrfn_op,'wb') as of:
-    #             print('hello')
-    #             # shutil.copyfileobj(r1.raw, of)
-    #             of.write(r1.content)
-    #             print('>> saved:',qrfn_op)
-
-    # # stop
-    # if not os.path.exists(qrfn_ph):
-    #     r2 = komrade_request(PATH_OPERATOR_WEB_CONTACT_PH_URL)
-    #     if r2.status_code==200:
-    #         with open(qrfn_ph,'wb') as of:
-    #             print('hello')
-    #             # shutil.copyfileobj(r2.raw, of)
-    #             of.write(r2.content)
-    #             print('>> saved:',qrfn_ph)
 
     # import
     from komrade.backend.mazes import tor_request
@@ -534,10 +511,24 @@ def connect_phonelines():
         return
 
     # unpack remote pkg
-    pkg = b64decode(r.text)
+    
+    pkg = r.text
+    print('got from onion:',pkg)
+    pkg = b64decode(pkg)
+    print('got from onion:',pkg)
+
     OMEGA_KEY_b,remote_builtin_keychain_encr = pkg.split(BSEP)
+    print('OMEGA_KEY_b',OMEGA_KEY_b)
+    print('remote_builtin_keychain_encr',remote_builtin_keychain_encr)
+    
+
     OMEGA_KEY = KomradeSymmetricKeyWithoutPassphrase(key=OMEGA_KEY_b)
+
+    print('loaded Omega',OMEGA_KEY)
     remote_builtin_keychain = OMEGA_KEY.decrypt(remote_builtin_keychain_encr)
+    
+    print('remote_builtin_keychain',remote_builtin_keychain)
+    
     remote_builtin_keychain_phone,remote_builtin_keychain_op = remote_builtin_keychain.split(BSEP)
     remote_builtin_keychain_phone_json = unpackage_from_transmission(remote_builtin_keychain_phone)
     remote_builtin_keychain_op_json = unpackage_from_transmission(remote_builtin_keychain_op)    
@@ -560,7 +551,9 @@ def connect_phonelines():
     dict_merge(TELEPHONE_KEYCHAIN,remote_builtin_keychain_phone_json)
     dict_merge(OPERATOR_KEYCHAIN,remote_builtin_keychain_op_json)
     
-
+    print('>>>> loaded OPERATOR_KEYCHAIN',OPERATOR_KEYCHAIN)
+    print('>>>> loaded TELEPHONE_KEYCHAIN',TELEPHONE_KEYCHAIN)
+    stop
     return (OPERATOR_KEYCHAIN,TELEPHONE_KEYCHAIN)
 
     # # load prime objects?
