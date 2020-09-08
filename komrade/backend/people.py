@@ -9,7 +9,8 @@ class Person(Caller):
 
     def ring_ring(self,with_msg,to_whom = None):
         # if no one intended, call the operator
-        return super().ring_ring(with_msg,to_phone=self.op)
+        #return super().ring_ring(with_msg,to_phone=self.op)
+        if not to_whom: to_whom = self.op
 
         # msg should be unencrypted
         msg_unencr = with_msg
