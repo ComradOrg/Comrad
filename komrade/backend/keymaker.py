@@ -93,6 +93,7 @@ class Keymaker(Logger):
     @property
     def uri_id(self):
         if not hasattr(self,'_uri_id') or not self._uri_id:
+            
             # try to load?
             contact_fnfn = os.path.join(PATH_QRCODES,self.name+'.png')
             print(contact_fnfn,os.path.exists(contact_fnfn))

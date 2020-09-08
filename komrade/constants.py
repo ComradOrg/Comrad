@@ -64,8 +64,7 @@ OPERATOR_INTERCEPT_MESSAGE = "If you'd like to make a call, please hang up and t
 KEYMAKER_DEFAULT_KEYS_TO_SAVE = ['pubkey']
 
 # KEYMAKER_DEFAULT_KEYS_TO_RETURN = ['privkey_encr',
-KEYMAKER_DEFAULT_KEYS_TO_RETURN = ['pubkey',
-                                   'privkey_encr',
+KEYMAKER_DEFAULT_KEYS_TO_RETURN = ['privkey_encr',  # pubkey returnd as QR
                                    'adminkey_encr',
                                    'privkey_decr_encr',
                                    'privkey_decr_decr',
