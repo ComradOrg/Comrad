@@ -428,19 +428,24 @@ def create_phonelines():
     phone_keys_to_keep_on_server = ['pubkey']  # kept on op server
 
     # create keys for Op
-    op_uri,op_decr_keys = op.forge_new_keys(
+    op_res = op.forge_new_keys(
         keys_to_save=op_keys_to_keep_on_server,
         keys_to_return=op_keys_to_keep_on_client + op_keys_to_keep_on_3rdparty # on clients only
     )
+    op_uri = op_res['uri_id']
+    op_decr_keys = op_res['_keychain']
+    
     print('op_uri',op_uri)
     print('op_decr_keys',op_decr_keys)
 
     # create keys for phone
-    phone_uri,phone_decr_keys = phone.forge_new_keys(
+    phone_res = phone.forge_new_keys(
         name=TELEPHONE_NAME,
         keys_to_save=phone_keys_to_keep_on_server,  # on server only
         keys_to_return=phone_keys_to_keep_on_client + phone_keys_to_keep_on_3rdparty   # on clients only
     )
+    phone_uri = phone_res['uri_id']
+    phone_decr_keys = phone_res['_keychain']
 
     print('phone_uri',phone_uri)
     print('phone_decr_keys',phone_decr_keys)
