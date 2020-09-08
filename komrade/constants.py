@@ -133,6 +133,7 @@ TELEPHONE = None
 
 PATH_OPERATOR_WEB_KEYS_FILE = f'/home/ryan/www/website-komrade/.builtin.keys'
 PATH_OPERATOR_WEB_KEYS_URL = f'http://{KOMRADE_URL}/.builtin.keys'
+PATH_OPERATOR_WEB_CONTACTS_DIR = '/home/ryan/www/website-komrade/.contacts'
 
 
 
