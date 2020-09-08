@@ -115,7 +115,10 @@ class TheOperator(Operator):
         return encr_data_b
 
 
-    def route(self, msg_d, _msg, route):
+    def route(self, msg_d, _msg, route=None):
+        if not route: route=_msg.get('_please')
+        if not route: raise KomradeException('no route!')
+        if '_please' in _msg: del _msg['_please']
         self.log(f'route() got incoming msg_d = {msg_d}, _msg = {_msg}, and route = {route}')
         if route == 'forge_new_keys':
             return self.forge_new_keys(**_msg)
