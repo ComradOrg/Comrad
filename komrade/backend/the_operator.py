@@ -40,14 +40,14 @@ class TheOperator(Operator):
             path_crypt_data=PATH_CRYPT_OP_DATA)
         self._keychain = OPERATOR_KEYCHAIN
         
-    def ring_ring(self,
+    def ring(self,
         from_caller=None,
         to_caller=None,
         json_phone2phone={}, 
         json_caller2phone={},   # (person) -> operator or operator -> (person)
         json_caller2caller={}):
         
-        encr_msg_to_send = super().ring_ring(
+        encr_msg_to_send = super().ring(
             from_phone=self,
             to_phone=self.phone,
             from_caller=from_caller,
@@ -82,7 +82,7 @@ class TheOperator(Operator):
         forged_keys_plus_id = super().forge_new_keys(**data)
 
         # return to Telephone/Caller
-        return self.ring_ring(json_phone2phone=forged_keys_plus_id)
+        return self.ring(json_phone2phone=forged_keys_plus_id)
 
         
         

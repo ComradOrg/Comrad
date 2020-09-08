@@ -11,11 +11,19 @@ class Caller(Operator):
     Variant of an Operator which handles local keys and keymaking.
     """
 
-    def ring_ring(self,msg_encr_caller2caller):
+
+
+    def ring_ring(self,with_msg,to_phone=None):
+        # message should be encrypted caller2caller (by Person.ring)
+        msg_encr_caller2caller = with_msg
+
+        # Caller can only encrypt for Operator (end phone)
+        to_whom = to_phone
+
         # ring 1: encrypt caller2phone
         msg_encr_caller2caller_caller2phone = self.package_msg_to(
             msg_encr_caller2caller,
-            self.op
+            to_whom
         )
         self.log('msg_encr_caller2caller_caller2phone',msg_encr_caller2caller_caller2phone)
 
@@ -53,7 +61,7 @@ class Caller(Operator):
             'passphrase':hashish(passphrase.encode())
         }
 
-        phone_res = self.phone.ring_ring(msg_to_op)
+        phone_res = self.phone.ring(msg_to_op)
         
         # URI id
         uri_id = phone_res.get('uri_id')

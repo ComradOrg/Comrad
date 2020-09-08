@@ -46,26 +46,30 @@ class TheTelephone(Operator):
             self.log('!! error in request',ringring.status_code,ringring.text)
             return None
 
-    def ring_ring(self,msg_encr_caller2caller_caller2phone):
+    def ring_ring(self,with_msg,to_phone=None):
+        if not to_phone: to_phone=self.op
+        to_whom = to_phone
 
         # ring 1: encrypt
         msg_encr_caller2caller_caller2phone_phone2phone = self.package_msg_to(
             msg_encr_caller2caller,
-            self.op
+            to_whom
         )
         self.log('final form of encr msg!',msg_encr_caller2caller_caller2phone_phone2phone)
 
         # ring 2: dial and get response
-        msg_encr_caller2caller_caller2phone_phone2phone = self.send_and_receive(msg_encr_caller2caller_phone2phone)
+        resp_msg_encr_caller2caller_caller2phone_phone2phone = self.send_and_receive(
+            msg_encr_caller2caller_phone2phone
+        )
         msg_encr_caller2caller_caller2phone_phone2phone: return
 
         # ring 3: decrypt
-        msg_encr_caller2caller_caller2phone = self.unpackage_msg_from(
-            msg_encr_caller2caller_caller2phone_phone2phone,
-            self.op
+        resp_msg_encr_caller2caller_caller2phone = self.unpackage_msg_from(
+            resp_msg_encr_caller2caller_caller2phone_phone2phone,
+            to_whom
         )
 
-        return msg_encr_caller2caller_caller2phone
+        return resp_msg_encr_caller2caller_caller2phone
 
     
 def test_call():

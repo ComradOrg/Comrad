@@ -111,4 +111,28 @@ class Operator(Keymaker):
 
     
     def unpackage_msg_from(self,msg_encr_b,another):
-        return self.decrypt_from_send(msg_encr_b,anonther.pubkey,self.privkey)
+        return self.decrypt_from_send(msg_encr_b,another)
+        
+
+    # def ring(self,with_msg,to_whom=None,by_way_of=None):
+    #     # ring 1: encrypt from me to 'whom'
+    #     msg_encr = self.package_msg_to(
+    #         with_msg,
+    #         whom
+    #     )
+    #     self.log(f'msg_encr --> {whom} layer 1',msg_encr)
+
+    #     # ring 2: keep ringing via mediator
+    #     resp_msg_encr = by_way_of.ring(
+    #         msg_encr
+    #     )
+    #     self.log('resp_msg_encr',resp_msg_encr)
+
+    #     # ring 3: decrypt and send back
+    #     resp_msg = self.unpackage_msg_from(
+    #         resp_msg_encr,
+    #         whom
+    #     )
+    #     self.log('resp_msg',resp_msg)
+
+    #     return resp_msg

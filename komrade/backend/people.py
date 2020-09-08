@@ -5,15 +5,35 @@ from komrade.backend import *
 
 class Person(Caller):
 
-    def call_person(self,person):
-        pass
+    # def ring_person(self,with_msg,to_whom):
+    #     res = self.ring(
+    #         with_msg,
+    #         to_whom,
+    #         )
+    #     self.log('<--',res)
+    #     return res
 
 
-    def ring_ring(self,msg_unencr,whom_to_call):
+    # def ring_ring(self,with_msg,to_whom = None):
+    #     # if no one intended, call the operator
+    #     if to_whom is None:
+    #         return self.ring_operator(with_msg)
+    #     elif type(to_whom)==Person:
+    #         return self.ring_person(with_msg,to_whom)
+    #     raise KomradeException('Ring whom?')
+
+
+    def ring_ring(self,with_msg,to_whom = None):
+        # if no one intended, call the operator
+        to_whom = self.op
+
+        # msg should be unencrypted
+        msg_unencr = with_msg
+
         # ring 1: encrypt caller2phone
         msg_encr_caller2caller = self.package_msg_to(
             msg_unencr,
-            whom_to_call
+            to_whom
         )
         self.log('msg_encr_caller2caller',msg_encr_caller2caller)
 
@@ -26,7 +46,7 @@ class Person(Caller):
         # ring 3: decrypt and send back
         resp_msg_unencr = self.unpackage_msg_from(
             msg_encr_caller2caller,
-            whom_to_call
+            to_whom
         )
         self.log('resp_msg_unencr',resp_msg_encr_caller2caller)
 
@@ -47,9 +67,9 @@ class Person(Caller):
         msg_to_op = {'_please':'forge_new_keys'}
 
         # call and ask operator to register us
-        resp = self.ring_ring(
+        resp = self.ring(
             whom=self.op,
-            msg_unencr=msg_to_op
+            with_msg=msg_to_op
         )
 
 
@@ -65,7 +85,7 @@ class Person(Caller):
 
         
 
-        phone_res = self.phone.ring_ring(msg_to_op)
+        phone_res = self.phone.ring(msg_to_op)
         
         # URI id
         uri_id = phone_res.get('uri_id')
