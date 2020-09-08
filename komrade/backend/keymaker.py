@@ -221,6 +221,17 @@ class Keymaker(Logger):
                 keychain_toreturn[key]=keychain[key]
         return keychain_toreturn
 
+    def save_uri_as_qrcode(self,name=None,uri_id=None):
+        if not uri_id: uri_id = get_random_id() + get_random_id()
+        uri_id = self.uri_id
+        if not uri_id and not self.uri_id: raise KomradeException('Need URI id to save!')
+
+        # gen
+        import pyqrcode
+        qr = pycode.create(uri_id)
+        ofnfn = os.path.join(PATH_QRCODES,self.name+'.png')
+        qr.png(ofnfn)
+        self.log('>> saved:',ofnfn)
 
     def save_keychain(self,name,keychain,keys_to_save=None,uri_id=None):
         if not keys_to_save: keys_to_save = list(keychain.keys())

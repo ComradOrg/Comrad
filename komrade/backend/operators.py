@@ -418,17 +418,21 @@ def create_phonelines():
     phone_keys_to_keep_on_server = ['pubkey_decr']  # sent to phone
 
     # create keys for Op
-    op_decr_keys = op.forge_new_keys(
+    op_uri,op_decr_keys = op.forge_new_keys(
         keys_to_save=op_keys_to_keep_on_server,  # on server only; flipped around
         keys_to_return=op_keys_to_keep_on_client + op_keys_to_keep_on_3rdparty # on clients only
     )
 
     # create keys for phone
-    phone_decr_keys = phone.forge_new_keys(
+    phone_uri,phone_decr_keys = phone.forge_new_keys(
         name=TELEPHONE_NAME,
         keys_to_save=phone_keys_to_keep_on_server,  # on server only
         keys_to_return=phone_keys_to_keep_on_client + phone_keys_to_keep_on_3rdparty   # on clients only
     )
+
+    # store URIs
+    op.save_uri_as_qrcode()
+    phone.save_uri_as_qrcode()
 
     ## store remote keys
     THIRD_PARTY_DICT = {OPERATOR_NAME:{}, TELEPHONE_NAME:{}}
