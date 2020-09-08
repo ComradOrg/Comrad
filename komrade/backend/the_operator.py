@@ -79,8 +79,31 @@ class TheOperator(Operator):
             self.phone
         )
         self.log('Operator unrolled the first layer of encryption:',msg_encr_caller2caller_caller2phone)
+        assert type(msg_encr_caller2caller_caller2phone)==dict
+        
+        # is there another layer?
+        msg_d=msg_encr_caller2caller_caller2phone
+        _msg=msg_d.get('_msg')
+        route=None
+        if _msg and type(_msg)==bytes:
+            alleged_name = msg_d.get('_from_name')
+            alleged_pubkey = msg_d.get('_from_pub')
+            if alleged_pubkey and alleged_name:
+                alleged_caller = Caller(alleged_name)
+                assert alleged_caller.pubkey == alleged_pubkey
 
-        # is there another layer,
+                msg_d2 = self.unpackage_msg_from(
+                    _msg,
+                    caller
+                )
+                assert type(msg_d2)==dict
+                dict_merge(msg_d,msg_d2)
+        
+        route = msg_d.get('_please',None)
+        
+        return self.route(msg_d,route)
+
+
 
 
     def send(self,encr_data_b):
@@ -88,14 +111,7 @@ class TheOperator(Operator):
         return encr_data_b
 
 
-    def route(self, data_b64_str):
-        return self.answer_phone(data_b64_str)
-
-        res=None
-        route = data.get('_please')
-        if not route: return OPERATOR_INTERCEPT_MESSAGE
-        del data['_please']
-
+    def route(self, msg_d, route):
         if route == 'forge_new_keys':
             return self.forge_new_keys(**data)
         return OPERATOR_INTERCEPT_MESSAGE

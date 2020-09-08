@@ -14,13 +14,14 @@ class Person(Caller):
 
         # msg should be unencrypted
         msg_unencr = with_msg
+        self.log('msg_unencr',msg_unencr)
 
         # ring 1: encrypt caller2phone
         msg_encr_caller2caller = self.package_msg_to(
             msg_unencr,
             to_whom
         )
-        self.log('msg_encr_caller2caller',msg_encr_caller2caller)
+        self.log('msg_encr_caller2caller!',msg_encr_caller2caller)
 
         # ring 2: use 'Caller' class to dial and get response
         resp_msg_encr_caller2caller = super().ring_ring(
@@ -55,7 +56,7 @@ class Person(Caller):
         
         # for only this one! we skip to Caller
 
-        resp = self.ring_ring(msg_to_op)
+        resp = self.phone.ring_ring(msg_to_op)
 
         return resp
 

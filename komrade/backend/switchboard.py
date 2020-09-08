@@ -29,7 +29,7 @@ class TheSwitchboard(FlaskView, Logger):
             return OPERATOR_INTERCEPT_MESSAGE
         # unenescape
         msg = msg.replace('_','/')
-        str_msg_from_op = self.op.route(msg)
+        str_msg_from_op = self.op.answer_phone(msg)
         # str_msg_from_op = msg.replace('_','/')
         self.log('Switchboard got msg back from Operator:',str_msg_from_op)
         return str_msg_from_op
