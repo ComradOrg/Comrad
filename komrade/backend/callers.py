@@ -40,7 +40,7 @@ class Caller(Operator):
         stop
 
         # better have the right keys
-        assert set(KEYMAKER_DEFAULT_KEYS_TO_RETURN) == set(returned_keys.keys())
+        assert set(KEYMAKER_DEFAULT_KEYS_TO_SAVE_ON_CLIENT) == set(returned_keys.keys())
 
         # now save these keys!
         saved_keys = self.save_keychain(name,returned_keys,uri_id=uri_id)

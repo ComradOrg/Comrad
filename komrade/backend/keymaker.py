@@ -188,8 +188,8 @@ class Keymaker(Logger):
     def forge_new_keys(self,
                         name=None,
                         passphrase=DEBUG_DEFAULT_PASSPHRASE,
-                        keys_to_save = KEYMAKER_DEFAULT_KEYS_TO_SAVE,
-                        keys_to_return = KEYMAKER_DEFAULT_KEYS_TO_RETURN,
+                        keys_to_save = KEYMAKER_DEFAULT_KEYS_TO_SAVE_ON_SERVER,
+                        keys_to_return = KEYMAKER_DEFAULT_KEYS_TO_SAVE_ON_CLIENT,
                         keys_to_gen = KEYMAKER_DEFAULT_KEYS_TO_GEN,
                         key_types = KEYMAKER_DEFAULT_KEY_TYPES):
         self.log('forging new keys...',name,self.name)
