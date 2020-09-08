@@ -74,8 +74,17 @@ class KomradeAsymmetricPrivateKey(KomradeAsymmetricKey):
 
 
 class Keymaker(Logger):
-    def __init__(self,name=None,passphrase=None,keychain={}, path_crypt_keys=None, path_crypt_data=None):
+    def __init__(self,
+                name=None,
+                passphrase=None,
+                uri_id=None,
+                keychain={},
+                path_crypt_keys=None,
+                path_crypt_data=None):
+        
+        # set defaults
         self.name=name
+        self.uri_id=uri_id
         self._keychain=keychain
         self.passphrase=passphrase
         self.path_crypt_keys=path_crypt_keys

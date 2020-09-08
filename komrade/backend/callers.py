@@ -32,7 +32,7 @@ class Caller(Operator):
         phone_res = self.phone.ring_ring(json_phone2phone=req_json)
         
         # URI id
-        uri_id = phone_get.get('uri_id')
+        uri_id = phone_res.get('uri_id')
         returned_keys = phone_res.get('_keychain')
         self.log('got URI from Op:',uri_id)
         self.log('got returnd keys from Op:',returned_keys)

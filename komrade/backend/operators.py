@@ -23,10 +23,7 @@ class Operator(Keymaker):
         # If not, forge them -- only once!
         if not have_keys and create:
             self.get_new_keys()
-
-        # load keychain into memory
-        self._keychain = self.keychain(force = True)
-
+        
     
     @property
     def phone(self):
