@@ -247,7 +247,7 @@ class Keymaker(Logger):
 
     def save_keychain(self,name,keychain,keys_to_save=None,uri_id=None):
         if not keys_to_save: keys_to_save = list(keychain.keys())
-        if not uri_id: uri_id = get_random_id() + get_random_id()
+        if not uri_id: b64encode(uri_id=keychain['pubkey']) #uri_id = get_random_id() + get_random_id()
         self._uri_id = uri_id
         # filter for transfer
         for k,v in keychain.items():

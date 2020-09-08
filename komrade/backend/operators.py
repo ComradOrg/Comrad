@@ -441,12 +441,11 @@ def create_phonelines():
     )
 
     # store URIs
-    op.save_uri_as_qrcode(odir=PATH_OPERATOR_WEB_CONTACTS_DIR)
-    op.save_uri_as_qrcode()
+    # op.save_uri_as_qrcode(odir=PATH_OPERATOR_WEB_CONTACTS_DIR)
+    # op.save_uri_as_qrcode()
     
-    phone.save_uri_as_qrcode(odir=PATH_OPERATOR_WEB_CONTACTS_DIR)
-    phone.save_uri_as_qrcode()
-
+    # phone.save_uri_as_qrcode(odir=PATH_OPERATOR_WEB_CONTACTS_DIR)
+    # phone.save_uri_as_qrcode()
 
     ## store remote keys
     THIRD_PARTY_DICT = {OPERATOR_NAME:{}, TELEPHONE_NAME:{}}
