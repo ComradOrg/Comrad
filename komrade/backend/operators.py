@@ -500,6 +500,11 @@ def connect_phonelines():
     if r.status_code!=200:
         print('cannot authenticate the keymakers')
         return
+
+    # load remote contacts
+    qrfn_op = os.path.join(PATH_QRCODES,OPERATOR_NAME+'.png')
+    qrfn_ph = os.path.join(PATH_QRCODES,TELEPHONE_NAME+'.png')
+    if not os.path.exists()
     
     # unpack remote pkg
     pkg = b64decode(r.text)

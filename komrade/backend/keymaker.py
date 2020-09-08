@@ -227,7 +227,7 @@ class Keymaker(Logger):
         import pyqrcode
         qr = pyqrcode.create(uri_id)
         if not odir: odir = PATH_QRCODES
-        ofnfn = os.path.join(PATH_QRCODES,self.name+'.png')
+        ofnfn = os.path.join(odir,self.name+'.png')
         qr.png(ofnfn,scale=10)
         self.log('>> saved:',ofnfn)
 
