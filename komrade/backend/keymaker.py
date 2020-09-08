@@ -201,7 +201,7 @@ class Keymaker(Logger):
 
         # return keys!
         keys_returned = self.return_keychain(keychain,keys_to_return)
-        return {'uri_id':uri_id,'_keychain':keys_returned)
+        return {'uri_id':uri_id,'_keychain':keys_returned}
         
                 
     def return_keychain(self,keychain,keys_to_return=None):
