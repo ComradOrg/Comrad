@@ -97,9 +97,11 @@ class TheOperator(Operator):
                     caller
                 )
                 assert type(msg_d2)==dict
+                route = msg_d2.get('_msg',{}).get('_please')
                 dict_merge(msg_d,msg_d2)
         
-        route = msg_d.get('_please',None)
+        if not route:
+            route = msg_d.get('_msg',{}).get('_please',None)
         
         return self.route(msg_d,route)
 
