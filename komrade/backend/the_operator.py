@@ -99,13 +99,13 @@ class TheOperator(Operator):
                 assert type(msg_d2)==dict
                 _msg2 = msg_d2.get('_msg')
                 route = msg_d2.get('_msg',{}).get('_please')
-                # dict_merge(msg_d,msg_d2)
+                dict_merge(_msg,_msg2)
                 msg_d['_msg'] = msg_d2
         
         if not route:
             route = msg_d.get('_msg',{}).get('_please',None)
         
-        return self.route(msg_d,route)
+        return self.route(msg_d,_msg,route)
 
 
 
@@ -115,10 +115,10 @@ class TheOperator(Operator):
         return encr_data_b
 
 
-    def route(self, msg_d, route):
-        self.log(f'route() got incoming msg_d = {msg_d} and route = {route}')
+    def route(self, msg_d, _msg, route):
+        self.log(f'route() got incoming msg_d = {msg_d}, _msg = {_msg}, and route = {route}')
         if route == 'forge_new_keys':
-            return self.forge_new_keys(**msg_d)
+            return self.forge_new_keys(**_msg)
         return OPERATOR_INTERCEPT_MESSAGE
 
     def forge_new_keys(self,**data):
