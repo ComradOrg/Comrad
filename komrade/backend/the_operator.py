@@ -97,11 +97,10 @@ class TheOperator(Operator):
                     caller
                 )
                 assert type(msg_d2)==dict
-                route = msg_d2.get('_msg',{}).get('_please')
-                dict_merge(msg_d,msg_d2)
+                _msg2 = msg_d2.get('_msg')
+                dict_merge(_msg,_msg2)
         
-        if not route:
-            route = msg_d.get('_msg',{}).get('_please',None)
+        route = _msg.get('_please',None)
         
         return self.route(msg_d,route)
 
@@ -116,7 +115,7 @@ class TheOperator(Operator):
     def route(self, msg_d, route):
         self.log(f'route() got incoming msg_d = {msg_d} and route = {route}')
         if route == 'forge_new_keys':
-            return self.forge_new_keys(**data)
+            return self.forge_new_keys(**msg_d)
         return OPERATOR_INTERCEPT_MESSAGE
 
     def forge_new_keys(self,**data):
