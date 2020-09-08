@@ -432,7 +432,7 @@ def create_phonelines():
         keys_to_save=op_keys_to_keep_on_server,
         keys_to_return=op_keys_to_keep_on_client + op_keys_to_keep_on_3rdparty # on clients only
     )
-    print('op_uri',phone_uri)
+    print('op_uri',op_uri)
     print('op_decr_keys',op_decr_keys)
 
     # create keys for phone
