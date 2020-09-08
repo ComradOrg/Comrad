@@ -432,6 +432,8 @@ def create_phonelines():
         keys_to_save=op_keys_to_keep_on_server,
         keys_to_return=op_keys_to_keep_on_client + op_keys_to_keep_on_3rdparty # on clients only
     )
+    print('op_uri',phone_uri)
+    print('op_decr_keys',op_decr_keys)
 
     # create keys for phone
     phone_uri,phone_decr_keys = phone.forge_new_keys(
@@ -439,6 +441,9 @@ def create_phonelines():
         keys_to_save=phone_keys_to_keep_on_server,  # on server only
         keys_to_return=phone_keys_to_keep_on_client + phone_keys_to_keep_on_3rdparty   # on clients only
     )
+
+    print('phone_uri',phone_uri)
+    print('phone_decr_keys',phone_decr_keys)
 
     # store URIs
     # op.save_uri_as_qrcode(odir=PATH_OPERATOR_WEB_CONTACTS_DIR)
