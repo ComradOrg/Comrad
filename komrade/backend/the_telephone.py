@@ -36,40 +36,44 @@ class TheTelephone(Operator):
         self.log("DIALING THE OPERATOR:",URL)
         ringring=komrade_request(URL)
         if ringring.status_code==200:
-            um_yes_hello = ringring.text
-            return self.answer_phone(um_yes_hello,
-                from_phone=self.op,
-                to_phone=self
-            )
+
+            # response back from Operator!
+            encr_str_response_from_op = ringring.text
+            self.log('encr_str_response_from_op',encr_str_response_from_op)
+
+            return encr_str_response_from_op.encode()
         else:
             self.log('!! error in request',ringring.status_code,ringring.text)
             return None
 
-    def ring_ring(self,
-            from_caller=None,
-            to_caller=None,
-            json_phone2phone={}, 
-            json_caller2phone={},   # (person) -> operator or operator -> (person)
-            json_caller2caller={}):
-        
-        encr_msg_to_send = super().ring_ring(
-            from_phone=self,
-            to_phone=self.op,
-            from_caller=from_caller,
-            to_caller=to_caller,
-            json_phone2phone=json_phone2phone, 
-            json_caller2phone=json_caller2phone,   # (person) -> operator
-            json_caller2caller=json_caller2caller)
+    def ring_ring(self,msg_encr_caller2caller_caller2phone):
 
-        return self.send_and_receive(encr_msg_to_send)
-        
+        # ring 1: encrypt
+        msg_encr_caller2caller_caller2phone_phone2phone = self.package_msg_to(
+            msg_encr_caller2caller,
+            self.op
+        )
+        self.log('final form of encr msg!',msg_encr_caller2caller_caller2phone_phone2phone)
+
+        # ring 2: dial and get response
+        msg_encr_caller2caller_caller2phone_phone2phone = self.send_and_receive(msg_encr_caller2caller_phone2phone)
+        msg_encr_caller2caller_caller2phone_phone2phone: return
+
+        # ring 3: decrypt
+        msg_encr_caller2caller_caller2phone = self.unpackage_msg_from(
+            msg_encr_caller2caller_caller2phone_phone2phone,
+            self.op
+        )
+
+        return msg_encr_caller2caller_caller2phone
+
     
 def test_call():
     caller = Caller('marx33') #Caller('marx')
     # caller.boot(create=True)
     # print(caller.keychain())
     # phone = TheTelephone()
-    # req_json = {'_route':'forge_new_keys','name':name, 'pubkey_is_public':pubkey_is_public}}
+    # req_json = {'_please':'forge_new_keys','name':name, 'pubkey_is_public':pubkey_is_public}}
     # req_json_s = jsonify(req_json)
     # res = phone.req({'forge_new_keys':{'name':'marx', 'pubkey_is_public':True}})
     # print(res)

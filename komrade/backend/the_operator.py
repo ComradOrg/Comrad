@@ -59,32 +59,19 @@ class TheOperator(Operator):
         return self.send(encr_msg_to_send)
 
 
-    def recv(self,data):
-        # decrypt
-        self.log('recv 1: got',data)
-
-        # answer the phone!
-        data_in = self.answer_phone(data, from_phone=self.phone, to_phone=self)
-        self.log('recv 2: answer_phone gave me',data_in)
-
-        # route
-        return self.route(data_in)
-        # self.log('recv 3: route gave me',encr_result)
-
-        # # send
-        # return self.send(encr_result)
-
-
     def send(self,encr_data_b):
         self.log(type(encr_data_b),encr_data_b,'sending!')
         return encr_data_b
 
 
     def route(self, data):
+        # route incoming call from the switchboard
+
+
         res=None
-        route = data.get('_route')
+        route = data.get('_please')
         if not route: return OPERATOR_INTERCEPT_MESSAGE
-        del data['_route']
+        del data['_please']
 
         if route == 'forge_new_keys':
             return self.forge_new_keys(**data)

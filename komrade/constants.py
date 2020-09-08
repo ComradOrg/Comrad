@@ -122,6 +122,9 @@ KEYMAKER_DEFAULT_KEY_TYPES = {
     'privkey_decr_encr':ENCRYPTED_KEY,
     'adminkey_decr_encr':ENCRYPTED_KEY
 }
+
+KEYMAKER_DEFAULT_ALL_KEY_NAMES = sorted(list(KEYMAKER_DEFAULT_KEY_TYPES.keys()), key=lambda x: x.count('_'))
+
 WHY_MSG = 'Forge the password of memory: '
 
 

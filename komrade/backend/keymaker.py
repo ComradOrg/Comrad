@@ -85,24 +85,61 @@ class Keymaker(Logger):
         # set defaults
         self.name=name
         self._uri_id=uri_id
+        self._pubkey=None
         self._keychain=keychain
         self.passphrase=passphrase
         self.path_crypt_keys=path_crypt_keys
         self.path_crypt_data=path_crypt_data
 
     @property
+    def pubkey(self):
+        if not self._pubkey: self._pubkey = self.crypt_keys.get(self.name, prefix='/pubkey/')
+        if not self._pubkey: self._pubkey = b64decode(self.load_qr.get(self.name, prefix='/pubkey/').encode())
+        return self._pubkey
+
+    def keychain(self,look_for=KEYMAKER_DEFAULT_ALL_KEY_NAMES):
+        keys = {'pubkey':self.pubkey}
+        uri = self.uri_id
+
+        # get from cache
+        for keyname in look_for:
+            key = self.crypt_keys.get(uri,prefix=f'/{keyname}/')
+            if key:
+                keys[keyname]=key
+
+        # try to assemble
+        keys = self.assemble(self.assemble(keys))
+
+        return keys
+
+
+    @property
+    def pubkey(self):
+        if not self._pubkey: self._pubkey = self.crypt_keys.get(self.name, prefix='/pubkey/')
+        if not self._pubkey: self._pubkey = b64decode(self.load_qr.get(self.name, prefix='/pubkey/').encode())
+        return self._pubkey
+    @property
+    def privkey(self): return self.keychain()['privkey']
+    @property
+    def adminkey(self): return self.keychain()['adminkey']
+
+
+
+    def load_qr(self,name):
+        # try to load?
+        contact_fnfn = os.path.join(PATH_QRCODES,name+'.png')
+        print(contact_fnfn,os.path.exists(contact_fnfn))
+        if not os.path.exists(contact_fnfn): return
+        # with open(contact_fnfn,'rb') as f: dat=f.read()
+        from pyzbar.pyzbar import decode
+        from PIL import Image
+        return decode(Image.open(contact_fnfn))[0].data
+
+
+    @property
     def uri_id(self):
         if not hasattr(self,'_uri_id') or not self._uri_id:
-            
-            # try to load?
-            contact_fnfn = os.path.join(PATH_QRCODES,self.name+'.png')
-            print(contact_fnfn,os.path.exists(contact_fnfn))
-            if not os.path.exists(contact_fnfn): return
-
-            # with open(contact_fnfn,'rb') as f: dat=f.read()
-            from pyzbar.pyzbar import decode
-            from PIL import Image
-            self._uri_id = uri_id = decode(Image.open(contact_fnfn))[0].data
+            self._uri_id = b64encode(self.pubkey)
         return self._uri_id
 
 
@@ -343,45 +380,45 @@ class Keymaker(Logger):
             return SCellSeal(key=str_or_key_or_cell)
 
 
-    def keychain(self,
-                passphrase=DEBUG_DEFAULT_PASSPHRASE,
-                extra_keys={},
-                keys_to_gen=KEYMAKER_DEFAULT_KEYS_TO_GEN,
-                uri_id=None,
-                **kwargs):
+    # def keychain(self,
+    #             passphrase=DEBUG_DEFAULT_PASSPHRASE,
+    #             extra_keys={},
+    #             keys_to_gen=KEYMAKER_DEFAULT_KEYS_TO_GEN,
+    #             uri_id=None,
+    #             **kwargs):
 
-        # assemble as many keys as we can!
-        self.log(f'''keychain(
-            passphrase={passphrase},
-            extra_keys={extra_keys},
-            keys_to_gen={keys_to_gen},
-            uri_id={uri_id},
-            **kwargs = {kwargs}
-        )''')
+    #     # assemble as many keys as we can!
+    #     self.log(f'''keychain(
+    #         passphrase={passphrase},
+    #         extra_keys={extra_keys},
+    #         keys_to_gen={keys_to_gen},
+    #         uri_id={uri_id},
+    #         **kwargs = {kwargs}
+    #     )''')
 
-        if not uri_id: uri_id = self.uri_id
-        if not uri_id and not self.uri_id: 
-            raise KomradeException('Need URI id to complete finding of keys!')
-        self.log('getting keychain for uri ID:',uri_id)
+    #     if not uri_id: uri_id = self.uri_id
+    #     if not uri_id and not self.uri_id: 
+    #         raise KomradeException('Need URI id to complete finding of keys!')
+    #     self.log('getting keychain for uri ID:',uri_id)
 
-        # if not force and hasattr(self,'_keychain') and self._keychain: return self._keychain
-        if passphrase: self.passphrase=passphrase
+    #     # if not force and hasattr(self,'_keychain') and self._keychain: return self._keychain
+    #     if passphrase: self.passphrase=passphrase
 
-        # start off keychain
-        _keychain = {**extra_keys, **self._keychain}
-        self.log('_keychain at start of keychain() =',_keychain)
+    #     # start off keychain
+    #     _keychain = {**extra_keys, **self._keychain}
+    #     self.log('_keychain at start of keychain() =',_keychain)
         
-        # find
-        for keyname in keys_to_gen:
-            if keyname in _keychain and _keychain[keyname]: continue
-            # self.log('??',keyname,keyname in self._keychain,'...')
-            newkey = self.crypt_keys.get(uri_id,prefix=f'/{keyname}/')
-            if newkey: _keychain[keyname] = newkey
+    #     # find
+    #     for keyname in keys_to_gen:
+    #         if keyname in _keychain and _keychain[keyname]: continue
+    #         # self.log('??',keyname,keyname in self._keychain,'...')
+    #         newkey = self.crypt_keys.get(uri_id,prefix=f'/{keyname}/')
+    #         if newkey: _keychain[keyname] = newkey
         
-        # return
-        _keychain = self.assemble(_keychain)
-        self._keychain = _keychain
-        return _keychain
+    #     # return
+    #     _keychain = self.assemble(_keychain)
+    #     self._keychain = _keychain
+    #     return _keychain
 
         
 
