@@ -90,6 +90,16 @@ def unpackage_from_transmission(data_json_b64):
     return data_json
 
 
+def get_random_id():
+    import uuid
+    return uuid.uuid4().hex
+
+def get_random_binary_id():
+    import base64
+    idstr = get_random_id()
+    return base64.b64encode(idstr.encode())
+
+
 
 # Recursive dictionary merge
 # https://gist.github.com/angstwad/bf22d1822c38a92ec0a9

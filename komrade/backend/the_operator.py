@@ -92,14 +92,10 @@ class TheOperator(Operator):
 
     def forge_new_keys(self,**data):
         # get keys
-        res = super().forge_new_keys(**data)
-        pkg={}
-        pkg['name']=data.get('name')
-        pkg['_keychain']=res
+        forged_keys_plus_id = super().forge_new_keys(**data)
 
-        self.log('returned keys from keymaker.forge_new_keys:','\n'.join(res.keys()))
-
-        return self.ring_ring(json_phone2phone=pkg)
+        # return to Telephone/Caller
+        return self.ring_ring(json_phone2phone=forged_keys_plus_id)
 
         
         

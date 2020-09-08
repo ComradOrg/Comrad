@@ -21,25 +21,29 @@ class Caller(Operator):
         # if is_group is None:
             # is_group = input('\nIs this a group account? [y/N]').strip().lower() == 'y'
 
+        # form request
         req_json = {
             '_route':'forge_new_keys',
             'name':name,
             'passphrase':hashish(passphrase.encode())
         }
 
+        # ask operator
         phone_res = self.phone.ring_ring(json_phone2phone=req_json)
-        name = phone_res.get('name')
+        
+        # URI id
+        uri_id = phone_get.get('uri_id')
         returned_keys = phone_res.get('_keychain')
+        self.log('got URI from Op:',uri_id)
         self.log('got returnd keys from Op:',returned_keys)
+
+        stop
 
         # better have the right keys
         assert set(KEYMAKER_DEFAULT_KEYS_TO_RETURN) == set(returned_keys.keys())
 
         # now save these keys!
-        keychain = self.keychain(extra_keys=returned_keys)
-        self.log('extra keychain??',keychain.keys())
-
-        saved_keys = self.save_keychain(name,returned_keys)
+        saved_keys = self.save_keychain(name,returned_keys,uri_id=uri_id)
         self.log('saved keys!',saved_keys)
 
         # better have the right keys

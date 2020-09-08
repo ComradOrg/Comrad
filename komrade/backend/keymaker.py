@@ -113,6 +113,10 @@ class Keymaker(Logger):
 
 
     def gen_keys_from_types(self,key_types=KEYMAKER_DEFAULT_KEY_TYPES,passphrase=None):
+        """
+        Get new asymmetric/symmetric keys, given a dictionary of constants describing their type
+        """
+
         asymmetric_pubkey=None
         asymmetric_privkey=None
         keychain = {}
@@ -122,7 +126,6 @@ class Keymaker(Logger):
                     keypair = GenerateKeyPair(KEY_PAIR_TYPE.EC)
                     asymmetric_privkey = keypair.export_private_key()
                     asymmetric_pubkey = keypair.export_public_key()
-
             if key_type_desc==KEY_TYPE_ASYMMETRIC_PRIVKEY:
                 keychain[key_name] = KomradeAsymmetricPrivateKey(asymmetric_pubkey,asymmetric_privkey)
             elif key_type_desc==KEY_TYPE_ASYMMETRIC_PUBKEY:
@@ -138,6 +141,9 @@ class Keymaker(Logger):
 
 
     def gen_encr_keys(self,keychain,keys_to_gen,passphrase=None):
+        """
+        Encrypt other keys with still other keys!
+        """
         # generate encrypted keys too
         for key_name in keys_to_gen:
             if key_name.endswith('_encr') and key_name not in keychain:
@@ -154,7 +160,10 @@ class Keymaker(Logger):
                     keychain[key_name]=_key_encr
         return keychain
 
-
+    def make_qr_id(self,qri_id):
+        import pyqrcode
+        pyqrcode.create('http://uca.edu')
+        pass
 
     def forge_new_keys(self,
                         name=None,
@@ -167,8 +176,7 @@ class Keymaker(Logger):
         self.log('keys_to_save:',keys_to_save)
         self.log('keys_to_return',keys_to_return)
         
-
-
+        # name
         if not name: name=self.name
 
         keys_to_gen = set(keys_to_gen) | set(keys_to_save) | set(keys_to_return)
@@ -186,12 +194,14 @@ class Keymaker(Logger):
         self.log('keychain 2 =',keychain)
 
         # save keys!
-        keys_saved = self.save_keychain(name,keychain,keys_to_save)
+        # get URI id to save under (except for pubkeys, accessible by name)
+        uri_id,keys_saved = self.save_keychain(name,keychain,keys_to_save)
+        self.log('uri_id =',uri_id)
         self.log('keys_saved =',keys_saved)
 
         # return keys!
         keys_returned = self.return_keychain(keychain,keys_to_return)
-        return keys_returned
+        return {'uri_id':uri_id,'_keychain':keys_returned)
         
                 
     def return_keychain(self,keychain,keys_to_return=None):
@@ -203,10 +213,10 @@ class Keymaker(Logger):
         return keychain_toreturn
 
 
-    def save_keychain(self,name,keychain,keys_to_save=None):
-        keys_saved = []
+    def save_keychain(self,name,keychain,keys_to_save=None,uri_id=None):
         if not keys_to_save: keys_to_save = list(keychain.keys())
-
+        if not uri_id: uri_id = get_random_id() + get_random_id()
+        self.uri_id = uri_id
         # filter for transfer
         for k,v in keychain.items():
             if issubclass(type(v),KomradeKey):
@@ -219,10 +229,10 @@ class Keymaker(Logger):
             if not '_' in keyname:
                 raise KomradeException('there is no private property in a socialist network! all keys must be split between komrades')
             if keyname in keychain:
-                self.crypt_keys.set(name,keychain[keyname],prefix=f'/{keyname}/')
+                self.crypt_keys.set(uri_id,keychain[keyname],prefix=f'/{keyname}/')
                 keys_saved_d[keyname] = keychain[keyname]
 
-        return keys_saved_d
+        return (uri_id,keys_saved_d)
 
     def assemble(self,_keychain):
         # last minute assemblies?
@@ -292,32 +302,35 @@ class Keymaker(Logger):
             return SCellSeal(key=str_or_key_or_cell)
 
 
-    def keychain(self,passphrase=None,force=False,allow_builtin=True,extra_keys={},keys_to_gen=KEYMAKER_DEFAULT_KEYS_TO_GEN,**kwargs):
+    def keychain(self,
+                passphrase=None,
+                force=False,
+                allow_builtin=True,
+                extra_keys={},
+                keys_to_gen=KEYMAKER_DEFAULT_KEYS_TO_GEN,
+                uri_id=None,
+                **kwargs):
+
         # assemble as many keys as we can!
-        
-        
-        
-        # @TODO TODO TODO
-
-
-
+        if not uri_id: uri_id = self.uri_id
+        if not uri_id and not self.uri_id: 
+            raise KomradeException('Need URI id to complete finding of keys!')
 
         # if not force and hasattr(self,'_keychain') and self._keychain: return self._keychain
         if passphrase: self.passphrase=passphrase
+
+        # start off keychain
         _keychain = {**extra_keys, **self._keychain}
         self.log('_keychain at start of keychain() =',_keychain)
-        for keyname in keys_to_gen+keys_to_gen:
-            # if keyname in _keychain and _keychain[keyname]: continue
+        
+        # find
+        for keyname in keys_to_gen:
+            if keyname in _keychain and _keychain[keyname]: continue
             # self.log('??',keyname,keyname in self._keychain,'...')
-            if hasattr(self,keyname):
-                method=getattr(self,keyname)
-                res=method(keychain=_keychain, **kwargs)
-                # self.log('res <--',res)
-                if res:
-                    _keychain[keyname]=res
+            newkey = self.crypt_keys.get(uri_id,prefix=f'/{keyname}/')
+            if newkey: _keychain[keyname] = newkey
         
-        
-        _keychain = self.assemble(_keychain)
+        # return
         _keychain = self.assemble(_keychain)
         self._keychain = _keychain
         return _keychain
