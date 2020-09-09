@@ -14,7 +14,7 @@ from .the_telephone import *
 from .callers import *
 
 from .phonelines import *
-
+from .messages import *
 
 ## define default entities
 OPERATOR = None

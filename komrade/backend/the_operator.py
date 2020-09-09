@@ -70,49 +70,55 @@ class TheOperator(Operator):
         # decode
         data_b64 = data_b64_str.encode()
         data = b64decode(data_b64)
-        msg_encr_caller2caller_caller2phone_phone2phone = data
+        msg_d = msg_encr_caller2caller_caller2phone_phone2phone = data
         self.log('msg_encr_caller2caller_caller2phone_phone2phone incoming',msg_encr_caller2caller_caller2phone_phone2phone)
 
-        TOTAL_MSG_CHAIN = {}
-        TOTAL_DECR_MSG
+        # make top-level message object, addressed to me the operator
+        msg = Message(msg_d,caller=self.phone,callee=self)
+        msg.decrypt()
 
-        # top layer: phone -> me, the op
-        msg_d = msg_encr_caller2caller_caller2phone = self.unpackage_msg_from(
-            msg_encr_caller2caller_caller2phone_phone2phone,
-            self.phone
-        )
-        self.log('Operator unrolled the first layer of encryption:',msg_encr_caller2caller_caller2phone)
-        assert type(msg_encr_caller2caller_caller2phone)==dict
+
+
+        # TOTAL_MSG_CHAIN = {}
+        # TOTAL_DECR_MSG
+
+        # # top layer: phone -> me, the op
+        # msg_d = msg_encr_caller2caller_caller2phone = self.unpackage_msg_from(
+        #     msg_encr_caller2caller_caller2phone_phone2phone,
+        #     self.phone
+        # )
+        # self.log('Operator unrolled the first layer of encryption:',msg_encr_caller2caller_caller2phone)
+        # assert type(msg_encr_caller2caller_caller2phone)==dict
         
-        # is there another layer, encrypted caller2phone ?
-        msg_d['_msg'] = self.unpackage_msg_dict(msg_d)
+        # # is there another layer, encrypted caller2phone ?
+        # msg_d['_msg'] = self.unpackage_msg_dict(msg_d)
 
-        # merge unencrypted messages
+        # # merge unencrypted messages
 
 
 
-        route=None
-        if _msg and type(_msg)==bytes:
-            alleged_name = msg_d.get('_from_name')
-            alleged_pubkey = msg_d.get('_from_pub')
-            if alleged_pubkey and alleged_name:
-                alleged_caller = Caller(alleged_name)
-                assert alleged_caller.pubkey == alleged_pubkey
+        # route=None
+        # if _msg and type(_msg)==bytes:
+        #     alleged_name = msg_d.get('_from_name')
+        #     alleged_pubkey = msg_d.get('_from_pub')
+        #     if alleged_pubkey and alleged_name:
+        #         alleged_caller = Caller(alleged_name)
+        #         assert alleged_caller.pubkey == alleged_pubkey
 
-                msg_d2 = self.unpackage_msg_from(
-                    _msg,
-                    caller
-                )
-                assert type(msg_d2)==dict
-                _msg2 = msg_d2.get('_msg')
-                route = msg_d2.get('_msg',{}).get('_please')
-                dict_merge(_msg,_msg2)
-                msg_d['_msg'] = msg_d2
+        #         msg_d2 = self.unpackage_msg_from(
+        #             _msg,
+        #             caller
+        #         )
+        #         assert type(msg_d2)==dict
+        #         _msg2 = msg_d2.get('_msg')
+        #         route = msg_d2.get('_msg',{}).get('_please')
+        #         dict_merge(_msg,_msg2)
+        #         msg_d['_msg'] = msg_d2
         
-        if not route:
-            route = msg_d.get('_msg',{}).get('_please',None)
+        # if not route:
+        #     route = msg_d.get('_msg',{}).get('_please',None)
         
-        return self.route(msg_d,_msg,route)
+        # return self.route(msg_d,_msg,route)
 
 
 
