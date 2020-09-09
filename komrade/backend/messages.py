@@ -78,16 +78,16 @@ class Message(Logger):
     
     ## loading messages
     def get_callers(self):
-        if self.caller is not None and self.callee is not None:
-            return (self.caller,self.callee) 
+        if self._caller is not None and self._callee is not None:
+            return (self._caller,self._callee) 
         alleged_caller = self.get_caller(self.from_name)
         alleged_callee = self.get_caller(self.to_name)
         if not self.caller_records_match(alleged_caller,alleged_callee):
             raise KomradeException('Records of callers on The Operator and the Caller do not match. Something fishy going on?')
         else:
-            self.caller = alleged_caller
-            self.callee = alleged_callee
-        return (alleged_caller,alleged_caller)
+            self._caller = alleged_caller
+            self._callee = alleged_callee
+        return (self._caller,self._callee)
 
     def caller_records_match(self,alleged_caller,alleged_callee):
         alleged_caller_name = self.from_name
