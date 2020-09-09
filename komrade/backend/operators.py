@@ -234,7 +234,7 @@ class Operator(Keymaker):
         ''')
 
         route_response = self.route_msg(msg_obj)
-        
+        self.log('route_response',route_response)
         # set this to be the new msg
         #msg_obj.msg = msg_obj.msg_d['_msg'] = response
         #self.log('what msg_obj looks like now:',msg_obj)
