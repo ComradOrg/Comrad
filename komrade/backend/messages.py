@@ -126,9 +126,12 @@ class Message(Logger):
         
         # now, is the decrypted message itself a message?
         if recursive and is_valid_msg_d(decr_msg):
+            self.log('this is a valid msg in its own right!',decr_msg)
             # then ... make that, a message object and decrypt it too!
             self.msg = Message(decr_msg)
             self.msg.decrypt()
+        
+        self.log(f'done decrypting! {self}')
         return decr_msg
 
 
@@ -139,7 +142,7 @@ class Message(Logger):
         
         # binarize msg
         msg_b = pickle.dumps(self.msg)
-        self.log('msg_b = ',msg_b)
+        # self.log('msg_b = ',msg_b)
 
         # encrypt it!
         msg_encr = SMessage(
