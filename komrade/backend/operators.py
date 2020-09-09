@@ -174,7 +174,8 @@ class Operator(Keymaker):
         ''')
 
         # decrypt
-        msg_obj.decrypt()
+        if msg_obj.is_encrypted:
+            msg_obj.decrypt()
         # are there instructions for us?
         if msg_obj.route:
             # get result from routing

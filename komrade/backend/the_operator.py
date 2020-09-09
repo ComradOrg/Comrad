@@ -122,8 +122,8 @@ class TheOperator(Operator):
 
 
     ### ROUTES
-    def forge_new_keys(self,msg_obj):
-        self.log('about to make some new keys!',msg_obj.msg_d)
+    def forge_new_keys(self,**data):
+        self.log('about to make some new keys!',data)
         # return {'_route':'well_hello_to_you_too'}
         
         # get keys
@@ -132,10 +132,8 @@ class TheOperator(Operator):
         # return to Telephone/Caller
         return forged_keys_plus_id
         
-    def does_username_exist(self,data):
-        # find pubkey?
+    def does_username_exist(self,**data):
         name=data.get('name')
-
         pubkey=self.crypt_keys.get(name,prefix='/pubkey/')
         self.log(f'looking for {name}, found {pubkey} as pubkey')
         return bool(pubkey)
