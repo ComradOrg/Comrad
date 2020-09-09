@@ -101,7 +101,7 @@ class Operator(Keymaker):
         from komrade.backend.messages import Message
         msg_obj = Message(msg_d)
         # decrypt msg
-        # msg_obj.decrypt()
+        msg_obj.decrypt(recursive=True)
         return msg_obj
 
 
