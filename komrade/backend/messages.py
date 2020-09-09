@@ -71,7 +71,7 @@ class Message(Logger):
             return TheOperator()
         if name == TELEPHONE_NAME:
             return TheTelephone()
-        from komrade.backend.Caller import Caller
+        from komrade.backend.callers import Caller
         return Caller(name)
 
     @property
