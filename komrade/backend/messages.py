@@ -34,7 +34,7 @@ class Message(Logger):
         self._is_encrypted=None
         # get operators straight away?
         if not self._from_whom or not self._to_whom:
-            self.get_from_whoms()
+            self.get_whoms()
 
     @property
     def data(self):
@@ -67,7 +67,7 @@ class Message(Logger):
         """
 
 
-    def get_from_whom(self,name):
+    def get_whom(self,name):
         if name == OPERATOR_NAME:
             return TheOperator()
         if name == TELEPHONE_NAME:
@@ -87,17 +87,17 @@ class Message(Logger):
         return self._to_whom
     
     ## loading messages
-    def get_from_whoms(self):
+    def get_whoms(self):
         if self._from_whom is not None and self._to_whom is not None:
             return (self._from_whom,self._to_whom) 
-        alleged_from_whom = self.get_from_whom(self.from_name)
-        alleged_to_whom = self.get_from_whom(self.to_name)
-        if not self.from_whom_records_match(alleged_from_whom,alleged_to_whom):
+        alleged_from_whom = self.get_whom(self.from_name)
+        alleged_to_whom = self.get_whom(self.to_name)
+        if not self.records_match(alleged_from_whom,alleged_to_whom):
             raise KomradeException('Records of from_whoms on The Operator and the from_whom do not match. Something fishy going on?')
         else:
             self._from_whom = alleged_from_whom
             self._to_whom = alleged_to_whom
-        return (self._from_whom,alleged_from_whom)
+        return (self._from_whom,self._to_whom)
 
     def from_whom_records_match(self,alleged_from_whom,alleged_to_whom):
         alleged_from_whom_name = self.from_name
