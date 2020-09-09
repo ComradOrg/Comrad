@@ -30,14 +30,14 @@ class Persona(Caller):
         return self.pubkey and self.privkey
 
     def exists_on_server(self):
-        answer = self.ring_ring(
+        answer = self.phone.ring_ring(
             msg={'_please':'does_username_exist','name':self.name}
         )
 
 
     # login?
-    def login(self):
-        if keys.get('pubkey') and keys.get('privkey')
+    # def login(self):
+        # if keys.get('pubkey') and keys.get('privkey')
 
 
     def register(self, name = None, passphrase = DEBUG_DEFAULT_PASSPHRASE, is_group=None):
