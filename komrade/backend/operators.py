@@ -202,7 +202,7 @@ class Operator(Keymaker):
             # whew, then we can make someone else take the phone
             self.log(f'passing msg onto {embedded_recipient} ...')
             
-            response = embedded_recipient.pronto_pronto(embedded_msg) 
+            response = embedded_recipient.pronto_pronto(embedded_msg).msg_d
             self.log(f'passed msg onto {embedded_recipient}, got this response: {response} ...')
         # otherwise what are we doing?
         else: 
