@@ -129,7 +129,10 @@ class TheOperator(Operator):
     def does_username_exist(self,data):
         assert type(data)==dict and 'name' in data and data['name']
         # find pubkey?
-        return self.crypt_keys.get(data['name'],prefix='/pubkey/')
+        name=data.get('name')
+        pubkey=self.crypt_keys.get(data['name'],prefix='/pubkey/')
+        self.log(f'looking for {name}, found {pubkey} as pubkey')
+        return bool(pubkey)
 
         
 
