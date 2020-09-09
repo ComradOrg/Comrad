@@ -351,11 +351,11 @@ class Keymaker(Logger):
             dval=_keychain[decrkey]
             if not dval: continue
 
-            self.log(ekey,decrkey,'??')
-            self.log(eval,dval,'????')
+            # self.log(ekey,decrkey,'??')
+            # self.log(eval,dval,'????')
             
             new_val = self.assemble_key(eval,dval)
-            self.log('!!#!',new_val)
+            # self.log('!!#!',new_val)
             if new_val:
                 _keychain[unencrkey] = new_val
         return _keychain
@@ -384,12 +384,12 @@ class Keymaker(Logger):
 
         # decrypt!
         try:
-            self.log(f'>> decrypting {key_encr_name} with {key_decr_name}\n({key_encr} with cell {decr_cell}')
+            # self.log(f'>> decrypting {key_encr_name} with {key_decr_name}\n({key_encr} with cell {decr_cell}')
             key = decr_cell.decrypt(key_encr)
             # self.log('assembled_key built:',key)
             return key
         except ThemisError as e:
-            self.log('!! decryption failed:',e)
+            # self.log('!! decryption failed:',e)
             return
 
     def get_cell(self, str_or_key_or_cell):

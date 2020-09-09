@@ -65,9 +65,11 @@ class TheOperator(Operator):
         
         # carry out message instructions
         route_result = self.route(msg_obj)
+        self.log('route_result <-',route_result)
 
         # turn msg back around
         msg_obj = self.compose_msg_to(route_result,self.phone)
+        self.log('returning msg:',msg_obj)
 
         # send back down encrypted
         msg_sealed = self.seal_msg(msg_obj)
