@@ -65,6 +65,9 @@ class TheOperator(Operator):
         )
         self.log(f'Operator understood message: {msg_obj} {msg_obj.route}')
         
+        # decrypt?
+        msg_obj.decrypt()
+
         # carry out message instructions
         resp_msg_obj = self.pronto_pronto(msg_obj) #,route=msg_obj.route)
         self.log('route_result <-',resp_msg_obj)

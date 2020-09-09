@@ -148,10 +148,10 @@ class Message(Logger):
         # for now this should be rolled out individually ,like an onion
         # ring_ring on client -> pronto_pronto on server
         # so we don't need or want to decrypt all at once
-        if recursive:
-            self.msg.decrypt()
-            self.log(f'decrypted sub msg! {self.msg}')
-            self.msg_d['_msg']=self.msg.msg_d
+            if recursive:
+                self.msg.decrypt()
+                self.log(f'decrypted sub msg! {self.msg}')
+                self.msg_d['_msg']=self.msg.msg_d
 
         self.log(f'done decrypting! {self}')
         return decr_msg

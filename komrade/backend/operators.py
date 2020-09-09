@@ -125,7 +125,6 @@ class Operator(Keymaker):
         from komrade.backend.messages import Message
         msg_obj = Message(msg_d,from_whom=from_whom,to_whom=to_whom)
         # decrypt msg
-        msg_obj.decrypt()
         return msg_obj
 
 

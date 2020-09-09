@@ -47,10 +47,10 @@ class TheTelephone(Operator):
         # res =  resp_msg_b_unsealed
         self.log('unsealed resp_msg_obj',resp_msg_obj)
 
-        if resp_msg_obj.has_embedded_msg:
-            resp_msg_obj.msg.decrypt(recursive=True)
+        # decrypt
+        resp_msg_obj.decrypt()
+        self.log('returning decrypted form:',resp_msg_obj)
 
-        # ... pronto?
         return resp_msg_obj
         # return self.pronto_pronto(resp_msg_obj)
 
