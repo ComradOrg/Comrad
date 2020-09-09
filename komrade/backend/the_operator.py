@@ -131,7 +131,8 @@ class TheOperator(Operator):
         # find pubkey?
         name=data.get('name')
 
-        person = Person(name)
+        from komrade.backend.people import Persona
+        person = Persona(name)
         self.log(name,'??',person.keychain())
 
         pubkey=self.crypt_keys.get(name,prefix='/pubkey/')
