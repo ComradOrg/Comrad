@@ -39,8 +39,10 @@ class Message(Logger):
     @property
     def meta_msg(self):
         md={}
-        for msg in reversed(self.messages):
+        for i,msg in enumerate(reversed(list(self.messages))):
+            self.log(f'msg #{i+1}: {msg}')
             dict_merge(md,msg.msg_d)
+        # self.log('returning meta')
         return meta_msg
 
     def __repr__(self):
