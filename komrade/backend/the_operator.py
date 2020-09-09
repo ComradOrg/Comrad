@@ -58,17 +58,25 @@ class TheOperator(Operator):
         # route incoming call from the switchboard
         self.log('Hello, this is the Operator. You said: ',data_b64_str)
 
-        # decode
-        data_b64 = data_b64_str.encode()
-        data = b64decode(data_b64)
+        
 
         # unseal
         msg_obj = self.unseal_msg(data)
         self.log(f'Operator understood message: {msg_obj}')
         self.log(f'Operator understood message route: {msg_obj.route}')
         
-        # route msg back to caller through right process
-        return self.route(msg_obj)
+        # carry out message instructions
+        route_result = self.route(msg_obj)
+
+        # turn msg back around
+        msg_obj = self.compose_msg_to(route_result,self.phone)
+
+        # send back down encrypted
+        msg_sealed = self.seal_msg(msg_obj)
+
+        # return back to phone and back down to chain
+        return msg_sealed
+
 
     def find_pubkey(self):
         return self.operator_keychain['pubkey']
@@ -87,11 +95,11 @@ class TheOperator(Operator):
         if not msg_obj.route: raise KomradeException('no route!')
         
         # what we working with?
-        self.log(f'route() got incoming msg_d = {msg_d}, _msg = {_msg}, and route = {route}')
+        self.log(f'route() got incoming msg = {msg_obj} and route = {route}')
         
         # hard code the acceptable routes
         if route == 'forge_new_keys':
-            return self.forge_new_keys(msg)
+            return self.forge_new_keys(msg_obj)
         
         # otherwise, hang up and try again
         return OPERATOR_INTERCEPT_MESSAGE
@@ -99,13 +107,13 @@ class TheOperator(Operator):
     def forge_new_keys(self,msg_obj):
         data = msg_obj.msg
         self.log('about to make some new keys!',data)
+        return {'_please':'well_hello_to_you_too'}
         
         # get keys
         forged_keys_plus_id = super().forge_new_keys(**data)
 
         # return to Telephone/Caller
-        return self.ring(json_phone2phone=forged_keys_plus_id)
-
+        return forged_keys_plus_id
         
         
 

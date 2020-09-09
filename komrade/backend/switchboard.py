@@ -22,17 +22,29 @@ class TheSwitchboard(FlaskView, Logger):
         return OPERATOR
 
     
-    def get(self,msg):
-        self.log('Incoming call!:',msg)
-        if not msg:
+    def get(self,data_b64_str_esc):
+        self.log('Incoming call!:',data_b64_str_esc)
+        if not data_b64_str_esc:
             self.log('empty request!')
             return OPERATOR_INTERCEPT_MESSAGE
+        
         # unenescape
-        msg = msg.replace('_','/')
-        str_msg_from_op = self.op.answer_phone(msg)
-        # str_msg_from_op = msg.replace('_','/')
-        self.log('Switchboard got msg back from Operator:',str_msg_from_op)
-        return str_msg_from_op
+        data_b64_str = data_b64_str_esc.replace('_','/')
+
+        # encode to binary
+        data_b64 = data_b64_str.encode()
+        data_b = b64decode(data_b64)
+
+        # ask operator to answer phone and request
+        resp_data_b = self.op.answer_phone(data_b)
+
+        # decode to str
+        resp_data_b64 = b64encode(resp_data_b)
+        resp_data_b64_str = resp_data_b64.decode()
+        resp_data_b64_str_esc = msg.replace('/','_')
+
+        # return as str
+        return resp_data_b64_str_esc
 
 def run_forever(port='8080'):
     global OPERATOR,TELEPHONE,TELEPHONE_KEYCHAIN,OPERATOR_KEYCHAIN,OMEGA_KEY
