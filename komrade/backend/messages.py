@@ -38,15 +38,13 @@ class Message(Logger):
 
 
     def __repr__(self):
-        msg_d_str=dict_format(self.msg_d)
+        msg_d_str=dict_format(self.msg_d,tab=6)
         return f"""
     
     <MSG>
         self.caller={self.caller}
         self.callee={self.callee}
-        self.msg={self.msg}
         self.msg_d={msg_d_str}
-        self.route={self.route}
     </MSG>
 
         """

@@ -78,23 +78,23 @@ class Operator(Keymaker):
         msg_obj = Message(msg_d,caller=self,callee=another)
         # self.log('created msg obj:',msg_obj)
         
-        
+        # encrypt!
+        msg_obj.encrypt(recursive=False)
 
         return msg_obj
 
-    def seal_msg(self,msg_obj):
+    def seal_msg(self,msg_d):
         # make sure encrypted
-        self.log('sealing msg!')
-        msg_obj.encrypt(recursive=True)
+        self.log('sealing msg!:',dict_format(msg_d))
+        # msg_obj.encrypt(recursive=True)
         # return pure binary version of self's entire msg_d
-        self.log('encrypted msg_d: ',msg_obj.msg_d)
-        
-        msg_b = package_for_transmission(msg_obj.msg_d)
-        self.log('sealed msg_d: ',msg_b)
-        
-        
+        msg_b = pickle.dumps(msg_obj.msg_d)
+        self.log('pickled!',msg_b)
+
         # encrypt by omega key
         msg_b_encr = self.omega_key.encrypt(msg_b)
+        self.log('final seal:',msg_b_encr)
+
         return msg_b_encr
 
     def unseal_msg(self,msg_b_encr):
@@ -107,7 +107,7 @@ class Operator(Keymaker):
         from komrade.backend.messages import Message
         msg_obj = Message(msg_d)
         # decrypt msg
-        msg_obj.decrypt(recursive=True)
+        # msg_obj.decrypt(recursive=True)
         return msg_obj
 
 
@@ -122,8 +122,9 @@ class Operator(Keymaker):
         
         # get encr msg obj
         msg_obj = self.compose_msg_to(msg, to_whom)
-        self.log(f'here is the message object I made, to send to {to_whom}: {msg_obj}')
+        # self.log(f'here is the message object I made, to send to {to_whom}: {msg_obj}')
         
+        # msg_encr = msg_obj.msg
         # encrypting
         # msg_obj.encrypt()
         # self.log(f'now I look like: {msg_obj}')
@@ -132,7 +133,7 @@ class Operator(Keymaker):
         
         # pass onto next person...
         if not get_resp_from: get_resp_from=to_whom.ring_ring
-        resp_msg_obj = get_resp_from(msg_obj)
+        resp_msg_obj = get_resp_from(msg_obj.msg_d)
         self.log('resp_msg_obj <-',resp_msg_obj)
 
         # decrypt?

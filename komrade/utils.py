@@ -36,11 +36,11 @@ def dict_format(d, tab=0):
     s = ['{\n']
     for k,v in d.items():
         if isinstance(v, dict):
-            v = format(v, tab+1)
+            v = dict_format(v, tab+1)
         else:
             v = repr(v)
 
-        s.append('%s%r: %s,\n' % ('  '*tab, k, v))
+        s.append('%s%r: %s (%s),\n' % ('  '*tab, k, v, type(v).__name__))
     s.append('%s}' % ('  '*tab))
     return ''.join(s)
 
@@ -85,7 +85,10 @@ import ujson as json
 import pickle
 def package_for_transmission(data_json):
     # print('package_for_transmission.data_json =',data_json)
+    
+
     data_json_b = pickle.dumps(data_json)
+    # print('data_json_b??')
     # print('package_for_transmission.data_json_b =',data_json_bstr)
     return b64encode(data_json_b)
 
