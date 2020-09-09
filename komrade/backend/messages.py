@@ -41,9 +41,8 @@ class Message(Logger):
         md={}
         msg_d=self.msg_d
         while msg_d:
-            dict_merge(md,msg_d)
+            for k,v in msg_d.items(): md[k]=v
             msg_d = msg_d.get('_msg',{})
-
         return md
 
     def __repr__(self):
