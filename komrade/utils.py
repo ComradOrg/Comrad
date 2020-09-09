@@ -57,7 +57,7 @@ class Logger(object):
         if PAUSE_LOGGER:
             try:
                 pause()
-                clear_screen()
+                # clear_screen()
             except KeyboardInterrupt:
                 exit()
 
