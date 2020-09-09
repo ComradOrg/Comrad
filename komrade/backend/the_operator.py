@@ -27,20 +27,13 @@ class TheOperator(Operator):
         """
         Boot up the operator. Requires knowing or setting a password of memory.
         """
-        # init req paths
-        # if not os.path.exists(PATH_OPERATOR): os.makedirs(PATH_OPERATOR)
-        global OPERATOR_KEYCHAIN,TELEPHONE_KEYCHAIN
-        
-        from komrade.backend.phonelines import connect_phonelines
-        if not TELEPHONE_KEYCHAIN or not OPERATOR_KEYCHAIN:
-            OPERATOR_KEYCHAIN,TELEPHONE_KEYCHAIN = connect_phonelines()
-        if not passphrase: self.passphrase=passphrase=getpass.getpass('Hello, this is the Operator speaking. What is the passphrase?\n> ')
         super().__init__(
             name,
             passphrase,
             path_crypt_keys=PATH_CRYPT_OP_KEYS,
-            path_crypt_data=PATH_CRYPT_OP_DATA)
-        self._keychain = OPERATOR_KEYCHAIN
+            path_crypt_data=PATH_CRYPT_OP_DATA
+        )
+        self._keychain = self.operator_keychain
         
     def ring(self,
         from_caller=None,
@@ -79,7 +72,8 @@ class TheOperator(Operator):
         # route msg back to caller
         return self.route(msg_obj)
 
-
+    def find_pubkey(self):
+        return self.operator_keychain['pubkey']
 
 
     def send(self,encr_data_b):

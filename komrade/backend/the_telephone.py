@@ -10,26 +10,12 @@ class TheTelephone(Operator):
     API client class for Caller to interact with The Operator.
     """
     def __init__(self, caller=None):
-        global OPERATOR_KEYCHAIN,TELEPHONE_KEYCHAIN
-        print('OP???',OPERATOR_KEYCHAIN)
-        print('PH???',TELEPHONE_KEYCHAIN)
-        
-        super().__init__(
-            name=TELEPHONE_NAME,
-            path_crypt_keys=PATH_CRYPT_CA_KEYS,
-            path_crypt_data=PATH_CRYPT_CA_KEYS
-        )
-        
-        if not TELEPHONE_KEYCHAIN or not OPERATOR_KEYCHAIN:
-            OPERATOR_KEYCHAIN,TELEPHONE_KEYCHAIN = connect_phonelines()
-        
-        print('OP2???',OPERATOR_KEYCHAIN)
-        print('PH2???',TELEPHONE_KEYCHAIN)
-        # stop
-        
+        super().__init__(name=TELEPHONE_NAME)
         self.caller=caller
-        self._keychain = TELEPHONE_KEYCHAIN
-        print(type(self._keychain), self._keychain)
+        self._keychain = self.telephone_keychain
+
+    def find_pubkey(self):
+        return self.telephone_keychain.get('pubkey')
 
     def send_and_receive(self,msg):
         msg_b64_str = b64encode(msg).decode()
@@ -47,35 +33,13 @@ class TheTelephone(Operator):
             self.log('!! error in request',ringring.status_code,ringring.text)
             return None
 
-    def ring_ring(self,with_msg,to_whom=None):
-        # usually, I'm calling the operator
-        if not to_whom: to_whom=self.op
-
-        # msg usually already encrypted twice
-        msg_encr_caller2caller_caller2phone = with_msg
-
-        # ring 1: encrypt again
-        msg_encr_caller2caller_caller2phone_phone2phone = self.package_msg_to(
-            msg_encr_caller2caller_caller2phone,
-            to_whom
+    def ring_ring(self,msg):
+        return super().ring_ring(
+            msg,
+            to_whom=self.op,
+            get_resp_from=self.send_and_receive
         )
-        self.log('msg_encr_caller2caller_caller2phone_phone2phone !',msg_encr_caller2caller_caller2phone_phone2phone)
-
-        # ring 2: dial and get response
-        resp_msg_encr_caller2caller_caller2phone_phone2phone = self.send_and_receive(
-            msg_encr_caller2caller_caller2phone_phone2phone
-        )
-        self.log(' got back from Op: resp_msg_encr_caller2caller_caller2phone_phone2phone',resp_msg_encr_caller2caller_caller2phone_phone2phone)
-        # msg_encr_caller2caller_caller2phone_phone2phone: return
-
-        # ring 3: decrypt
-        resp_msg_encr_caller2caller_caller2phone = self.unpackage_msg_from(
-            resp_msg_encr_caller2caller_caller2phone_phone2phone,
-            to_whom
-        )
-
-        return resp_msg_encr_caller2caller_caller2phone
-
+        
     
 def test_call():
     phone = TheTelephone()

@@ -5,39 +5,71 @@ from komrade.backend import *
 
 class Person(Caller):
 
+    # def ring_ring(self,msg,to_whom = None):
+    #     # if no one intended, call the operator
+    #     #return super().ring_ring(with_msg,to_phone=self.op)
+    #     if not to_whom: to_whom = self.op
 
+    
 
-    def ring_ring(self,with_msg,to_whom = None):
-        # if no one intended, call the operator
-        #return super().ring_ring(with_msg,to_phone=self.op)
-        if not to_whom: to_whom = self.op
+        # # create a message, caller 2 caller
+        # msg_obj = self.compose_msg_to(msg, to_whom)
+        
+        # # ring 2: use 'Caller' class to dial and get response
+        # resp_msg_obj = super().ring_ring(
+        #     msg_obj
+        # )
+        # self.log('resp_msg_encr_caller2caller',resp_msg_encr_caller2caller)
 
-        # msg should be unencrypted
-        msg_unencr = with_msg
-        self.log('msg_unencr',msg_unencr)
+        # # ring 3: decrypt and send back
+        # resp_msg_unencr = self.unpackage_msg_from(
+        #     msg_encr_caller2caller,
+        #     to_whom
+        # )
+        # self.log('resp_msg_unencr',resp_msg_encr_caller2caller)
 
-        # ring 1: encrypt caller2phone
-        msg_encr_caller2caller = self.package_msg_to(
-            msg_unencr,
-            to_whom
+        # return resp_msg_unencr
+
+    # def ring_ring(self,with_msg,to_whom = None):
+    #     # if no one intended, call the operator
+    #     #return super().ring_ring(with_msg,to_phone=self.op)
+    #     if not to_whom: to_whom = self.op
+
+    #     # msg should be unencrypted
+    #     msg_unencr = with_msg
+    #     self.log('msg_unencr',msg_unencr)
+
+    #     # ring 1: encrypt caller2phone
+    #     msg_encr_caller2caller = self.package_msg_to(
+    #         msg_unencr,
+    #         to_whom
+    #     )
+    #     self.log('msg_encr_caller2caller!',msg_encr_caller2caller)
+
+    #     # ring 2: use 'Caller' class to dial and get response
+    #     resp_msg_encr_caller2caller = super().ring_ring(
+    #         msg_encr_caller2caller
+    #     )
+    #     self.log('resp_msg_encr_caller2caller',resp_msg_encr_caller2caller)
+
+    #     # ring 3: decrypt and send back
+    #     resp_msg_unencr = self.unpackage_msg_from(
+    #         msg_encr_caller2caller,
+    #         to_whom
+    #     )
+    #     self.log('resp_msg_unencr',resp_msg_encr_caller2caller)
+
+    #     return resp_msg_unencr
+
+    def send_msg_to(self,msg,to_whom):
+        return self.ring_ring(msg,to_whom)
+
+    def ring_ring(self,msg,to_whom):
+        return super().super().ring_ring(
+            msg,
+            to_whom,
+            get_resp_from=super().ring_ring
         )
-        self.log('msg_encr_caller2caller!',msg_encr_caller2caller)
-
-        # ring 2: use 'Caller' class to dial and get response
-        resp_msg_encr_caller2caller = super().ring_ring(
-            msg_encr_caller2caller
-        )
-        self.log('resp_msg_encr_caller2caller',resp_msg_encr_caller2caller)
-
-        # ring 3: decrypt and send back
-        resp_msg_unencr = self.unpackage_msg_from(
-            msg_encr_caller2caller,
-            to_whom
-        )
-        self.log('resp_msg_unencr',resp_msg_encr_caller2caller)
-
-        return resp_msg_unencr
-
 
     def register(self,name=None,passphrase=DEBUG_DEFAULT_PASSPHRASE, is_group=None):
         # get needed metadata
@@ -51,6 +83,11 @@ class Person(Caller):
 
         # form request to operator
         msg_to_op = {'_please':'forge_new_keys'}
+
+        msg_response = self.phone.ring_ring(
+            msg_to_op,
+            self.op
+        )
 
         # call and ask operator to register us
         

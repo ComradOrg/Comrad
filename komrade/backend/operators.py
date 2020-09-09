@@ -1,11 +1,11 @@
 # internal imports
 import os,sys; sys.path.append(os.path.abspath(os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__),'..')),'..')))
 from komrade import *
-from komrade.backend.crypt import *
-from komrade.backend.keymaker import *
-from komrade.backend.mazes import *
-from komrade.backend.switchboard import *
-
+# from komrade.backend.crypt import *
+# from komrade.backend.keymaker import *
+# from komrade.backend.mazes import *
+# from komrade.backend.switchboard import *
+from komrade.backend import *
 
 
 
@@ -15,6 +15,10 @@ class Operator(Keymaker):
         super().__init__(name=name,passphrase=passphrase, keychain=keychain,
                          path_crypt_keys=path_crypt_keys, path_crypt_data=path_crypt_data)
         self.boot(create=False)
+
+        # connect phonelines?
+        from komrade.backend.phonelines import connect_phonelines
+        self.operator_keychain,self.telephone_keychain,self.omega_key = connect_phonelines()
 
     def boot(self,create=False):
          # Do I have my keys?
@@ -53,105 +57,67 @@ class Operator(Keymaker):
         
         return OPERATOR
 
-    def encrypt_to_send(self,msg_json,from_privkey,to_pubkey):
-        self.log('msg_json',msg_json)
-        self.log('from_privkey',from_privkey)
-        self.log('to_pubkey',to_pubkey)
-        if not msg_json or not from_privkey or not to_pubkey:
-            self.log('not enough info!',msg_json,from_privkey,to_pubkey)
-            whattttttt
-            return b''
-        self.log('packing for transmission: msg_json',type(msg_json),msg_json)
-        msg_b = package_for_transmission(msg_json)
-        self.log('packing for transmission: msg_b',type(msg_b),msg_b)
-        # try:
-        self.log('from privkey =',from_privkey)
-        self.log('to pubkey =',to_pubkey)
 
-        msg_encr = SMessage(
-            from_privkey,
-            to_pubkey,
-        ).wrap(msg_b)
-        self.log('msg_encr',msg_encr)
-        # stop
-        return msg_encr
-        # except ThemisError as e:
-            # self.log('unable to encrypt to send!',e)
-        # return b''
-
-
-    def decrypt_from_send(self,msg_encr,from_pubkey,to_privkey):
-        if not msg_encr or not from_pubkey or not to_privkey:
-            self.log('not enough info!',msg_encr,from_pubkey,to_privkey)
-            return {}
-        try:
-            # decrypt
-            msg_b = SMessage(
-                to_privkey,
-                from_pubkey,
-            ).unwrap(msg_encr)
-            # decode
-            self.log('msg_b??',msg_b)
-            msg_json = unpackage_from_transmission(msg_b)
-            self.log('msg_json??',msg_json)
-            # return
-            return msg_json
-        except ThemisError as e:
-            self.log('unable to decrypt from send!',e)
-        return {}
-
-
-
-    def package_msg_to(self,msg,another):
-        self.log('KEYCHAINNN ',self.keychain())
-        self.log('my privkey',self.privkey)
-        self.log('my pubkey',self.pubkey,self.keychain().get('pubkey','!!!?!!?!?!?!?'))
+    def compose_msg_to(self,msg,another):
         if not self.privkey or not self.pubkey:
-            self.log('why do I have no pub/privkey pair!?',self.privkey,self,self.name)
-            return b''
+            raise KomradeException('why do I have no pub/privkey pair!?',self,self.name)
         if not another.name or not another.pubkey:
-            self.log('why do I not know whom I\'m writing to?')
-            return b''
+            raise KomradeException('why do I not know whom I\'m writing to?')
 
-        # otherwise send msg
-        msg_encr = self.encrypt_to_send(msg, self.privkey, another.pubkey)
+        # otherwise create msg
         msg_d = {
             '_from_pub':self.pubkey,
             '_from_name':self.name,
             '_to_pub':another.pubkey,
             '_to_name':another.name,
-            '_msg':msg_encr,
+            '_msg':msg,
         }
-        self.log(f'I am a {type(self)} packaging a message to {another}')
-        return msg_d
+        self.log(f'I am a {type(self)} packaging a message to {another}: {msg_d}')
+        
+        from komrade.backend.messages import Message
+        msg_obj = Message(msg_d,caller=self,callee=another)
+        self.log('created msg obj:',msg_obj)
+
+        return msg_obj
+
+    def seal_msg(self,msg_obj):
+        # make sure encrypted
+        msg_obj.encrypt()
+        # return pure binary version of self's entire msg_d
+        msg_b = package_for_transmission(msg_obj.msg_d)
+        # encrypte by omega key
+        msg_b_encr = self.omega_key.encrypt(msg_b)
+        return msg_b_encr
+
+    def unseal_msg(self,msg_b_encr):
+        # decrypt by omega
+        msg_b = self.omega_key.decrypt(msg_b_encr)
+        # unpackage from transmission
+        msg_d = unpackage_from_transmission(msg_b)
+        # get message obj
+        msg_obj = Message(msg_d)
+        # decrypt msg
+        msg_obj.decrypt()
+        return msg_obj
 
     
-    def unpackage_msg_from(self,msg_encr_b,another):
-        return self.decrypt_from_send(
-            msg_encr_b,
-            from_pubkey=another.pubkey,
-            to_privkey=self.privkey
-        )
+    # self = caller
+    # towhom = phone
+    # bywayof = op
+    def ring_ring(self,msg,to_whom,get_resp_from=None):
+        # get encr msg obj
+        msg_obj = self.compose_msg_to(msg, to_whom)
+        # pass onto next person
 
-    # def ring(self,with_msg,to_whom=None,by_way_of=None):
-    #     # ring 1: encrypt from me to 'whom'
-    #     msg_encr = self.package_msg_to(
-    #         with_msg,
-    #         whom
-    #     )
-    #     self.log(f'msg_encr --> {whom} layer 1',msg_encr)
+        # get pure encrypted binary, sealed
+        msg_sealed = self.seal_msg(msg_obj)
+        
+        # pass onto next person...
+        if not get_resp_from: get_resp_from=to_whom.ring_ring
+        resp_msg_b = get_resp_from(msg_sealed)
 
-    #     # ring 2: keep ringing via mediator
-    #     resp_msg_encr = by_way_of.ring(
-    #         msg_encr
-    #     )
-    #     self.log('resp_msg_encr',resp_msg_encr)
+        # unseal msg
+        resp_msg_obj = self.unseal_msg(resp_msg_b)
 
-    #     # ring 3: decrypt and send back
-    #     resp_msg = self.unpackage_msg_from(
-    #         resp_msg_encr,
-    #         whom
-    #     )
-    #     self.log('resp_msg',resp_msg)
-
-    #     return resp_msg
+        return resp_msg_obj
+        

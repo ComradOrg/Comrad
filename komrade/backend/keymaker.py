@@ -91,12 +91,13 @@ class Keymaker(Logger):
         self.path_crypt_keys=path_crypt_keys
         self.path_crypt_data=path_crypt_data
 
-    @property
-    def pubkey(self):
+
+    def find_pubkey(self):
+        global TELEPHONE_KEYCHAIN,OPERATOR_KEYCHAIN
         #self.log('keychain?',self.keychain())
         if 'pubkey' in self._keychain and self._keychain['pubkey']:
             return self._keychain['pubkey']
-
+        
         res = self.crypt_keys.get(self.name, prefix='/pubkey/')
         if res: return res
         
@@ -104,28 +105,39 @@ class Keymaker(Logger):
         if res: return res
 
         self.log('I don\'t know my public key!')
-        return None
+        raise KomradeException(f'I don\'t know my public key!\n{self}\n{self._keychain}')
+        #return None
+
+        
 
     def keychain(self,look_for=KEYMAKER_DEFAULT_ALL_KEY_NAMES):
+        # load existing keychain
         keys = self._keychain #self._keychain = keys = {**self._keychain}
-        uri = self.uri_id
+        
+        # make sure we have the pubkey
+        if not 'pubkey' in self._keychain: self._keychain['pubkey']=self.find_pubkey()
+        pubkey=self._keychain['pubkey']
+
+        # get uri
+        uri = b64encode(pubkey)
 
         # get from cache
         for keyname in look_for:
             if keyname in keys and keys[keyname]: continue
-            
-            # self.log('??',keyname)
             key = self.crypt_keys.get(uri,prefix=f'/{keyname}/')
             if key: keys[keyname]=key
         
-        # self.log('keys 1!',self._keychain)
-
         # try to assemble
         keys = self.assemble(self.assemble(keys))
-        # self.log('keys 2!',self._keychain)
+        
+        #store to existing set
+        self._keychain = keys
+        
+        #return
         return keys
 
-
+    @property
+    def pubkey(self): return self.keychain().get('pubkey')
     @property
     def privkey(self): return self.keychain().get('privkey')
     @property
@@ -149,8 +161,8 @@ class Keymaker(Logger):
     @property
     def uri_id(self):
         if not self._uri_id:
-            if self.pubkey:
-                self._uri_id = b64encode(self.pubkey)
+            pubkey = self.find_pubkey()
+            self._uri_id = b64encode(pubkey)
         return self._uri_id
 
 
