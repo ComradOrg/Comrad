@@ -41,10 +41,10 @@ class TheSwitchboard(FlaskView, Logger):
         # decode to str
         resp_data_b64 = b64encode(resp_data_b)
         resp_data_b64_str = resp_data_b64.decode()
-        resp_data_b64_str_esc = resp_data_b64_str.replace('/','_')
+        # resp_data_b64_str_esc = resp_data_b64_str.replace('/','_')
 
         # return as str
-        return resp_data_b64_str_esc
+        return resp_data_b64_str
 
 def run_forever(port='8080'):
     global OPERATOR,TELEPHONE,TELEPHONE_KEYCHAIN,OPERATOR_KEYCHAIN,OMEGA_KEY

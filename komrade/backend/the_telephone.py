@@ -17,22 +17,29 @@ class TheTelephone(Operator):
     def find_pubkey(self):
         return self.telephone_keychain.get('pubkey')
 
-    def send_and_receive(self,msg):
-        msg_b64_str = b64encode(msg).decode()
+    def send_and_receive(self,msg_b):
+        # prepare for transmission across net
+        msg_b64 = b64encode(msg_b)
+        msg_b64_str = msg_b64.decode()
         msg_b64_str_esc = msg_b64_str.replace('/','_')
-        
         self.log('msg_b64_str_esc',type(msg_b64_str_esc),msg_b64_str_esc)
+        
+        # dial the operator
         URL = OPERATOR_API_URL + msg_b64_str_esc + '/'
         self.log("DIALING THE OPERATOR:",URL)
-        ringring=komrade_request(URL)
-        if ringring.status_code==200:
-            # response back from Operator!
-            encr_str_response_from_op = ringring.text
-            self.log('encr_str_response_from_op',encr_str_response_from_op)
-            return encr_str_response_from_op #.encode()
-        else:
-            self.log('!! error in request',ringring.status_code,ringring.text)
-            return None
+        phonecall=komrade_request(URL)
+        if phonecall.status_code!=200:
+            self.log('!! error in request',phonecall.status_code,phonecall.text)
+            return
+        
+        # response back from Operator!
+        resp_msg_b64_str = phonecall.text
+        self.log('resp_msg_b64_str',resp_msg_b64_str)
+
+        resp_msg_b64 = resp_msg_b64_str.encode()
+        resp_msg_b = b64decode(resp_msg_b64)
+        return resp_msg_b
+
 
     def ring_ring(self,msg):
         return super().ring_ring(
