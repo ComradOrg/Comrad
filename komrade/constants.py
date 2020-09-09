@@ -145,7 +145,7 @@ PATH_OPERATOR_WEB_CONTACTS_DIR = '/home/ryan/www/website-komrade/.contacts'
 PATH_OPERATOR_WEB_CONTACT_OP_URL = f'http://{KOMRADE_URL}/.contacts/TheOperator.png'
 PATH_OPERATOR_WEB_CONTACT_PH_URL = f'http://{KOMRADE_URL}/.contacts/TheTelephone.png'
 
-PAUSE_LOGGER = False
+PAUSE_LOGGER = True
 
 # dangerous! leave on only if absolutely necessary for initial dev
 ALLOW_CLEARNET = True
