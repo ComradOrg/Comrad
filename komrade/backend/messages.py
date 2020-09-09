@@ -33,7 +33,7 @@ class Message(Logger):
         self.messenger=None
         self.is_encrypted=False
         # get operators straight away?
-        if not self.caller or not self.callee:
+        if not self._caller or not _self.callee:
             self.get_callers()
 
 
@@ -126,8 +126,8 @@ class Message(Logger):
         # now, is the decrypted message itself a message?
         if recursive and is_valid_msg_d(decr_msg):
             # then ... make that, a message object and decrypt it too!
-            self.embedded_msg = Message(decr_msg)
-            self.embedded_msg.decrypt()
+            self.msg = Message(decr_msg)
+            self.msg.decrypt()
         return decr_msg
 
 
