@@ -116,9 +116,10 @@ class Message(Logger):
             return False
         return True
 
-    def decrypt(self,recursive=False):
+    def decrypt(self,recursive=True):
         # 
         if not self.is_encrypted: return
+        
         # get from_whoms
         self.log(f'attempting to decrypt {self}')
 
@@ -144,14 +145,9 @@ class Message(Logger):
             self.log('this is a valid msg in its own right!',decr_msg)
             # then ... make that, a message object and decrypt it too!
             self.msg = Message(decr_msg)
-        
-        # for now this should be rolled out individually ,like an onion
-        # ring_ring on client -> pronto_pronto on server
-        # so we don't need or want to decrypt all at once
-            if recursive:
+
+            if recursive and self.msg.is_encrypted:
                 self.msg.decrypt()
-                self.log(f'decrypted sub msg! {self.msg}')
-                self.msg_d['_msg']=self.msg.msg_d
 
         self.log(f'done decrypting! {self}')
         return decr_msg
