@@ -54,7 +54,8 @@ class Person(Caller):
 
         # call and ask operator to register us
         
-        # for only this one! we skip to Caller
+        # for only this one! we skip straight to phone,
+        # since I don't have any public keys yet
 
         resp = self.phone.ring_ring(msg_to_op)
 

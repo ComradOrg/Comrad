@@ -30,7 +30,6 @@ class TheTelephone(Operator):
         self.caller=caller
         self._keychain = TELEPHONE_KEYCHAIN
         print(type(self._keychain), self._keychain)
-        
 
     def send_and_receive(self,msg):
         msg_b64_str = b64encode(msg).decode()
@@ -40,34 +39,33 @@ class TheTelephone(Operator):
         self.log("DIALING THE OPERATOR:",URL)
         ringring=komrade_request(URL)
         if ringring.status_code==200:
-
             # response back from Operator!
             encr_str_response_from_op = ringring.text
             self.log('encr_str_response_from_op',encr_str_response_from_op)
-
             return encr_str_response_from_op #.encode()
         else:
             self.log('!! error in request',ringring.status_code,ringring.text)
             return None
 
-    def ring_ring(self,with_msg,to_phone=None):
-        if not to_phone: to_phone=self.op
-        to_whom = to_phone
+    def ring_ring(self,with_msg,to_whom=None):
+        # usually, I'm calling the operator
+        if not to_whom: to_whom=self.op
 
-        # msg is of type
+        # msg usually already encrypted twice
         msg_encr_caller2caller_caller2phone = with_msg
 
-        # ring 1: encrypt
+        # ring 1: encrypt again
         msg_encr_caller2caller_caller2phone_phone2phone = self.package_msg_to(
             msg_encr_caller2caller_caller2phone,
             to_whom
         )
-        self.log('final form of encr msg!',msg_encr_caller2caller_caller2phone_phone2phone)
+        self.log('msg_encr_caller2caller_caller2phone_phone2phone !',msg_encr_caller2caller_caller2phone_phone2phone)
 
         # ring 2: dial and get response
         resp_msg_encr_caller2caller_caller2phone_phone2phone = self.send_and_receive(
             msg_encr_caller2caller_caller2phone_phone2phone
         )
+        self.log(' got back from Op: resp_msg_encr_caller2caller_caller2phone_phone2phone',resp_msg_encr_caller2caller_caller2phone_phone2phone)
         # msg_encr_caller2caller_caller2phone_phone2phone: return
 
         # ring 3: decrypt

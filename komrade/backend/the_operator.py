@@ -60,6 +60,8 @@ class TheOperator(Operator):
 
         return self.send(encr_msg_to_send)
 
+    def can_I_decrypt_this(self,msg_d):
+
     # ends the ring_ring() chain
     def answer_phone(self,data_b64_str):
         # route incoming call from the switchboard
@@ -71,19 +73,24 @@ class TheOperator(Operator):
         msg_encr_caller2caller_caller2phone_phone2phone = data
         self.log('msg_encr_caller2caller_caller2phone_phone2phone incoming',msg_encr_caller2caller_caller2phone_phone2phone)
 
-        TOTAL_MSG = {}
+        TOTAL_MSG_CHAIN = {}
+        TOTAL_DECR_MSG
 
         # top layer: phone -> me, the op
-        msg_encr_caller2caller_caller2phone = self.unpackage_msg_from(
+        msg_d = msg_encr_caller2caller_caller2phone = self.unpackage_msg_from(
             msg_encr_caller2caller_caller2phone_phone2phone,
             self.phone
         )
         self.log('Operator unrolled the first layer of encryption:',msg_encr_caller2caller_caller2phone)
         assert type(msg_encr_caller2caller_caller2phone)==dict
         
-        # is there another layer?
-        msg_d=msg_encr_caller2caller_caller2phone
-        _msg=msg_d.get('_msg')
+        # is there another layer, encrypted caller2phone ?
+        msg_d['_msg'] = self.unpackage_msg_dict(msg_d)
+
+        # merge unencrypted messages
+
+
+
         route=None
         if _msg and type(_msg)==bytes:
             alleged_name = msg_d.get('_from_name')

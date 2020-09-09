@@ -131,7 +131,6 @@ class Operator(Keymaker):
             from_pubkey=another.pubkey,
             to_privkey=self.privkey
         )
-        
 
     # def ring(self,with_msg,to_whom=None,by_way_of=None):
     #     # ring 1: encrypt from me to 'whom'
@@ -155,3 +154,65 @@ class Operator(Keymaker):
     #     self.log('resp_msg',resp_msg)
 
     #     return resp_msg
+
+    def is_valid_msg_d(self,msg_d):
+        if not type(msg_d)==dict: return False
+        to_name=msg_d.get('_to_name')
+        to_pub=msg_d.get('_to_pub')
+        from_name=msg_d.get('_from_name')
+        from_pub=msg_d.get('_from_pub')
+        msg=msg_d.get('_msg')
+        if to_name and to_pub and from_name and from_pub and msg: return True
+        return False
+        
+
+    def can_decrypt_this(self,msg_d):
+        # check info present
+        if not self.is_valid_msg_d(msg_d): return False
+        to_name=msg_d.get('_to_name')
+        to_pub=msg_d.get('_to_pub')
+        if to_name != self.name or to_pub != self.pubkey: return False
+        return True
+
+    def unpackage_msg_dict(self,msg_d):
+        if self.can_I_decrypt_this(msg_d):
+            # get right caller
+            alleged_caller_name = _msg.get('_from_name')
+            alleged_caller_pub = _msg.get('_from_pub')
+            my_record_of_them = Caller(alleged_caller_name)
+
+            if alleged_caller_name == my_record_of_them.name:
+                if alleged_caller_pub == my_record_of_them.pubkey:
+                    encr_msg=msg_d.get('_msg')
+
+                    try:
+                        msg_d['_msg'] = decr_msg = self.unpackage_msg_from(
+                            encr_msg,
+                            my_record_of_them
+                        )
+                    except KomradeException as e:
+                        self.log('!! e')
+        return msg_d
+
+    def msg_is_encrypted(self,_msg_d):
+        if not self.is_valid_msg_d(_msg_d): return False
+        
+
+
+    def unroll_decryption_onion(self,msg_d):
+        # does message even need decryption?
+
+        # get right caller
+        alleged_caller_name = _msg.get('_from_name')
+        alleged_caller_pub = _msg.get('_from_pub')
+        alleged_callee_name = _msg.get('_to_name')
+        alleged_callee_pub = _msg.get('_to_pub')
+
+        alleged_caller = Operator(alleged_caller_name)
+        alleged_callee = Operator(alleged_callee_name)
+
+        if alleged_callee.can_decrypt_this()
+
+        if self.can_I_decrypt_this(msg_d,I=):
+            msg_d['_msg'] = self.unroll_decryption_onion(msg_d['_msg'])
+        return msg_d
