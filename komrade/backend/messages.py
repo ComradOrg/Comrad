@@ -153,9 +153,10 @@ class Message(Logger):
 
     @property
     def is_encrypted(self):
-        if self.msg._is_encrypted is not None:
-            return self.msg._is_encrypted
         return type(self.msg) == bytes
+        # if self.msg._is_encrypted is not None:
+            # return self.msg._is_encrypted
+        
 
 
     def encrypt(self): # each child message should already be encrypted before coming to its parent message ,recursive=False):
