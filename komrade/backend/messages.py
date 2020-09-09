@@ -120,7 +120,7 @@ class Message(Logger):
         # 
         if not self.is_encrypted: return
         # get from_whoms
-        self.log(f'attempting to decrypt msg',self.msg) # {self.msg} from {from_whom} to {to_whom}')
+        self.log(f'attempting to decrypt {self}')
 
         # decrypt msg
         decr_msg_b = SMessage(
@@ -137,7 +137,7 @@ class Message(Logger):
         self.msg = decr_msg
         self.msg_d['_msg'] = decr_msg
 
-        self.log('got decr msg back:',decr_msg)
+        # self.log('got decr msg back:',decr_msg)
         
         # now, is the decrypted message itself a message?
         if is_valid_msg_d(decr_msg):
