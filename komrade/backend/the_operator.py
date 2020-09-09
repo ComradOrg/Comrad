@@ -97,15 +97,19 @@ class TheOperator(Operator):
         # what we working with?
         self.log(f'route() got incoming msg = {msg_obj} and route = {route}')
         
+        # pass on data
+        data = msg_obj.msg
+        if type(data)==dict and ROUTE_KEYNAME in data:
+            del data[ROUTE_KEYNAME]
+
         # hard code the acceptable routes
         if route == 'forge_new_keys':
-            return self.forge_new_keys(msg_obj)
+            return self.forge_new_keys(data)
         
         # otherwise, hang up and try again
         return OPERATOR_INTERCEPT_MESSAGE
 
-    def forge_new_keys(self,msg_obj):
-        data = msg_obj.msg
+    def forge_new_keys(self,data):
         self.log('about to make some new keys!',data)
         # return {'_please':'well_hello_to_you_too'}
         

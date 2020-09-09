@@ -71,7 +71,9 @@ class Person(Caller):
             get_resp_from=super().ring_ring
         )
 
-    def register(self,name=None,passphrase=DEBUG_DEFAULT_PASSPHRASE, is_group=None):
+
+
+    def register(self, name = None, passphrase = DEBUG_DEFAULT_PASSPHRASE, is_group=None):
         # get needed metadata
         if not name: name=self.name
         if name is None: 
@@ -81,38 +83,19 @@ class Person(Caller):
         # if is_group is None:
             # is_group = input('\nIs this a group account? [y/N]').strip().lower() == 'y'
 
-        # form request to operator
-        msg_to_op = {'_please':'forge_new_keys'}
+        # form request
+        msg_to_op = {
+            '_please':'forge_new_keys',
+            'name':name,
+            'passphrase':hashish(passphrase.encode())
+        }
 
-        msg_response = self.phone.ring_ring(
-            msg_to_op,
-            self.op
-        )
-
-        # call and ask operator to register us
+        # get message back
+        msg_obj = self.phone.ring_ring(msg_to_op)
         
-        # for only this one! we skip straight to phone,
-        # since I don't have any public keys yet
-
-        resp = self.phone.ring_ring(msg_to_op)
-
-        return resp
+        print('GOT BACK!!!',msg_obj)
 
 
-    def get_new_keys(self, name = None, passphrase = DEBUG_DEFAULT_PASSPHRASE, is_group=None):
-        # get needed metadata
-        if not name: name=self.name
-        if name is None: 
-            name = input('\nWhat is the name for this account? ')
-        if passphrase is None:
-            passphrase = getpass.getpass('\nEnter a memborable password: ')
-        # if is_group is None:
-            # is_group = input('\nIs this a group account? [y/N]').strip().lower() == 'y'
-
-        
-
-        phone_res = self.phone.ring(msg_to_op)
-        
         # URI id
         uri_id = phone_res.get('uri_id')
         returned_keys = phone_res.get('_keychain')
@@ -134,6 +117,72 @@ class Person(Caller):
         # success!
         self.log('yay!!!!')
         return saved_keys
+
+
+
+    # def register(self,name=None,passphrase=DEBUG_DEFAULT_PASSPHRASE, is_group=None):
+    #     # get needed metadata
+    #     if not name: name=self.name
+    #     if name is None: 
+    #         name = input('\nWhat is the name for this account? ')
+    #     if passphrase is None:
+    #         passphrase = getpass.getpass('\nEnter a memborable password: ')
+    #     # if is_group is None:
+    #         # is_group = input('\nIs this a group account? [y/N]').strip().lower() == 'y'
+
+    #     # form request to operator
+    #     msg_to_op = {'_please':'forge_new_keys'}
+
+    #     msg_response = self.phone.ring_ring(
+    #         msg_to_op,
+    #         self.op
+    #     )
+
+    #     # call and ask operator to register us
+        
+    #     # for only this one! we skip straight to phone,
+    #     # since I don't have any public keys yet
+
+    #     resp = self.phone.ring_ring(msg_to_op)
+
+    #     return resp
+
+
+    # def get_new_keys(self, name = None, passphrase = DEBUG_DEFAULT_PASSPHRASE, is_group=None):
+    #     # get needed metadata
+    #     if not name: name=self.name
+    #     if name is None: 
+    #         name = input('\nWhat is the name for this account? ')
+    #     if passphrase is None:
+    #         passphrase = getpass.getpass('\nEnter a memborable password: ')
+    #     # if is_group is None:
+    #         # is_group = input('\nIs this a group account? [y/N]').strip().lower() == 'y'
+
+        
+
+    #     phone_res = self.phone.ring(msg_to_op)
+        
+    #     # URI id
+    #     uri_id = phone_res.get('uri_id')
+    #     returned_keys = phone_res.get('_keychain')
+    #     self.log('got URI from Op:',uri_id)
+    #     self.log('got returnd keys from Op:',returned_keys)
+
+    #     stop
+
+    #     # better have the right keys
+    #     assert set(KEYMAKER_DEFAULT_KEYS_TO_SAVE_ON_CLIENT) == set(returned_keys.keys())
+
+    #     # now save these keys!
+    #     saved_keys = self.save_keychain(name,returned_keys,uri_id=uri_id)
+    #     self.log('saved keys!',saved_keys)
+
+    #     # better have the right keys
+    #     # assert set(KEYMAKER_DEFAULT_KEYS_TO_SAVE) == set(saved_keys.keys())
+
+    #     # success!
+    #     self.log('yay!!!!')
+    #     return saved_keys
 
 
 if __name__=='__main__':
