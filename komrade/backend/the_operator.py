@@ -61,10 +61,8 @@ class TheOperator(Operator):
         # unseal
         msg_obj = self.unseal_msg(data_b)
         self.log(f'Operator understood message: {msg_obj}')
+        pause()
         
-        # decrypt all of it!
-        msg_obj.decrypt()
-        self.log('I am now decrypted!',msg_obj)
         # self.log('my messages:',msg_obj.messages)
 
         #self.log(f'Operator understood message route: {msg_obj.route}')

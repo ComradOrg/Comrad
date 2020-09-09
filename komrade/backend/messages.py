@@ -142,7 +142,9 @@ class Message(Logger):
             self.log('this is a valid msg in its own right!',decr_msg)
             # then ... make that, a message object and decrypt it too!
             self.msg = Message(decr_msg)
-            self.msg.decrypt()
+            
+            # but do not decrypt it yet!
+            # self.msg.decrypt()
         
         self.log(f'done decrypting! {self}')
         return decr_msg
@@ -168,28 +170,6 @@ class Message(Logger):
         self.msg_d['_msg'] = msg_encr
         self.log(f'Encrypted! I now look like v2: {self}')
         self.is_encrypted = True
-
-
-
-    # def decrypt_from_send(self,msg_encr,from_pubkey,to_privkey):
-    #     if not msg_encr or not from_pubkey or not to_privkey:
-    #         self.log('not enough info!',msg_encr,from_pubkey,to_privkey)
-    #         return {}
-    #     try:
-    #         # decrypt
-    #         msg_b = SMessage(
-    #             to_privkey,
-    #             from_pubkey,
-    #         ).unwrap(msg_encr)
-    #         # decode
-    #         self.log('msg_b??',msg_b)
-    #         msg_json = unpackage_from_transmission(msg_b)
-    #         self.log('msg_json??',msg_json)
-    #         # return
-    #         return msg_json
-    #     except ThemisError as e:
-    #         self.log('unable to decrypt from send!',e)
-    #     return {}
 
 
 

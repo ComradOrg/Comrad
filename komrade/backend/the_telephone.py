@@ -44,7 +44,6 @@ class TheTelephone(Operator):
 
         # unseal
         resp_msg_b_unsealed = self.unseal_msg(resp_msg_b)
-        resp_msg_b_unsealed.decrypt()
         return resp_msg_b_unsealed
 
 
