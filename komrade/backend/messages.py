@@ -57,7 +57,6 @@ class Message(Logger):
         self.caller={self.caller}
         self.callee={self.callee}
         self.msg_d={msg_d_str}
-        self.msg={self.msg}
     </MSG>
 
         """
