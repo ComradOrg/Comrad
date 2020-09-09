@@ -101,7 +101,7 @@ class Keymaker(Logger):
         res = self.crypt_keys.get(self.name, prefix='/pubkey/')
         if res: return res
         
-        res = b64decode(self.load_qr(self.name).encode())
+        res = self.load_qr(self.name)
         if res: return res
 
         self.log('I don\'t know my public key!')

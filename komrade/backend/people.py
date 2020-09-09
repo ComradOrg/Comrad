@@ -65,7 +65,7 @@ class Person(Caller):
         return self.ring_ring(msg,to_whom)
 
     def ring_ring(self,msg,to_whom):
-        return super().super().ring_ring(
+        return super(Caller,self).ring_ring(
             msg,
             to_whom,
             get_resp_from=super().ring_ring
@@ -187,6 +187,12 @@ class Person(Caller):
 
 
 if __name__=='__main__':
-    person = Person('marx')
+    marx = Person('marx')
+    elon = Person('elon')
 
-    person.register()
+    marx.register()
+    elon.register()
+    # person.register()
+    # print(person.pubkey)
+
+    elon.send_msg_to('youre dumb',marx)

@@ -60,7 +60,7 @@ class Operator(Keymaker):
 
     def compose_msg_to(self,msg,another):
         if not self.privkey or not self.pubkey:
-            raise KomradeException('why do I have no pub/privkey pair!?',self,self.name)
+            raise KomradeException('why do I have no pub/privkey pair!?',self,self.name,self.pubkey,self.privkey,self.keychain())
         if not another.name or not another.pubkey:
             raise KomradeException('why do I not know whom I\'m writing to?')
 
