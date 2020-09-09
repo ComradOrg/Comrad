@@ -279,7 +279,7 @@ def test_msg():
     print('?keychains?')
     pprint(phone.pubkey)
     
-    msg={'_please':'hello_world'}
+    msg={'_please':'forge_new_keys'}
 
 
     resp_msp_obj = phone.ring_ring(msg)
