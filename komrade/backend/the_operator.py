@@ -65,14 +65,9 @@ class TheOperator(Operator):
         # unseal
         msg_obj = self.unseal_msg(data)
         self.log(f'Operator understood message: {msg_obj}')
-        stop
-
-        # make top-level message object, addressed to me the operator
-        from komrade.backend.messages import Message
-        msg_obj = Message(msg_d,caller=self.phone,callee=self)
-        msg_obj.decrypt()
-
-        # route msg back to caller
+        self.log(f'Operator understood message route: {msg_obj.route}')
+        
+        # route msg back to caller through right process
         return self.route(msg_obj)
 
     def find_pubkey(self):
