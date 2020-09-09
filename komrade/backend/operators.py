@@ -168,9 +168,8 @@ class Operator(Keymaker):
             return func(**data)
         
     
-    def pronto_pronto(self, msg_obj):
+    def route_msg(self, msg_obj):
         self.log(f'''
-        << "Pronto?"
         >> {msg_obj}
         ''')
 
@@ -190,7 +189,7 @@ class Operator(Keymaker):
             # whew, then we can make someone else take the phone
             self.log(f'passing msg onto {embedded_recipient} ...')
             
-            response = embedded_recipient.pronto_pronto(embedded_msg) 
+            response = embedded_recipient.route_msg(embedded_msg) 
             self.log(f'passed msg onto {embedded_recipient}, got this response: {response} ...')
         # otherwise what are we doing?
         else: 

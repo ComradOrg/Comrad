@@ -54,7 +54,7 @@ class TheOperator(Operator):
         return self.send(encr_msg_to_send)
 
     # ends the ring_ring() chain
-    def pronto_pronto(self,data_b):
+    def answer_phone(self,data_b):
         # route incoming call from the switchboard
         self.log('Hello, this is the Operator. You said: ',data_b)
 
@@ -66,8 +66,8 @@ class TheOperator(Operator):
         self.log(f'Operator understood message: {msg_obj} {msg_obj.route}')
         
         # carry out message instructions
-        resp_msg_obj = super().pronto_pronto(msg_obj) #,route=msg_obj.route)
-        self.log('route_result <-',route_result)
+        resp_msg_obj = self.route_msg(msg_obj) #,route=msg_obj.route)
+        self.log('route_result <-',resp_msg_obj)
 
         # should be encrypted already
         assert resp_msg_obj.is_encrypted
