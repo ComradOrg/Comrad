@@ -167,6 +167,7 @@ class Operator(Keymaker):
             self.log(f'passing msg onto {embedded_recipient} ...')
             
             response = embedded_recipient.route_msg(embedded_msg)
+            from kormade.backend.messages import Message
             if response and type(response)==Message:
                 response = response.msg_d
             self.log(f'passed msg onto {embedded_recipient}, got this response: {response} ...')
