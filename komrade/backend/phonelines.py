@@ -165,6 +165,6 @@ def connect_phonelines():
     dict_merge(TELEPHONE_KEYCHAIN,remote_builtin_keychain_phone_json)
     dict_merge(OPERATOR_KEYCHAIN,remote_builtin_keychain_op_json)
     
-    print('>>>> loaded OPERATOR_KEYCHAIN',OPERATOR_KEYCHAIN)
-    print('>>>> loaded TELEPHONE_KEYCHAIN',TELEPHONE_KEYCHAIN)
+    # print('>>>> loaded OPERATOR_KEYCHAIN',OPERATOR_KEYCHAIN)
+    # print('>>>> loaded TELEPHONE_KEYCHAIN',TELEPHONE_KEYCHAIN)
     return (OPERATOR_KEYCHAIN,TELEPHONE_KEYCHAIN,OMEGA_KEY)

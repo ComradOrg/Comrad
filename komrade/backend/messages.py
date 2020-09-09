@@ -33,7 +33,7 @@ class Message(Logger):
         self.messenger=None
         self.is_encrypted=False
         # get operators straight away?
-        if not self._caller or not _self.callee:
+        if not self._caller or not self._callee:
             self.get_callers()
 
 
