@@ -141,37 +141,7 @@ class Operator(Keymaker):
         return Caller(name)
 
 
-    def ring_ring(self,msg,to_whom,get_resp_from=None):
-        # ring ring
-        self.log(f'''
-        ring ring!
-        I am {self}.
-        I have been told to pass onto {to_whom},
-        by way of function {get_resp_from},
-        the following msg:
-        {dict_format(msg,tab=5)}
-        ''')
-        
-        # get encr msg obj
-        msg_obj = self.compose_msg_to(msg, to_whom)
-        self.log(f'ring ring! here is the message object I made, to send to {to_whom}: {msg_obj}')
-        
-        # encrypting
-        msg_obj.encrypt()
-        # get pure encrypted binary, sealed
-        #msg_sealed = self.seal_msg(msg_obj)
-        
-        # pass onto next person...
-        if not get_resp_from: get_resp_from=to_whom.ring_ring
-        resp_msg_obj = get_resp_from(msg_obj.msg_d)
-        self.log('resp_msg_obj <-',resp_msg_obj)
-
-        # route back?
-        route_result = self.route_msg(resp_msg_obj)
-        self.log('route_result 2?',route_result)
-
-        return route_result
-
+  
         # return resp_msg_obj
 
     def route(self,data,route):
@@ -204,6 +174,50 @@ class Operator(Keymaker):
         # ???
         return response
     
+
+
+
+    def ring_ring(self,msg,to_whom,get_resp_from=None):
+        # ring ring
+        self.log(f'''
+        ring ring!
+        I am {self}.
+        I have been told to pass onto {to_whom},
+        by way of function {get_resp_from},
+        the following msg:
+        {dict_format(msg,tab=5)}
+        ''')
+        
+        # get encr msg obj
+        msg_obj = self.compose_msg_to(
+            msg,
+            to_whom
+        )
+        self.log(f'ring ring! here is the message object I made, to send to {to_whom}: {msg_obj}')
+        
+        # encrypting
+        msg_obj.encrypt()
+        # get pure encrypted binary, sealed
+        #msg_sealed = self.seal_msg(msg_obj)
+        
+        # pass onto next person...
+        if not get_resp_from: get_resp_from=to_whom.ring_ring
+        resp_msg_obj = get_resp_from(msg_obj.msg_d)
+        self.log('resp_msg_obj <-',resp_msg_obj)
+
+        # route back?
+        route_result = self.route_msg(resp_msg_obj)
+        self.log('route_result 2?',route_result)
+
+        return route_result
+
+
+
+
+
+
+
+
     def pronto_pronto(self, msg_obj):
         self.log(f'''
         pronto pronto!
