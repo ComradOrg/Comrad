@@ -337,7 +337,7 @@ class Keymaker(Logger):
                 raise KomradeException('there is no private property in a socialist network! all keys must be split between komrades')
             if keyname in keychain:
                 # uri = uri_id
-                uri = uri_id if name!='pubkey' else name
+                uri = uri_id if keyname!='pubkey' else name
                 self.crypt_keys.set(uri,keychain[keyname],prefix=f'/{keyname}/')
                 keys_saved_d[keyname] = keychain[keyname]
 
