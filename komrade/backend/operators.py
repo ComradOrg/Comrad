@@ -6,7 +6,8 @@ from komrade import *
 # from komrade.backend.mazes import *
 # from komrade.backend.switchboard import *
 from komrade.backend import *
-
+from komrade.backend.messages import Message
+        
 
 
 class Operator(Keymaker):
@@ -75,9 +76,7 @@ class Operator(Keymaker):
         }
         # self.log(f'I am {self} packaging a message to {another}: {msg_d}')
         
-        from komrade.backend.messages import Message
-        msg_obj = Message(msg_d,caller=self,callee=another)
-        # self.log('created msg obj:',msg_obj)
+        msg_obj = Message(msg_d,from_whom=self,to_whom=another)
         
         # encrypt!
         msg_obj.encrypt()
@@ -108,7 +107,7 @@ class Operator(Keymaker):
         # get message obj
         print('unsealed msg:',msg_d)
         from komrade.backend.messages import Message
-        msg_obj = Message(msg_d,caller=from_whom,callee=to_whom)
+        msg_obj = Message(msg_d,from_whom=from_whom,to_whom=to_whom)
         # decrypt msg
         msg_obj.decrypt()
         return msg_obj
@@ -124,7 +123,7 @@ class Operator(Keymaker):
             return TheOperator()
         if name == TELEPHONE_NAME:
             return TheTelephone()
-        return Caller(name)
+        return from_whom(name)
 
 
     def ring_ring(self,msg,to_whom,get_resp_from=None):
@@ -185,7 +184,7 @@ class Operator(Keymaker):
         # can we pass the buck on?
         elif msg_obj.has_embedded_msg:
             embedded_msg = msg_obj.msg
-            embedded_recipient = embedded_msg.callee
+            embedded_recipient = embedded_msg.to_whom
             # whew, then we can make someone else take the phone
             self.log(f'passing msg onto {embedded_recipient} ...')
             

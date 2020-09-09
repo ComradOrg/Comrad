@@ -15,7 +15,7 @@ def is_valid_msg_d(msg_d):
 
 
 class Message(Logger):
-    def __init__(self,msg_d,caller=None,callee=None,messenger=None,embedded_msg=None,is_encrypted=False):
+    def __init__(self,msg_d,from_whom=None,to_whom=None,messenger=None,embedded_msg=None,is_encrypted=False):
         # check input
         if not is_valid_msg_d(msg_d):
             raise KomradeException('This is not a valid msg_d:',msg_d)
@@ -28,13 +28,13 @@ class Message(Logger):
         self.msg=msg_d.get('_msg')
         self.embedded_msg=embedded_msg  # only if this message has an embedded one
         self._route=msg_d.get(ROUTE_KEYNAME)
-        self._caller=caller
-        self._callee=callee
+        self._from_whom=from_whom
+        self._to_whom=to_whom
         self.messenger=None
         self._is_encrypted=None
         # get operators straight away?
-        if not self._caller or not self._callee:
-            self.get_callers()
+        if not self._from_whom or not self._to_whom:
+            self.get_from_whoms()
 
     @property
     def data(self):
@@ -50,7 +50,7 @@ class Message(Logger):
         return md
 
     def mark_return_to_sender(self):
-        self._caller,self._callee = self._callee,self._caller
+        self._from_whom,self._to_whom = self._to_whom,self._from_whom
         self.msg_d['_from_pub'],self.msg_d['_to_pub'] = self.msg_d['_to_pub'],self.msg_d['_from_pub'],
         self.msg_d['_from_name'],self.msg_d['_to_name'] = self.msg_d['_to_name'],self.msg_d['_from_name'],
 
@@ -59,77 +59,77 @@ class Message(Logger):
         return f"""
     
     <MSG>
-        self.caller={self.caller}
-        self.callee={self.callee}
+        self.from_whom={self.from_whom}
+        self.to_whom={self.to_whom}
         self.msg_d={msg_d_str}
     </MSG>
 
         """
 
 
-    def get_caller(self,name):
+    def get_from_whom(self,name):
         if name == OPERATOR_NAME:
             return TheOperator()
         if name == TELEPHONE_NAME:
             return TheTelephone()
-        return Caller(name)
+        return from_whom(name)
 
     @property
-    def caller(self):
-        if not self._caller:
-            self._caller,self._callee = self.get_callers()
-        return self._caller
+    def from_whom(self):
+        if not self._from_whom:
+            self._from_whom,self._to_whom = self.get_from_whoms()
+        return self._from_whom
 
     @property
-    def callee(self):
-        if not self._callee:
-            self._caller,self._callee = self.get_callers()
-        return self._callee
+    def to_whom(self):
+        if not self._to_whom:
+            self._from_whom,self._to_whom = self.get_from_whoms()
+        return self._to_whom
     
     ## loading messages
-    def get_callers(self):
-        if self._caller is not None and self._callee is not None:
-            return (self._caller,self._callee) 
-        alleged_caller = self.get_caller(self.from_name)
-        alleged_callee = self.get_caller(self.to_name)
-        if not self.caller_records_match(alleged_caller,alleged_callee):
-            raise KomradeException('Records of callers on The Operator and the Caller do not match. Something fishy going on?')
+    def get_from_whoms(self):
+        if self._from_whom is not None and self._to_whom is not None:
+            return (self._from_whom,self._to_whom) 
+        alleged_from_whom = self.get_from_whom(self.from_name)
+        alleged_to_whom = self.get_from_whom(self.to_name)
+        if not self.from_whom_records_match(alleged_from_whom,alleged_to_whom):
+            raise KomradeException('Records of from_whoms on The Operator and the from_whom do not match. Something fishy going on?')
         else:
-            self._caller = alleged_caller
-            self._callee = alleged_callee
-        return (self._caller,alleged_caller)
+            self._from_whom = alleged_from_whom
+            self._to_whom = alleged_to_whom
+        return (self._from_whom,alleged_from_whom)
 
-    def caller_records_match(self,alleged_caller,alleged_callee):
-        alleged_caller_name = self.from_name
-        alleged_caller_pubkey = self.from_pubkey
-        alleged_callee_name = self.to_name
-        alleged_callee_pubkey = self.to_pubkey
+    def from_whom_records_match(self,alleged_from_whom,alleged_to_whom):
+        alleged_from_whom_name = self.from_name
+        alleged_from_whom_pubkey = self.from_pubkey
+        alleged_to_whom_name = self.to_name
+        alleged_to_whom_pubkey = self.to_pubkey
 
-        # self.log('caller names:',alleged_caller.name, alleged_caller_name)
-        # self.log('caller pubs:',alleged_caller.pubkey, alleged_caller_pubkey)
-        # self.log('callee names:',alleged_callee.name, alleged_callee_name)
-        # self.log('callee pubs:',alleged_callee.pubkey, alleged_callee_pubkey)
+        # self.log('from_whom names:',alleged_from_whom.name, alleged_from_whom_name)
+        # self.log('from_whom pubs:',alleged_from_whom.pubkey, alleged_from_whom_pubkey)
+        # self.log('to_whom names:',alleged_to_whom.name, alleged_to_whom_name)
+        # self.log('to_whom pubs:',alleged_to_whom.pubkey, alleged_to_whom_pubkey)
 
-        if alleged_callee.name != alleged_callee_name:
+        if alleged_to_whom.name != alleged_to_whom_name:
             return False
-        if alleged_caller.name != alleged_caller_name:
+        if alleged_from_whom.name != alleged_from_whom_name:
             return False
-        if alleged_callee.pubkey != alleged_callee_pubkey:
+        if alleged_to_whom.pubkey != alleged_to_whom_pubkey:
             return False
-        if alleged_caller.pubkey != alleged_caller_pubkey:
+        if alleged_from_whom.pubkey != alleged_from_whom_pubkey:
             return False
         return True
 
     def decrypt(self,recursive=False):
         # 
         if not self.is_encrypted: return
-        # get callers
-        self.log(f'attempting to decrypt msg',self.msg) # {self.msg} from {caller} to {callee}')
+        # get from_whoms
+        self.log(f'attempting to decrypt msg',self.msg) # {self.msg} from {from_whom} to {to_whom}')
 
         # decrypt msg
         decr_msg_b = SMessage(
-            self.callee.privkey,
-            self.caller.pubkey
+            self.to_whom.privkey,
+            self.from_whom.pubkey
         ).unwrap(self.msg)
         
         self.log('Am I decrypted?',decr_msg_b)
@@ -168,7 +168,7 @@ class Message(Logger):
 
     def encrypt(self): # each child message should already be encrypted before coming to its parent message ,recursive=False):
         if self._is_encrypted: return
-        # self.log(f'attempting to encrypt msg {self.msg} from {self.caller} to {self.callee}')
+        # self.log(f'attempting to encrypt msg {self.msg} from {self.from_whom} to {self.to_whom}')
         self.log(f'About to encrypt self.msg! I now look like v1: {self}')
         
         # binarize msg
@@ -177,8 +177,8 @@ class Message(Logger):
 
         # encrypt it!
         msg_encr = SMessage(
-            self.caller.privkey,
-            self.callee.pubkey,
+            self.from_whom.privkey,
+            self.to_whom.pubkey,
         ).wrap(msg_b)
 
         self.msg_decr = self.msg
