@@ -103,15 +103,15 @@ class TheOperator(Operator):
         self.log(f'route() got incoming msg = {msg_obj} and route = {route}')
         
         # pass on data
-        data = msg_obj.msg
-        if type(data)==dict and ROUTE_KEYNAME in data:
-            del data[ROUTE_KEYNAME]
+        # data = msg_obj.msg
+        # if type(data)==dict and ROUTE_KEYNAME in data:
+        #     del data[ROUTE_KEYNAME]
 
         ## hard code the acceptable routes
         if route == 'forge_new_keys':
-            return self.forge_new_keys(data)
+            return self.forge_new_keys(msg_obj)
         elif route == 'does_username_exist':
-            return self.does_username_exist(data)
+            return self.does_username_exist(msg_obj)
         
         # otherwise, hang up and try again
         return OPERATOR_INTERCEPT_MESSAGE
