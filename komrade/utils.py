@@ -90,7 +90,7 @@ def package_for_transmission(data_json):
     data_json_b = pickle.dumps(data_json)
     # print('data_json_b??')
     # print('package_for_transmission.data_json_b =',data_json_bstr)
-    return b64encode(data_json_b)
+    return data_json_b
 
 
 def dejsonize(dict):

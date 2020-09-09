@@ -88,7 +88,7 @@ class Operator(Keymaker):
         self.log('sealing msg!:',dict_format(msg_d))
         # msg_obj.encrypt(recursive=True)
         # return pure binary version of self's entire msg_d
-        msg_b = pickle.dumps(msg_obj.msg_d)
+        msg_b = pickle.dumps(msg_d)
         self.log('pickled!',msg_b)
 
         # encrypt by omega key
@@ -101,7 +101,7 @@ class Operator(Keymaker):
         # decrypt by omega
         msg_b = self.omega_key.decrypt(msg_b_encr)
         # unpackage from transmission
-        msg_d = unpackage_from_transmission(msg_b)
+        msg_d = pickle.loads(msg_b)
         # get message obj
         print('unsealed msg:',msg_d)
         from komrade.backend.messages import Message
@@ -118,11 +118,23 @@ class Operator(Keymaker):
 
     def ring_ring(self,msg,to_whom,get_resp_from=None):
         # ring ring
-        self.log(f'ring ring! I, {self}, have been told to pass a message {msg} onto {to_whom}, by way of function {get_resp_from}')
+        self.log(f'''
+        ring ring!
+        
+        I am {self}.
+        
+        I have been told to pass onto {to_whom},
+        
+        by way of function {get_resp_from},
+        
+        the following msg:
+        
+        {dict_format(msg)}
+        ''')
         
         # get encr msg obj
         msg_obj = self.compose_msg_to(msg, to_whom)
-        # self.log(f'here is the message object I made, to send to {to_whom}: {msg_obj}')
+        self.log(f'ring ring! here is the message object I made, to send to {to_whom}: {msg_obj}')
         
         # msg_encr = msg_obj.msg
         # encrypting
