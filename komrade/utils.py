@@ -31,6 +31,19 @@ def clear_screen():
 def pause():
     input('')
 
+
+def dict_format(d, tab=0):
+    s = ['{\n']
+    for k,v in d.items():
+        if isinstance(v, dict):
+            v = format(v, tab+1)
+        else:
+            v = repr(v)
+
+        s.append('%s%r: %s,\n' % ('  '*tab, k, v))
+    s.append('%s}' % ('  '*tab))
+    return ''.join(s)
+
 import inspect
 class Logger(object):
     def log(self,*x):

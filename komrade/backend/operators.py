@@ -84,9 +84,15 @@ class Operator(Keymaker):
 
     def seal_msg(self,msg_obj):
         # make sure encrypted
-        # msg_obj.encrypt()
+        self.log('sealing msg!')
+        msg_obj.encrypt(recursive=True)
         # return pure binary version of self's entire msg_d
+        self.log('encrypted msg_d: ',msg_obj.msg_d)
+        
         msg_b = package_for_transmission(msg_obj.msg_d)
+        self.log('sealed msg_d: ',msg_b)
+        
+        
         # encrypt by omega key
         msg_b_encr = self.omega_key.encrypt(msg_b)
         return msg_b_encr
@@ -119,7 +125,7 @@ class Operator(Keymaker):
         self.log(f'here is the message object I made, to send to {to_whom}: {msg_obj}')
         
         # encrypting
-        msg_obj.encrypt()
+        # msg_obj.encrypt()
         # self.log(f'now I look like: {msg_obj}')
         # get pure encrypted binary, sealed
         #msg_sealed = self.seal_msg(msg_obj)
@@ -130,7 +136,7 @@ class Operator(Keymaker):
         self.log('resp_msg_obj <-',resp_msg_obj)
 
         # decrypt?
-        resp_msg_obj.decrypt()
+        # resp_msg_obj.decrypt()
 
         # unseal msg
         # resp_msg_obj = self.unseal_msg(resp_msg_b)
