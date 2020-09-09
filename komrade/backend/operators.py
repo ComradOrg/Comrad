@@ -175,6 +175,7 @@ class Operator(Keymaker):
         else: 
             response = msg_obj
         # ???
+        response.encrypt()
         return response
     
 
