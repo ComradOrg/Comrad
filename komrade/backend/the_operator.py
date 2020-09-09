@@ -60,8 +60,6 @@ class TheOperator(Operator):
 
         return self.send(encr_msg_to_send)
 
-    def can_I_decrypt_this(self,msg_d):
-
     # ends the ring_ring() chain
     def answer_phone(self,data_b64_str):
         # route incoming call from the switchboard
