@@ -120,16 +120,11 @@ class Operator(Keymaker):
         # ring ring
         self.log(f'''
         ring ring!
-        
         I am {self}.
-        
         I have been told to pass onto {to_whom},
-        
         by way of function {get_resp_from},
-        
         the following msg:
-        
-        {dict_format(msg)}
+        {dict_format(msg,tabs=5)}
         ''')
         
         # get encr msg obj
