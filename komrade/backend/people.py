@@ -62,6 +62,7 @@ class Person(Caller):
     #     return resp_msg_unencr
 
     def send_msg_to(self,msg,to_whom):
+        msg = {'_please':'deliver_to', 'msg':msg}
         return self.ring_ring(msg,to_whom)
 
     def ring_ring(self,msg,to_whom):
@@ -190,8 +191,8 @@ if __name__=='__main__':
     marx = Person('marx')
     elon = Person('elon')
 
-    marx.register()
-    elon.register()
+    # marx.register()
+    # elon.register()
     # person.register()
     # print(person.pubkey)
 
