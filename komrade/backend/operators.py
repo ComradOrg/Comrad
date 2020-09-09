@@ -6,14 +6,19 @@ from komrade import *
 # from komrade.backend.mazes import *
 # from komrade.backend.switchboard import *
 from komrade.backend import *
-from komrade.backend.messages import Message
         
 
 def locate_an_operator(name):
+    global OPERATOR,TELEPHONE
+
+    from komrade.backend.the_operator import TheOperator
+    from komrade.backend.the_telephone import TheTelephone
+    from komrade.backend.callers import Caller
+
     if name == OPERATOR_NAME:
-        return TheOperator()
+        return OPERATOR if OPERATOR else TheOperator()
     if name == TELEPHONE_NAME:
-        return TheTelephone()
+        return TELEPHONE if TELEPHONE else TheTelephone()
     return Caller(name)
 
 
@@ -82,6 +87,7 @@ class Operator(Keymaker):
             '_msg':msg,
         }
         # self.log(f'I am {self} packaging a message to {another}: {msg_d}')
+        from komrade.backend.messages import Message
         
         msg_obj = Message(msg_d,from_whom=self,to_whom=another)
         
