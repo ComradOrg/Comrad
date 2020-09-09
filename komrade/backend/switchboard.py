@@ -36,7 +36,7 @@ class TheSwitchboard(FlaskView, Logger):
         data_b = b64decode(data_b64)
 
         # ask operator to answer phone and request
-        resp_data_b = self.op.answer_phone(data_b)
+        resp_data_b = self.op.pronto_pronto(data_b)
 
         # decode to str
         resp_data_b64 = b64encode(resp_data_b)
