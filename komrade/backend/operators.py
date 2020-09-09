@@ -166,14 +166,8 @@ class Operator(Keymaker):
         resp_msg_obj = get_resp_from(msg_obj.msg_d)
         self.log('resp_msg_obj <-',resp_msg_obj)
 
-        # decrypt?
-        resp_msg_obj.decrypt()
-        self.log('rung rung!',resp_msg_obj)
-
-        # unseal msg
-        # resp_msg_obj = self.unseal_msg(resp_msg_b)
-
-        return resp_msg_obj
+        # now we have to answer
+        return resp_msg_obj.from_whom.pronto_pronto(resp_msg_obj)
 
     def route(self,data,route):
         if hasattr(self,route) and route in self.ROUTES:
