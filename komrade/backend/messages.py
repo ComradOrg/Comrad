@@ -116,6 +116,8 @@ class Message(Logger):
         return True
 
     def decrypt(self,recursive=False):
+        # 
+        if not self.is_encrypted: return
         # get callers
         self.log(f'attempting to decrypt msg',self.msg) # {self.msg} from {caller} to {callee}')
 
