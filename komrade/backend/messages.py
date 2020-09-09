@@ -116,7 +116,7 @@ class Message(Logger):
             return False
         return True
 
-    def decrypt(self,recursive=True):
+    def decrypt(self,recursive=False):
         # 
         if not self.is_encrypted: return
         
