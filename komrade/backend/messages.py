@@ -67,12 +67,8 @@ class Message(Logger):
 
 
     def get_whom(self,name):
-        if name == OPERATOR_NAME:
-            return TheOperator()
-        if name == TELEPHONE_NAME:
-            return TheTelephone()
-        from komrade.backend.callers import Caller
-        return Caller(name)
+        from komrade.backend.operators import locate_an_operator
+        return locate_an_operator(name)
 
     @property
     def from_whom(self):

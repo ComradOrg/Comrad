@@ -9,6 +9,13 @@ from komrade.backend import *
 from komrade.backend.messages import Message
         
 
+def locate_an_operator(name):
+    if name == OPERATOR_NAME:
+        return TheOperator()
+    if name == TELEPHONE_NAME:
+        return TheTelephone()
+    return Caller(name)
+
 
 class Operator(Keymaker):
     ROUTES = ['forge_new_keys','does_username_exist','hello_world']
@@ -123,7 +130,7 @@ class Operator(Keymaker):
             return TheOperator()
         if name == TELEPHONE_NAME:
             return TheTelephone()
-        return from_whom(name)
+        return Caller(name)
 
 
     def ring_ring(self,msg,to_whom,get_resp_from=None):
