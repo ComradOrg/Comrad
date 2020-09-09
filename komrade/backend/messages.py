@@ -88,14 +88,14 @@ class Message(Logger):
             return (self._from_whom,self._to_whom) 
         alleged_from_whom = self.get_whom(self.from_name)
         alleged_to_whom = self.get_whom(self.to_name)
-        if not self.records_match(alleged_from_whom,alleged_to_whom):
+        if not self.whom_records_match(alleged_from_whom,alleged_to_whom):
             raise KomradeException('Records of from_whoms on The Operator and the from_whom do not match. Something fishy going on?')
         else:
             self._from_whom = alleged_from_whom
             self._to_whom = alleged_to_whom
         return (self._from_whom,self._to_whom)
 
-    def from_whom_records_match(self,alleged_from_whom,alleged_to_whom):
+    def whom_records_match(self,alleged_from_whom,alleged_to_whom):
         alleged_from_whom_name = self.from_name
         alleged_from_whom_pubkey = self.from_pubkey
         alleged_to_whom_name = self.to_name
