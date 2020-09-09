@@ -96,6 +96,9 @@ class Operator(Keymaker):
 
         return msg_obj
 
+    # def compose_reply(self,msg,another):
+
+
     def seal_msg(self,msg_d):
         # make sure encrypted
         self.log('sealing msg!:',dict_format(msg_d))
@@ -180,7 +183,7 @@ class Operator(Keymaker):
             return func(**data)
         
     
-    def route_msg(self, msg_obj):
+    def pronto_pronto(self, msg_obj):
         self.log(f'''
         >> {msg_obj}
         ''')
@@ -201,19 +204,23 @@ class Operator(Keymaker):
             # whew, then we can make someone else take the phone
             self.log(f'passing msg onto {embedded_recipient} ...')
             
-            response = embedded_recipient.route_msg(embedded_msg) 
+            response = embedded_recipient.pronto_pronto(embedded_msg) 
             self.log(f'passed msg onto {embedded_recipient}, got this response: {response} ...')
         # otherwise what are we doing?
         else: 
             raise KomradeException('No route, no embedded msg. What to do?')
         
         # set this to be the new msg
-        msg_obj.msg = msg_obj.msg_d['_msg'] = response
-        self.log('what msg_obj looks like now:',msg_obj)
+        #msg_obj.msg = msg_obj.msg_d['_msg'] = response
+        #self.log('what msg_obj looks like now:',msg_obj)
 
-        # invert who's sending to whom!
-        msg_obj.mark_return_to_sender()
-
+        # send new content back
+        resp_msg_obj = msg_obj.to_whom.compose_msg_to(
+            response,
+            msg_obj.from_whom
+        )
+        self.log('resp_msg_obj',resp_msg_obj)
+        
         # re-encrypt
         msg_obj.encrypt()
         self.log(f're-encrypted: {msg_obj}')

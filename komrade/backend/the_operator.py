@@ -66,15 +66,9 @@ class TheOperator(Operator):
         self.log(f'Operator understood message: {msg_obj} {msg_obj.route}')
         
         # carry out message instructions
-        resp_msg_obj = self.route_msg(msg_obj) #,route=msg_obj.route)
+        resp_msg_obj = self.pronto_pronto(msg_obj) #,route=msg_obj.route)
         self.log('route_result <-',resp_msg_obj)
 
-        # should be encrypted already
-        assert resp_msg_obj.is_encrypted
-        # it should be pointing back from me to the telephone
-        assert resp_msg_obj.callee.pubkey==self.phone.pubkey
-        assert resp_msg_obj.caller.pubkey==self.pubkey
-        
         # send back down encrypted
         msg_sealed = self.seal_msg(resp_msg_obj.msg_d)
 

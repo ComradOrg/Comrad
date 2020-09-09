@@ -146,7 +146,7 @@ class Message(Logger):
             self.msg = Message(decr_msg)
         
         # for now this should be rolled out individually ,like an onion
-        # ring_ring on client -> route_msg on server
+        # ring_ring on client -> pronto_pronto on server
         # so we don't need or want to decrypt all at once
         if recursive:
             self.msg.decrypt()
