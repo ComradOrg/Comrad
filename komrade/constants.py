@@ -151,3 +151,6 @@ ALLOW_CLEARNET = True
 
 
 DEBUG_DEFAULT_PASSPHRASE = 'all your base are belong to us'
+
+
+ROUTE_KEYNAME = '_please'

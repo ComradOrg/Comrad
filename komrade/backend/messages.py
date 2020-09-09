@@ -26,12 +26,16 @@ class Message(Logger):
         self.from_name=msg_d.get('_from_name')
         self.from_pubkey=msg_d.get('_from_pub')
         self.msg=msg_d.get('_msg')
+        self.embedded_msg=None  # only if this message has an embedded one
+        self._route=msg_d.get(ROUTE_KEYNAME)
         self.caller=caller
         self.callee=callee
         # get operators straight away?
         if not self.caller or not self.callee:
             self.get_callers()
 
+
+    ## loading messages
     def get_callers(self,msg_d):
         if self.caller is not None and self.callee is not None:
             return (self.caller,self.callee) 
@@ -65,6 +69,7 @@ class Message(Logger):
     def decrypt(self,recursive=True):
         # get callers
         caller,callee = self.get_callers()
+        self.log(f'attempting to decrypt msg {self.msg}' from {caller} to {caller}'')
         # decrypt msg
         decr_msg = caller.unpackage_msg_from(
             self.msg,
@@ -76,7 +81,24 @@ class Message(Logger):
         
         # now, is the decrypted message itself a message?
         if recursive and is_valid_msg_d(decr_msg):
-            # then ... make that, a message object, and decrypt it too!
-            self.msg_obj = decr_msg
-            self.msg_obj.decrypt()
+            # then ... make that, a message object and decrypt it too!
+            self.embedded_msg = Message(decr_msg)
+            self.embedded_msg.decrypt()
         return decr_msg
+
+
+
+    ## msg properties
+    def has_embedded_msg(self):
+        return self.embedded_msg is not None
+
+    @property
+    def messages(self):
+        # move through msgs recursively
+        msgs = [self] if not self.has_embedded_msg else [self] + self.embedded_msg.messages
+        return msgs
+
+    @property
+    def route(self):
+        for msg in self.messages:
+            if msg._route: return msg._route 

@@ -72,51 +72,12 @@ class TheOperator(Operator):
         self.log('msg_encr_caller2caller_caller2phone_phone2phone incoming',msg_encr_caller2caller_caller2phone_phone2phone)
 
         # make top-level message object, addressed to me the operator
-        msg = Message(msg_d,caller=self.phone,callee=self)
-        msg.decrypt()
+        from komrade.backend.messages import Message
+        msg_obj = Message(msg_d,caller=self.phone,callee=self)
+        msg_obj.decrypt()
 
-
-
-        # TOTAL_MSG_CHAIN = {}
-        # TOTAL_DECR_MSG
-
-        # # top layer: phone -> me, the op
-        # msg_d = msg_encr_caller2caller_caller2phone = self.unpackage_msg_from(
-        #     msg_encr_caller2caller_caller2phone_phone2phone,
-        #     self.phone
-        # )
-        # self.log('Operator unrolled the first layer of encryption:',msg_encr_caller2caller_caller2phone)
-        # assert type(msg_encr_caller2caller_caller2phone)==dict
-        
-        # # is there another layer, encrypted caller2phone ?
-        # msg_d['_msg'] = self.unpackage_msg_dict(msg_d)
-
-        # # merge unencrypted messages
-
-
-
-        # route=None
-        # if _msg and type(_msg)==bytes:
-        #     alleged_name = msg_d.get('_from_name')
-        #     alleged_pubkey = msg_d.get('_from_pub')
-        #     if alleged_pubkey and alleged_name:
-        #         alleged_caller = Caller(alleged_name)
-        #         assert alleged_caller.pubkey == alleged_pubkey
-
-        #         msg_d2 = self.unpackage_msg_from(
-        #             _msg,
-        #             caller
-        #         )
-        #         assert type(msg_d2)==dict
-        #         _msg2 = msg_d2.get('_msg')
-        #         route = msg_d2.get('_msg',{}).get('_please')
-        #         dict_merge(_msg,_msg2)
-        #         msg_d['_msg'] = msg_d2
-        
-        # if not route:
-        #     route = msg_d.get('_msg',{}).get('_please',None)
-        
-        # return self.route(msg_d,_msg,route)
+        # route msg back to caller
+        return self.route(msg_obj)
 
 
 
@@ -126,16 +87,25 @@ class TheOperator(Operator):
         return encr_data_b
 
 
-    def route(self, msg_d, _msg, route=None):
-        if not route: route=_msg.get('_please')
-        if not route: raise KomradeException('no route!')
-        if '_please' in _msg: del _msg['_please']
+    def route(self, msg_obj):
+        # get route from msg
+        route = msg_obj.route
+
+        # no route?
+        if not msg_obj.route: raise KomradeException('no route!')
+        
+        # what we working with?
         self.log(f'route() got incoming msg_d = {msg_d}, _msg = {_msg}, and route = {route}')
+        
+        # hard code the acceptable routes
         if route == 'forge_new_keys':
-            return self.forge_new_keys(**_msg)
+            return self.forge_new_keys(msg)
+        
+        # otherwise, hang up and try again
         return OPERATOR_INTERCEPT_MESSAGE
 
-    def forge_new_keys(self,**data):
+    def forge_new_keys(self,msg_obj):
+        data = msg_obj.msg
         self.log('about to make some new keys!',data)
         
         # get keys
