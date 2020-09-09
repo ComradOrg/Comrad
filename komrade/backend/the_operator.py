@@ -61,8 +61,11 @@ class TheOperator(Operator):
         # decode
         data_b64 = data_b64_str.encode()
         data = b64decode(data_b64)
-        msg_d = msg_encr_caller2caller_caller2phone_phone2phone = data
-        self.log('msg_encr_caller2caller_caller2phone_phone2phone incoming',msg_encr_caller2caller_caller2phone_phone2phone)
+
+        # unseal
+        msg_obj = self.unseal_msg(data)
+        self.got(f'Operator understood message: {msg_obj}')
+        stop
 
         # make top-level message object, addressed to me the operator
         from komrade.backend.messages import Message
