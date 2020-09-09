@@ -69,8 +69,9 @@ KEYMAKER_DEFAULT_KEYS_TO_SAVE_ON_CLIENT = [
                                    #'pubkey'  # as QR
                                    'privkey_encr',  
                                    'adminkey_encr',
-                                   'privkey_decr_encr',
-                                   'privkey_decr_decr',
+                                   'privkey_decr',
+                                   #'privkey_decr_encr',
+                                   #'privkey_decr_decr',
                                    'adminkey_decr_encr',
                                    'adminkey_decr_decr']
 
