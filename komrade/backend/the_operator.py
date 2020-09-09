@@ -107,7 +107,7 @@ class TheOperator(Operator):
     def forge_new_keys(self,msg_obj):
         data = msg_obj.msg
         self.log('about to make some new keys!',data)
-        return {'_please':'well_hello_to_you_too'}
+        # return {'_please':'well_hello_to_you_too'}
         
         # get keys
         forged_keys_plus_id = super().forge_new_keys(**data)

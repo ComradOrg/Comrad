@@ -113,7 +113,7 @@ class Message(Logger):
     def decrypt(self,recursive=True):
         # get callers
         caller,callee = self.get_callers()
-        self.log(f'attempting to decrypt msg {self.msg} from {caller} to {caller}')
+        self.log(f'attempting to decrypt msg {self.msg} from {caller} to {callee}')
         # decrypt msg
         decr_msg = self.decrypt_from_send(
             msg_encr=self.msg,
