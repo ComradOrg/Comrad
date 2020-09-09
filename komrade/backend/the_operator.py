@@ -64,7 +64,7 @@ class TheOperator(Operator):
 
         # unseal
         msg_obj = self.unseal_msg(data)
-        self.got(f'Operator understood message: {msg_obj}')
+        self.log(f'Operator understood message: {msg_obj}')
         stop
 
         # make top-level message object, addressed to me the operator
