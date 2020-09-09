@@ -45,10 +45,10 @@ class TheTelephone(Operator):
         # unseal
         resp_msg_obj = self.unseal_msg(resp_msg_b)
         # res =  resp_msg_b_unsealed
-        self.log('unsealed resp_msg_obj')
+        self.log('unsealed resp_msg_obj',resp_msg_obj)
 
         # ... pronto?
-        return self.pronto_pronto(resp_msg_obj)
+        # return self.pronto_pronto(resp_msg_obj)
 
 
     def ring_ring(self,msg):

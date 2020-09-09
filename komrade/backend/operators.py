@@ -168,7 +168,7 @@ class Operator(Keymaker):
         self.log('resp_msg_obj <-',resp_msg_obj)
 
         # decrypt?
-        resp_msg_obj.decrypt()
+        resp_msg_obj.decrypt(recursive=True)
         self.log('rung rung!',resp_msg_obj)
 
         # unseal msg
@@ -208,10 +208,7 @@ class Operator(Keymaker):
             self.log(f'passed msg onto {embedded_recipient}, got this response: {response} ...')
         # otherwise what are we doing?
         else: 
-            # in that case...
-            # ...
-            return msg_obj
-            # raise KomradeException('No route, no embedded msg. What to do?')
+            raise KomradeException('No route, no embedded msg. What to do?')
         
         # set this to be the new msg
         #msg_obj.msg = msg_obj.msg_d['_msg'] = response
