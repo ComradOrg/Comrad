@@ -92,7 +92,7 @@ class Operator(Keymaker):
         msg_obj = Message(msg_d,from_whom=self,to_whom=another)
         
         # encrypt!
-        msg_obj.encrypt()
+        # msg_obj.encrypt()
 
         return msg_obj
 
@@ -157,10 +157,8 @@ class Operator(Keymaker):
         msg_obj = self.compose_msg_to(msg, to_whom)
         self.log(f'ring ring! here is the message object I made, to send to {to_whom}: {msg_obj}')
         
-        # msg_encr = msg_obj.msg
         # encrypting
-        # msg_obj.encrypt()
-        # self.log(f'now I look like: {msg_obj}')
+        msg_obj.encrypt()
         # get pure encrypted binary, sealed
         #msg_sealed = self.seal_msg(msg_obj)
         
@@ -170,7 +168,7 @@ class Operator(Keymaker):
         self.log('resp_msg_obj <-',resp_msg_obj)
 
         # decrypt?
-        # resp_msg_obj.decrypt()
+        resp_msg_obj.decrypt()
 
         # unseal msg
         # resp_msg_obj = self.unseal_msg(resp_msg_b)

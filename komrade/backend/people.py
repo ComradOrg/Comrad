@@ -85,6 +85,7 @@ class Persona(Caller):
 
     def send_msg_to(self,msg,to_whom):
         msg = self.compose_msg_to(msg,to_whom)
+        msg.encrypt()
         
         {'_route':'deliver_to', 'msg':msg}
         
