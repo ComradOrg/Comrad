@@ -31,13 +31,13 @@ class Message(Logger):
         self._caller=caller
         self._callee=callee
         self.messenger=None
-        self.is_encrypted=False
+        self._is_encrypted=None
         # get operators straight away?
         if not self._caller or not self._callee:
             self.get_callers()
 
     @property
-    def meta_msg(self):
+    def data(self):
         md={}
         msg_d=self.msg_d
         while msg_d:
@@ -115,7 +115,7 @@ class Message(Logger):
             return False
         return True
 
-    def decrypt(self,recursive=True):
+    def decrypt(self,recursive=False):
         # get callers
         self.log(f'attempting to decrypt msg',self.msg) # {self.msg} from {caller} to {callee}')
 
@@ -137,20 +137,29 @@ class Message(Logger):
         self.log('got decr msg back:',decr_msg)
         
         # now, is the decrypted message itself a message?
-        if recursive and is_valid_msg_d(decr_msg):
+        if is_valid_msg_d(decr_msg):
             self.log('this is a valid msg in its own right!',decr_msg)
             # then ... make that, a message object and decrypt it too!
             self.msg = Message(decr_msg)
-            
-            # but do not decrypt it yet!
-            # self.msg.decrypt()
         
+        # for now this should be rolled out individually ,like an onion
+        # ring_ring on client -> pronto_pronto on server
+        # so we don't need or want to decrypt all at once
+        if recursive:
+            self.msg.decrypt()
+
         self.log(f'done decrypting! {self}')
         return decr_msg
 
+    @property
+    def is_encrypted(self):
+        if self.msg._is_encrypted is not None:
+            return self.msg._is_encrypted
+        return type(self.msg) == bytes
+
 
     def encrypt(self): # each child message should already be encrypted before coming to its parent message ,recursive=False):
-        if self.is_encrypted: return
+        if self._is_encrypted: return
         # self.log(f'attempting to encrypt msg {self.msg} from {self.caller} to {self.callee}')
         self.log(f'About to encrypt self.msg! I now look like v1: {self}')
         
@@ -168,7 +177,7 @@ class Message(Logger):
         self.msg = msg_encr
         self.msg_d['_msg'] = msg_encr
         self.log(f'Encrypted! I now look like v2: {self}')
-        self.is_encrypted = True
+        self._is_encrypted = True
 
 
 

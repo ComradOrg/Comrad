@@ -54,31 +54,29 @@ class TheOperator(Operator):
         return self.send(encr_msg_to_send)
 
     # ends the ring_ring() chain
-    def answer_phone(self,data_b):
+    def pronto_pronto(self,data_b):
         # route incoming call from the switchboard
         self.log('Hello, this is the Operator. You said: ',data_b)
 
         # unseal
-        msg_obj = self.unseal_msg(data_b)
+        msg_obj = self.unseal_msg(
+            data_b,
+            from_whom=self.phone
+        )
         self.log(f'Operator understood message: {msg_obj} {msg_obj.route}')
-        pause()
         
-        # self.log('my messages:',msg_obj.messages)
-
-        #self.log(f'Operator understood message route: {msg_obj.route}')
-        data = msg_obj.meta_msg
-        self.log('meta msg = all data?',dict_format(data,tab=6))
-
         # carry out message instructions
-        route_result = self.route(data,route=msg_obj.route)
+        resp_msg_obj = super().pronto_pronto(msg_obj) #,route=msg_obj.route)
         self.log('route_result <-',route_result)
 
-        # turn msg back around
-        msg_obj = self.compose_msg_to(route_result,self.phone)
-        self.log('returning msg:',msg_obj)
-
+        # should be encrypted already
+        assert resp_msg_obj.is_encrypted
+        # it should be pointing back from me to the telephone
+        assert resp_msg_obj.callee.pubkey==self.phone.pubkey
+        assert resp_msg_obj.caller.pubkey==self.pubkey
+        
         # send back down encrypted
-        msg_sealed = self.seal_msg(msg_obj.msg_d)
+        msg_sealed = self.seal_msg(resp_msg_obj.msg_d)
 
         # return back to phone and back down to chain
         return msg_sealed
@@ -93,20 +91,31 @@ class TheOperator(Operator):
         return encr_data_b
 
 
-    def route(self, data, route):
-        if not route: raise KomradeException('no route!')
+    # def route(self, msg_obj):
+    #     if not msg_obj.route:
+    #         # nothign explicitly requested yet?
+    #         # can we pass the msg on?
+    #         if msg_obj.has_embedded_msg:
+
+    #         self.route(msg_obj, route=msg_obj)
         
-        # what we working with?
-        self.log(f'route() got incoming msg data = {data} and route = {route}')
+    #     # self.log('my messages:',msg_obj.messages)
+
         
-        ## hard code the acceptable routes
-        if route == 'forge_new_keys':
-            return self.forge_new_keys(data)
-        elif route == 'does_username_exist':
-            return self.does_username_exist(data)
+
+    #     if not route: raise KomradeException('no route!')
         
-        # otherwise, hang up and try again
-        return OPERATOR_INTERCEPT_MESSAGE
+    #     # what we working with?
+    #     self.log(f'route() got incoming msg data = {data} and route = {route}')
+        
+    #     ## hard code the acceptable routes
+    #     if route == 'forge_new_keys':
+    #         return self.forge_new_keys(data)
+    #     elif route == 'does_username_exist':
+    #         return self.does_username_exist(data)
+        
+    #     # otherwise, hang up and try again
+    #     return OPERATOR_INTERCEPT_MESSAGE
 
 
 

@@ -10,6 +10,7 @@ from komrade.backend import *
 
 
 class Operator(Keymaker):
+    ROUTES = ['forge_new_keys','does_username_exist','hello_world']
     
     def __init__(self, name, passphrase=DEBUG_DEFAULT_PASSPHRASE, keychain = {}, path_crypt_keys=PATH_CRYPT_CA_KEYS, path_crypt_data=PATH_CRYPT_CA_DATA):
         super().__init__(name=name,passphrase=passphrase, keychain=keychain,
@@ -97,7 +98,9 @@ class Operator(Keymaker):
 
         return msg_b_encr
 
-    def unseal_msg(self,msg_b_encr):
+    def unseal_msg(self,msg_b_encr,from_whom=None,to_whom=None):
+        # default to assumption that I am the recipient
+        if not to_whom: to_whom=self
         # decrypt by omega
         msg_b = self.omega_key.decrypt(msg_b_encr)
         # unpackage from transmission
@@ -105,7 +108,7 @@ class Operator(Keymaker):
         # get message obj
         print('unsealed msg:',msg_d)
         from komrade.backend.messages import Message
-        msg_obj = Message(msg_d)
+        msg_obj = Message(msg_d,caller=from_whom,callee=to_whom)
         # decrypt msg
         msg_obj.decrypt()
         return msg_obj
@@ -115,6 +118,14 @@ class Operator(Keymaker):
         clsname=(type(self)).__name__
         keystr='+'.join(self.top_keys)
         return f'[{clsname}] {self.name} ({keystr})'
+
+    def locate_an_operator(self,name):
+        if name == OPERATOR_NAME:
+            return TheOperator()
+        if name == TELEPHONE_NAME:
+            return TheTelephone()
+        return Caller(name)
+
 
     def ring_ring(self,msg,to_whom,get_resp_from=None):
         # ring ring
@@ -150,4 +161,45 @@ class Operator(Keymaker):
         # resp_msg_obj = self.unseal_msg(resp_msg_b)
 
         return resp_msg_obj
+
+    def route(self,data,route):
+        if hasattr(self,route) and route in self.ROUTES:
+            func = getattr(self,route)
+            return func(**data)
+        
+    
+    def pronto_pronto(self, msg_obj):
+        self.log(f'''
+        << "Pronto?"
+        >> {msg_obj}
+        ''')
+
+        # decrypt
+        if msg_obj.is_encrypted:
+            msg_obj.decrypt()
+        # are there instructions for us?
+        if msg_obj.route:
+            # get result from routing
+            self.log(f'routing msg to self.{msg_obj.route}(**{msg_obj.data})')
+            response = self.route(msg_obj.data, route=msg_obj.route)
+            self.log('route response:',response)
+        # can we pass the buck on?
+        elif msg_obj.has_embedded_msg:
+            # whew, then we can make someone else take the phone
+            self.log(f'passing msg onto {msg_obj.callee} ...')
+            response = msg_obj.callee.pronto_pronto(msg_obj) 
+            self.log(f'passed msg onto {msg_obj.callee}, got this response: {response} ...')
+        # otherwise what are we doing?
+        else: 
+            raise KomradeException('No route, no embedded msg. What to do?')
+        
+        # set this to be the new msg
+        msg_obj.msg = self.msg_d['_msg'] = response
+
+        # re-encrypt
+        msg_obj.encrypt()
+        self.log(f're-encrypted: {self}')
+        
+        # passing... my self back?
+        return msg_obj
         
