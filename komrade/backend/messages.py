@@ -43,7 +43,7 @@ class Message(Logger):
             self.log(f'msg #{i+1}: {msg}')
             dict_merge(md,msg.msg_d)
         # self.log('returning meta')
-        return meta_msg
+        return md
 
     def __repr__(self):
         msg_d_str=dict_format(self.msg_d,tab=6)

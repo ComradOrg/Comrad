@@ -65,6 +65,7 @@ class TheOperator(Operator):
         # decrypt all of it!
         msg_obj.decrypt()
         self.log('I am now decrypted!',msg_obj)
+        self.log('my messages:',msg_obj.messages)
 
         #self.log(f'Operator understood message route: {msg_obj.route}')
         self.log('meta msg!',msg_obj.meta_msg)

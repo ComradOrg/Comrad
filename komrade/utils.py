@@ -52,11 +52,13 @@ class Logger(object):
         mytype = type(self).__name__
         caller = calframe[1][3]
         log(f'\n[{mytype}.{caller}()]',*x)
-        try:
-            pause()
-            clear_screen()
-        except KeyboardInterrupt:
-            exit()
+
+        if PAUSE_LOGGER:
+            try:
+                pause()
+                clear_screen()
+            except KeyboardInterrupt:
+                exit()
 
 import binascii,base64
 def isBase64(sb):
