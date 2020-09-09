@@ -123,6 +123,8 @@ class Message(Logger):
         self.msg_encr = self.msg
         self.msg = decr_msg
         self.msg_d['_msg'] = decr_msg
+
+        self.log('got decr msg back:',decr_msg)
         
         # now, is the decrypted message itself a message?
         if recursive and is_valid_msg_d(decr_msg):
