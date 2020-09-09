@@ -79,7 +79,7 @@ class Operator(Keymaker):
         # self.log('created msg obj:',msg_obj)
         
         # encrypt!
-        msg_obj.encrypt(recursive=False)
+        msg_obj.encrypt()
 
         return msg_obj
 
