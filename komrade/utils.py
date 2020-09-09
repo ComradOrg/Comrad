@@ -53,6 +53,7 @@ class Logger(object):
         caller = calframe[1][3]
         log(f'\n[{mytype}.{caller}()]',*x)
 
+        from komrade.constants import PAUSE_LOGGER
         if PAUSE_LOGGER:
             try:
                 pause()
