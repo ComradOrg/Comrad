@@ -280,11 +280,6 @@ class Keymaker(Logger):
         self.log('keys_saved =',keys_saved)
         self.log('keychain =',keychain)
 
-        # save pubkey as QR
-        if not 'pubkey' in keys_saved:
-            self.log('did not save pubkey in crypt, storing as QR...')
-            self.save_uri_as_qrcode(name=name, uri_id=uri_id, odir=PATH_QRCODES)
-
         # return keys!
         keys_returned = self.return_keychain(keychain,keys_to_return)
         return {'uri_id':uri_id,'_keychain':keys_returned}
@@ -332,6 +327,11 @@ class Keymaker(Logger):
                 uri = uri_id if name!='pubkey' else name
                 self.crypt_keys.set(uri,keychain[keyname],prefix=f'/{keyname}/')
                 keys_saved_d[keyname] = keychain[keyname]
+
+        # save pubkey as QR
+        if not 'pubkey' in keys_saved_d:
+            self.log('did not save pubkey in crypt, storing as QR...')
+            self.save_uri_as_qrcode(name=name, uri_id=uri_id, odir=PATH_QRCODES)
 
         return (uri_id,keys_saved_d,keychain)
 

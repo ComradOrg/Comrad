@@ -92,6 +92,7 @@ class Person(Caller):
 
         # get message back
         msg_obj = self.phone.ring_ring(msg_to_op)
+        phone_res = msg_obj.msg
         
         print('GOT BACK!!!',msg_obj)
 
@@ -102,14 +103,14 @@ class Person(Caller):
         self.log('got URI from Op:',uri_id)
         self.log('got returnd keys from Op:',returned_keys)
 
-        stop
-
         # better have the right keys
         assert set(KEYMAKER_DEFAULT_KEYS_TO_SAVE_ON_CLIENT) == set(returned_keys.keys())
 
         # now save these keys!
         saved_keys = self.save_keychain(name,returned_keys,uri_id=uri_id)
         self.log('saved keys!',saved_keys)
+
+        # save my qr?
 
         # better have the right keys
         # assert set(KEYMAKER_DEFAULT_KEYS_TO_SAVE) == set(saved_keys.keys())
