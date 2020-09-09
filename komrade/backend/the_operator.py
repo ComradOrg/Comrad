@@ -68,10 +68,11 @@ class TheOperator(Operator):
         # self.log('my messages:',msg_obj.messages)
 
         #self.log(f'Operator understood message route: {msg_obj.route}')
-        self.log('meta msg!',dict_format(msg_obj.meta_msg,tab=6))
+        data = msg_obj.meta_msg
+        self.log('meta msg = all data?',dict_format(data,tab=6))
 
         # carry out message instructions
-        route_result = self.route(msg_obj)
+        route_result = self.route(data,route=msg_obj.route)
         self.log('route_result <-',route_result)
 
         # turn msg back around
@@ -94,26 +95,17 @@ class TheOperator(Operator):
         return encr_data_b
 
 
-    def route(self, msg_obj):
-        # get route from msg
-        route = msg_obj.route
-
-        # no route?
-        if not msg_obj.route: raise KomradeException('no route!')
+    def route(self, data, route):
+        if not route: raise KomradeException('no route!')
         
         # what we working with?
-        self.log(f'route() got incoming msg = {msg_obj} and route = {route}')
+        self.log(f'route() got incoming msg data = {data} and route = {route}')
         
-        # pass on data
-        # data = msg_obj.msg
-        # if type(data)==dict and ROUTE_KEYNAME in data:
-        #     del data[ROUTE_KEYNAME]
-
         ## hard code the acceptable routes
         if route == 'forge_new_keys':
-            return self.forge_new_keys(msg_obj)
+            return self.forge_new_keys(data)
         elif route == 'does_username_exist':
-            return self.does_username_exist(msg_obj)
+            return self.does_username_exist(data)
         
         # otherwise, hang up and try again
         return OPERATOR_INTERCEPT_MESSAGE
@@ -134,7 +126,6 @@ class TheOperator(Operator):
         return forged_keys_plus_id
         
     def does_username_exist(self,data):
-        assert type(data)==dict and 'name' in data and data['name']
         # find pubkey?
         name=data.get('name')
 

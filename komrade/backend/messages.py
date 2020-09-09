@@ -43,6 +43,10 @@ class Message(Logger):
         while msg_d:
             for k,v in msg_d.items(): md[k]=v
             msg_d = msg_d.get('_msg',{})
+            if type(msg_d)!=dict: msg_d=None
+        if '_msg' in md and type(md['_msg']) == dict:
+            del md['_msg']
+        del md[ROUTE_KEYNAME]
         return md
 
     def __repr__(self):
