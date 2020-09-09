@@ -1,7 +1,7 @@
 import os,sys; sys.path.append(os.path.abspath(os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__),'..')),'..')))
 from komrade import *
 from komrade.backend import *
-from kormade.backend.callers import Caller
+from komrade.backend.callers import Caller
 
 
 def is_valid_msg_d(msg_d):
