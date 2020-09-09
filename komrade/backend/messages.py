@@ -72,7 +72,7 @@ class Message(Logger):
             return TheOperator()
         if name == TELEPHONE_NAME:
             return TheTelephone()
-        return from_whom(name)
+        return Caller(name)
 
     @property
     def from_whom(self):
