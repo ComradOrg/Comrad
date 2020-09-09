@@ -185,21 +185,24 @@ class Operator(Keymaker):
             self.log('route response:',response)
         # can we pass the buck on?
         elif msg_obj.has_embedded_msg:
+            embedded_msg = msg_obj.msg
+            embedded_recipient = embedded_msg.callee
             # whew, then we can make someone else take the phone
-            self.log(f'passing msg onto {msg_obj.callee} ...')
-            response = msg_obj.callee.pronto_pronto(msg_obj) 
-            self.log(f'passed msg onto {msg_obj.callee}, got this response: {response} ...')
+            self.log(f'passing msg onto {embedded_recipient} ...')
+            
+            response = embedded_recipient.pronto_pronto(embedded_msg) 
+            self.log(f'passed msg onto {embedded_recipient}, got this response: {response} ...')
         # otherwise what are we doing?
         else: 
             raise KomradeException('No route, no embedded msg. What to do?')
         
         # set this to be the new msg
-        msg_obj.msg = self.msg_d['_msg'] = response
+        msg_obj.msg = msg_obj.msg_d['_msg'] = response
 
         # re-encrypt
         msg_obj.encrypt()
-        self.log(f're-encrypted: {self}')
+        self.log(f're-encrypted: {msg_obj}')
         
-        # passing... my self back?
+        # passing msg back the chain
         return msg_obj
         
