@@ -252,15 +252,20 @@ class Message(Logger):
     @property
     def messages(self):
         # move through msgs recursively
-        msgs = [self] if not self.has_embedded_msg else [self] + self.embedded_msg.messages
-        return msgs
+        yield self
+        if self.has_embedded_msg:
+            yield self.messages
 
     @property
     def route(self):
-        for msg in self.messages:
-            if msg._route: return msg._route 
-
-
+        if type(self.msg)==dict:
+            rte=self.msg.get(ROUTE_KEYNAME)
+            if rte:
+                return rte
+        if self.has_embedded_msg:
+            return self.msg.route
+        return None
+        
 
 
     
