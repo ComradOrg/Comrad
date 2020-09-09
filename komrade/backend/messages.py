@@ -49,6 +49,11 @@ class Message(Logger):
         del md[ROUTE_KEYNAME]
         return md
 
+    def mark_return_to_sender(self):
+        self._caller,self._callee = self._callee,self._caller
+        self.msg_d['_from_pub'],self.msg_d['_to_pub'] = self.msg_d['_to_pub'],self.msg_d['_from_pub'],
+        self.msg_d['_from_name'],self.msg_d['_to_name'] = self.msg_d['_to_name'],self.msg_d['_from_name'],
+
     def __repr__(self):
         msg_d_str=dict_format(self.msg_d,tab=6)
         return f"""

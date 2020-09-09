@@ -199,10 +199,13 @@ class Operator(Keymaker):
         msg_obj.msg = msg_obj.msg_d['_msg'] = response
         self.log('what msg_obj looks like now:',msg_obj)
 
+        # invert who's sending to whom!
+        msg_obj.mark_return_to_sender()
+
         # re-encrypt
         msg_obj.encrypt()
         self.log(f're-encrypted: {msg_obj}')
         
-        # passing msg back the chain
+        # pass msg back the chain
         return msg_obj
         
