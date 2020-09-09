@@ -96,7 +96,7 @@ if __name__=='__main__':
     marx = Persona('marx')
     elon = Persona('elon')
 
-    # marx.register()
+    marx.register()
     # elon.register()
     # person.register()
     # print(person.pubkey)
