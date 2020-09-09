@@ -220,9 +220,9 @@ class Operator(Keymaker):
         self.log('resp_msg_obj',resp_msg_obj)
         
         # re-encrypt
-        msg_obj.encrypt()
-        self.log(f're-encrypted: {msg_obj}')
+        resp_msg_obj.encrypt()
+        self.log(f're-encrypted: {resp_msg_obj}')
         
         # pass msg back the chain
-        return msg_obj
+        return resp_msg_obj
         
