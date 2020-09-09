@@ -101,6 +101,18 @@ class Operator(Keymaker):
         msg_obj.decrypt()
         return msg_obj
 
+    # def package_msg_to(self,msg,another):
+    #     # otherwise send msg
+    #     return self.compose_msg_to(msg,another)
+
+    
+    # def unpackage_msg_from(self,msg_encr_b,another):
+    #     return self.decrypt_from_send(
+    #         msg_encr_b,
+    #         from_pubkey=another.pubkey,
+    #         to_privkey=self.privkey
+    #     )
+
     
     # self = caller
     # towhom = phone

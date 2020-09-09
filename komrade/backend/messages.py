@@ -87,7 +87,7 @@ class Message(Logger):
         else:
             self._caller = alleged_caller
             self._callee = alleged_callee
-        return (self._caller,self._callee)
+        return (self._caller,alleged_caller)
 
     def caller_records_match(self,alleged_caller,alleged_callee):
         alleged_caller_name = self.from_name
@@ -115,9 +115,10 @@ class Message(Logger):
         caller,callee = self.get_callers()
         self.log(f'attempting to decrypt msg {self.msg} from {caller} to {caller}')
         # decrypt msg
-        decr_msg = caller.unpackage_msg_from(
-            self.msg,
-            callee
+        decr_msg = self.decrypt_from_send(
+            msg_encr=self.msg,
+            from_pubkey=caller.pubkey,
+            to_privkey=callee.privkey
         )
         self.msg_encr = self.msg
         self.msg = decr_msg
@@ -241,26 +242,7 @@ class Message(Logger):
 
 
 
-    def package_msg_to(self,msg,another):
-        # otherwise send msg
-        msg_encr = self.encrypt_to_send(msg, self.privkey, another.pubkey)
-        msg_d = {
-            '_from_pub':self.pubkey,
-            '_from_name':self.name,
-            '_to_pub':another.pubkey,
-            '_to_name':another.name,
-            '_msg':msg_encr,
-        }
-        self.log(f'I am a {type(self)} packaging a message to {another}')
-        return msg_d
-
     
-    def unpackage_msg_from(self,msg_encr_b,another):
-        return self.decrypt_from_send(
-            msg_encr_b,
-            from_pubkey=another.pubkey,
-            to_privkey=self.privkey
-        )
 
     ## msg properties
     @property
