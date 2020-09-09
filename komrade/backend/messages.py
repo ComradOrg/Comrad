@@ -1,8 +1,6 @@
 import os,sys; sys.path.append(os.path.abspath(os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__),'..')),'..')))
 from komrade import *
 from komrade.backend import *
-from komrade.backend.callers import Caller
-
 
 def is_valid_msg_d(msg_d):
     if not type(msg_d)==dict: return False
@@ -73,6 +71,7 @@ class Message(Logger):
             return TheOperator()
         if name == TELEPHONE_NAME:
             return TheTelephone()
+        from komrade.backend.Caller import Caller
         return Caller(name)
 
     @property
