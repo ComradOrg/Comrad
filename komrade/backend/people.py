@@ -7,20 +7,20 @@ class Persona(Caller):
 
     def __init__(self, name, passphrase=DEBUG_DEFAULT_PASSPHRASE):
         super().__init__(name=name,passphrase=passphrase)
-        self.boot(create=False)
+    #     self.boot(create=False)
 
-    def boot(self,create=False):
-        # Do I already have my keys?
-        # yes? -- login
+    # def boot(self,create=False):
+    #     # Do I already have my keys?
+    #     # yes? -- login
 
-        keys = self.keychain()
-        if keys.get('pubkey') and keys.get('privkey'):
-            self.log('booted!')
-            return True
+    #     keys = self.keychain()
+    #     if keys.get('pubkey') and keys.get('privkey'):
+    #         self.log('booted!')
+    #         return True
         
-        # If not, forge them -- only once!
-        if not have_keys and create:
-            self.get_new_keys()
+    #     # If not, forge them -- only once!
+    #     if not have_keys and create:
+    #         self.get_new_keys()
 
 
     def exists_locally_as_contact(self):
@@ -30,9 +30,10 @@ class Persona(Caller):
         return self.pubkey and self.privkey
 
     def exists_on_server(self):
-        answer = self.phone.ring_ring(
-            msg={'_please':'does_username_exist','name':self.name}
-        )
+        return self.ring_ring({
+            '_route':'does_username_exist',
+            'name':self.name
+        })
 
 
     # login?
@@ -52,7 +53,7 @@ class Persona(Caller):
 
         # form request
         msg_to_op = {
-            '_please':'forge_new_keys',
+            '_route':'forge_new_keys',
             'name':name,
             'passphrase':hashish(passphrase.encode())
         }
@@ -85,7 +86,7 @@ class Persona(Caller):
     def send_msg_to(self,msg,to_whom):
         msg = self.compose_msg_to(msg,to_whom)
         
-        {'_please':'deliver_to', 'msg':msg}
+        {'_route':'deliver_to', 'msg':msg}
         
         return self.ring_ring(msg)
 
@@ -96,12 +97,12 @@ if __name__=='__main__':
     marx = Persona('marx')
     elon = Persona('elon')
 
-    marx.register()
+    # marx.register()
     # elon.register()
     # person.register()
     # print(person.pubkey)
 
     # elon.send_msg_to('youre dumb',marx)
-    #Caller('elon').ring_ring({'_please':'say_hello','_msg':'my dumb message to operator'})
+    #Caller('elon').ring_ring({'_route':'say_hello','_msg':'my dumb message to operator'})
 
     print(marx.exists_on_server())

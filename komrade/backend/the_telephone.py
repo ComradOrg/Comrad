@@ -18,8 +18,11 @@ class TheTelephone(Operator):
         return self.telephone_keychain.get('pubkey')
 
     def send_and_receive(self,msg_b):
+        # seal for transport
+        msg_b_sealed = self.seal_msg(msg_b)
+
         # prepare for transmission across net
-        msg_b64 = b64encode(msg_b)
+        msg_b64 = b64encode(msg_b_sealed)
         msg_b64_str = msg_b64.decode()
         msg_b64_str_esc = msg_b64_str.replace('/','_')
         self.log('msg_b64_str_esc',type(msg_b64_str_esc),msg_b64_str_esc)
@@ -38,7 +41,10 @@ class TheTelephone(Operator):
 
         resp_msg_b64 = resp_msg_b64_str.encode()
         resp_msg_b = b64decode(resp_msg_b64)
-        return resp_msg_b
+
+        # unseal
+        resp_msg_b_unsealed = self.unseal_msg(resp_msg_b)
+        return resp_msg_b_unsealed
 
 
     def ring_ring(self,msg):
@@ -58,7 +64,7 @@ def test_call():
     # caller.boot(create=True)
     # print(caller.keychain())
     # phone = TheTelephone()
-    # req_json = {'_please':'forge_new_keys','name':name, 'pubkey_is_public':pubkey_is_public}}
+    # req_json = {'_route':'forge_new_keys','name':name, 'pubkey_is_public':pubkey_is_public}}
     # req_json_s = jsonify(req_json)
     # res = phone.req({'forge_new_keys':{'name':'marx', 'pubkey_is_public':True}})
     # print(res)

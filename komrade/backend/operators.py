@@ -72,20 +72,22 @@ class Operator(Keymaker):
             '_to_name':another.name,
             '_msg':msg,
         }
-        self.log(f'I am a {type(self)} packaging a message to {another}: {msg_d}')
+        # self.log(f'I am {self} packaging a message to {another}: {msg_d}')
         
         from komrade.backend.messages import Message
         msg_obj = Message(msg_d,caller=self,callee=another)
-        self.log('created msg obj:',msg_obj)
+        # self.log('created msg obj:',msg_obj)
+        
+        
 
         return msg_obj
 
     def seal_msg(self,msg_obj):
         # make sure encrypted
-        msg_obj.encrypt()
+        # msg_obj.encrypt()
         # return pure binary version of self's entire msg_d
         msg_b = package_for_transmission(msg_obj.msg_d)
-        # encrypte by omega key
+        # encrypt by omega key
         msg_b_encr = self.omega_key.encrypt(msg_b)
         return msg_b_encr
 
@@ -99,23 +101,39 @@ class Operator(Keymaker):
         from komrade.backend.messages import Message
         msg_obj = Message(msg_d)
         # decrypt msg
-        msg_obj.decrypt()
+        # msg_obj.decrypt()
         return msg_obj
 
+
+    def __repr__(self):
+        clsname=(type(self)).__name__
+        keystr='+'.join(self.top_keys)
+        return f'[{clsname}] {self.name} ({keystr})'
+
     def ring_ring(self,msg,to_whom,get_resp_from=None):
+        # ring ring
+        self.log(f'ring ring! I, {self}, have been told to pass a message {msg} onto {to_whom}, by way of function {get_resp_from}')
+        
         # get encr msg obj
         msg_obj = self.compose_msg_to(msg, to_whom)
-        # pass onto next person
-
+        self.log(f'here is the message object I made, to send to {to_whom}: {msg_obj}')
+        
+        # encrypting
+        msg_obj.encrypt()
+        # self.log(f'now I look like: {msg_obj}')
         # get pure encrypted binary, sealed
-        msg_sealed = self.seal_msg(msg_obj)
+        #msg_sealed = self.seal_msg(msg_obj)
         
         # pass onto next person...
         if not get_resp_from: get_resp_from=to_whom.ring_ring
-        resp_msg_b = get_resp_from(msg_sealed)
+        resp_msg_obj = get_resp_from(msg_obj)
+        self.log('resp_msg_obj <-',resp_msg_obj)
+
+        # decrypt?
+        resp_msg_obj.decrypt()
 
         # unseal msg
-        resp_msg_obj = self.unseal_msg(resp_msg_b)
+        # resp_msg_obj = self.unseal_msg(resp_msg_b)
 
         return resp_msg_obj
         

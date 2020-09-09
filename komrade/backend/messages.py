@@ -40,19 +40,12 @@ class Message(Logger):
     def __repr__(self):
         return f"""
     
-    <MESSAGE>
-        self.caller={self.callee}
-        self.from_name={self.from_name}
-        self.from_pubkey={self.from_pubkey}
-        
-        self.callee={self.caller}
-        self.to_name={self.to_name}
-        self.to_pubkey={self.to_pubkey}
-        
+    <MSG>
+        self.caller={self.caller}
+        self.callee={self.callee}
         self.msg={self.msg}
-        
-        self._route={self.route}
-    </MESSAGE>
+        self.route={self.route}
+    </MSG>
 
         """
 
@@ -110,7 +103,7 @@ class Message(Logger):
             return False
         return True
 
-    def decrypt(self,recursive=True):
+    def decrypt(self,recursive=False):
         # get callers
         caller,callee = self.get_callers()
         self.log(f'attempting to decrypt msg {self.msg} from {caller} to {callee}')
@@ -134,7 +127,7 @@ class Message(Logger):
         return decr_msg
 
 
-    def encrypt(self,recursive=True):
+    def encrypt(self,recursive=False):
         """
         Assuming that a recursive message looks like this:
         <MESSAGE>
@@ -163,7 +156,7 @@ class Message(Logger):
         </MESSAGE>
         """
         if self.is_encrypted: return
-        self.log(f'attempting to encrypt msg {self.msg} from {self.caller} to {self.callee}')
+        # self.log(f'attempting to encrypt msg {self.msg} from {self.caller} to {self.callee}')
         self.log(f'I now look like v1: {self}')
 
         if not self.has_embedded_msg:
@@ -180,7 +173,7 @@ class Message(Logger):
             self.caller.privkey,
             self.callee.pubkey
         )
-        self.log('created an encrypted msg:',encr_msg)
+        # self.log('created an encrypted msg:',encr_msg)
         self.msg_decr = self.msg
         self.msg = encr_msg
         self.msg_d['_msg'] = encr_msg
@@ -193,28 +186,21 @@ class Message(Logger):
 
     ## creating/encrypting/rolling up messages
     def encrypt_to_send(self,msg_json,from_privkey,to_pubkey):
-        self.log('msg_json',msg_json)
-        self.log('from_privkey',from_privkey)
-        self.log('to_pubkey',to_pubkey)
-        
-        
-        
         if not msg_json or not from_privkey or not to_pubkey:
-            self.log('not enough info!',msg_json,from_privkey,to_pubkey)
-            whattttttt
-            return b''
-        self.log('packing for transmission: msg_json',type(msg_json),msg_json)
+            raise KomradeException(f'not enough info!')
+
+        # self.log('packing for transmission: msg_json',type(msg_json),msg_json)
         msg_b = package_for_transmission(msg_json)
-        self.log('packing for transmission: msg_b',type(msg_b),msg_b)
+        # self.log('packing for transmission: msg_b',type(msg_b),msg_b)
         # try:
-        self.log('from privkey =',from_privkey)
-        self.log('to pubkey =',to_pubkey)
+        # self.log('from privkey =',from_privkey)
+        # self.log('to pubkey =',to_pubkey)
 
         msg_encr = SMessage(
             from_privkey,
             to_pubkey,
         ).wrap(msg_b)
-        self.log('msg_encr',msg_encr)
+        # self.log('msg_encr',msg_encr)
         # stop
         return msg_encr
         # except ThemisError as e:
@@ -281,7 +267,7 @@ def test_msg():
     print('?keychains?')
     pprint(phone.pubkey)
     
-    msg={'_please':'forge_new_keys'}
+    msg={'_route':'forge_new_keys'}
 
 
     resp_msp_obj = phone.ring_ring(msg)

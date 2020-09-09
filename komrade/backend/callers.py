@@ -12,6 +12,7 @@ class Caller(Operator):
     """
 
     def ring_ring(self,msg):
+        # stop
         return super().ring_ring(
             msg,
             to_whom=self.op,

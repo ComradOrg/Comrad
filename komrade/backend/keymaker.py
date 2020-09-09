@@ -107,7 +107,14 @@ class Keymaker(Logger):
         raise KomradeException(f'I don\'t know my public key!\n{self}\n{self._keychain}')
         #return None
 
-        
+
+    @property
+    def keys(self):
+        return sorted(list(self.keychain().keys()))
+    
+    @property
+    def top_keys(self):
+        return [k for k in self.keys if k.count('_')==0]
 
     def keychain(self,look_for=KEYMAKER_DEFAULT_ALL_KEY_NAMES):
         # load existing keychain
@@ -158,7 +165,6 @@ class Keymaker(Logger):
     def load_qr(self,name):
         # try to load?
         contact_fnfn = os.path.join(PATH_QRCODES,name+'.png')
-        print(contact_fnfn,os.path.exists(contact_fnfn))
         if not os.path.exists(contact_fnfn): return ''
         # with open(contact_fnfn,'rb') as f: dat=f.read()
         from pyzbar.pyzbar import decode
