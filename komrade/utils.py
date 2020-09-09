@@ -79,7 +79,7 @@ def dejsonize(dict):
 def unpackage_from_transmission(data_json_b64):
     # print('unpackage_from_transmission.data_json_b64 =',data_json_b64)
     data_json_b = b64decode(data_json_b64)
-    print('unpackage_from_transmission.data_json_bstr =',data_json_b)
+    # print('unpackage_from_transmission.data_json_bstr =',data_json_b)
     
     data_json = pickle.loads(data_json_b)
     # print('unpackage_from_transmission.data_json =',data_json)

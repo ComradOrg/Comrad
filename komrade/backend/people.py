@@ -102,4 +102,6 @@ if __name__=='__main__':
     # print(person.pubkey)
 
     # elon.send_msg_to('youre dumb',marx)
-    Caller('elon').ring_ring({'_please':'say_hello','_msg':'my dumb message to operator'})
+    #Caller('elon').ring_ring({'_please':'say_hello','_msg':'my dumb message to operator'})
+
+    print(marx.exists_on_server())
