@@ -95,6 +95,7 @@ class Operator(Keymaker):
         # unpackage from transmission
         msg_d = unpackage_from_transmission(msg_b)
         # get message obj
+        from komrade.backend.messages import Message
         msg_obj = Message(msg_d)
         # decrypt msg
         msg_obj.decrypt()

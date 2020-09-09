@@ -293,21 +293,11 @@ def test_msg():
     pprint(phone.pubkey)
     
     msg={'_please':'hello_world'}
-    
-    msg_d = {
-        '_from_pub':phone.pubkey,
-        '_from_name':phone.name,
-        '_to_pub':op.pubkey,
-        '_to_name':op.name,
-        '_msg':msg,
-    }
 
-    # msg_obj = Message(msg_d,caller=phone,callee=op)
-    # msg_obj.encrypt()
-
-    # print(msg_obj)
-
-    # print('\n\n',msg_obj.sealed)
 
     resp_msp_obj = phone.ring_ring(msg)
     print(resp_msp_obj) 
+
+
+if __name__ == '__main__':
+    test_msg()
