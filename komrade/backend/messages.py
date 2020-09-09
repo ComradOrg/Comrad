@@ -41,17 +41,17 @@ class Message(Logger):
         return f"""
     
     <MESSAGE>
-        self._caller={self.callee}
+        self.caller={self.callee}
         self.from_name={self.from_name}
         self.from_pubkey={self.from_pubkey}
         
-        self._callee={self.caller}
+        self.callee={self.caller}
         self.to_name={self.to_name}
         self.to_pubkey={self.to_pubkey}
         
         self.msg={self.msg}
         
-        self._route={self._route}
+        self._route={self.route}
     </MESSAGE>
 
         """

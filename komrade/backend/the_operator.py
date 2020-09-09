@@ -106,7 +106,7 @@ class TheOperator(Operator):
         if route == 'forge_new_keys':
             return self.forge_new_keys(data)
         elif route == 'does_user_exist':
-            return self.does_user_exist(data)
+            return self.does_username_exist(data)
         
         # otherwise, hang up and try again
         return OPERATOR_INTERCEPT_MESSAGE
@@ -126,7 +126,7 @@ class TheOperator(Operator):
         # return to Telephone/Caller
         return forged_keys_plus_id
         
-    def does_user_exist(self,data):
+    def does_username_exist(self,data):
         assert type(data)==dict and 'name' in data and data['name']
         # find pubkey?
         return self.crypt_keys.get(data['name'],prefix='/pubkey/')
