@@ -114,15 +114,16 @@ class Operator(Keymaker):
             return b''
 
         # otherwise send msg
-        msg = {
+        msg_encr = self.encrypt_to_send(msg, self.privkey, another.pubkey)
+        msg_d = {
             '_from_pub':self.pubkey,
             '_from_name':self.name,
             '_to_pub':another.pubkey,
             '_to_name':another.name,
-            '_msg':msg,
+            '_msg':msg_encr,
         }
         self.log(f'I am a {type(self)} packaging a message to {another}')
-        return self.encrypt_to_send(msg, self.privkey, another.pubkey)
+        return msg_d
 
     
     def unpackage_msg_from(self,msg_encr_b,another):
