@@ -36,12 +36,9 @@ class TheTelephone(Operator):
             return
         
         # response back from Operator!
-        resp_msg_b64_str = phonecall.text
-        self.log('resp_msg_b64_str',resp_msg_b64_str)
-
-        resp_msg_b64 = resp_msg_b64_str.encode()
-        resp_msg_b = b64decode(resp_msg_b64)
-
+        resp_msg_b = phonecall.text
+        self.log('resp_msg_b',resp_msg_b)
+        
         # unseal
         resp_msg_b_unsealed = self.unseal_msg(resp_msg_b)
         return resp_msg_b_unsealed
