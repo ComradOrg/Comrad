@@ -168,7 +168,7 @@ class Operator(Keymaker):
         self.log('resp_msg_obj <-',resp_msg_obj)
 
         # decrypt?
-        resp_msg_obj.decrypt(recursive=True)
+        resp_msg_obj.decrypt()
         self.log('rung rung!',resp_msg_obj)
 
         # unseal msg
@@ -184,6 +184,7 @@ class Operator(Keymaker):
     
     def pronto_pronto(self, msg_obj):
         self.log(f'''
+        pronto pronto!
         >> {msg_obj}
         ''')
 

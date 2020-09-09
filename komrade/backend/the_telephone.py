@@ -43,8 +43,12 @@ class TheTelephone(Operator):
         resp_msg_b = b64decode(resp_msg_b64)
 
         # unseal
-        resp_msg_b_unsealed = self.unseal_msg(resp_msg_b)
-        return resp_msg_b_unsealed
+        resp_msg_obj = self.unseal_msg(resp_msg_b)
+        # res =  resp_msg_b_unsealed
+        self.log('unsealed resp_msg_obj')
+
+        # ... pronto?
+        return self.pronto_pronto(resp_msg_obj)
 
 
     def ring_ring(self,msg):
