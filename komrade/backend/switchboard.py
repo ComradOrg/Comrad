@@ -35,8 +35,8 @@ class TheSwitchboard(FlaskView, Logger):
         return str_msg_from_op
 
 def run_forever(port='8080'):
-    global OPERATOR,TELEPHONE,TELEPHONE_KEYCHAIN,OPERATOR_KEYCHAIN
-    OPERATOR_KEYCHAIN,TELEPHONE_KEYCHAIN=connect_phonelines()
+    global OPERATOR,TELEPHONE,TELEPHONE_KEYCHAIN,OPERATOR_KEYCHAIN,OMEGA_KEY
+    OPERATOR_KEYCHAIN,TELEPHONE_KEYCHAIN,OMEGA_KEY=connect_phonelines()
     TELEPHONE = TheTelephone()
     OPERATOR = TheOperator()
     app = Flask(__name__)
