@@ -199,9 +199,14 @@ class Message(Logger):
     @property
     def messages(self):
         # move through msgs recursively
-        yield self
-        if self.has_embedded_msg:
-            yield self.messages
+        def _msgs():
+            msg=self
+            while True:
+                yield msg
+                if msg.has_embedded_msg:
+                    msg=msg.msg
+                break
+        return list(_msgs())
 
     @property
     def route(self):
