@@ -148,8 +148,8 @@ class Message(Logger):
         ).wrap(msg_b)
 
         self.msg_decr = self.msg
-        self.msg = encr_msg
-        self.msg_d['_msg'] = encr_msg
+        self.msg = msg_encr
+        self.msg_d['_msg'] = msg_encr
         self.log(f'Encrypted! I now look like v2: {self}')
         self.is_encrypted = True
 
