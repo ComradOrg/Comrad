@@ -105,7 +105,7 @@ class TheOperator(Operator):
         ## hard code the acceptable routes
         if route == 'forge_new_keys':
             return self.forge_new_keys(data)
-        elif route == 'does_user_exist':
+        elif route == 'does_username_exist':
             return self.does_username_exist(data)
         
         # otherwise, hang up and try again
