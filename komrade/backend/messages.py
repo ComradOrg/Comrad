@@ -88,10 +88,10 @@ class Message(Logger):
         alleged_callee_name = self.to_name
         alleged_callee_pubkey = self.to_pubkey
 
-        self.log('caller names:',alleged_caller.name, alleged_caller_name)
-        self.log('caller pubs:',alleged_caller.pubkey, alleged_caller_pubkey)
-        self.log('callee names:',alleged_callee.name, alleged_callee_name)
-        self.log('callee pubs:',alleged_callee.pubkey, alleged_callee_pubkey)
+        # self.log('caller names:',alleged_caller.name, alleged_caller_name)
+        # self.log('caller pubs:',alleged_caller.pubkey, alleged_caller_pubkey)
+        # self.log('callee names:',alleged_callee.name, alleged_callee_name)
+        # self.log('callee pubs:',alleged_callee.pubkey, alleged_callee_pubkey)
 
         if alleged_callee.name != alleged_callee_name:
             return False
