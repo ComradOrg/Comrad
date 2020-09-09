@@ -14,19 +14,19 @@ class Operator(Keymaker):
     def __init__(self, name, passphrase=DEBUG_DEFAULT_PASSPHRASE, keychain = {}, path_crypt_keys=PATH_CRYPT_CA_KEYS, path_crypt_data=PATH_CRYPT_CA_DATA):
         super().__init__(name=name,passphrase=passphrase, keychain=keychain,
                          path_crypt_keys=path_crypt_keys, path_crypt_data=path_crypt_data)
-        self.boot(create=False)
+        # self.boot(create=False)
 
         # connect phonelines?
         from komrade.backend.phonelines import connect_phonelines
         self.operator_keychain,self.telephone_keychain,self.omega_key = connect_phonelines()
 
-    def boot(self,create=False):
-         # Do I have my keys?
-        have_keys = self.exists()
+    # def boot(self,create=False):
+    #      # Do I have my keys?
+    #     have_keys = self.exists()
         
-        # If not, forge them -- only once!
-        if not have_keys and create:
-            self.get_new_keys()
+    #     # If not, forge them -- only once!
+    #     if not have_keys and create:
+    #         self.get_new_keys()
         
     
     @property
@@ -102,22 +102,6 @@ class Operator(Keymaker):
         msg_obj.decrypt()
         return msg_obj
 
-    # def package_msg_to(self,msg,another):
-    #     # otherwise send msg
-    #     return self.compose_msg_to(msg,another)
-
-    
-    # def unpackage_msg_from(self,msg_encr_b,another):
-    #     return self.decrypt_from_send(
-    #         msg_encr_b,
-    #         from_pubkey=another.pubkey,
-    #         to_privkey=self.privkey
-    #     )
-
-    
-    # self = caller
-    # towhom = phone
-    # bywayof = op
     def ring_ring(self,msg,to_whom,get_resp_from=None):
         # get encr msg obj
         msg_obj = self.compose_msg_to(msg, to_whom)

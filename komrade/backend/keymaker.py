@@ -8,7 +8,6 @@ class KomradeKey(ABC):
     def encrypt(self,msg,**kwargs): pass
     @abstractmethod
     def decrypt(self,msg,**kwargs): pass
-
     @abstractmethod
     def data(self): pass
 
@@ -142,7 +141,18 @@ class Keymaker(Logger):
     def privkey(self): return self.keychain().get('privkey')
     @property
     def adminkey(self): return self.keychain().get('adminkey')
-
+    @property
+    def pubkey_encr(self): return self.keychain().get('pubkey_encr')
+    @property
+    def privkey_encr(self): return self.keychain().get('privkey_encr')
+    @property
+    def adminkey_encr(self): return self.keychain().get('adminkey_encr')
+    @property
+    def pubkey_decr(self): return self.keychain().get('pubkey_decr')
+    @property
+    def privkey_decr(self): return self.keychain().get('privkey_decr')
+    @property
+    def adminkey_decr(self): return self.keychain().get('adminkey_decr')
 
 
     def load_qr(self,name):
@@ -185,8 +195,11 @@ class Keymaker(Logger):
             self._crypt_data = Crypt(fn=self.path_crypt_data)
         return self._crypt_data
 
-    def exists(self):
-        return self.crypt_keys.exists(self.name,prefix='/pubkey_encr/') or self.crypt_keys.exists(self.name,prefix='/pubkey_decr/') or self.crypt_keys.exists(self.name,prefix='/pubkey/')
+    def can_log_in(self):
+        if not self.pubkey: return False
+        if not (self.privkey or self.privkey_encr): return False
+        return True
+    
 
     ### CREATING KEYS
     
