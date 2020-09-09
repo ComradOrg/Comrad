@@ -201,6 +201,7 @@ class Operator(Keymaker):
             self.log(f'passed msg onto {embedded_recipient}, got this response: {response} ...')
         # otherwise what are we doing?
         else: 
+            return msg_obj
             raise KomradeException('No route, no embedded msg. What to do?')
         
         # set this to be the new msg
