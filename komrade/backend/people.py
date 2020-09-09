@@ -30,10 +30,11 @@ class Persona(Caller):
         return self.pubkey and self.privkey
 
     def exists_on_server(self):
-        return self.ring_ring({
+        answer = self.ring_ring({
             '_route':'does_username_exist',
             'name':self.name
         })
+        self.log('answer??',answer)
 
 
     # login?

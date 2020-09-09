@@ -169,6 +169,7 @@ class Operator(Keymaker):
 
         # decrypt?
         resp_msg_obj.decrypt()
+        self.log('rung rung!',resp_msg_obj)
 
         # unseal msg
         # resp_msg_obj = self.unseal_msg(resp_msg_b)
