@@ -80,7 +80,7 @@ class TheOperator(Operator):
         self.log('returning msg:',msg_obj)
 
         # send back down encrypted
-        msg_sealed = self.seal_msg(msg_obj)
+        msg_sealed = self.seal_msg(msg_obj.msg_d)
 
         # return back to phone and back down to chain
         return msg_sealed
