@@ -67,7 +67,8 @@ class TheOperator(Operator):
         self.log('I am now decrypted!',msg_obj)
 
         #self.log(f'Operator understood message route: {msg_obj.route}')
-        
+        self.log('meta msg!',msg_obj.meta_msg)
+
         # carry out message instructions
         route_result = self.route(msg_obj)
         self.log('route_result <-',route_result)
@@ -121,8 +122,8 @@ class TheOperator(Operator):
 
 
     ### ROUTES
-    def forge_new_keys(self,data):
-        self.log('about to make some new keys!',data)
+    def forge_new_keys(self,msg_obj):
+        self.log('about to make some new keys!',msg_obj.msg_d)
         # return {'_route':'well_hello_to_you_too'}
         
         # get keys

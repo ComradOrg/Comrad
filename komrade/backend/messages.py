@@ -36,6 +36,12 @@ class Message(Logger):
         if not self._caller or not self._callee:
             self.get_callers()
 
+    @property
+    def meta_msg(self):
+        md={}
+        for msg in reversed(self.messages):
+            dict_merge(md,msg.msg_d)
+        return meta_msg
 
     def __repr__(self):
         msg_d_str=dict_format(self.msg_d,tab=6)
