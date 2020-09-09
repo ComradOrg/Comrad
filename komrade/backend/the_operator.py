@@ -60,7 +60,7 @@ class TheOperator(Operator):
 
         # unseal
         msg_obj = self.unseal_msg(data_b)
-        self.log(f'Operator understood message: {msg_obj}')
+        self.log(f'Operator understood message: {msg_obj} {msg_obj.route}')
         pause()
         
         # self.log('my messages:',msg_obj.messages)
