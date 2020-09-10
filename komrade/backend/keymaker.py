@@ -346,7 +346,7 @@ Keymaker ({self}) is forging new keys for {name}
         
         self.log(f'''
 Saved URI(=pubkey_b64) as a QR code: {ofnfn}
-''')
+''',do_pause=False)
         self.print_qr(uri_id)
 
     def save_keychain(self,name,keychain,keys_to_save=None,uri_id=None):
