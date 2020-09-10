@@ -41,7 +41,7 @@ class Message(Logger):
 <MSG>
     self.from_whom={self.from_whom}
     self.to_whom={self.to_whom}
-    self.msg_d={msg_d_str}
+    self.msg={self.msg}
 </MSG>
         """
 
