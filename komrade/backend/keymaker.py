@@ -10,6 +10,15 @@ class KomradeKey(ABC):
     def decrypt(self,msg,**kwargs): pass
     @abstractmethod
     def data(self): pass
+    @property
+    def data_b64(self):return b64encode(self.data)
+    @property
+    def discreet(self,num_chars_on_either_side_to_show=7,ellipsis='...'):
+        if not self.data: return '?'
+        if not self.data_b64: return '?'
+        b64str=self.data_b64.decode()
+        dstr = b64str[:num_chars_on_either_side_to_show] + ellipsis + b64str[-num_chars_on_either_side_to_show:]
+        return f'{dstr} [len: {len(b64str)}]'
 
 
 class KomradeSymmetricKey(KomradeKey):
@@ -37,14 +46,14 @@ class KomradeSymmetricKeyWithPassphrase(KomradeSymmetricKey):
         #return self.passphrase
     @property
     def data(self): return KEY_TYPE_SYMMETRIC_WITH_PASSPHRASE.encode('utf-8')
-    def __repr__(self): return f'[Symmetric Key] ({self.data})'
+    def __repr__(self): return f'[Symmetric Key] ({self.discreet})'
 
 class KomradeSymmetricKeyWithoutPassphrase(KomradeSymmetricKey):
     def __init__(self,key=None):
         self.key = GenerateSymmetricKey() if not key else key
     @property
     def data(self): return self.key
-    def __repr__(self): return f'[Symmetric Key] ({b64encode(self.key).decode()})'
+    def __repr__(self): return f'[Symmetric Key] ({self.discreet})'
 
 
 
@@ -67,26 +76,31 @@ class KomradeAsymmetricKey(KomradeKey):
 class KomradeAsymmetricPublicKey(KomradeAsymmetricKey):
     @property
     def key(self): return self.pubkey
-    def __repr__(self): return f'''[Asymmetric Public Key] ({b64encode(self.pubkey).decode() if self.pubkey else '?'})'''
+    @property
+    def data(self): return self.pubkey 
+    
+    def __repr__(self): return f'''[Asymmetric Public Key] ({self.discreet})'''
 class KomradeAsymmetricPrivateKey(KomradeAsymmetricKey):
     @property
+    def data(self): return self.privkey 
+    @property
     def key(self): return self.privkey
-    def __repr__(self): return f'''[Asymmetric Private Key] ({b64encode(self.privkey).decode() if self.privkey else '?'})'''
+    def __repr__(self): return f'''[Asymmetric Private Key] ({self.discreet})'''
 
 
 
 class KomradeEncryptedKey(object):
     def __init__(self,data): self.data=data
     @property
-    def data_b64(self): return b64encode(self.data)
-    def __repr__(self): return f'[Encrypted Key] ({self.data_b64})'
+    def data_b64(self): return b64encode(self.data).decode()
+    def __repr__(self): return f'[Encrypted Key] ({self.discreet})'
 
 class KomradeEncryptedAsymmetricPrivateKey(KomradeEncryptedKey):
-    def __repr__(self): return f'[Encrypted Asymmetric Private Key] ({self.data_b64})'
+    def __repr__(self): return f'[Encrypted Asymmetric Private Key] ({self.discreet})'
 class KomradeEncryptedAsymmetricPublicKey(KomradeEncryptedKey):
-    def __repr__(self): return f'[Encrypted Asymmetric Public Key] ({self.data_b64})'
+    def __repr__(self): return f'[Encrypted Asymmetric Public Key] ({self.discreet})'
 class KomradeEncryptedSymmetricKey(KomradeEncryptedKey):
-    def __repr__(self): return f'[Encrypted Symmetric Key] ({self.data_b64})'
+    def __repr__(self): return f'[Encrypted Symmetric Key] ({self.discreet})'
 
 def get_encrypted_key_obj(data,name_of_encrypted_key):
     if name_of_encrypted_key.startswith('privkey'):
