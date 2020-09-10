@@ -47,7 +47,7 @@ class Persona(Caller):
             f'@{name}: Uh yes hello, Operator? Could I please register as Komrade @{name}?',
             ART_OLDPHONE,
             '''@TheOperator: Sure, but it's not safe for me to cut the keys you need. Why don't you do that yourself, and come back to me when you've cut a special "asymmetric" key in half: you can keep both halves, and I'll keep one, that way we'll always know we're talking to each other.''',
-            f'{@name}: Ok but how do I cut these keys?',
+            f'@{name}: Ok but how do I cut these keys?',
             '@TheOperator: Visit the Keymaker.'
         ])
 
