@@ -411,7 +411,10 @@ Keymaker ({self}) is forging new keys for {name}
             if keyname in keychain:
                 # uri = uri_id
                 uri = uri_id if keyname!='pubkey' else name
-                self.crypt_keys.set(uri,keychain[keyname],prefix=f'/{keyname}/')
+                val = keychain[keyname]
+                if issubclass(type(keychain[keyname]), KomradeKey) or issubclass(type(keychain[keyname]), KomradeEncryptedKey):
+                    val = val.data
+                self.crypt_keys.set(uri,val,prefix=f'/{keyname}/')
                 keys_saved_d[keyname] = keychain[keyname]
 
         # save pubkey as QR
