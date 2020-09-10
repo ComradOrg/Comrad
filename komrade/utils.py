@@ -33,6 +33,11 @@ def do_pause():
 
 
 def dict_format(d, tab=0):
+    def repr(v):
+        if type(v)==bytes and not isBase64(v):
+            return b64encode(v)
+        return v
+
     s = ['{\n']
     for k,v in sorted(d.items()):
         if isinstance(v, dict):
@@ -41,7 +46,7 @@ def dict_format(d, tab=0):
             v = repr(v)
 
         # s.append('%s%r: %s (%s),\n' % ('  '*tab, k, v, type(v).__name__))
-        s.append('%s%r: %s,\n\n' % ('  '*tab, k, v))
+        s.append('%s%r: %s,\n\n' % ('  '*tab, k, repr(v)))
     s.append('%s}' % ('  '*tab))
     return ''.join(s)
 
