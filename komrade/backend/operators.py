@@ -132,8 +132,13 @@ class Operator(Keymaker):
         clsname=(type(self)).__name__
         name = clsname+' '+self.name if self.name!=clsname else clsname
         keystr='+'.join(self.top_keys)
-        pubk = f' [{self.pubkey_b64}]' if self.pubkey else ''
-        return f'{name}{pubk} ({keystr})'
+        if self.pubkey:
+            pubk=self.pubkey_b64.decode()
+            pubk=pubk[:5] + '...'pubk[-5:]
+            pubk = f' ({pubk})'# if pubk else ''
+        else:
+            pubk = ''
+        return f'[{name}]{pubk} ({keystr})'
 
     def locate_an_operator(self,name):
         if name == OPERATOR_NAME:
