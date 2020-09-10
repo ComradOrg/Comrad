@@ -144,22 +144,35 @@ class Operator(Keymaker):
   
         # return resp_msg_obj
 
-    def route(self,data,route):
-        if hasattr(self,route) and route in self.ROUTES:
-            func = getattr(self,route)
-            return func(**data)
+    def route(self,msg_obj):
+        data,route = msg_obj.data, msg_obj.route
+        if not hasattr(self,route) or route not in self.ROUTES:
+            raise KomradeException('route not valid!')
+        
+        # route it!
+        func = getattr(self,route)
+        new_data = func(**data)
+        self.log('got back from route func <-',new_data)
+
+        # return the other way
+        self.log('message was sent this way:',msg_obj)
+        msg_obj.mark_return_to_sender(new_msg=new_data)
+        self.log('now it\'s going the other way:',msg_obj)
+
+        return msg_obj
+
 
     def route_msg(self,msg_obj):
         # decrypt
         self.log('got msg_obj!',msg_obj)
-        # if msg_obj.is_encrypted:
-            # msg_obj.decrypt()
+        if msg_obj.is_encrypted:
+            msg_obj.decrypt()
         # are there instructions for us?
         if msg_obj.route:
             # get result from routing
             self.log(f'routing msg to self.{msg_obj.route}(**{msg_obj.data})')
-            response = self.route(msg_obj.data, route=msg_obj.route)
-            self.log('route response:',response)
+            return self.route(msg_obj)
+
         # can we pass the buck on?
         elif msg_obj.has_embedded_msg:
             embedded_msg = msg_obj.msg
@@ -167,24 +180,11 @@ class Operator(Keymaker):
 
             # whew, then we can make someone else take the phone
             self.log(f'passing msg onto {embedded_recipient} ...')
-            response = embedded_recipient.route_msg(embedded_msg)
-            
-            # from komrade.backend.messages import Message
-            # if response and type(response)==Message:
-                # response = response.msg_d
-            
-            self.log(f'passed msg onto {embedded_recipient}, got this response: {response} ...')
-        
-        # otherwise what are we doing?
-        else: 
-            response = msg_obj
-        
-        # turn msg back around?
-        # resp_msg_obj = 
-        return response
-        
+            return embedded_recipient.route_msg(embedded_msg)
+
         # ???
-        # return response
+        self.log('what do I do? giving this back to you...')
+        return msg_obj
     
 
 
