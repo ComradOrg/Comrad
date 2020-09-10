@@ -23,7 +23,7 @@ def locate_an_operator(name):
 
 
 class Operator(Keymaker):
-    ROUTES = ['forge_new_keys','does_username_exist','hello_world']
+    ROUTES = OPERATOR_ROUTES
     
     def __init__(self, name, passphrase=DEBUG_DEFAULT_PASSPHRASE, keychain = {}, path_crypt_keys=PATH_CRYPT_CA_KEYS, path_crypt_data=PATH_CRYPT_CA_DATA):
         super().__init__(name=name,passphrase=passphrase, keychain=keychain,
