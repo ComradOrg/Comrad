@@ -332,7 +332,7 @@ Keymaker ({self}) is forging new keys for {name}
         import qrcode
         qr=qrcode.QRCode()
         qr.add_data(self.uri_id if not data else data)
-        ascii = capture_stdout(qr.print_ascii())
+        ascii = capture_stdout(qr.print_ascii)
         return ascii
 
     def save_uri_as_qrcode(self,uri_id=None,name=None):
