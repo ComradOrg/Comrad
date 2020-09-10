@@ -118,7 +118,7 @@ cv = {cv}
         if success:
             cvb64=b64encode(cv).decode()
             qrstr=self.qr_str(cvb64)
-            res['status'] = f'''{OPERATOR_INTRO} I have successfully registered Komrade {name}.
+            res['status'] = f'''{OPERATOR_INTRO}I have successfully registered Komrade {name}.
             
             If you're interested, here's what I did. I stored the public key you gave me, {cvb64}, under the name of "{name}". However, I never save that name directly, but record it only in a disguised, "hashed" form: {ck}. I scrambled "{name}" by running it through a 1-way hashing function, which will always yield the same result: provided you know which function I'm using, and what the secret "salt" is that I add to all the input, a string of text which I keep protected and encrypted on my local hard drive.
             
@@ -131,7 +131,7 @@ cv = {cv}
             If you'd like to change this default behavior, e.g. by instead allowing anyone to request your public key, except for those whom you explcitly block, I have also created a super secret administrative record for you to change various settings on your account. This is protected by a separate encryption key which I have generated for you; and this key which is itself encrypted with the password you entered earlier. Don't worry: I never saw that password you typed, since it was given to me already hashed and disguised (as something {len(passphrase)} characters long, ending in "{passphrase[:10]}"). Without that hashed passphrase, no one will be able to unlock the administration key; and without the administration key, they won't be able to find the hashed record I stored your user settings under, since I also salted that hash with your own hashed passphrase. Even if someone found the record I stored them under, they wouldn't be able to decrypt the existing settings; and if they can't do that, I won't let them overwrite the record.'''
         else:
             res['status']= f'''
-{OPERATOR_INTRO}. I'm sorry, but I can't register the name of {name}.
+{OPERATOR_INTRO}I'm sorry, but I can't register the name of {name}.
 '''
         self.log('Operator returning result:',res)
         return res
