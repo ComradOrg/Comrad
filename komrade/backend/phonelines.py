@@ -37,6 +37,8 @@ def create_phonelines():
         keys_to_save=op_keys_to_keep_on_server,
         keys_to_return=op_keys_to_keep_on_client + op_keys_to_keep_on_3rdparty # on clients only
     )
+    print('op!',op_uri)
+    pprint(op_decr_keys)
 
     # create keys for phone
     phone_uri,phone_decr_keys = phone.forge_new_keys(
@@ -44,13 +46,16 @@ def create_phonelines():
         keys_to_save=phone_keys_to_keep_on_server,  # on server only
         keys_to_return=phone_keys_to_keep_on_client + phone_keys_to_keep_on_3rdparty   # on clients only
     )
+    print('phone!',op_uri)
+    pprint(phone_decr_keys)
 
     # create keys for world
     world_uri,world_decr_keys = world.forge_new_keys(
         keys_to_save=world_keys_to_keep_on_server,
         keys_to_return=world_keys_to_keep_on_client + world_keys_to_keep_on_3rdparty # on clients only
     )
-
+    print('world!',op_uri)
+    pprint(world_decr_keys)
     ## store remote keys
     THIRD_PARTY_DICT = {OPERATOR_NAME:{}, TELEPHONE_NAME:{}, WORLD_NAME:{}}
     for key in op_keys_to_keep_on_3rdparty:
@@ -112,7 +117,8 @@ def connect_phonelines():
     # load remote keys
     r = komrade_request(PATH_OPERATOR_WEB_KEYS_URL)
     if r.status_code!=200:
-        return
+        # return
+        raise KomradeException('oh no!')
     pkg = r.text
     pkg = b64decode(pkg)
     OMEGA_KEY_b,remote_builtin_keychain_encr = pkg.split(BSEP)
@@ -127,7 +133,11 @@ def connect_phonelines():
         remote_builtin_keychain[OPERATOR_NAME],
         remote_builtin_keychain[WORLD_NAME]
     )
-
+    print('remote!',
+        remote_builtin_keychain_phone_json,
+        remote_builtin_keychain_op_json,
+        remote_builtin_keychain_world_json
+    )
 
     # load local keys
     if not os.path.exists(PATH_BUILTIN_KEYCHAIN):
@@ -142,6 +152,11 @@ def connect_phonelines():
     ) = (local_builtin_keychain[TELEPHONE_NAME],
         local_builtin_keychain[OPERATOR_NAME],
         local_builtin_keychain[WORLD_NAME]
+    )
+    print('local!',
+        local_builtin_keychain_phone_json,
+        local_builtin_keychain_op_json,
+        local_builtin_keychain_world_json
     )
 
 
@@ -160,3 +175,12 @@ def connect_phonelines():
     # #print('>>>> loaded OPERATOR_KEYCHAIN',OPERATOR_KEYCHAIN)
     # #print('>>>> loaded TELEPHONE_KEYCHAIN',TELEPHONE_KEYCHAIN)
     return (OPERATOR_KEYCHAIN,TELEPHONE_KEYCHAIN,WORLD_KEYCHAIN,OMEGA_KEY)
+
+
+
+if __name__ == '__main__':
+    phone = TheTelephone()
+    op = TheOperator()
+
+    pprint(phone.keychain())
+    pprint(op.keychain())
