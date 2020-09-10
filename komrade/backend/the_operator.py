@@ -130,9 +130,7 @@ cv = {cv}
 
             If you'd like to change this default behavior, e.g. by instead allowing anyone to request your public key, except for those whom you explcitly block, I have also created a super secret administrative record for you to change various settings on your account. This is protected by a separate encryption key which I have generated for you; and this key which is itself encrypted with the password you entered earlier. Don't worry: I never saw that password you typed, since it was given to me already hashed and disguised (as something {len(passphrase)} characters long, ending in "{passphrase[:10]}"). Without that hashed passphrase, no one will be able to unlock the administration key; and without the administration key, they won't be able to find the hashed record I stored your user settings under, since I also salted that hash with your own hashed passphrase. Even if someone found the record I stored them under, they wouldn't be able to decrypt the existing settings; and if they can't do that, I won't let them overwrite the record.''')
         else:
-            res['status']= f'''
-{OPERATOR_INTRO}I'm sorry, but I can't register the name of {name}.
-'''
+            self.status(f'{OPERATOR_INTRO}I'm sorry, but I can't register the name of {name}.')
         self.log('Operator returning result:',dict_format(res,tab=2))
         return res
         
