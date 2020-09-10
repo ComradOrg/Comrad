@@ -153,35 +153,7 @@ class Operator(Keymaker):
         return Caller(name)
 
 
-  
-        # return resp_msg_obj
-
-    # def route1(self,msg_obj):
-    #     data,route = msg_obj.data, msg_obj.route
-    #     if not hasattr(self,route) or route not in self.ROUTES:
-    #         raise KomradeException('route not valid!')
-        
-    #     # route it!
-    #     func = getattr(self,route)
-    #     new_data = func(**data)
-    #     self.log(f'got new_data back from self.{route}() <-- {new_data}')
-
-    #     # return the other way
-    #     self.log('message was sent this way:',msg_obj)
-    #     msg_obj.mark_return_to_sender(new_msg=new_data)
-    #     self.log('now it\'s going the other way:',msg_obj)
-
-    #     # delete route
-    #     if msg_obj.route:
-    #         msg_obj.delete_route()
-
-    #     # if not decrypted
-    #     if not msg_obj.is_encrypted:
-    #         msg_obj.encrypt()
-
-    #     return msg_obj
-
-    def route_msg(self,msg_obj):
+    def route_msg(self,msg_obj,reencrypt=True):
         # decrypt
         self.log('got msg_obj!',msg_obj)
         if msg_obj.is_encrypted:
@@ -208,36 +180,10 @@ class Operator(Keymaker):
         self.log('returning to sender as:',msg_obj)
 
         # encrypt
-        msg_obj.encrypt()
+        if reencrypt:
+            msg_obj.encrypt()
 
         return msg_obj
-
-
-    # def route_msg0(self,msg_obj):
-    #     # decrypt
-    #     self.log('got msg_obj!',msg_obj)
-    #     if msg_obj.is_encrypted:
-    #         msg_obj.decrypt()
-    #     # are there instructions for us?
-    #     if msg_obj.route:
-    #         # get result from routing
-    #         self.log(f'routing msg to self.{msg_obj.route}(**{dict_format(msg_obj.data)})')
-    #         return self.route(msg_obj)
-
-    #     # can we pass the buck on?
-    #     elif msg_obj.has_embedded_msg:
-    #         embedded_msg = msg_obj.msg
-    #         embedded_recipient = embedded_msg.to_whom
-
-    #         # whew, then we can make someone else take the phone
-    #         self.log(f'passing msg onto {embedded_recipient} ...')
-    #         return embedded_recipient.route_msg(embedded_msg)
-
-    #     # ???
-    #     self.log('what do I do? giving this back to you...')
-    #     return msg_obj
-    
-
 
 
     def ring_ring(self,msg,to_whom,get_resp_from=None):
@@ -271,7 +217,7 @@ class Operator(Keymaker):
             resp_msg_obj.decrypt()
 
         # route back?
-        return self.route_msg(resp_msg_obj)
+        return self.route_msg(resp_msg_obj,reencrypt=False)
 
 
 
@@ -283,7 +229,7 @@ class Operator(Keymaker):
         >> {msg_obj}
         ''')
 
-        return  self.route_msg(msg_obj)
+        return self.route_msg(msg_obj,reencrypt=True)
 
         # route_response = self.route_msg(msg_obj)
         # self.log('route_response',route_response)

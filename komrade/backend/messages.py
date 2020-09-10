@@ -221,6 +221,7 @@ class Message(Logger):
             
         if self.has_embedded_msg:
             self.msg.delete_route()
+
         
 
 
