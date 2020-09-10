@@ -180,7 +180,8 @@ class Operator(Keymaker):
             response = msg_obj
         
         # turn msg back around?
-        resp_msg_obj = 
+        # resp_msg_obj = 
+        return response
         
         # ???
         # return response
