@@ -105,8 +105,8 @@ cv = {cv}
 ''')
         
         # check input back from crypt
-        if success and cv!=pubkey: success=False
-        if success and name!=self.crypt_keys.key2hash(name): success=False
+        # if success and b64decode(cv)!=pubkey: success=False
+        # if success and name!=self.crypt_keys.key2hash(name): success=False
         
         res = {
             'success':success,
