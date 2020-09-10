@@ -224,11 +224,11 @@ class Operator(Keymaker):
         if resp_msg_obj.is_encrypted:
             resp_msg_obj.decrypt()
         
-        return resp_msg_obj
 
         # route back?
-        # route_result = self.route_msg(resp_msg_obj)
-        # self.log('route_result 2?',route_result)
+        route_result = self.route_msg(resp_msg_obj)
+        self.log('route_result 2?',route_result)
+        return route_result
 
         # decrypt?
         # from komrade.backend.messages import Message
