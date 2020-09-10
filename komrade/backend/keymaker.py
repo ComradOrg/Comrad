@@ -253,13 +253,13 @@ class Keymaker(Logger):
         for key_name in keys_to_gen:
             if key_name.endswith('_encr') and key_name not in keychain:
                 # encrypt it with the associated decr
-                self.log(f'let\'s encrypt {key_name}!')
+                # self.log(f'let\'s encrypt {key_name}!')
                 name_of_what_to_encrypt = key_name[:-len('_encr')]
                 the_key_to_encrypt_it_with = name_of_what_to_encrypt + '_decr'
                 if the_key_to_encrypt_it_with in keychain and name_of_what_to_encrypt in keychain:
                     _key_decr = keychain[the_key_to_encrypt_it_with]
                     _key = keychain[name_of_what_to_encrypt]
-                    self.log(f'about to encrypt key {name_of_what_to_encrypt}, using {the_key_to_encrypt_it_with}, which is a type {KEYMAKER_DEFAULT_KEY_TYPES[the_key_to_encrypt_it_with]} and has value {keychain[the_key_to_encrypt_it_with]}')
+                    # self.log(f'about to encrypt key {name_of_what_to_encrypt}, using {the_key_to_encrypt_it_with}, which is a type {KEYMAKER_DEFAULT_KEY_TYPES[the_key_to_encrypt_it_with]} and has value {keychain[the_key_to_encrypt_it_with]}')
                     _key_encr = _key_decr.encrypt(_key)
                     # self.log(f'{_key}\n-- encrypting ----->\n{_key_encr}')
                     keychain[key_name]=_key_encr
