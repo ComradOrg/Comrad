@@ -328,7 +328,9 @@ Keymaker ({self}) is forging new keys for {name}
         return fnfn
 
     @property
-    def qr(self,data=None):
+    def qr(self): return self.qr_str(data=self.uri_id)
+
+    def qr_str(self,data=None):
         import qrcode
         qr=qrcode.QRCode()
         qr.add_data(self.uri_id if not data else data)

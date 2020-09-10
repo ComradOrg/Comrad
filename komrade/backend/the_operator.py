@@ -95,9 +95,34 @@ class TheOperator(Operator):
         return bool(pubkey)
 
     def register_new_user(self,name,pubkey,**data):
-        self.log('setting pubkey under name')
-        res = self.crypt_keys.set(name,pubkey,prefix='/pubkey/')
+        # self.log('setting pubkey under name')
+        success,ck,cv = self.crypt_keys.set(name,pubkey,prefix='/pubkey/')
         self.log('got result from crypt:',res)
+        
+        # check input back from crypt
+        assert cv==pubkey
+        assert name==self.crypt_keys.key2hash(name) #(self.crypt_keys.prepare_key()
+        
+        res = {
+            'success':success,
+            'pubkey':cv,
+            'name':name,
+        }
+        
+        ## success msg
+        if success:
+            res['status'] = f'''
+{OPERATOR_INTRO} I have managed to register user {name}.
+I've stored their public key ({b64encode(cv).decode()}) under their name,
+in a disguished (hashed with salt) form: {ck}.
+'''
+        else:
+            res['status']= f'''
+{OPERATOR_INTRO}. I'm sorry, but I can'tregister username {name}.
+Someone has already registered under that name.'''
+
+        self.log('Operator returning result:',res)
+
         return res
         
 

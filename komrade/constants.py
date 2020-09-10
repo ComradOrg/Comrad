@@ -167,3 +167,5 @@ OPERATOR_ROUTES = [
     'hello_world',
     'register_new_user'
 ]
+
+OPERATOR_INTRO = 'Hello, this is the Operator speaking. '

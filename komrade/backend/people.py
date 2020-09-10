@@ -75,64 +75,6 @@ class Persona(Caller):
         resp_msg_obj = self.phone.ring_ring(data)
         self.log('register got back from op:',resp_msg_obj)
 
-    #     phone_res = msg_obj.msg
-
-    #     # URI id
-    #     uri_id = phone_res.get('uri_id')
-    #     returned_keys = phone_res.get('_keychain')
-    #     self.log('got URI from Op:',uri_id)
-    #     self.log('got returnd keys from Op:',returned_keys)
-
-    #     # better have the right keys
-    #     assert set(KEYMAKER_DEFAULT_KEYS_TO_SAVE_ON_CLIENT) == set(returned_keys.keys())
-
-    #     # now save these keys!
-    #     saved_keys = self.save_keychain(name,returned_keys,uri_id=uri_id)
-    #     self.log('saved keys!',saved_keys)
-
-    #     # success!
-    #     self.log('yay!!!!')
-    #     return saved_keys
-
-
-
-    # def register(self, name = None, passphrase = DEBUG_DEFAULT_PASSPHRASE, is_group=None):
-    #     # get needed metadata
-    #     if not name: name=self.name
-    #     if name is None: 
-    #         name = input('\nWhat is the name for this account? ')
-    #     if passphrase is None:
-    #         passphrase = getpass.getpass('\nEnter a memborable password: ')
-    #     # if is_group is None:
-    #         # is_group = input('\nIs this a group account? [y/N]').strip().lower() == 'y'
-
-    #     # form request
-    #     msg_to_op = {
-    #         '_route':'forge_new_keys',
-    #         'name':name,
-    #         'passphrase':hashish(passphrase.encode())
-    #     }
-
-    #     # get message back
-    #     msg_obj = self.phone.ring_ring(msg_to_op)
-    #     phone_res = msg_obj.msg
-
-    #     # URI id
-    #     uri_id = phone_res.get('uri_id')
-    #     returned_keys = phone_res.get('_keychain')
-    #     self.log('got URI from Op:',uri_id)
-    #     self.log('got returnd keys from Op:',returned_keys)
-
-    #     # better have the right keys
-    #     assert set(KEYMAKER_DEFAULT_KEYS_TO_SAVE_ON_CLIENT) == set(returned_keys.keys())
-
-    #     # now save these keys!
-    #     saved_keys = self.save_keychain(name,returned_keys,uri_id=uri_id)
-    #     self.log('saved keys!',saved_keys)
-
-    #     # success!
-    #     self.log('yay!!!!')
-    #     return saved_keys
 
 
     def ring_ring(self,msg):

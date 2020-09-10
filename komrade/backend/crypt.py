@@ -91,7 +91,7 @@ class Crypt(Logger):
     def set(self,k,v,prefix=''):
         if self.has(k,prefix=prefix):
             self.log("I'm afraid I can't let you do that, overwrite someone's data!")
-            return False
+            return (False,None,None)
         
         k_b=self.package_key(k,prefix=prefix)
         k_b_hash = self.hash(k_b)
@@ -111,10 +111,17 @@ Crypt.set(
         ''')
         # store
         self.store.put(k_b_hash,v_b)
-        return True
+        return (True,k_b_hash,v_b)
 
     def exists(self,k,prefix=''):
         return self.has(k,prefix=prefix)
+
+    def key2hash(self,k,prefix=''):
+        return self.hash(
+            self.package_key(
+                prefix + k
+            )
+        )
 
     def get(self,k,prefix=''):
         k_b=self.package_key(k,prefix=prefix)
