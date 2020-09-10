@@ -87,8 +87,8 @@ def make_key_discreet(data,num_chars_on_either_side_to_show=7,ellipsis='...'):
     if not data: return '?'
     if not isBase64(data): data=b64encode(data)
     data=data.decode()
-    dstr = b64str[:num_chars_on_either_side_to_show] + ellipsis + b64str[-num_chars_on_either_side_to_show:]
-    return f'{dstr} [len: {len(b64str)}]'
+    dstr = data[:num_chars_on_either_side_to_show] + ellipsis + data[-num_chars_on_either_side_to_show:]
+    return f'{dstr} [len: {len(data)}]'
 
 class KomradeEncryptedKey(object):
     def __init__(self,data): self.data=data
