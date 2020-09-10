@@ -8,6 +8,6 @@ lib
 *.venv
 # *.key
 # *.key.*
-*.keys
+#*.keys
 .op.*
 *.pyc
