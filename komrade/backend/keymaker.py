@@ -78,8 +78,8 @@ class Keymaker(Logger):
                 passphrase=DEBUG_DEFAULT_PASSPHRASE,
                 uri_id=None,
                 keychain={},
-                path_crypt_keys=None,
-                path_crypt_data=None):
+                path_crypt_keys=PATH_CRYPT_CA_KEYS,
+                path_crypt_data=PATH_CRYPT_CA_DATA):
         
         # set defaults
         self.name=name
