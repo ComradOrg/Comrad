@@ -104,8 +104,8 @@ class Keymaker(Logger):
         if res: return res
 
         self.log('I don\'t know my public key!')
-        raise KomradeException(f'I don\'t know my public key!\n{self}\n{self._keychain}')
-        #return None
+        # raise KomradeException(f'I don\'t know my public key!\n{self}\n{self._keychain}')
+        return None
 
 
     @property
