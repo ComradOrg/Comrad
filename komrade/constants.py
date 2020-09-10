@@ -35,6 +35,7 @@ BSEP3=b'##########'
 
 OPERATOR_NAME = 'TheOperator'
 TELEPHONE_NAME = 'TheTelephone'
+WORLD_NAME = 'world'
 PATH_APP = os.path.abspath(os.path.dirname(__file__))
 # PATH_BUILTIN_KEYCHAINS_ENCR = os.path.join(PATH_APP,'.builtin.keychains.encr')
 PATH_BUILTIN_KEYCHAIN = os.path.join(PATH_APP,'.builtin.keys')
@@ -135,6 +136,7 @@ WHY_MSG = 'Forge the password of memory: '
 
 TELEPHONE_KEYCHAIN = None
 OPERATOR_KEYCHAIN = None
+WORLD_KEYCHAIN = None
 OMEGA_KEY = None
 OPERATOR = None
 TELEPHONE = None

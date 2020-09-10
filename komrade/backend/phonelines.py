@@ -24,6 +24,14 @@ def create_phonelines():
     phone_keys_to_keep_on_3rdparty = ['privkey_decr']  # dl by phone
     phone_keys_to_keep_on_server = ['pubkey']  # kept on op server
 
+    ## create phone
+    world = Operator(name=WORLD_NAME)
+    world_keys_to_keep_on_client = op_keys_to_keep_on_client
+    world_keys_to_keep_on_3rdparty = op_keys_to_keep_on_3rdparty
+    world_keys_to_keep_on_server = op_keys_to_keep_on_server
+
+    
+
     # create keys for Op
     op_res = op.forge_new_keys(
         keys_to_save=op_keys_to_keep_on_server,
@@ -44,35 +52,40 @@ def create_phonelines():
     phone_uri = phone_res['uri_id']
     phone_decr_keys = phone_res['_keychain']
 
-    #pring('phone_uri',phone_uri)
-    #pring('phone_decr_keys',phone_decr_keys)
 
-    # store URIs
-    # op.save_uri_as_qrcode(odir=PATH_OPERATOR_WEB_CONTACTS_DIR)
-    # op.save_uri_as_qrcode()
-    
-    # phone.save_uri_as_qrcode(odir=PATH_OPERATOR_WEB_CONTACTS_DIR)
-    # phone.save_uri_as_qrcode()
+    # create keys for world
+    world_res = world.forge_new_keys(
+        keys_to_save=world_keys_to_keep_on_server,
+        keys_to_return=world_keys_to_keep_on_client + world_keys_to_keep_on_3rdparty # on clients only
+    )
+    world_uri = world_res['uri_id']
+    world_decr_keys = world_res['_keychain']
 
     ## store remote keys
-    THIRD_PARTY_DICT = {OPERATOR_NAME:{}, TELEPHONE_NAME:{}}
+    THIRD_PARTY_DICT = {OPERATOR_NAME:{}, TELEPHONE_NAME:{}, WORLD_NAME:{}}
     for key in op_keys_to_keep_on_3rdparty:
         if key in op_decr_keys:
             THIRD_PARTY_DICT[OPERATOR_NAME][key]=op_decr_keys[key]
     for key in phone_keys_to_keep_on_3rdparty:
         if key in phone_decr_keys:
             THIRD_PARTY_DICT[TELEPHONE_NAME][key]=phone_decr_keys[key]
+    for key in world_keys_to_keep_on_3rdparty:
+        if key in world_decr_keys:
+            THIRD_PARTY_DICT[WORLD_NAME][key]=world_decr_keys[key]
 
     #pring('THIRD_PARTY_DICT',THIRD_PARTY_DICT)
 
     # store local keys
-    STORE_IN_APP = {OPERATOR_NAME:{}, TELEPHONE_NAME:{}}
+    STORE_IN_APP = {OPERATOR_NAME:{}, TELEPHONE_NAME:{}, WORLD_NAME:{}}
     for key in op_keys_to_keep_on_client:
         if key in op_decr_keys:
             STORE_IN_APP[OPERATOR_NAME][key]=op_decr_keys[key]
     for key in phone_keys_to_keep_on_client:
         if key in phone_decr_keys:
             STORE_IN_APP[TELEPHONE_NAME][key]=phone_decr_keys[key]
+    for key in world_keys_to_keep_on_client:
+        if key in world_decr_keys:
+            STORE_IN_APP[WORLD_NAME][key]=world_decr_keys[key]
     #pring('STORE_IN_APP',STORE_IN_APP)
 
     # package
@@ -102,69 +115,52 @@ def create_phonelines():
 
 def connect_phonelines():
     # globals
-    global OMEGA_KEY,OPERATOR_KEYCHAIN,TELEPHONE_KEYCHAIN
-    if OMEGA_KEY and OPERATOR_KEYCHAIN and TELEPHONE_KEYCHAIN:
-        return (OPERATOR_KEYCHAIN,TELEPHONE_KEYCHAIN,OMEGA_KEY)
-
-    #pring('\n\n\n\nCONNECTING PHONELINES!\n\n\n\n')
+    global OMEGA_KEY,OPERATOR_KEYCHAIN,TELEPHONE_KEYCHAIN,WORLD_KEYCHAIN
+    if OMEGA_KEY and OPERATOR_KEYCHAIN and TELEPHONE_KEYCHAIN and WORLD_KEYCHAIN:
+        return (OPERATOR_KEYCHAIN,TELEPHONE_KEYCHAIN,WORLD_KEYCHAIN,OMEGA_KEY)
 
     # import
     from komrade.backend.mazes import tor_request
     from komrade.backend import PATH_OPERATOR_WEB_KEYS_URL
 
+    # load remote keys
+    r = komrade_request(PATH_OPERATOR_WEB_KEYS_URL)
+    if r.status_code!=200:
+        return
+    pkg = r.text
+    pkg = b64decode(pkg)
+    OMEGA_KEY_b,remote_builtin_keychain_encr = pkg.split(BSEP)
+    OMEGA_KEY = KomradeSymmetricKeyWithoutPassphrase(key=OMEGA_KEY_b)
+    remote_builtin_keychain = unpackage_from_transmission(OMEGA_KEY.decrypt(remote_builtin_keychain_encr))
+    (
+        remote_builtin_keychain_phone_json,
+        remote_builtin_keychain_op_json,
+        remote_builtin_keychain_world_json
+    ) = (
+        remote_builtin_keychain[TELEPHONE_NAME],
+        remote_builtin_keychain[OPERATOR_NAME],
+        remote_builtin_keychain[WORLD_NAME]
+    )
+
+
     # load local keys
     if not os.path.exists(PATH_BUILTIN_KEYCHAIN):
-        #pring('builtin keys not present??')
         return
     with open(PATH_BUILTIN_KEYCHAIN,'rb') as f:
         local_builtin_keychain_encr = b64decode(f.read())
 
-    # load remote keys
-    #pring('??',PATH_OPERATOR_WEB_KEYS_URL)
-    r = komrade_request(PATH_OPERATOR_WEB_KEYS_URL)
-    if r.status_code!=200:
-        #pring('cannot authenticate the keymakers')
-        return
-
-    # unpack remote pkg
-    
-    pkg = r.text
-    #pring('got from onion:',pkg)
-    pkg = b64decode(pkg)
-    #pring('got from onion:',pkg)
-
-    OMEGA_KEY_b,remote_builtin_keychain_encr = pkg.split(BSEP)
-    #pring('OMEGA_KEY_b',OMEGA_KEY_b)
-    #pring('remote_builtin_keychain_encr',remote_builtin_keychain_encr)
-    
-
-    OMEGA_KEY = KomradeSymmetricKeyWithoutPassphrase(key=OMEGA_KEY_b)
-
-    #pring('loaded Omega',OMEGA_KEY)
-    # from komrade.utils import unpackage_from_transmission
-    remote_builtin_keychain = unpackage_from_transmission(OMEGA_KEY.decrypt(remote_builtin_keychain_encr))
-    #pring('remote_builtin_keychain',remote_builtin_keychain)
-    
-    remote_builtin_keychain_phone_json,remote_builtin_keychain_op_json = remote_builtin_keychain[TELEPHONE_NAME],remote_builtin_keychain[OPERATOR_NAME]
-    #pring('remote_builtin_keychain_phone_json',remote_builtin_keychain_phone_json)
-    #pring('remote_builtin_keychain_op_json',remote_builtin_keychain_op_json)
-    
-    # unpack local pkg
-    local_builtin_keychain = unpackage_from_transmission(OMEGA_KEY.decrypt(local_builtin_keychain_encr))
-    #pring('local_builtin_keychain',local_builtin_keychain)
-
-    local_builtin_keychain_phone_json,local_builtin_keychain_op_json = local_builtin_keychain[TELEPHONE_NAME],local_builtin_keychain[OPERATOR_NAME]
-    #pring('local_builtin_keychain_phone_json',local_builtin_keychain_phone_json)
-    #pring('local_builtin_keychain_op_json',local_builtin_keychain_op_json)
 
     # set builtin keychains
     TELEPHONE_KEYCHAIN={}
     OPERATOR_KEYCHAIN={}
+    WORLD_KEYCHAIN={}
     dict_merge(TELEPHONE_KEYCHAIN,local_builtin_keychain_phone_json)
     dict_merge(OPERATOR_KEYCHAIN,local_builtin_keychain_op_json)
+    dict_merge(WORLD_KEYCHAIN,local_builtin_keychain_world_json)
     dict_merge(TELEPHONE_KEYCHAIN,remote_builtin_keychain_phone_json)
     dict_merge(OPERATOR_KEYCHAIN,remote_builtin_keychain_op_json)
+    dict_merge(WORLD_KEYCHAIN,remote_builtin_keychain_world_json)
     
     # #pring('>>>> loaded OPERATOR_KEYCHAIN',OPERATOR_KEYCHAIN)
     # #pring('>>>> loaded TELEPHONE_KEYCHAIN',TELEPHONE_KEYCHAIN)
-    return (OPERATOR_KEYCHAIN,TELEPHONE_KEYCHAIN,OMEGA_KEY)
+    return (OPERATOR_KEYCHAIN,TELEPHONE_KEYCHAIN,WORLD_KEYCHAIN,OMEGA_KEY)
