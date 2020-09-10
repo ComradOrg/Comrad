@@ -134,7 +134,7 @@ class Operator(Keymaker):
         keystr='+'.join(self.top_keys)
         if self.pubkey:
             pubk=self.pubkey_b64.decode()
-            pubk=pubk[:5] + '...'pubk[-5:]
+            pubk=pubk[:5] + '...'+pubk[-5:]
             pubk = f' ({pubk})'# if pubk else ''
         else:
             pubk = ''
