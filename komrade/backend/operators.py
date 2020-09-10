@@ -223,6 +223,8 @@ class Operator(Keymaker):
 
         if resp_msg_obj.is_encrypted:
             resp_msg_obj.decrypt()
+        
+        return resp_msg_obj
 
         # route back?
         # route_result = self.route_msg(resp_msg_obj)
