@@ -35,6 +35,17 @@ class Message(Logger):
         if not self._from_whom or not self._to_whom:
             self.get_whoms()
 
+    def __repr__(self):
+        msg_d_str=dict_format(self.msg_d,tab=6)
+        return f"""    
+<MSG>
+    self.from_whom={self.from_whom}
+    self.to_whom={self.to_whom}
+    self.msg_d={msg_d_str}
+</MSG>
+        """
+
+
     @property
     def data(self):
         md={}
@@ -55,19 +66,7 @@ class Message(Logger):
         if new_msg:
             self.msg=self.msg_d['_msg']=new_msg
 
-    def __repr__(self):
-        msg_d_str=dict_format(self.msg_d,tab=6)
-        return f"""
-    
-    <MSG>
-        self.from_whom={self.from_whom}
-        self.to_whom={self.to_whom}
-        self.msg_d={msg_d_str}
-    </MSG>
-
-        """
-
-
+        
     def get_whom(self,name):
         from komrade.backend.operators import locate_an_operator
         return locate_an_operator(name)

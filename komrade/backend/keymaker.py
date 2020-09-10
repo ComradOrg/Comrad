@@ -145,6 +145,8 @@ class Keymaker(Logger):
     @property
     def pubkey(self): return self.keychain().get('pubkey')
     @property
+    def pubkey_b64(self): return b64encode(self.pubkey) #self.keychain().get('pubkey')
+    @property
     def privkey(self): return self.keychain().get('privkey')
     @property
     def adminkey(self): return self.keychain().get('adminkey')
