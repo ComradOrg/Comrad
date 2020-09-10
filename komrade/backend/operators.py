@@ -151,8 +151,9 @@ class Operator(Keymaker):
 
     def route_msg(self,msg_obj):
         # decrypt
-        if msg_obj.is_encrypted:
-            msg_obj.decrypt()
+        self.log('got msg_obj!',msg_obj)
+        # if msg_obj.is_encrypted:
+            # msg_obj.decrypt()
         # are there instructions for us?
         if msg_obj.route:
             # get result from routing
@@ -163,19 +164,26 @@ class Operator(Keymaker):
         elif msg_obj.has_embedded_msg:
             embedded_msg = msg_obj.msg
             embedded_recipient = embedded_msg.to_whom
+
             # whew, then we can make someone else take the phone
             self.log(f'passing msg onto {embedded_recipient} ...')
-            
             response = embedded_recipient.route_msg(embedded_msg)
+            
             # from komrade.backend.messages import Message
             # if response and type(response)==Message:
                 # response = response.msg_d
+            
             self.log(f'passed msg onto {embedded_recipient}, got this response: {response} ...')
+        
         # otherwise what are we doing?
         else: 
             response = msg_obj
+        
+        # turn msg back around?
+        resp_msg_obj = 
+        
         # ???
-        return response
+        # return response
     
 
 

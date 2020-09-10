@@ -88,34 +88,6 @@ class TheOperator(Operator):
         return encr_data_b
 
 
-    # def route(self, msg_obj):
-    #     if not msg_obj.route:
-    #         # nothign explicitly requested yet?
-    #         # can we pass the msg on?
-    #         if msg_obj.has_embedded_msg:
-
-    #         self.route(msg_obj, route=msg_obj)
-        
-    #     # self.log('my messages:',msg_obj.messages)
-
-        
-
-    #     if not route: raise KomradeException('no route!')
-        
-    #     # what we working with?
-    #     self.log(f'route() got incoming msg data = {data} and route = {route}')
-        
-    #     ## hard code the acceptable routes
-    #     if route == 'forge_new_keys':
-    #         return self.forge_new_keys(data)
-    #     elif route == 'does_username_exist':
-    #         return self.does_username_exist(data)
-        
-    #     # otherwise, hang up and try again
-    #     return OPERATOR_INTERCEPT_MESSAGE
-
-
-
 
 
     ### ROUTES

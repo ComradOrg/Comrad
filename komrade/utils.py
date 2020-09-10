@@ -40,7 +40,8 @@ def dict_format(d, tab=0):
         else:
             v = repr(v)
 
-        s.append('%s%r: %s (%s),\n' % ('  '*tab, k, v, type(v).__name__))
+        # s.append('%s%r: %s (%s),\n' % ('  '*tab, k, v, type(v).__name__))
+        s.append('%s%r: %s,\n' % ('  '*tab, k, v)
     s.append('%s}' % ('  '*tab))
     return ''.join(s)
 
