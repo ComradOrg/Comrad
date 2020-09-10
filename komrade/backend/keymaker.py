@@ -413,7 +413,8 @@ Keymaker ({self}) is forging new keys for {name}
 
     def save_keychain(self,name,keychain,keys_to_save=None,uri_id=None):
         if not keys_to_save: keys_to_save = list(keychain.keys())
-        if not uri_id: uri_id = b64encode(keychain['pubkey'].data).decode() #uri_id = get_random_id() + get_random_id()
+        if not uri_id and 'pubkey' in keychain:
+            uri_id = b64encode(keychain['pubkey'].data).decode() #uri_id = get_random_id() + get_random_id()
         # self.log(f'SAVING KEYCHAIN FOR {name} under URI {uri_id}')
         self._uri_id = uri_id
         # filter for transfer
@@ -430,6 +431,7 @@ Keymaker ({self}) is forging new keys for {name}
             if keyname in keychain:
                 # uri = uri_id
                 uri = uri_id if keyname!='pubkey' else name
+                if not uri: raise KomradeException('invalid URI! {uri}')
                 val = keychain[keyname]
                 if issubclass(type(keychain[keyname]), KomradeKey) or issubclass(type(keychain[keyname]), KomradeEncryptedKey):
                     val = val.data
