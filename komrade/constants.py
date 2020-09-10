@@ -160,3 +160,10 @@ DEBUG_DEFAULT_PASSPHRASE = 'all your base are belong to us'
 
 
 ROUTE_KEYNAME = '_route'
+
+OPERATOR_ROUTES = [
+    'forge_new_keys',
+    'does_username_exist',
+    'hello_world',
+    'register_new_user'
+]
