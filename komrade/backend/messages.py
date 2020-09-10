@@ -41,7 +41,7 @@ class Message(Logger):
 <MSG>
     self.from_whom={self.from_whom}
     self.to_whom={self.to_whom}
-    self.msg={dict_format(self.msg) if type(self.msg)==dict else self.msg}
+    self.msg={dict_format(self.msg,tab=4) if type(self.msg)==dict else self.msg}
 </MSG>
         """
 
