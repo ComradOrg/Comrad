@@ -142,7 +142,7 @@ class Message(Logger):
 
         # now, is the decrypted message itself a message?
         if is_valid_msg_d(decr_msg):
-            self.log('this is a valid msg in its own right!',decr_msg)
+            self.log('this has a valid msg in its own right!',self)
             # then ... make that, a message object and decrypt it too!
             self.msg = Message(decr_msg)
 
@@ -165,6 +165,11 @@ class Message(Logger):
         # self.log(f'attempting to encrypt msg {self.msg} from {self.from_whom} to {self.to_whom}')
         self.log(f'About to encrypt self.msg! I now look like v1: {self}')
         
+        # make sure msg is not meeta
+        if self.has_embedded_msg:
+            self.msg = self.msg.msg_d
+            self.log('woops, first had to replace Message object with dict')
+
         # binarize msg
         msg_b = pickle.dumps(self.msg)
         # self.log('msg_b = ',msg_b)
