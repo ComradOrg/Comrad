@@ -127,6 +127,7 @@ cv = {cv_b64}
                 'adminkey_encr',
                 'adminkey_decr'
             ],
+            keys_to_save=[],
             keys_to_return = [
                 'adminkey',
                 'adminkey_encr',
