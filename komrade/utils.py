@@ -51,9 +51,10 @@ def dict_format(d, tab=0):
     return ''.join(s)
 
 import inspect,time
-from komrade.constants import PAUSE_LOGGER
+from komrade.constants import PAUSE_LOGGER,SHOW_LOG,SHOW_STATUS
 class Logger(object):
     def log(self,*x,pause=PAUSE_LOGGER,clear=PAUSE_LOGGER):
+        if not SHOW_LOG: return
         curframe = inspect.currentframe()
         calframe = inspect.getouterframes(curframe, 2)
         mytype = type(self).__name__
@@ -67,6 +68,7 @@ class Logger(object):
         exit()
 
     def status(self,*msg,pause=True,clear=True,ticks=[],tab=2):
+        if not SHOW_STATUS: return
         # if len(msg)==1 and type(msg[0])==str:
             # msg=[x for x in msg[0].split('\n\n')]
         if clear: clear_screen()
