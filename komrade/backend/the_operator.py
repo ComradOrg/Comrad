@@ -113,16 +113,22 @@ class TheOperator(Operator):
         if success:
             res['status'] = f'''
 {OPERATOR_INTRO} I have managed to register user {name}.
-I've stored their public key ({b64encode(cv).decode()}) under their name,
-in a disguished (hashed with salt) form: {ck}.
-'''
+I've stored their public key ({b64encode(cv).decode()}) under their name.
+I never mention this name directly, but record it only
+in a disguised, "hashed" form: by running it through a 1-way 
+information process which will always yield the same scrambled result,
+but which is unpredictable to anyone without the secret key,
+which I keep protected and encrypted on my local hard drive.
+The content of tour subsequent data will therefore not only be encrypted,
+but its location in my database is obscured, and even I couldn't find it
+again unless you gave me exactly what information to run through the 1-way
+information scrambler once again.'''
         else:
             res['status']= f'''
 {OPERATOR_INTRO}. I'm sorry, but I can'tregister username {name}.
-Someone has already registered under that name.'''
-
+Someone has already registered under that name.
+'''
         self.log('Operator returning result:',res)
-
         return res
         
 
