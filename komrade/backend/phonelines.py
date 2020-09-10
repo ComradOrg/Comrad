@@ -33,33 +33,23 @@ def create_phonelines():
     
 
     # create keys for Op
-    op_res = op.forge_new_keys(
+    op_uri,op_decr_keys = op.forge_new_keys(
         keys_to_save=op_keys_to_keep_on_server,
         keys_to_return=op_keys_to_keep_on_client + op_keys_to_keep_on_3rdparty # on clients only
     )
-    op_uri = op_res['uri_id']
-    op_decr_keys = op_res['_keychain']
-    
-    #pring('op_uri',op_uri)
-    #pring('op_decr_keys',op_decr_keys)
 
     # create keys for phone
-    phone_res = phone.forge_new_keys(
+    phone_uri,phone_decr_keys = phone.forge_new_keys(
         name=TELEPHONE_NAME,
         keys_to_save=phone_keys_to_keep_on_server,  # on server only
         keys_to_return=phone_keys_to_keep_on_client + phone_keys_to_keep_on_3rdparty   # on clients only
     )
-    phone_uri = phone_res['uri_id']
-    phone_decr_keys = phone_res['_keychain']
-
 
     # create keys for world
-    world_res = world.forge_new_keys(
+    world_uri,world_decr_keys = world.forge_new_keys(
         keys_to_save=world_keys_to_keep_on_server,
         keys_to_return=world_keys_to_keep_on_client + world_keys_to_keep_on_3rdparty # on clients only
     )
-    world_uri = world_res['uri_id']
-    world_decr_keys = world_res['_keychain']
 
     ## store remote keys
     THIRD_PARTY_DICT = {OPERATOR_NAME:{}, TELEPHONE_NAME:{}, WORLD_NAME:{}}
@@ -157,6 +147,6 @@ def connect_phonelines():
     dict_merge(OPERATOR_KEYCHAIN,remote_builtin_keychain_op_json)
     dict_merge(WORLD_KEYCHAIN,remote_builtin_keychain_world_json)
     
-    # #pring('>>>> loaded OPERATOR_KEYCHAIN',OPERATOR_KEYCHAIN)
-    # #pring('>>>> loaded TELEPHONE_KEYCHAIN',TELEPHONE_KEYCHAIN)
+    # #print('>>>> loaded OPERATOR_KEYCHAIN',OPERATOR_KEYCHAIN)
+    # #print('>>>> loaded TELEPHONE_KEYCHAIN',TELEPHONE_KEYCHAIN)
     return (OPERATOR_KEYCHAIN,TELEPHONE_KEYCHAIN,WORLD_KEYCHAIN,OMEGA_KEY)
