@@ -101,11 +101,11 @@ if __name__=='__main__':
     elon = Persona('elon')
 
     # marx.register()
-    # elon.register()
+    elon.register()
     # person.register()
     # print(person.pubkey)
 
     # elon.send_msg_to('youre dumb',marx)
     #Caller('elon').ring_ring({'_route':'say_hello','_msg':'my dumb message to operator'})
 
-    print(marx.exists_on_server())
+    # print(marx.exists_on_server())
