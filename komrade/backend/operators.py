@@ -156,55 +156,86 @@ class Operator(Keymaker):
   
         # return resp_msg_obj
 
-    def route(self,msg_obj):
-        data,route = msg_obj.data, msg_obj.route
-        if not hasattr(self,route) or route not in self.ROUTES:
-            raise KomradeException('route not valid!')
+    # def route1(self,msg_obj):
+    #     data,route = msg_obj.data, msg_obj.route
+    #     if not hasattr(self,route) or route not in self.ROUTES:
+    #         raise KomradeException('route not valid!')
         
-        # route it!
-        func = getattr(self,route)
-        new_data = func(**data)
-        self.log(f'got new_data back from self.{route}() <-- {new_data}')
+    #     # route it!
+    #     func = getattr(self,route)
+    #     new_data = func(**data)
+    #     self.log(f'got new_data back from self.{route}() <-- {new_data}')
 
-        # return the other way
-        self.log('message was sent this way:',msg_obj)
-        msg_obj.mark_return_to_sender(new_msg=new_data)
-        self.log('now it\'s going the other way:',msg_obj)
+    #     # return the other way
+    #     self.log('message was sent this way:',msg_obj)
+    #     msg_obj.mark_return_to_sender(new_msg=new_data)
+    #     self.log('now it\'s going the other way:',msg_obj)
 
-        # delete route
-        if msg_obj.route:
-            msg_obj.delete_route()
+    #     # delete route
+    #     if msg_obj.route:
+    #         msg_obj.delete_route()
 
-        # if not decrypted
-        if not msg_obj.is_encrypted:
-            msg_obj.encrypt()
+    #     # if not decrypted
+    #     if not msg_obj.is_encrypted:
+    #         msg_obj.encrypt()
 
-        return msg_obj
-
+    #     return msg_obj
 
     def route_msg(self,msg_obj):
         # decrypt
         self.log('got msg_obj!',msg_obj)
         if msg_obj.is_encrypted:
             msg_obj.decrypt()
-        # are there instructions for us?
-        if msg_obj.route:
-            # get result from routing
-            self.log(f'routing msg to self.{msg_obj.route}(**{dict_format(msg_obj.data)})')
-            return self.route(msg_obj)
+        
+        # try route
+        if msg_obj.route
+            data,route = msg_obj.data, msg_obj.route
+            if hasattr(self,route) or route not in self.ROUTES:
+                raise KomradeException(f'Not a valid route!: {route}')
+            
+            # route it!
+            func = getattr(self,route)
+            new_data = func(**data)
+            msg_obj.msg = msg_obj.msg_d['_msg'] = new_data
 
-        # can we pass the buck on?
-        elif msg_obj.has_embedded_msg:
-            embedded_msg = msg_obj.msg
-            embedded_recipient = embedded_msg.to_whom
+        # try passing it on?
+        if msg_obj.has_embedded_msg:
+            new_data = self.route_msg(msg_obj.msg)
+            msg_obj.msg = msg_obj.msg_d['_msg'] = new_data
 
-            # whew, then we can make someone else take the phone
-            self.log(f'passing msg onto {embedded_recipient} ...')
-            return embedded_recipient.route_msg(embedded_msg)
+        # time to turn around and encrypt
+        msg_obj.mark_return_to_sender()
+        self.log('returning to sender as:',msg_obj)
 
-        # ???
-        self.log('what do I do? giving this back to you...')
+        # encrypt
+        msg_obj.encrypt()
+
         return msg_obj
+
+
+    # def route_msg0(self,msg_obj):
+    #     # decrypt
+    #     self.log('got msg_obj!',msg_obj)
+    #     if msg_obj.is_encrypted:
+    #         msg_obj.decrypt()
+    #     # are there instructions for us?
+    #     if msg_obj.route:
+    #         # get result from routing
+    #         self.log(f'routing msg to self.{msg_obj.route}(**{dict_format(msg_obj.data)})')
+    #         return self.route(msg_obj)
+
+    #     # can we pass the buck on?
+    #     elif msg_obj.has_embedded_msg:
+    #         embedded_msg = msg_obj.msg
+    #         embedded_recipient = embedded_msg.to_whom
+
+    #         # whew, then we can make someone else take the phone
+    #         self.log(f'passing msg onto {embedded_recipient} ...')
+    #         return embedded_recipient.route_msg(embedded_msg)
+
+    #     # ???
+    #     self.log('what do I do? giving this back to you...')
+    #     return msg_obj
     
 
 
@@ -229,33 +260,18 @@ class Operator(Keymaker):
         
         # encrypting
         msg_obj.encrypt()
-        # get pure encrypted binary, sealed
-        #msg_sealed = self.seal_msg(msg_obj)
-        
-        # pass onto next person...
+
+        # pass through the telephone wire by the get_resp_from function
         if not get_resp_from: get_resp_from=to_whom.ring_ring
         resp_msg_obj = get_resp_from(msg_obj.msg_d)
         self.log('resp_msg_obj <-',resp_msg_obj)
 
+        # decrypt
         if resp_msg_obj.is_encrypted:
             resp_msg_obj.decrypt()
-        
 
         # route back?
-        route_result = self.route_msg(resp_msg_obj)
-        self.log('route_result 2?',route_result)
-        return route_result
-
-        # decrypt?
-        # from komrade.backend.messages import Message
-        # if type(route_result)==Message:
-            # if route_result.is_encrypted:
-                # route_result.decrypt()
-
-        # return route_result
-
-
-
+        return self.route_msg(resp_msg_obj)
 
 
 
@@ -267,30 +283,30 @@ class Operator(Keymaker):
         >> {msg_obj}
         ''')
 
-        #return  self.route_msg(msg_obj)
+        return  self.route_msg(msg_obj)
 
-        route_response = self.route_msg(msg_obj)
-        self.log('route_response',route_response)
-        # set this to be the new msg
-        #msg_obj.msg = msg_obj.msg_d['_msg'] = response
-        #self.log('what msg_obj looks like now:',msg_obj)
+        # route_response = self.route_msg(msg_obj)
+        # self.log('route_response',route_response)
+        # # set this to be the new msg
+        # #msg_obj.msg = msg_obj.msg_d['_msg'] = response
+        # #self.log('what msg_obj looks like now:',msg_obj)
 
-        # send new content back
-        # from komrade.backend.messages import Message
-        # if type(route_response)==Message:
-        #     resp_msg_obj = route_response
-        # else:    
-        resp_msg_obj = msg_obj.to_whom.compose_msg_to(
-            route_response,
-            msg_obj.from_whom
-        )
-        self.log('resp_msg_obj',resp_msg_obj)
+        # # send new content back
+        # # from komrade.backend.messages import Message
+        # # if type(route_response)==Message:
+        # #     resp_msg_obj = route_response
+        # # else:    
+        # resp_msg_obj = msg_obj.to_whom.compose_msg_to(
+        #     route_response,
+        #     msg_obj.from_whom
+        # )
+        # self.log('resp_msg_obj',resp_msg_obj)
         
-        # re-encrypt
-        if not resp_msg_obj.is_encrypted:
-            resp_msg_obj.encrypt()
-            self.log(f're-encrypted: {resp_msg_obj}')
+        # # re-encrypt
+        # if not resp_msg_obj.is_encrypted:
+        #     resp_msg_obj.encrypt()
+        #     self.log(f're-encrypted: {resp_msg_obj}')
         
-        # pass msg back the chain
-        return resp_msg_obj
+        # # pass msg back the chain
+        # return resp_msg_obj
         
