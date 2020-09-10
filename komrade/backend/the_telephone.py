@@ -48,8 +48,8 @@ class TheTelephone(Operator):
         self.log('unsealed resp_msg_obj',resp_msg_obj)
 
         # decrypt
-        resp_msg_obj.decrypt()
-        self.log('returning decrypted form:',resp_msg_obj)
+        # resp_msg_obj.decrypt()
+        # self.log('returning decrypted form:',resp_msg_obj)
 
         return resp_msg_obj
         # return self.pronto_pronto(resp_msg_obj)
