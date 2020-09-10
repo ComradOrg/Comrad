@@ -119,29 +119,27 @@ class Message(Logger):
         return True
 
     def decrypt(self,recursive=False):
-        # 
+        # check if needs decryption
         if not self.is_encrypted: return
-        
-        # get from_whoms
+
+        # otherwise lets do it
+        self.msg_encr = self.msg
         self.log(f'attempting to decrypt {self}')
 
         # decrypt msg
-        decr_msg_b = SMessage(
+        self.msg = decr_msg_b = SMessage(
             self.to_whom.privkey,
             self.from_whom.pubkey
         ).unwrap(self.msg)
-        
-        self.log('Am I decrypted?',decr_msg_b)
-        
-        decr_msg = pickle.loads(decr_msg_b)
-        self.log('unpickled:',decr_msg)
+        self.log('Am I decrypted?',self)
 
-        self.msg_encr = self.msg
-        self.msg = decr_msg
+        # unpickle        
+        self.msg = decr_msg = pickle.loads(decr_msg_b)
+        self.log('unpickled:',self)
+
+        # save to d
         self.msg_d['_msg'] = decr_msg
 
-        # self.log('got decr msg back:',decr_msg)
-        
         # now, is the decrypted message itself a message?
         if is_valid_msg_d(decr_msg):
             self.log('this is a valid msg in its own right!',decr_msg)
