@@ -62,7 +62,10 @@ class Persona(Caller):
         self.log(f'my new uri is {uri_id} and I got new keys!: {dict_format(keys_returned)}')
 
         # save the ones we should on server
-        data = { **{'name':name}, **keys_returned}
+        data = {
+            **{'name':name, ROUTE_KEYNAME:'register_new_user'}, 
+            **keys_returned
+        }
         self.log('sending to server:',dict_format(data))
         # msg_to_op = self.compose_msg_to(data, self.op)
             
