@@ -37,8 +37,8 @@ def create_phonelines():
         keys_to_save=op_keys_to_keep_on_server,
         keys_to_return=op_keys_to_keep_on_client + op_keys_to_keep_on_3rdparty # on clients only
     )
-    print('op!',op_uri)
-    pprint(op_decr_keys)
+    #print('op!',op_uri)
+    p#print(op_decr_keys)
 
     # create keys for phone
     phone_uri,phone_decr_keys = phone.forge_new_keys(
@@ -46,16 +46,16 @@ def create_phonelines():
         keys_to_save=phone_keys_to_keep_on_server,  # on server only
         keys_to_return=phone_keys_to_keep_on_client + phone_keys_to_keep_on_3rdparty   # on clients only
     )
-    print('phone!',op_uri)
-    pprint(phone_decr_keys)
+    #print('phone!',op_uri)
+    p#print(phone_decr_keys)
 
     # create keys for world
     world_uri,world_decr_keys = world.forge_new_keys(
         keys_to_save=world_keys_to_keep_on_server,
         keys_to_return=world_keys_to_keep_on_client + world_keys_to_keep_on_3rdparty # on clients only
     )
-    print('world!',op_uri)
-    pprint(world_decr_keys)
+    #print('world!',op_uri)
+    p#print(world_decr_keys)
     ## store remote keys
     THIRD_PARTY_DICT = {OPERATOR_NAME:{}, TELEPHONE_NAME:{}, WORLD_NAME:{}}
     for key in op_keys_to_keep_on_3rdparty:
@@ -68,7 +68,7 @@ def create_phonelines():
         if key in world_decr_keys:
             THIRD_PARTY_DICT[WORLD_NAME][key]=world_decr_keys[key]
 
-    print('THIRD_PARTY_DICT',THIRD_PARTY_DICT)
+    #print('THIRD_PARTY_DICT',THIRD_PARTY_DICT)
 
     # store local keys
     STORE_IN_APP = {OPERATOR_NAME:{}, TELEPHONE_NAME:{}, WORLD_NAME:{}}
@@ -81,7 +81,7 @@ def create_phonelines():
     for key in world_keys_to_keep_on_client:
         if key in world_decr_keys:
             STORE_IN_APP[WORLD_NAME][key]=world_decr_keys[key]
-    print('STORE_IN_APP',STORE_IN_APP)
+    #print('STORE_IN_APP',STORE_IN_APP)
 
     # package
     import pickle
@@ -92,16 +92,16 @@ def create_phonelines():
     omega_key = KomradeSymmetricKeyWithoutPassphrase()
     STORE_IN_APP_encr = b64encode(omega_key.encrypt(STORE_IN_APP_pkg))
     THIRD_PARTY_totalpkg = b64encode(omega_key.data + BSEP + omega_key.encrypt(THIRD_PARTY_DICT_pkg))
-    # print('THIRD_PARTY_totalpkg',THIRD_PARTY_totalpkg)
+    # #print('THIRD_PARTY_totalpkg',THIRD_PARTY_totalpkg)
 
     # save
     with open(PATH_BUILTIN_KEYCHAIN,'wb') as of:
         of.write(STORE_IN_APP_encr)
-        print('STORE_IN_APP_encr',STORE_IN_APP_encr)
+        #print('STORE_IN_APP_encr',STORE_IN_APP_encr)
         
     with open(PATH_OPERATOR_WEB_KEYS_FILE,'wb') as of:
         of.write(THIRD_PARTY_totalpkg)
-        print('THIRD_PARTY_DICT_encr',THIRD_PARTY_totalpkg)
+        #print('THIRD_PARTY_DICT_encr',THIRD_PARTY_totalpkg)
 
 
 def connect_phonelines():
@@ -133,7 +133,7 @@ def connect_phonelines():
         remote_builtin_keychain[OPERATOR_NAME],
         remote_builtin_keychain[WORLD_NAME]
     )
-    print('remote!',
+    #print('remote!',
         remote_builtin_keychain_phone_json,
         remote_builtin_keychain_op_json,
         remote_builtin_keychain_world_json
@@ -153,7 +153,7 @@ def connect_phonelines():
         local_builtin_keychain[OPERATOR_NAME],
         local_builtin_keychain[WORLD_NAME]
     )
-    print('local!',
+    #print('local!',
         local_builtin_keychain_phone_json,
         local_builtin_keychain_op_json,
         local_builtin_keychain_world_json
@@ -180,10 +180,10 @@ def connect_phonelines():
         qr = pyqrcode.create(uri_id)
         qr.png(ofnfn,scale=5)
         qr_str = qr.terminal()
-        print(f'Saved world to QR:\n{qr_str}')
+        #print(f'Saved world to QR:\n{qr_str}')
     
-    # #print('>>>> loaded OPERATOR_KEYCHAIN',OPERATOR_KEYCHAIN)
-    # #print('>>>> loaded TELEPHONE_KEYCHAIN',TELEPHONE_KEYCHAIN)
+    # ##print('>>>> loaded OPERATOR_KEYCHAIN',OPERATOR_KEYCHAIN)
+    # ##print('>>>> loaded TELEPHONE_KEYCHAIN',TELEPHONE_KEYCHAIN)
     return (OPERATOR_KEYCHAIN,TELEPHONE_KEYCHAIN,WORLD_KEYCHAIN,OMEGA_KEY)
 
 
@@ -192,5 +192,5 @@ if __name__ == '__main__':
     phone = TheTelephone()
     op = TheOperator()
 
-    pprint(phone.keychain())
-    pprint(op.keychain())
+    p#print(phone.keychain())
+    p#print(op.keychain())
