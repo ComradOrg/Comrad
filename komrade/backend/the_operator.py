@@ -97,7 +97,12 @@ class TheOperator(Operator):
     def register_new_user(self,name,passphrase,pubkey,**data):
         # self.log('setting pubkey under name')
         success,ck,cv = self.crypt_keys.set(name,pubkey,prefix='/pubkey/')
-        # self.log('got result from crypt:',res)
+        self.log(f'''
+got result from crypt:
+success = {success}
+ck = {ck}
+cv = {cv}
+''')
         
         # check input back from crypt
         assert cv==pubkey
