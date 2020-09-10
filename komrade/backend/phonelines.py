@@ -9,7 +9,7 @@ from komrade.backend import *
 ### CREATE PRIME ENTITIES
 def create_phonelines():
     ## CREATE OPERATOR
-    op = Operator(name=OPERATOR_NAME)
+    op = Keymaker(name=OPERATOR_NAME)
     op_keys_to_keep_on_client = ['pubkey']  # kept on app, stored under name
     op_keys_to_keep_on_3rdparty = ['privkey_decr']  # kept on .onion site
     op_keys_to_keep_on_server = ['pubkey',   # stored under name
@@ -19,13 +19,13 @@ def create_phonelines():
                                 'adminkey_decr_decr']   # kept on op server
 
     ## create phone
-    phone = Operator(name=TELEPHONE_NAME)
+    phone = Keymaker(name=TELEPHONE_NAME)
     phone_keys_to_keep_on_client = ['pubkey','privkey_encr'] # kept on app; need both to init connection 
     phone_keys_to_keep_on_3rdparty = ['privkey_decr']  # dl by phone
     phone_keys_to_keep_on_server = ['pubkey']  # kept on op server
 
     ## create phone
-    world = Operator(name=WORLD_NAME)
+    world = Keymaker(name=WORLD_NAME)
     world_keys_to_keep_on_client = op_keys_to_keep_on_client
     world_keys_to_keep_on_3rdparty = op_keys_to_keep_on_3rdparty
     world_keys_to_keep_on_server = op_keys_to_keep_on_server
