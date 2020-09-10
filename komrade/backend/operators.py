@@ -263,6 +263,8 @@ class Operator(Keymaker):
         >> {msg_obj}
         ''')
 
+        return  self.route_msg(msg_obj)
+
         route_response = self.route_msg(msg_obj)
         self.log('route_response',route_response)
         # set this to be the new msg
