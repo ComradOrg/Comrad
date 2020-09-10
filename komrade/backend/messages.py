@@ -89,7 +89,7 @@ class Message(Logger):
             return (self._from_whom,self._to_whom) 
         alleged_from_whom = self.get_whom(self.from_name)
         alleged_to_whom = self.get_whom(self.to_name)
-        if not self.whom_records_match(alleged_from_whom,alleged_to_whom):
+        if alleged_to_whom and not self.whom_records_match(alleged_from_whom,alleged_to_whom):
             raise KomradeException('Records of from_whoms on The Operator and the from_whom do not match. Something fishy going on?')
         else:
             self._from_whom = alleged_from_whom

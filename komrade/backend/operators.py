@@ -121,7 +121,7 @@ class Operator(Keymaker):
         # unpackage from transmission
         msg_d = pickle.loads(msg_b)
         # get message obj
-        print('unsealed msg:',msg_d)
+        # print('unsealed msg:',msg_d)
         from komrade.backend.messages import Message
         msg_obj = Message(msg_d,from_whom=from_whom,to_whom=to_whom)
         # decrypt msg
@@ -182,7 +182,7 @@ class Operator(Keymaker):
         # are there instructions for us?
         if msg_obj.route:
             # get result from routing
-            self.log(f'routing msg to self.{msg_obj.route}(**{msg_obj.data})')
+            self.log(f'routing msg to self.{msg_obj.route}(**{dict_format(msg_obj.data)})')
             return self.route(msg_obj)
 
         # can we pass the buck on?

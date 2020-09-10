@@ -273,36 +273,41 @@ class Keymaker(Logger):
                         keys_to_return = KEYMAKER_DEFAULT_KEYS_TO_SAVE_ON_CLIENT,
                         keys_to_gen = KEYMAKER_DEFAULT_KEYS_TO_GEN,
                         key_types = KEYMAKER_DEFAULT_KEY_TYPES):
-        self.log('forging new keys...',name,self.name)
-        self.log('keys_to_save:',keys_to_save)
-        self.log('keys_to_return',keys_to_return)
-        
-        # name
-        if not name: name=self.name
-
+        # setup
         keys_to_gen = set(keys_to_gen) | set(keys_to_save) | set(keys_to_return)
         keys_to_gen = sorted(list(keys_to_gen),key=lambda x: x.count('_'))
-        self.log('keys_to_gen =',keys_to_gen)
         key_types = dict([(k,key_types[k]) for k in keys_to_gen])
-        self.log('key_types =',key_types)
+        if not name: name=self.name
+
+        # show user what's happening
+        self.log(f'''
+Keymaker ({self}) is forging new keys for {name}
+    I will save these keys in this crypt:
+        {keys_to_save}
+    I will also save this user's pubkey (as b64 URI) to:
+        {self.get_path_qrcode(name=name)}
+    I will return these keys to you:
+        {keys_to_return}
+    which means I will end up generating these keys:
+        {keys_to_gen}
+    I will also be using these key types to do so:
+        {dict_format(key_types,tab=4)}
+        ''')
+        
 
         # get decryptor keys!
         keychain = self.gen_keys_from_types(key_types,passphrase=passphrase)
-        self.log('keychain 1 =',keychain)
-        
-        # gen encrypted keys!
-        keychain = self.gen_encr_keys(keychain,keys_to_gen,passphrase=passphrase)
-        self.log('keychain 2 =',keychain)
+        self.log('I built this keychain!',dict_format(keychain,tab=2))
         
         # save keys!
         # get URI id to save under (except for pubkeys, accessible by name)
-        uri_id,keys_saved,keychain = self.save_keychain(name,keychain,keys_to_save)
-        self.log('uri_id =',uri_id)
-        self.log('keys_saved =',keys_saved)
-        self.log('keychain =',keychain)
+        uri_id,keys_saved_d,keychain = self.save_keychain(name,keychain,keys_to_save)
+        self.log('I saved this keychain:',dict_format(keys_saved_d,tab=2),'using the generated-from-pubkey URI ID',uri_id)
 
         # return keys!
         keys_returned = self.return_keychain(keychain,keys_to_return)
+        self.log('I am returning this keychain:',dict_format(keys_returned,tab=2))
+
         return (uri_id,keys_returned)
         
                 
@@ -314,23 +319,28 @@ class Keymaker(Logger):
                 keychain_toreturn[key]=keychain[key]
         return keychain_toreturn
 
-    def save_uri_as_qrcode(self,name=None,uri_id=None,odir=None):
-        if not uri_id: uri_id = get_random_id() + get_random_id()
-        uri_id = self.uri_id
+    def get_path_qrcode(self,name=None,dir=None,ext='.png'):
+        if not name: name=self.name
+        if not dir: dir = PATH_QRCODES
+        fnfn = os.path.join(dir,name+ext)
+        return fnfn
+
+    def save_uri_as_qrcode(self,uri_id=None,name=None):
+        if not uri_id: uri_id = self.uri_id
         if not uri_id and not self.uri_id: raise KomradeException('Need URI id to save!')
+        if not name: name=self.name
 
         # gen
         import pyqrcode
         qr = pyqrcode.create(uri_id)
-        if not odir: odir = PATH_QRCODES
-        ofnfn = os.path.join(odir,self.name+'.png')
+        ofnfn = self.get_path_qrcode(name=name)
         qr.png(ofnfn,scale=5)
         self.log('>> saved:',ofnfn)
 
     def save_keychain(self,name,keychain,keys_to_save=None,uri_id=None):
         if not keys_to_save: keys_to_save = list(keychain.keys())
         if not uri_id: uri_id = b64encode(keychain['pubkey'].data).decode() #uri_id = get_random_id() + get_random_id()
-        self.log(f'SAVING KEYCHAIN FOR {name} under URI {uri_id}')
+        # self.log(f'SAVING KEYCHAIN FOR {name} under URI {uri_id}')
         self._uri_id = uri_id
         # filter for transfer
         for k,v in keychain.items():
@@ -352,7 +362,10 @@ class Keymaker(Logger):
         # save pubkey as QR
         if not 'pubkey' in keys_saved_d:
             self.log('did not save pubkey in crypt, storing as QR...')
-            self.save_uri_as_qrcode(name=name, uri_id=uri_id, odir=PATH_QRCODES)
+            self.save_uri_as_qrcode(name=name, uri_id=uri_id)
+
+        # set to my keychain right away
+        self._keychain = keychain
 
         return (uri_id,keys_saved_d,keychain)
 

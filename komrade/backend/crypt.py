@@ -49,7 +49,7 @@ class Crypt(Logger):
             super().log(*x)
         
     def hash(self,binary_data):
-        return hashlib.sha256(binary_data + self.secret).hexdigest()
+        return b64encode(hashlib.sha256(binary_data + self.secret).hexdigest().encode()).decode()
         # return zlib.adler32(binary_data)
 
     def force_binary(self,k_b):
@@ -66,15 +66,17 @@ class Crypt(Logger):
 
     def package_val(self,k):
         k_b = self.force_binary(k)
-        if self.cell is not None: k_b = self.cell.encrypt(k_b)
-        return k_b
+        if self.cell is not None:
+            k_b = self.cell.encrypt(k_b)
+        return b64encode(k_b)
 
     def unpackage_val(self,k_b):
         try:
-            if self.cell is not None: k_b = self.cell.decrypt(k_b)
+            if self.cell is not None:
+                k_b = self.cell.decrypt(k_b)
+            return b64decode(k_b)
         except ThemisError:
             pass
-        return k_b
 
     def has(self,k,prefix=''):
         k_b=self.package_key(k,prefix=prefix)
@@ -94,8 +96,19 @@ class Crypt(Logger):
         k_b=self.package_key(k,prefix=prefix)
         k_b_hash = self.hash(k_b)
         v_b=self.package_val(v)
-        self.log(f'set(\n\t{prefix}{k},\n\t{k_b}\n\t{k_b_hash}\n\t\n\t{v_b}\n)\n')
-
+        self.log(f'''
+Crypt.set(
+    prefix = {prefix},
+    
+    k = {k},
+    
+    k_b = {k_b},
+    
+    k_hash = {k_b_hash},
+    
+    val={v_b}
+)')
+        ''')
         # store
         self.store.put(k_b_hash,v_b)
         return True

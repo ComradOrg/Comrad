@@ -62,7 +62,33 @@ class Persona(Caller):
         self.log(f'my new uri is {uri_id} and I got new keys!: {dict_format(keys_returned)}')
 
         # save the ones we should on server
+        data = { **{'name':name}, **keys_returned}
+        self.log('sending to server:',dict_format(data))
+        # msg_to_op = self.compose_msg_to(data, self.op)
+            
+
+        # ring operator
+        resp_msg_obj = self.ring_ring(data)
+        self.log('register got back from op:',resp_msg_obj)
         
+    #     phone_res = msg_obj.msg
+
+    #     # URI id
+    #     uri_id = phone_res.get('uri_id')
+    #     returned_keys = phone_res.get('_keychain')
+    #     self.log('got URI from Op:',uri_id)
+    #     self.log('got returnd keys from Op:',returned_keys)
+
+    #     # better have the right keys
+    #     assert set(KEYMAKER_DEFAULT_KEYS_TO_SAVE_ON_CLIENT) == set(returned_keys.keys())
+
+    #     # now save these keys!
+    #     saved_keys = self.save_keychain(name,returned_keys,uri_id=uri_id)
+    #     self.log('saved keys!',saved_keys)
+
+    #     # success!
+    #     self.log('yay!!!!')
+    #     return saved_keys
 
 
 
@@ -123,7 +149,7 @@ if __name__=='__main__':
     marx = Persona('marx')
     elon = Persona('elon')
 
-    # marx.register()
+    marx.register()
     # elon.register()
     # person.register()
     # print(person.pubkey)
@@ -131,4 +157,4 @@ if __name__=='__main__':
     # elon.send_msg_to('youre dumb',marx)
     #Caller('elon').ring_ring({'_route':'say_hello','_msg':'my dumb message to operator'})
 
-    print(marx.exists_on_server())
+    # print(marx.exists_on_server())

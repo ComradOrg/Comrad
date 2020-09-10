@@ -34,7 +34,7 @@ def pause():
 
 def dict_format(d, tab=0):
     s = ['{\n']
-    for k,v in d.items():
+    for k,v in sorted(d.items()):
         if isinstance(v, dict):
             v = dict_format(v, tab+1)
         else:
