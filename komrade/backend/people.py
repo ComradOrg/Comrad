@@ -68,9 +68,10 @@ class Persona(Caller):
             
 
         # ring operator
-        resp_msg_obj = self.ring_ring(data)
+        # call from phone since I don't have pubkey on record on Op yet
+        resp_msg_obj = self.phone.ring_ring(data)
         self.log('register got back from op:',resp_msg_obj)
-        
+
     #     phone_res = msg_obj.msg
 
     #     # URI id
