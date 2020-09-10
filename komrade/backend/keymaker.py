@@ -347,12 +347,7 @@ Keymaker ({self}) is forging new keys for {name}
         qr.png(ofnfn,scale=5)
         
         self._uri_id = uri_id
-        self.log(f'''
-Saved URI(=pubkey_b64) as a QR code: {ofnfn}
-
-{self.qr}
-
-''')
+        self.log(f'''Saved URI(=pubkey_b64) as a QR code: {ofnfn} {self.qr}''')
 
     def save_keychain(self,name,keychain,keys_to_save=None,uri_id=None):
         if not keys_to_save: keys_to_save = list(keychain.keys())
