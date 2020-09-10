@@ -117,7 +117,7 @@ def connect_phonelines():
     pkg = b64decode(pkg)
     OMEGA_KEY_b,remote_builtin_keychain_encr = pkg.split(BSEP)
     OMEGA_KEY = KomradeSymmetricKeyWithoutPassphrase(key=OMEGA_KEY_b)
-    remote_builtin_keychain = unpackage_from_transmission(OMEGA_KEY.decrypt(remote_builtin_keychain_encr))
+    remote_builtin_keychain = pickle.loads(OMEGA_KEY.decrypt(remote_builtin_keychain_encr))
     (
         remote_builtin_keychain_phone_json,
         remote_builtin_keychain_op_json,
