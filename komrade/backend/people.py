@@ -43,6 +43,14 @@ class Persona(Caller):
         # if keys.get('pubkey') and keys.get('privkey')
 
     def register(self, name = None, passphrase = DEBUG_DEFAULT_PASSPHRASE, is_group=None):
+        self.status([
+            f'@{name}: Uh yes hello, Operator? Could I please register as Komrade @{name}?',
+            ART_OLDPHONE,
+            '''@TheOperator: Sure, but it's not safe for me to cut the keys you need. Why don't you do that yourself, and come back to me when you've cut a special "asymmetric" key in half: you can keep both halves, and I'll keep one, that way we'll always know we're talking to each other.''',
+            f'{@name}: Ok but how do I cut these keys?',
+            '@TheOperator: Visit the Keymaker.'
+        ])
+
         # get needed metadata
         if not name: name=self.name
         if name is None: 

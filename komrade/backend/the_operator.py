@@ -135,7 +135,7 @@ cv = {cv_b64}
             ],
             key_types = {
                 'adminkey':KomradeSymmetricKeyWithoutPassphrase(),
-                'adminkey_encr':ENCRYPTED_KEY,
+                'adminkey_encr':KomradeEncryptedKey(),
                 'adminkey_decr':KomradeSymmetricKeyWithPassphrase(passphrase=passphrase)
             }
         )
@@ -155,7 +155,9 @@ cv = {cv_b64}
         
         # set in crypt
         key_to_be_hashed = cv_b64 + passphrase
-        self.crypt_keys.set(key_to_be_hashed, settings_b_encr)
+        self.crypt_keys.set(key_to_be_hashed, settings_b_encr, prefix='/settings/')
+        self.crypt_keys.set(key_to_be_hashed, settings_b_encr, prefix='/adminkey_encr/')
+
         
 
         # give back decryptor

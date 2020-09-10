@@ -1,4 +1,5 @@
 # basic config
+from .art import *
 from .constants import *
 from .utils import *
 

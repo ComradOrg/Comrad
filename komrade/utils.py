@@ -60,16 +60,16 @@ class Logger(object):
         caller = calframe[1][3]
         log(f'\n[{mytype}.{caller}()]',*x)
 
-        try:
-            if pause: do_pause()
-            if pause: clear_screen()
-        except KeyboardInterrupt:
-            exit()
+        # try:
+        if pause: do_pause()
+        if pause: clear_screen()
+        # except KeyboardInterrupt:
+        exit()
 
     def status(self,status_msg):
         paras=[]
         for para in status_msg.split('\n\n'):
-            self.log(para.strip())
+            self.log(para.strip(),pause=True,clear=False)
             paras.append(para)
         return paras
 
