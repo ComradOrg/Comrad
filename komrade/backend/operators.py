@@ -22,6 +22,7 @@ def locate_an_operator(name):
     return Caller(name)
 
 
+from komrade.constants import OPERATOR_ROUTES
 class Operator(Keymaker):
     ROUTES = OPERATOR_ROUTES
     
