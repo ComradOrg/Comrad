@@ -27,8 +27,6 @@ class KomradeSymmetricKey(KomradeKey):
     def decrypt(self,msg,**kwargs):
         return self.cell.decrypt(msg,**kwargs)
     
-    
-
 
         
 class KomradeSymmetricKeyWithPassphrase(KomradeSymmetricKey):
@@ -74,6 +72,38 @@ class KomradeAsymmetricPrivateKey(KomradeAsymmetricKey):
     @property
     def key(self): return self.privkey
     def __repr__(self): return f'''[Asymmetric Private Key] ({b64encode(self.privkey).decode() if self.privkey else '?'})'''
+
+
+
+class KomradeEncryptedKey(object):
+    def __init__(self,data): self.data=data
+    def __repr__(self): return f'[Encrypted Key] ({self.data})'
+
+class KomradeEncryptedAsymmetricPrivateKey(KomradeEncryptedKey):
+    def __repr__(self): return f'[Encrypted Asymmetric Private Key] ({self.data})'
+class KomradeEncryptedAsymmetricPublicKey(KomradeEncryptedKey):
+    def __repr__(self): return f'[Encrypted Asymmetric Public Key] ({self.data})'
+class KomradeEncryptedSymmetricKey(KomradeEncryptedKey):
+    def __repr__(self): return f'[Encrypted Symmetric Key] ({self.data})'
+
+def get_encrypted_key_obj(data,name_of_encrypted_key):
+    if name_of_encrypted_key.startswith('privkey'):
+        return KomradeEncryptedAsymmetricPrivateKey(data)
+    elif name_of_encrypted_key.startswith('pubkey'):
+        return KomradeEncryptedAsymmetricPublicKey(data)
+    else:
+        return KomradeEncryptedSymmetricKey(data)
+    
+
+
+
+
+
+
+
+
+
+
 
 
 class Keymaker(Logger):
@@ -265,8 +295,12 @@ class Keymaker(Logger):
                     _key = keychain[name_of_what_to_encrypt]
                     # self.log(f'about to encrypt key {name_of_what_to_encrypt}, using {the_key_to_encrypt_it_with}, which is a type {KEYMAKER_DEFAULT_KEY_TYPES[the_key_to_encrypt_it_with]} and has value {keychain[the_key_to_encrypt_it_with]}')
                     _key_encr = _key_decr.encrypt(_key)
+
+
+                    _key_encr_obj = get_encrypted_key_obj(_key_encr, name_of_what_to_encrypt)
+
                     # self.log(f'{_key}\n-- encrypting ----->\n{_key_encr}')
-                    keychain[key_name]=_key_encr
+                    keychain[key_name]=_key_encr_obj
         return keychain
 
 
