@@ -337,7 +337,14 @@ Keymaker ({self}) is forging new keys for {name}
         qr = pyqrcode.create(uri_id)
         ofnfn = self.get_path_qrcode(name=name)
         qr.png(ofnfn,scale=5)
-        self.log('>> saved:',ofnfn)
+        qr_str = qr.terminal('red', 'white')
+        self.log('''
+Encoded URI(=pubkey_b64) into a QR code:
+
+{qr_str}
+
+I saved it to: {ofnfn}
+''')
 
     def save_keychain(self,name,keychain,keys_to_save=None,uri_id=None):
         if not keys_to_save: keys_to_save = list(keychain.keys())
@@ -363,7 +370,7 @@ Keymaker ({self}) is forging new keys for {name}
 
         # save pubkey as QR
         if not 'pubkey' in keys_saved_d:
-            self.log('did not save pubkey in crypt, storing as QR...')
+            # self.log('did not save pubkey in crypt, storing as QR...')
             self.save_uri_as_qrcode(name=name, uri_id=uri_id)
 
         # set to my keychain right away
