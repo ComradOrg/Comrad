@@ -105,8 +105,8 @@ cv = {cv}
 ''')
         
         # check input back from crypt
-        assert cv==pubkey
-        assert name==self.crypt_keys.key2hash(name) #(self.crypt_keys.prepare_key()
+        if success and cv!=pubkey: success=False
+        if success and name!=self.crypt_keys.key2hash(name): success=False
         
         res = {
             'success':success,
