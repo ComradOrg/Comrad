@@ -134,6 +134,16 @@ def connect_phonelines():
         return
     with open(PATH_BUILTIN_KEYCHAIN,'rb') as f:
         local_builtin_keychain_encr = b64decode(f.read())
+    local_builtin_keychain = pickle.loads(OMEGA_KEY.decrypt(local_builtin_keychain_encr))
+    (
+        local_builtin_keychain_phone_json,
+        local_builtin_keychain_op_json,
+        local_builtin_keychain_world_json
+    ) = (local_builtin_keychain[TELEPHONE_NAME],
+        local_builtin_keychain[OPERATOR_NAME],
+        local_builtin_keychain[WORLD_NAME]
+    )
+
 
 
     # set builtin keychains
