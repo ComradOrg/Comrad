@@ -62,8 +62,11 @@ class Logger(object):
             exit()
 
     def status(self,status_msg):
+        paras=[]
         for para in status_msg.split('\n\n'):
             self.log(para.strip())
+            paras.append(para)
+        return paras
 
 import binascii,base64
 def isBase64(sb):
