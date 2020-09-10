@@ -174,7 +174,7 @@ class Operator(Keymaker):
         # delete route
         if msg_obj.route:
             msg_obj.delete_route()
-            
+
         # if not decrypted
         if not msg_obj.is_encrypted:
             msg_obj.encrypt()
@@ -276,14 +276,14 @@ class Operator(Keymaker):
         #self.log('what msg_obj looks like now:',msg_obj)
 
         # send new content back
-        from komrade.backend.messages import Message
-        if type(route_response)==Message:
-            resp_msg_obj = route_response
-        else:    
-            resp_msg_obj = msg_obj.to_whom.compose_msg_to(
-                route_response,
-                msg_obj.from_whom
-            )
+        # from komrade.backend.messages import Message
+        # if type(route_response)==Message:
+        #     resp_msg_obj = route_response
+        # else:    
+        resp_msg_obj = msg_obj.to_whom.compose_msg_to(
+            route_response,
+            msg_obj.from_whom
+        )
         self.log('resp_msg_obj',resp_msg_obj)
         
         # re-encrypt
