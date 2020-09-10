@@ -83,12 +83,12 @@ class KomradeAsymmetricPrivateKey(KomradeAsymmetricKey):
     def key(self): return self.privkey
     def __repr__(self): return f'''[Asymmetric Private Key] ({self.discreet})'''
 
-def make_key_discreet(data,len_start=10,len_end=10,ellipsis='...',show_len=True):
+def make_key_discreet(data,len_start=10,len_end=10,ellipsis='.',show_len=True):
     if not data: return '?'
     if not isBase64(data): data=b64encode(data)
     data=data.decode()
     amt_missing = len(data) - len_start - len_end
-    dstr = data[:len_start] + ('-'*amt_missing)
+    dstr = data[:len_start] + (ellipsis*amt_missing)
     if len_end: dstr+=data[-len_end:]
     return f'{dstr}' #' (+{len(data)-len_start-len_end})'
 
