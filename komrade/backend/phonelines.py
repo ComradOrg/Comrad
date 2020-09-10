@@ -134,10 +134,10 @@ def connect_phonelines():
         remote_builtin_keychain[WORLD_NAME]
     )
     #print('remote!',
-        remote_builtin_keychain_phone_json,
-        remote_builtin_keychain_op_json,
-        remote_builtin_keychain_world_json
-    )
+    #     remote_builtin_keychain_phone_json,
+    #     remote_builtin_keychain_op_json,
+    #     remote_builtin_keychain_world_json
+    # #)
 
     # load local keys
     if not os.path.exists(PATH_BUILTIN_KEYCHAIN):
@@ -154,10 +154,10 @@ def connect_phonelines():
         local_builtin_keychain[WORLD_NAME]
     )
     #print('local!',
-        local_builtin_keychain_phone_json,
-        local_builtin_keychain_op_json,
-        local_builtin_keychain_world_json
-    )
+    #     local_builtin_keychain_phone_json,
+    #     local_builtin_keychain_op_json,
+    #     local_builtin_keychain_world_json
+    # )
 
 
 
