@@ -133,7 +133,7 @@ cv = {cv}
             res['status']= f'''
 {OPERATOR_INTRO}I'm sorry, but I can't register the name of {name}.
 '''
-        self.log('Operator returning result:',res)
+        self.log('Operator returning result:',dict_format(res,tab=2))
         return res
         
 
