@@ -135,7 +135,7 @@ class Operator(Keymaker):
     def __repr__(self):
         clsname=(type(self)).__name__
         name = clsname+' '+self.name if self.name!=clsname else clsname
-        keystr='' #'+'.join(self.top_keys) if self.pubkey else ''
+        keystr='+'.join(self.top_keys) if self.pubkey else ''
         # if self.pubkey:
         if False:
             pubk=self.pubkey_b64.decode()
