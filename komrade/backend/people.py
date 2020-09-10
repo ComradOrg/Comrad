@@ -63,7 +63,7 @@ class Persona(Caller):
 
         # save the ones we should on server
         data = {
-            **{'name':name, 'passphrase':self.hash(passphrase), ROUTE_KEYNAME:'register_new_user'}, 
+            **{'name':name, 'passphrase':self.crypt_keys.hash(passphrase), ROUTE_KEYNAME:'register_new_user'}, 
             **keys_returned
         }
         self.log('sending to server:',dict_format(data,tab=2))
