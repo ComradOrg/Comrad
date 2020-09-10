@@ -38,7 +38,7 @@ def dict_format(d, tab=0):
             return b64encode(v)
         return v
 
-    s = ['{\n']
+    s = ['{\n\n']
     for k,v in sorted(d.items()):
         if isinstance(v, dict):
             v = dict_format(v, tab+1)
@@ -47,7 +47,7 @@ def dict_format(d, tab=0):
 
         # s.append('%s%r: %s (%s),\n' % ('  '*tab, k, v, type(v).__name__))
         s.append('%s%r: %s,\n\n' % ('  '*tab, k, repr(v)))
-    s.append('%s}' % ('  '*tab))
+    s.append('\n%s}' % ('  '*tab))
     return ''.join(s)
 
 import inspect
