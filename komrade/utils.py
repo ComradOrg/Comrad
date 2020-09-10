@@ -50,7 +50,7 @@ def dict_format(d, tab=0):
     s.append('%s}' % ('  '*tab))
     return ''.join(s)
 
-import inspect
+import inspect,time
 from komrade.constants import PAUSE_LOGGER
 class Logger(object):
     def log(self,*x,pause=PAUSE_LOGGER,clear=PAUSE_LOGGER):
@@ -66,12 +66,44 @@ class Logger(object):
         # except KeyboardInterrupt:
         exit()
 
-    def status(self,status_msg):
+    def status(self,*msg,pause=True,clear=True,ticks=[],tab=2):
+        # if len(msg)==1 and type(msg[0])==str:
+            # msg=[x for x in msg[0].split('\n\n')]
+        if clear: clear_screen()
         paras=[]
-        for para in status_msg.split('\n\n'):
-            self.log(para.strip(),pause=True,clear=False)
-            paras.append(para)
-        return paras
+        res={}
+        for para in msg:
+            plen = para if type(para)==int or type(para)==float else None
+            if type(para) in {int,float}:
+                plen=int(para)
+                for i in range(plen):
+                    tick = ticks[i] if i<len(ticks) else '.'
+                    print(tick,end=' ',flush=True)
+                    time.sleep(1)
+            elif para is None:
+                clear_screen()
+            elif para is False:
+                pass
+            elif type(para) is tuple:
+                k=para[0]
+                q=para[1]
+                f=para[2] if len(para)>2 else input
+                ans=None
+                while not ans:
+                    ans=f(q).strip()
+                res[k]=ans
+            elif type(para) is dict:
+                print(dict_format(para,tab=tab))
+            elif para is 0:
+                do_pause()
+            elif pause:
+                print(para,flush=True)
+                paras+=[para]  
+                do_pause()
+            else:
+                print(para,flush=True)
+                paras+=[para]    
+        return {'paras':paras, 'vals':res}
 
 import binascii,base64
 def isBase64(sb):

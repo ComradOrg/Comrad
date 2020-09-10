@@ -5,7 +5,7 @@ from komrade.backend import *
 
 class Persona(Caller):
 
-    def __init__(self, name, passphrase=DEBUG_DEFAULT_PASSPHRASE):
+    def __init__(self, name=None, passphrase=DEBUG_DEFAULT_PASSPHRASE):
         super().__init__(name=name,passphrase=passphrase)
     #     self.boot(create=False)
 
@@ -42,23 +42,66 @@ class Persona(Caller):
     # def login(self):
         # if keys.get('pubkey') and keys.get('privkey')
 
-    def register(self, name = None, passphrase = DEBUG_DEFAULT_PASSPHRASE, is_group=None):
+    def register(self, name = None, passphrase = None, is_group=None):
+        # defaults
+        if name and not self.name: self.name=name
+        if not name and self.name: name=self.name
+        if not name and not self.name: name=''
+        
+        # ring ring!
+        ticks = ['*ring*','*ring ring*','*ring*']
+        self.status(None,ART_OLDPHONE3,3,pause=False,ticks = ticks)
+
+        # hello, op?
+        self.status(f'\n\n@{name if name else "?"}: Uh yes hello, Operator? I would like to join Komrade, the socialist network. Could you patch me through?',clear=True,pause=True)
+        while not name:
+            name=self.status(('name','@TheOperator: Of course, Komrade ...?\n@'),clear=False).get('vals',{}).get('name')
+            print()
+        self.name=name
+        self.status(f"@TheOperator: Of course, Komrade @{name}. A fine name. First, though, let me see if by an awkward accident someone has already taken this name.",clear=False)
+
+        # does username exist
+        res = self.exists_on_server()
+        self.status('I got this result',res,clear=False)
+        stop
+
+        exit()
+
         self.status([
-            f'@{name}: Uh yes hello, Operator? Could I please register as Komrade @{name}?',
-            ART_OLDPHONE,
-            '''@TheOperator: Sure, but it's not safe for me to cut the keys you need. Why don't you do that yourself, and come back to me when you've cut a special "asymmetric" key in half: you can keep both halves, and I'll keep one, that way we'll always know we're talking to each other.''',
-            f'@{name}: Ok but how do I cut these keys?',
+            '''@TheOperator: I could, it's not safe yet. Your information will be exposed all over the internet. You should forge your encryption keys first.''',
+            f'@{name}: Fine, but how do I do that?',
             '@TheOperator: Visit the Keymaker.'
         ])
 
-        # get needed metadata
-        if not name: name=self.name
-        if name is None: 
-            name = input('\nWhat is the name for this account? ')
-        if passphrase is None:
-            passphrase = getpass.getpass('\nEnter a memborable password: ')
-        # if is_group is None:
-            # is_group = input('\nIs this a group account? [y/N]').strip().lower() == 'y'
+        # ring ring!
+        self.status([None,ART_KEY,2],pause=False)
+
+        # some info
+        res = self.status([
+            # ART_KEY,
+            f'{ART_KEY}@{name}: Dear @Keymaker, I would like to forge a new set of keys.',
+            f'''@Keymaker: We will make two. A matching, "asymmetric" pair:''',
+            '\t1) A "public key" you can share with anyone.',
+            '\t2) A "private key" other no one can ever, ever see.',
+            'With both together, you can communicate privately and securely with anyone who also has their own key pair.'
+        ])
+        while not passphrase:
+            passphrase1 = getpass(f'What is a *memorable* pass word or phrase? Do not write it down.\n@{name}: ')
+            passphrase2 = getpass(f'Could you repeat that?')
+            if passphrase1!=passphrase2:
+                self.status('Those passwords didn\'t match. Please try again.',clear=False,pause=False)
+            else:
+                passphrase=passphrase1
+
+        # if not name or name=='?': self.name = name = res['vals'].get('name')
+        res = self.status([
+            ('passphrase',f'\nWhat is a memorable pass word or phrase? \n@{name}: ',getpass) if not passphrase else False
+            ('passphrase2',f'\Could you repeat that? \n@{name}: ',getpass) if not passphrase else False
+        ],clear=False) 
+        if not passphrase:
+            p1,p2=res.get('passphrase'),res.get('passphrase2')
+            # if p1!=p2
+            # passphrase = passphrase
 
         # make and save keys locally
         uri_id,keys_returned = self.forge_new_keys(
@@ -101,8 +144,9 @@ class Persona(Caller):
 def test_register():
     import random
     num = random.choice(list(range(0,1000)))
-    botname=f'marx{str(num).zfill(3)}'
-    marxbot = Persona(botname)
+    # botname=f'marx{str(num).zfill(3)}'
+    # marxbot = Persona(botname)
+    marxbot=Persona()
     marxbot.register()
 
 if __name__=='__main__':
