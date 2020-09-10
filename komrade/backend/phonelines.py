@@ -179,7 +179,7 @@ def connect_phonelines():
         uri_id = b64encode(WORLD_KEYCHAIN['pubkey'])
         qr = pyqrcode.create(uri_id)
         qr.png(ofnfn,scale=5)
-        qr_str = qr.terminal('red', 'white')
+        qr_str = qr.terminal()
         print(f'Saved world to QR:\n{qr_str}')
     
     # #print('>>>> loaded OPERATOR_KEYCHAIN',OPERATOR_KEYCHAIN)
