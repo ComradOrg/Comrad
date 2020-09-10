@@ -77,14 +77,16 @@ class KomradeAsymmetricPrivateKey(KomradeAsymmetricKey):
 
 class KomradeEncryptedKey(object):
     def __init__(self,data): self.data=data
-    def __repr__(self): return f'[Encrypted Key] ({self.data})'
+    @property
+    def data_b64(self): return b64encode(self.data)
+    def __repr__(self): return f'[Encrypted Key] ({self.data_b64})'
 
 class KomradeEncryptedAsymmetricPrivateKey(KomradeEncryptedKey):
-    def __repr__(self): return f'[Encrypted Asymmetric Private Key] ({self.data})'
+    def __repr__(self): return f'[Encrypted Asymmetric Private Key] ({self.data_b64})'
 class KomradeEncryptedAsymmetricPublicKey(KomradeEncryptedKey):
-    def __repr__(self): return f'[Encrypted Asymmetric Public Key] ({self.data})'
+    def __repr__(self): return f'[Encrypted Asymmetric Public Key] ({self.data_b64})'
 class KomradeEncryptedSymmetricKey(KomradeEncryptedKey):
-    def __repr__(self): return f'[Encrypted Symmetric Key] ({self.data})'
+    def __repr__(self): return f'[Encrypted Symmetric Key] ({self.data_b64})'
 
 def get_encrypted_key_obj(data,name_of_encrypted_key):
     if name_of_encrypted_key.startswith('privkey'):

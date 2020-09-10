@@ -47,7 +47,7 @@ def dict_format(d, tab=0):
 
         # s.append('%s%r: %s (%s),\n' % ('  '*tab, k, v, type(v).__name__))
         s.append('%s%r: %s,\n\n' % ('  '*tab, k, repr(v)))
-    s.append('\n%s}' % ('  '*tab))
+    s.append('%s}' % ('  '*tab))
     return ''.join(s)
 
 import inspect
