@@ -46,21 +46,20 @@ def dict_format(d, tab=0):
     return ''.join(s)
 
 import inspect
+from komrade.constants import PAUSE_LOGGER
 class Logger(object):
-    def log(self,*x):
+    def log(self,*x,do_pause=PAUSE_LOGGER,do_clear=PAUSE_LOGGER):
         curframe = inspect.currentframe()
         calframe = inspect.getouterframes(curframe, 2)
         mytype = type(self).__name__
         caller = calframe[1][3]
         log(f'\n[{mytype}.{caller}()]',*x)
 
-        from komrade.constants import PAUSE_LOGGER
-        if PAUSE_LOGGER:
-            try:
-                pause()
-                clear_screen()
-            except KeyboardInterrupt:
-                exit()
+        try:
+            if do_pause: pause()
+            if do_pause: clear_screen()
+        except KeyboardInterrupt:
+            exit()
 
 import binascii,base64
 def isBase64(sb):

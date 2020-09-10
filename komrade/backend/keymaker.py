@@ -103,7 +103,7 @@ class Keymaker(Logger):
         res = self.load_qr(self.name)
         if res: return res
 
-        self.log('I don\'t know my public key!')
+        self.log('I don\'t know my public key! Do I need to register?',do_pause=False)
         # raise KomradeException(f'I don\'t know my public key!\n{self}\n{self._keychain}')
         return None
 
@@ -327,6 +327,12 @@ Keymaker ({self}) is forging new keys for {name}
         fnfn = os.path.join(dir,name+ext)
         return fnfn
 
+    def print_qr(self,data=None):
+        import qrcode
+        qr=qrcode.QRCode()
+        qr.add_data(self.uri_id if not data else data)
+        qr.print_ascii()
+
     def save_uri_as_qrcode(self,uri_id=None,name=None):
         if not uri_id: uri_id = self.uri_id
         if not uri_id and not self.uri_id: raise KomradeException('Need URI id to save!')
@@ -337,14 +343,11 @@ Keymaker ({self}) is forging new keys for {name}
         qr = pyqrcode.create(uri_id)
         ofnfn = self.get_path_qrcode(name=name)
         qr.png(ofnfn,scale=5)
-        qr_str = qr.terminal()
+        
         self.log(f'''
-Encoded URI(=pubkey_b64) into a QR code:
-
-{qr_str}
-
-I saved it to: {ofnfn}
+Saved URI(=pubkey_b64) as a QR code: {ofnfn}
 ''')
+        self.print_qr(uri_id)
 
     def save_keychain(self,name,keychain,keys_to_save=None,uri_id=None):
         if not keys_to_save: keys_to_save = list(keychain.keys())
