@@ -338,7 +338,7 @@ Keymaker ({self}) is forging new keys for {name}
         ofnfn = self.get_path_qrcode(name=name)
         qr.png(ofnfn,scale=5)
         qr_str = qr.terminal('red', 'white')
-        self.log('''
+        self.log(f'''
 Encoded URI(=pubkey_b64) into a QR code:
 
 {qr_str}
