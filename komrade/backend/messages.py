@@ -212,6 +212,15 @@ class Message(Logger):
         if self.has_embedded_msg:
             return self.msg.route
         return None
+
+    def delete_route(self):
+        if type(self.msg)==dict:
+            del self.msg[ROUTE_KEYNAME]
+            if ROUTE_KEYNAME in self.msg_d['_msg']:
+                del self.msg_d['_msg'][ROUTE_KEYNAME]
+            
+        if self.has_embedded_msg:
+            self.msg.delete_route()
         
 
 

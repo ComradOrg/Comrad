@@ -165,14 +165,16 @@ class Operator(Keymaker):
         func = getattr(self,route)
         new_data = func(**data)
         self.log(f'got new_data back from self.{route}() <-- {new_data}')
-        if ROUTE_KEYNAME in new_data: del new_data[ROUTE_KEYNAME]
-        # self.log('got back from route func <-',new_data)
 
         # return the other way
         self.log('message was sent this way:',msg_obj)
         msg_obj.mark_return_to_sender(new_msg=new_data)
         self.log('now it\'s going the other way:',msg_obj)
 
+        # delete route
+        if msg_obj.route:
+            msg_obj.delete_route()
+            
         # if not decrypted
         if not msg_obj.is_encrypted:
             msg_obj.encrypt()
