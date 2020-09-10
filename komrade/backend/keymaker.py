@@ -4,6 +4,9 @@ from komrade.backend.crypt import *
 from abc import ABC, abstractmethod
  
 class KomradeKey(ABC):
+    def __repr__(self):
+        return b64encode(self.key)
+
     @abstractmethod
     def encrypt(self,msg,**kwargs): pass
     @abstractmethod
@@ -39,12 +42,14 @@ class KomradeSymmetricKeyWithPassphrase(KomradeSymmetricKey):
         #return self.passphrase
     @property
     def data(self): return KEY_TYPE_SYMMETRIC_WITH_PASSPHRASE.encode('utf-8')
+    def __repr__(self): return self.data
 
 class KomradeSymmetricKeyWithoutPassphrase(KomradeSymmetricKey):
     def __init__(self,key=None):
         self.key = GenerateSymmetricKey() if not key else key
     @property
     def data(self): return self.key
+    def __repr__(self): return f'{b64encode(self.key)} (Symmetric Key)'
 
 
 
@@ -63,6 +68,7 @@ class KomradeAsymmetricKey(KomradeKey):
         return SMessage(privkey,pubkey).unwrap(msg)
     @property
     def data(self): return self.key
+    def __repr__(self): return f'''{b64encode(self.pubkey) if self.pubkey else '?'} (pub) / {b64encode(self.privkey) if self.privkey else '?'} (priv) (Asymmetric keys)'''
 
 class KomradeAsymmetricPublicKey(KomradeAsymmetricKey):
     @property
