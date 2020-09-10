@@ -73,7 +73,7 @@ def create_phonelines():
         if key in world_decr_keys:
             THIRD_PARTY_DICT[WORLD_NAME][key]=world_decr_keys[key]
 
-    #pring('THIRD_PARTY_DICT',THIRD_PARTY_DICT)
+    print('THIRD_PARTY_DICT',THIRD_PARTY_DICT)
 
     # store local keys
     STORE_IN_APP = {OPERATOR_NAME:{}, TELEPHONE_NAME:{}, WORLD_NAME:{}}
@@ -86,31 +86,27 @@ def create_phonelines():
     for key in world_keys_to_keep_on_client:
         if key in world_decr_keys:
             STORE_IN_APP[WORLD_NAME][key]=world_decr_keys[key]
-    #pring('STORE_IN_APP',STORE_IN_APP)
+    print('STORE_IN_APP',STORE_IN_APP)
 
     # package
-    STORE_IN_APP_pkg = package_for_transmission(STORE_IN_APP) #package_for_transmission(STORE_IN_APP[TELEPHONE_NAME]) + BSEP + package_for_transmission(STORE_IN_APP[OPERATOR_NAME])
-    THIRD_PARTY_DICT_pkg = package_for_transmission(THIRD_PARTY_DICT) #package_for_transmission(THIRD_PARTY_DICT[TELEPHONE_NAME]) + BSEP + package_for_transmission(THIRD_PARTY_DICT[OPERATOR_NAME])
-    #pring('THIRD_PARTY_DICT_pkg',THIRD_PARTY_DICT_pkg)
-    #pring('THIRD_PARTY_DICT_pkg',THIRD_PARTY_DICT_pkg)
-
+    import pickle
+    STORE_IN_APP_pkg = pickle.dumps(STORE_IN_APP) #pickle.dumps(STORE_IN_APP[TELEPHONE_NAME]) + BSEP + pickle.dumps(STORE_IN_APP[OPERATOR_NAME])
+    THIRD_PARTY_DICT_pkg = pickle.dumps(THIRD_PARTY_DICT) #pickle.dumps(THIRD_PARTY_DICT[TELEPHONE_NAME]) + BSEP + pickle.dumps(THIRD_PARTY_DICT[OPERATOR_NAME])
 
     # encrypt
     omega_key = KomradeSymmetricKeyWithoutPassphrase()
     STORE_IN_APP_encr = b64encode(omega_key.encrypt(STORE_IN_APP_pkg))
-    #pring('STORE_IN_APP_encr',STORE_IN_APP_encr)
-
     THIRD_PARTY_totalpkg = b64encode(omega_key.data + BSEP + omega_key.encrypt(THIRD_PARTY_DICT_pkg))
-    #pring('THIRD_PARTY_totalpkg',THIRD_PARTY_totalpkg)
+    # print('THIRD_PARTY_totalpkg',THIRD_PARTY_totalpkg)
 
     # save
     with open(PATH_BUILTIN_KEYCHAIN,'wb') as of:
         of.write(STORE_IN_APP_encr)
-        #pring('STORE_IN_APP_encr',STORE_IN_APP_encr)
+        print('STORE_IN_APP_encr',STORE_IN_APP_encr)
         
     with open(PATH_OPERATOR_WEB_KEYS_FILE,'wb') as of:
         of.write(THIRD_PARTY_totalpkg)
-        #pring('THIRD_PARTY_DICT_encr',THIRD_PARTY_totalpkg)
+        print('THIRD_PARTY_DICT_encr',THIRD_PARTY_totalpkg)
 
 
 def connect_phonelines():
