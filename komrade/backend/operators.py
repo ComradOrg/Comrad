@@ -217,7 +217,7 @@ class Operator(Keymaker):
             resp_msg_obj.decrypt()
 
         # route back?
-        return self.route_msg(resp_msg_obj,reencrypt=False)
+        return self.route_msg(resp_msg_obj,reencrypt=False).msg
 
 
 
