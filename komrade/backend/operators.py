@@ -188,7 +188,7 @@ class Operator(Keymaker):
             msg_obj.decrypt()
         
         # try route
-        if msg_obj.route
+        if msg_obj.route:
             data,route = msg_obj.data, msg_obj.route
             if hasattr(self,route) or route not in self.ROUTES:
                 raise KomradeException(f'Not a valid route!: {route}')
