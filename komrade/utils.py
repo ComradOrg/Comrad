@@ -28,7 +28,7 @@ def clear_screen():
     import os
     os.system('cls' if os.name == 'nt' else 'clear')
 
-def pause():
+def do_pause():
     input('')
 
 
@@ -48,7 +48,7 @@ def dict_format(d, tab=0):
 import inspect
 from komrade.constants import PAUSE_LOGGER
 class Logger(object):
-    def log(self,*x,do_pause=PAUSE_LOGGER,do_clear=PAUSE_LOGGER):
+    def log(self,*x,pause=PAUSE_LOGGER,clear=PAUSE_LOGGER):
         curframe = inspect.currentframe()
         calframe = inspect.getouterframes(curframe, 2)
         mytype = type(self).__name__
@@ -56,10 +56,14 @@ class Logger(object):
         log(f'\n[{mytype}.{caller}()]',*x)
 
         try:
-            if do_pause: pause()
-            if do_pause: clear_screen()
+            if pause: do_pause()
+            if pause: clear_screen()
         except KeyboardInterrupt:
             exit()
+
+    def status(self,status_msg):
+        for para in status_msg.split('\n\n'):
+            self.log(para)
 
 import binascii,base64
 def isBase64(sb):
