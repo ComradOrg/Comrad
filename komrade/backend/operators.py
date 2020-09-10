@@ -221,17 +221,20 @@ class Operator(Keymaker):
         resp_msg_obj = get_resp_from(msg_obj.msg_d)
         self.log('resp_msg_obj <-',resp_msg_obj)
 
+        if resp_msg_obj.is_encrypted:
+            resp_msg_obj.decrypt()
+
         # route back?
-        route_result = self.route_msg(resp_msg_obj)
-        self.log('route_result 2?',route_result)
+        # route_result = self.route_msg(resp_msg_obj)
+        # self.log('route_result 2?',route_result)
 
         # decrypt?
-        from komrade.backend.messages import Message
-        if type(route_result)==Message:
-            if route_result.is_encrypted:
-                route_result.decrypt()
+        # from komrade.backend.messages import Message
+        # if type(route_result)==Message:
+            # if route_result.is_encrypted:
+                # route_result.decrypt()
 
-        return route_result
+        # return route_result
 
 
 

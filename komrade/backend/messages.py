@@ -127,18 +127,15 @@ class Message(Logger):
         self.log(f'attempting to decrypt {self}')
 
         # decrypt msg
-        self.msg = decr_msg_b = SMessage(
+        self.msg = self.msg_d['_msg'] = decr_msg_b = SMessage(
             self.to_whom.privkey,
             self.from_whom.pubkey
         ).unwrap(self.msg)
         self.log('Am I decrypted?',self)
 
         # unpickle        
-        self.msg = decr_msg = pickle.loads(decr_msg_b)
+        self.msg = self.msg_d['_msg'] = decr_msg = pickle.loads(decr_msg_b)
         self.log('unpickled:',self)
-
-        # save to d
-        self.msg_d['_msg'] = decr_msg
 
         # now, is the decrypted message itself a message?
         if is_valid_msg_d(decr_msg):

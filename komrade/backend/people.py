@@ -35,6 +35,7 @@ class Persona(Caller):
             'name':self.name
         })
         self.log('answer??',answer)
+        return answer
 
 
     # login?
