@@ -170,3 +170,14 @@ OPERATOR_ROUTES = [
 ]
 
 OPERATOR_INTRO = 'Hello, this is the Operator speaking. '
+
+
+
+
+VISIBILITY_TYPE_PUBLIC = 'VISIBILITY_TYPE_PUBLIC'  # visible to the world
+VISIBILITY_TYPE_SEMIPUBLIC = 'VISIBILITY_TYPE_SEMIPUBLIC'  # visible to the world
+VISIBILITY_TYPE_PRIVATE = 'VISIBILITY_TYPE_PRIVATE'  # visible to the world
+
+DEFAULT_USER_SETTINGS = {
+    'visibility':VISIBILITY_TYPE_SEMIPUBLIC
+}

@@ -96,12 +96,12 @@ class TheOperator(Operator):
 
     def register_new_user(self,name,passphrase,pubkey,**data):
         # self.log('setting pubkey under name')
-        success,ck,cv = self.crypt_keys.set(name,pubkey,prefix='/pubkey/')
+        success,ck,cv_b64 = self.crypt_keys.set(name,pubkey,prefix='/pubkey/')
         self.log(f'''
 got result from crypt:
 success = {success}
 ck = {ck}
-cv = {cv}
+cv = {cv_b64}
 ''')
         
         # check input back from crypt
@@ -110,7 +110,7 @@ cv = {cv}
         
         res = {
             'success':success,
-            'pubkey':cv,
+            'pubkey':b64decode(cv_b64),
             'name':name,
         }
         if not success:
@@ -127,16 +127,15 @@ cv = {cv}
                 'adminkey_encr',
                 'adminkey_decr'
             ],
-            keys_to_save=[
-                'adminkey_encr'
-            ],
             keys_to_return = [
-                'adminkey_decr'
+                'adminkey',
+                'adminkey_encr',
+                'adminkey_decr',
             ],
             key_types = {
                 'adminkey':KomradeSymmetricKeyWithoutPassphrase(),
                 'adminkey_encr':ENCRYPTED_KEY,
-                'adminkey_decr':KomradeSymmetricKeyWithPassphrase()
+                'adminkey_decr':KomradeSymmetricKeyWithPassphrase(passphrase=passphrase)
             }
         )
         self.log('generated admin keys:',admin_keys)
@@ -145,12 +144,24 @@ cv = {cv}
             res['status']=self.status(f"{OPERATOR_INTRO}I'm sorry, but I couldn't register {name} right now.")
             return res
         
-        for key,val in admin_keys.items():
-            res[key]=val
+        # get settings
+        settings = DEFAULT_USER_SETTINGS
+        settings_b = pickle.dumps(settings)
+        
+        # use admin key to encrypt
+        adminkey=admin_keys['adminkey']
+        settings_b_encr = adminkey.encrypt(settings_b)
+        
+        # set in crypt
+        key_to_be_hashed = cv_b64 + passphrase
+        self.crypt_keys.set(key_to_be_hashed, settings_b_encr)
+        
+
+        # give back decryptor
 
         ## success msg
         #
-        cvb64=b64encode(cv).decode()
+        cvb64=cv_b64#b64encode(cv).decode()
         qrstr=self.qr_str(cvb64)
         res['status']=self.status(f'''{OPERATOR_INTRO}I have successfully registered Komrade {name}.
         
