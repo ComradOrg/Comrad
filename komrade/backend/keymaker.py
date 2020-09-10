@@ -88,7 +88,7 @@ def make_key_discreet(data,len_start=10,len_end=0,ellipsis='...',show_len=True):
     if not isBase64(data): data=b64encode(data)
     data=data.decode()
     amt_missing = len(data) - len_start - len_end
-    dstr = data[:len_start] + (''*amt_missing)
+    dstr = data[:len_start] + ('-'*amt_missing)
     if len_end: dstr+=data[-len_end:]
     return f'{dstr}' #' (+{len(data)-len_start-len_end})'
 
