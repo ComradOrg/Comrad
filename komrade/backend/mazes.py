@@ -7,7 +7,7 @@ log=print
 def komrade_request(url,allow_clearnet = ALLOW_CLEARNET):
     if '.onion' in url or not allow_clearnet:
         return tor_request(url)
-    return requests.get(url,timeout=60)
+    return requests.get(url,timeout=600)
 
 def tor_request(url):
     return tor_request_in_python(url)

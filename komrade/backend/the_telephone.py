@@ -25,7 +25,7 @@ class TheTelephone(Operator):
         msg_b64 = b64encode(msg_b_sealed)
         msg_b64_str = msg_b64.decode()
         msg_b64_str_esc = msg_b64_str.replace('/','_')
-        self.log('msg_b64_str_esc',type(msg_b64_str_esc),msg_b64_str_esc)
+        # self.log('msg_b64_str_esc',type(msg_b64_str_esc),msg_b64_str_esc)
         
         # dial the operator
         URL = OPERATOR_API_URL + msg_b64_str_esc + '/'
@@ -37,7 +37,7 @@ class TheTelephone(Operator):
         
         # response back from Operator!
         resp_msg_b64_str = phonecall.text
-        self.log('resp_msg_b64_str',resp_msg_b64_str)
+        # self.log('resp_msg_b64_str',resp_msg_b64_str)
 
         resp_msg_b64 = resp_msg_b64_str.encode()
         resp_msg_b = b64decode(resp_msg_b64)
