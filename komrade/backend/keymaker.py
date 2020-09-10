@@ -299,7 +299,7 @@ Keymaker ({self}) is forging new keys for {name}
         keychain = self.gen_keys_from_types(key_types,passphrase=passphrase)
         # gen encrypted keys!
         keychain = self.gen_encr_keys(keychain,keys_to_gen,passphrase=passphrase)
-        self.log('I built this keychain!',keychain)
+        self.log('I built this keychain!',dict_format(keychain,tab=2))
         
         # save keys!
         # get URI id to save under (except for pubkeys, accessible by name)
