@@ -97,6 +97,37 @@ def test_torpy():
 
 
 
+import random
+def test_slow_func(n,t=1,m=10):
+    for x in range(m):
+        print(f'Thread #{n}: it #{x} of {m}, sleeping {m} sec..')
+        yield x
+        # time.sleep(t)
+
+
+
+
+
+def test_threads():
+    from multiprocessing.pool import ThreadPool
+    pool = ThreadPool(processes=2)
+
+    for x in pool.imap_unordered(test_slow_func, [1,2,3]):
+        for y in x:
+            print(y,'?')
+        print(x,'...')
+
+
+async def test_slow_func(n,t=1,m=10):
+    for x in range(m):
+        print(f'Thread #{n}: it #{x} of {m}, sleeping {m} sec..')
+        yield x
+        asyncio.sleep(t)
+
+# test async
+async def test_async():
+    return await asyncio.gather(*[await test_slow_func(n) for n in range(3)])
+
 
 
 

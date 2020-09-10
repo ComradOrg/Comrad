@@ -33,7 +33,7 @@ def do_pause():
 
 
 def dict_format(d, tab=0):
-    def repr(v):
+    def reppr(v):
         if type(v)==bytes and not isBase64(v):
             return b64encode(v)
         return v
@@ -46,7 +46,7 @@ def dict_format(d, tab=0):
             v = repr(v)
 
         # s.append('%s%r: %s (%s),\n' % ('  '*tab, k, v, type(v).__name__))
-        s.append('%s%r: %s,\n\n' % ('  '*tab, k, repr(v)))
+        s.append('%s%r: %s,\n\n' % ('  '*tab, k, reppr(v)))
     s.append('%s}' % ('  '*tab))
     return ''.join(s)
 
@@ -67,7 +67,8 @@ class Logger(object):
         # except KeyboardInterrupt:
         exit()
 
-    def status(self,*msg,pause=True,clear=True,ticks=[],tab=2):
+    def status(self,*msg,pause=True,clear=False,ticks=[],tab=2,speed=2,end=None):
+        import random
         if not SHOW_STATUS: return
         # if len(msg)==1 and type(msg[0])==str:
             # msg=[x for x in msg[0].split('\n\n')]
@@ -78,10 +79,10 @@ class Logger(object):
             plen = para if type(para)==int or type(para)==float else None
             if type(para) in {int,float}:
                 plen=int(para)
-                for i in range(plen):
+                for i in range(plen * speed):
                     tick = ticks[i] if i<len(ticks) else '.'
-                    print(tick,end=' ',flush=True)
-                    time.sleep(1)
+                    print(tick,end=end if end else ' ',flush=True)
+                    time.sleep(random.random() / speed)
             elif para is None:
                 clear_screen()
             elif para is False:
@@ -99,11 +100,11 @@ class Logger(object):
             elif para is 0:
                 do_pause()
             elif pause:
-                print(para,flush=True)
+                print(para,flush=True,end=end if end else '\n')
                 paras+=[para]  
                 do_pause()
             else:
-                print(para,flush=True)
+                print(para,flush=True,end=end if end else '\n')
                 paras+=[para]    
         return {'paras':paras, 'vals':res}
 

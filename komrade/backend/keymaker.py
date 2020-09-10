@@ -3,7 +3,7 @@ from komrade import *
 from komrade.backend.crypt import *
 from abc import ABC, abstractmethod
  
-class KomradeKey(ABC):
+class KomradeKey(ABC,Logger):
     @abstractmethod
     def encrypt(self,msg,**kwargs): pass
     @abstractmethod
@@ -31,14 +31,23 @@ class KomradeSymmetricKey(KomradeKey):
         return self.cell.encrypt(msg,**kwargs)
     def decrypt(self,msg,**kwargs):
         return self.cell.decrypt(msg,**kwargs)
-    
+
+def getpass_status(passphrase=None):
+    while not passphrase:
+        passphrase1 = getpass(f'@Keymaker: What is a *memorable* pass word or phrase? Do not write it down.\n@{name}: ')
+        passphrase2 = getpass(f'@Keymaker: Could you repeat that?')
+        if passphrase1!=passphrase2:
+            self.status('@Keymaker: Those passwords didn\'t match. Please try again.',clear=False,pause=False)
+        else:
+            return passphrase1
+
 
         
 class KomradeSymmetricKeyWithPassphrase(KomradeSymmetricKey):
     def __init__(self,passphrase=DEBUG_DEFAULT_PASSPHRASE, why=WHY_MSG):
         self.passphrase=passphrase
         if not self.passphrase:
-            self.passphrase=getpass.getpass(why)
+            self.passphrase=getpass_status if SHOW_LOG else getpass.getpass(why)
         #return self.passphrase
     @property
     def data(self): return KEY_TYPE_SYMMETRIC_WITH_PASSPHRASE.encode('utf-8')
@@ -70,20 +79,36 @@ class KomradeAsymmetricKey(KomradeKey):
     def data(self): return self.key
     
 class KomradeAsymmetricPublicKey(KomradeAsymmetricKey):
+    def __init__(self,pubkey,privkey=None):
+        self.pubkey=pubkey
+        self.privkey=privkey
     @property
     def key(self): return self.pubkey
     @property
     def data(self): return self.pubkey 
     
-    def __repr__(self): return f'''[Asymmetric Public Key] ({self.discreet})'''
+    def __repr__(self): return f'''[Asymmetric Public Key] ({self.data_b64.decode()})'''
 class KomradeAsymmetricPrivateKey(KomradeAsymmetricKey):
+    def __init__(self,privkey,pubkey=None):
+        self.pubkey=pubkey
+        self.privkey=privkey
     @property
     def data(self): return self.privkey 
     @property
     def key(self): return self.privkey
     def __repr__(self): return f'''[Asymmetric Private Key] ({self.discreet})'''
 
-def make_key_discreet(data,len_start=10,len_end=10,ellipsis='.',show_len=True):
+def make_key_discreet(data,chance_bowdlerize=0.5):
+    import random
+
+    if not data: return '?'
+    if not isBase64(data): data=b64encode(data)
+    key=data.decode()
+
+    return ''.join((k if random.random()<chance_bowdlerize else '-') for k in key)
+
+
+def make_key_discreet1(data,len_start=10,len_end=10,ellipsis='.',show_len=True):
     if not data: return '?'
     if not isBase64(data): data=b64encode(data)
     data=data.decode()
@@ -92,7 +117,7 @@ def make_key_discreet(data,len_start=10,len_end=10,ellipsis='.',show_len=True):
     if len_end: dstr+=data[-len_end:]
     return f'{dstr}' #' (+{len(data)-len_start-len_end})'
 
-class KomradeEncryptedKey(object):
+class KomradeEncryptedKey(Logger):
     def __init__(self,data): self.data=data
     @property
     def data_b64(self): return b64encode(self.data).decode()
@@ -338,6 +363,8 @@ class Keymaker(Logger):
         key_types = dict([(k,key_types[k]) for k in keys_to_gen])
         if not name: name=self.name
 
+        print('forging!')
+
         # show user what's happening
         self.log(f'''
 Keymaker ({self}) is forging new keys for {name}
@@ -352,6 +379,7 @@ Keymaker ({self}) is forging new keys for {name}
     I will also be using these key types to do so:
         {dict_format(key_types,tab=4)}
         ''')
+
         
 
         # gen decryptor keys!
@@ -359,7 +387,7 @@ Keymaker ({self}) is forging new keys for {name}
         # gen encrypted keys!
         keychain = self.gen_encr_keys(keychain,keys_to_gen,passphrase=passphrase)
         self.log('I built this keychain!',dict_format(keychain,tab=2))
-        
+        # self.status('@Keymaker: I ended up building these keys:',keychain)
         
         # save keys!
         # get URI id to save under (except for pubkeys, accessible by name)
@@ -369,6 +397,9 @@ Keymaker ({self}) is forging new keys for {name}
         # return keys!
         keys_returned = self.return_keychain(keychain,keys_to_return)
         self.log('I am returning this keychain:',dict_format(keys_returned,tab=2))
+
+
+        print('done forging!')
 
         return (uri_id,keys_returned)
         

@@ -1,8 +1,7 @@
 # basic config
-from .art import *
 from .constants import *
 from .utils import *
-
+from .cli.artcode import *
 
 # common python imports
 import os,sys

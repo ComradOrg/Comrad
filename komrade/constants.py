@@ -157,7 +157,7 @@ PAUSE_LOGGER = True
 ALLOW_CLEARNET = True
 
 
-DEBUG_DEFAULT_PASSPHRASE = 'all your base are belong to us'
+DEBUG_DEFAULT_PASSPHRASE = None # 'all your base are belong to us'
 
 
 ROUTE_KEYNAME = '_route'
@@ -182,5 +182,9 @@ DEFAULT_USER_SETTINGS = {
     'visibility':VISIBILITY_TYPE_SEMIPUBLIC
 }
 
-SHOW_LOG = False
+SHOW_LOG = True
 SHOW_STATUS = True
+
+
+CLI_TITLE = 'KOMRADE'
+CLI_FONT = 'colossal'

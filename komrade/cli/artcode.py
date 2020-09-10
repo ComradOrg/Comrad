@@ -254,7 +254,7 @@ def map_pixels_to_ascii_chars(image, range_width=25):
 
     return "".join(pixels_to_chars)
 
-def convert_image_to_ascii(image, new_width=50):
+def convert_image_to_ascii(image, new_width=100):
     image = scale_image(image)
     image = convert_to_grayscale(image)
 
