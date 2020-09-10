@@ -69,18 +69,19 @@ OPERATOR_INTERCEPT_MESSAGE = "If you'd like to make a call, please hang up and t
 KEYMAKER_DEFAULT_KEYS_TO_SAVE_ON_SERVER = ['pubkey']   # stored under QR URI
 
 # kept on client
-KEYMAKER_DEFAULT_KEYS_TO_SAVE_ON_CLIENT = [
+KEYMAKER_DEFAULT_KEYS_TO_SAVE_ON_CLIENT = ['privkey_encr','privkey_decr']
                                    #'pubkey'  # as QR
-                                   'privkey_encr',  
-                                   'adminkey_encr',
-                                   'privkey_decr',
+                                #    'privkey_encr',  
+                                #    'adminkey_encr',
+                                #    'privkey_decr'],
                                    #'privkey_decr_encr',
                                    #'privkey_decr_decr',
-                                   'adminkey_decr_encr',
-                                   'adminkey_decr_decr']
+                                #    'adminkey_decr_encr',
+                                #    'adminkey_decr_decr']
 
-KEYMAKER_DEFAULT_KEYS_TO_GEN =  ['pubkey','privkey','adminkey',
-                                 'pubkey_decr','privkey_decr', 'adminkey_decr']
+# KEYMAKER_DEFAULT_KEYS_TO_GEN =  ['pubkey','privkey','adminkey',
+                                #  'pubkey_decr','privkey_decr', 'adminkey_decr']
+KEYMAKER_DEFAULT_KEYS_TO_GEN = []
 KEYMAKER_DEFAULT_KEYS_TO_GEN += KEYMAKER_DEFAULT_KEYS_TO_SAVE_ON_SERVER
 KEYMAKER_DEFAULT_KEYS_TO_GEN += KEYMAKER_DEFAULT_KEYS_TO_SAVE_ON_CLIENT
 KEYMAKER_DEFAULT_KEYS_TO_GEN = list(set(KEYMAKER_DEFAULT_KEYS_TO_GEN))
