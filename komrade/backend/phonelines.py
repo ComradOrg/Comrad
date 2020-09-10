@@ -171,6 +171,16 @@ def connect_phonelines():
     dict_merge(TELEPHONE_KEYCHAIN,remote_builtin_keychain_phone_json)
     dict_merge(OPERATOR_KEYCHAIN,remote_builtin_keychain_op_json)
     dict_merge(WORLD_KEYCHAIN,remote_builtin_keychain_world_json)
+
+    # @hack: make sure world saved as contact?
+    ofnfn=os.path.join(PATH_QRCODES,WORLD_NAME+'.png')
+    if not os.path.exists(ofnfn):
+        import pyqrcode    
+        uri_id = b64encode(WORLD_KEYCHAIN['pubkey'])
+        qr = pyqrcode.create(uri_id)
+        qr.png(ofnfn,scale=5)
+        qr_str = qr.terminal('red', 'white')
+        print(f'Saved world to QR:\n{qr_str}')
     
     # #print('>>>> loaded OPERATOR_KEYCHAIN',OPERATOR_KEYCHAIN)
     # #print('>>>> loaded TELEPHONE_KEYCHAIN',TELEPHONE_KEYCHAIN)
