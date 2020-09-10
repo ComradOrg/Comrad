@@ -63,17 +63,17 @@ class Persona(Caller):
 
         # save the ones we should on server
         data = {
-            **{'name':name, 'passphrase':passphrase, ROUTE_KEYNAME:'register_new_user'}, 
+            **{'name':name, 'passphrase':self.hash(passphrase), ROUTE_KEYNAME:'register_new_user'}, 
             **keys_returned
         }
-        self.log('sending to server:',dict_format(data))
+        self.log('sending to server:',dict_format(data,tab=2))
         # msg_to_op = self.compose_msg_to(data, self.op)
             
 
         # ring operator
         # call from phone since I don't have pubkey on record on Op yet
         resp_msg_obj = self.phone.ring_ring(data)
-        self.log('register got back from op:',resp_msg_obj)
+        self.log('register got back from op:',dict_format(resp_msg_obj,tab=2))
 
 
 
