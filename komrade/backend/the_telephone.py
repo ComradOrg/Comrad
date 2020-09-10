@@ -26,6 +26,12 @@ class TheTelephone(Operator):
         msg_b64_str = msg_b64.decode()
         msg_b64_str_esc = msg_b64_str.replace('/','_')
         # self.log('msg_b64_str_esc',type(msg_b64_str_esc),msg_b64_str_esc)
+
+        self.status(f'''
+Hello, Operator?
+
+Please send this message along, would you: {msg_b64_str}
+''')
         
         # dial the operator
         URL = OPERATOR_API_URL + msg_b64_str_esc + '/'

@@ -93,7 +93,7 @@ class Persona(Caller):
 def test_register():
     import random
     num = random.choice(list(range(0,1000)))
-    botname='marx{str(num).zfill(3)}'
+    botname=f'marx{str(num).zfill(3)}'
     marxbot = Persona(botname)
     marxbot.register()
 
