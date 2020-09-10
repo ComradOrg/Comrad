@@ -16,8 +16,20 @@ LOG_GET_SET = True
 
 
 class Crypt(Logger):
-    def __init__(self,name=None,fn=None,cell=None,init_d=None):
+    def __init__(self,name=None,fn=None,cell=None,init_d=None,use_secret=CRYPT_USE_SECRET,path_secret=PATH_CRYPT_SECRET):
         if not name and fn: name=os.path.basename(fn).replace('.','_')
+
+        if use_secret and path_secret:
+            if not os.path.exists(path_secret):
+                self.secret = get_random_binary_id()
+                self.log('shhh! creating secret:',self.secret)
+                with open(path_secret,'wb') as of:
+                    of.write(self.secret)
+            else:
+                with open(path_secret,'rb') as f:
+                    self.secret = f.read()
+        else:
+            self.secret = b''
 
         self.name,self.fn,self.cell = name,fn,cell
         self.store = FilesystemStore(self.fn)
@@ -37,7 +49,7 @@ class Crypt(Logger):
             super().log(*x)
         
     def hash(self,binary_data):
-        return hashlib.sha256(binary_data).hexdigest()
+        return hashlib.sha256(binary_data + self.secret).hexdigest()
         # return zlib.adler32(binary_data)
 
     def force_binary(self,k_b):
@@ -47,28 +59,15 @@ class Crypt(Logger):
         return k_b
 
     def package_key(self,k,prefix=''):
-        # self.log('k???',type(k),k)
         if not k: return b''
-        # self.log('prefix???',type(prefix),prefix)
         k_b = self.force_binary(k)
-        # self.log(type(k_b),k_b)
-        # k_s = k_b.decode()
-        # self.log(type(k_s),k_s)
-        # k_s2 = prefix + k_s
-        # self.log(type(k_s2),k_s2)
-        # k_b2 = k_s2.encode()
         k_b2 = self.force_binary(prefix) + k_b
-        # self.log('k_b2',type(k_b2),k_b2)
-        # k_b = self.cell.encrypt(k_b)
-        # prefix_b = self.force_binary(prefix)
-        
         return k_b2
 
     def package_val(self,k):
         k_b = self.force_binary(k)
         if self.cell is not None: k_b = self.cell.encrypt(k_b)
         return k_b
-
 
     def unpackage_val(self,k_b):
         try:
@@ -77,40 +76,41 @@ class Crypt(Logger):
             pass
         return k_b
 
+    def has(self,k,prefix=''):
+        k_b=self.package_key(k,prefix=prefix)
+        k_b_hash = self.hash(k_b)
+        try:
+            v=self.store.get(k_b_hash)
+            return True
+        except KeyError:
+            return False
+
 
     def set(self,k,v,prefix=''):
-        # self.log('set() k -->',prefix,k)
+        if self.has(k,prefix=prefix):
+            self.log("I'm afraid I can't let you do that, overwrite someone's data!")
+            return False
+        
         k_b=self.package_key(k,prefix=prefix)
-        # self.log('set() k_b -->',k_b)
         k_b_hash = self.hash(k_b)
-        # self.log('k_b_hash',type(k_b_hash),k_b_hash)
-
-        # self.log('set() v -->',v)
         v_b=self.package_val(v)
         self.log(f'set(\n\t{prefix}{k},\n\t{k_b}\n\t{k_b_hash}\n\t\n\t{v_b}\n)\n')
-        # stop
-        # stop
-        
-        return self.store.put(k_b_hash,v_b)
+
+        # store
+        self.store.put(k_b_hash,v_b)
+        return True
 
     def exists(self,k,prefix=''):
-        return bool(self.get(k,prefix=prefix))
+        return self.has(k,prefix=prefix)
 
     def get(self,k,prefix=''):
-        # self.log('k1? -->',prefix,k)
         k_b=self.package_key(k,prefix=prefix)
-        # self.log('k2? -->',k_b)
         k_b_hash = self.hash(k_b)
-        # self.log('k_b_hash',type(k_b_hash),k_b_hash)
-
         try:
             v=self.store.get(k_b_hash)
         except KeyError:
             return None
-        # self.log('v? -->',v)
         v_b=self.unpackage_val(v)
-        # self.log('v_b?',v_b)
-        # self.log('get()',k_b,'-->',v_b)
         return v_b
 
 

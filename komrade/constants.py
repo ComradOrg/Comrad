@@ -25,6 +25,9 @@ for x in [PATH_KOMRADE,PATH_KOMRADE_DATA,PATH_KOMRADE_KEYS,PATH_QRCODES]:
     if not os.path.exists(x):
         os.makedirs(x)
 
+CRYPT_USE_SECRET = True
+PATH_CRYPT_SECRET = os.path.join(PATH_KOMRADE,'.secret')
+
 # etc
 BSEP=b'||||||||||'
 BSEP2=b'@@@@@@@@@@'

@@ -102,12 +102,16 @@ class TheOperator(Operator):
         # return to Telephone/Caller
         return forged_keys_plus_id
         
-    def does_username_exist(self,**data):
-        name=data.get('name')
+    def does_username_exist(self,name,**data):
         pubkey=self.crypt_keys.get(name,prefix='/pubkey/')
         self.log(f'looking for {name}, found {pubkey} as pubkey')
         return bool(pubkey)
 
+    def register_new_user(self,name,pubkey,**data):
+        self.log('setting pubkey under name')
+        res = self.crypt_keys.set(name,pubkey,prefix='/pubkey/')
+        self.log('got result from crypt:',res)
+        return res
         
 
 
