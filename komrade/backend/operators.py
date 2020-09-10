@@ -190,7 +190,7 @@ class Operator(Keymaker):
         # try route
         if msg_obj.route:
             data,route = msg_obj.data, msg_obj.route
-            if hasattr(self,route) or route not in self.ROUTES:
+            if not hasattr(self,route) or route not in self.ROUTES:
                 raise KomradeException(f'Not a valid route!: {route}')
             
             # route it!
