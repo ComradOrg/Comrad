@@ -159,6 +159,10 @@ class Operator(Keymaker):
         msg_obj.mark_return_to_sender(new_msg=new_data)
         self.log('now it\'s going the other way:',msg_obj)
 
+        # if not decrypted
+        if not msg_obj.is_encrypted:
+            msg_obj.encrypt()
+
         return msg_obj
 
 
