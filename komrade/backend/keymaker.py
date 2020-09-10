@@ -46,7 +46,7 @@ class KomradeSymmetricKeyWithoutPassphrase(KomradeSymmetricKey):
         self.key = GenerateSymmetricKey() if not key else key
     @property
     def data(self): return self.key
-    def __repr__(self): return f'[Symmetric Key] ({b64encode(self.key)})'
+    def __repr__(self): return f'[Symmetric Key] ({b64encode(self.key).decode()})'
 
 
 
@@ -65,16 +65,15 @@ class KomradeAsymmetricKey(KomradeKey):
         return SMessage(privkey,pubkey).unwrap(msg)
     @property
     def data(self): return self.key
-    def __repr__(self): return f'''[Asymmetric Keys]
-    (pub: {b64encode(self.pubkey) if self.pubkey else '?'},
-    priv: {b64encode(self.privkey) if self.privkey else '?'}'''
-
+    
 class KomradeAsymmetricPublicKey(KomradeAsymmetricKey):
     @property
     def key(self): return self.pubkey
+    def __repr__(self): return f'''[Asymmetric Public Key] ({b64encode(self.pubkey).decode() if self.pubkey else '?'})'''
 class KomradeAsymmetricPrivateKey(KomradeAsymmetricKey):
     @property
     def key(self): return self.privkey
+    def __repr__(self): return f'''[Asymmetric Private Key] ({b64encode(self.privkey).decode() if self.privkey else '?'})'''
 
 
 class Keymaker(Logger):
