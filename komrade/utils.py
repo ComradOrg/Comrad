@@ -165,3 +165,14 @@ def dict_merge(dct, merge_dct):
             dict_merge(dct[k], merge_dct[k])
         else:
             dct[k] = merge_dct[k]
+
+
+
+def capture_stdout(func):
+    import io
+    from contextlib import redirect_stdout
+    f = io.StringIO()
+    with redirect_stdout(f):
+        func()
+    out = f.getvalue()
+    return out

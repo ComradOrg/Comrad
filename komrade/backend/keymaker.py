@@ -327,11 +327,13 @@ Keymaker ({self}) is forging new keys for {name}
         fnfn = os.path.join(dir,name+ext)
         return fnfn
 
-    def print_qr(self,data=None):
+    @property
+    def qr(self,data=None):
         import qrcode
         qr=qrcode.QRCode()
         qr.add_data(self.uri_id if not data else data)
-        qr.print_ascii()
+        ascii = capture_stdout(qr.print_ascii())
+        return ascii
 
     def save_uri_as_qrcode(self,uri_id=None,name=None):
         if not uri_id: uri_id = self.uri_id
@@ -344,10 +346,13 @@ Keymaker ({self}) is forging new keys for {name}
         ofnfn = self.get_path_qrcode(name=name)
         qr.png(ofnfn,scale=5)
         
+        self._uri_id = uri_id
         self.log(f'''
 Saved URI(=pubkey_b64) as a QR code: {ofnfn}
-''',do_pause=False)
-        self.print_qr(uri_id)
+
+{self.qr}
+
+''')
 
     def save_keychain(self,name,keychain,keys_to_save=None,uri_id=None):
         if not keys_to_save: keys_to_save = list(keychain.keys())
