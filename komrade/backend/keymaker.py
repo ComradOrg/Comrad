@@ -4,9 +4,6 @@ from komrade.backend.crypt import *
 from abc import ABC, abstractmethod
  
 class KomradeKey(ABC):
-    def __repr__(self):
-        return b64encode(self.key)
-
     @abstractmethod
     def encrypt(self,msg,**kwargs): pass
     @abstractmethod
