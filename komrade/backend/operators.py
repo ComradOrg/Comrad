@@ -263,7 +263,7 @@ class Operator(Keymaker):
         >> {msg_obj}
         ''')
 
-        return  self.route_msg(msg_obj)
+        #return  self.route_msg(msg_obj)
 
         route_response = self.route_msg(msg_obj)
         self.log('route_response',route_response)
@@ -272,15 +272,20 @@ class Operator(Keymaker):
         #self.log('what msg_obj looks like now:',msg_obj)
 
         # send new content back
-        resp_msg_obj = msg_obj.to_whom.compose_msg_to(
-            route_response,
-            msg_obj.from_whom
-        )
+        from komrade.backend.messages import Message
+        if type(route_response)==Message:
+            resp_msg_obj = route_response
+        else:    
+            resp_msg_obj = msg_obj.to_whom.compose_msg_to(
+                route_response,
+                msg_obj.from_whom
+            )
         self.log('resp_msg_obj',resp_msg_obj)
         
         # re-encrypt
-        resp_msg_obj.encrypt()
-        self.log(f're-encrypted: {resp_msg_obj}')
+        if not resp_msg_obj.is_encrypted:
+            resp_msg_obj.encrypt()
+            self.log(f're-encrypted: {resp_msg_obj}')
         
         # pass msg back the chain
         return resp_msg_obj
