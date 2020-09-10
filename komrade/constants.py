@@ -81,7 +81,7 @@ KEYMAKER_DEFAULT_KEYS_TO_SAVE_ON_CLIENT = ['privkey_encr','privkey_decr']
 
 # KEYMAKER_DEFAULT_KEYS_TO_GEN =  ['pubkey','privkey','adminkey',
                                 #  'pubkey_decr','privkey_decr', 'adminkey_decr']
-KEYMAKER_DEFAULT_KEYS_TO_GEN = []
+KEYMAKER_DEFAULT_KEYS_TO_GEN = ['pubkey','privkey']
 KEYMAKER_DEFAULT_KEYS_TO_GEN += KEYMAKER_DEFAULT_KEYS_TO_SAVE_ON_SERVER
 KEYMAKER_DEFAULT_KEYS_TO_GEN += KEYMAKER_DEFAULT_KEYS_TO_SAVE_ON_CLIENT
 KEYMAKER_DEFAULT_KEYS_TO_GEN = list(set(KEYMAKER_DEFAULT_KEYS_TO_GEN))
