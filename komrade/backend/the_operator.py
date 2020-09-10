@@ -87,16 +87,17 @@ class TheOperator(Operator):
         self.log(type(encr_data_b),encr_data_b,'sending!')
         return encr_data_b
 
-
-
-
     ### ROUTES
     def forge_new_keys(self,**data):
         self.log('about to make some new keys!',data)
         # return {'_route':'well_hello_to_you_too'}
         
         # get keys
-        forged_keys_plus_id = super().forge_new_keys(**data)
+        forged_keys_plus_id = super().forge_new_keys(
+            name=data.get('name'),
+            passphrase=data.get('passphrase')
+        )
+        self.log('<- forged keys',forged_keys_plus_id)
 
         # return to Telephone/Caller
         return forged_keys_plus_id

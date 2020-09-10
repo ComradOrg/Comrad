@@ -130,22 +130,22 @@ class Message(Logger):
             self.to_whom.privkey,
             self.from_whom.pubkey
         ).unwrap(self.msg)
-        self.log('Am I decrypted?',self)
+        # self.log('Am I decrypted?',self)
 
         # unpickle        
         self.msg = self.msg_d['_msg'] = decr_msg = pickle.loads(decr_msg_b)
-        self.log('unpickled:',self)
+        self.log('I am now decrypted and unpickled:',self)
 
         # now, is the decrypted message itself a message?
         if is_valid_msg_d(decr_msg):
-            self.log('this has a valid msg in its own right!',self)
+            self.log('Once decrypted, I discovered that I contain a valid msg in its own right!',self)
             # then ... make that, a message object and decrypt it too!
             self.msg = Message(decr_msg)
 
             if recursive and self.msg.is_encrypted:
                 self.msg.decrypt()
 
-        self.log(f'done decrypting! {self}')
+        # self.log(f'done decrypting! {self}')
         return decr_msg
 
     @property
