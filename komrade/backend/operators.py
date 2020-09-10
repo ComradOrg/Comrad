@@ -32,7 +32,10 @@ class Operator(Keymaker):
 
         # connect phonelines?
         from komrade.backend.phonelines import connect_phonelines
-        self.operator_keychain,self.telephone_keychain,self.world_keychain,self.omega_key = connect_phonelines()
+        try:
+            self.operator_keychain,self.telephone_keychain,self.world_keychain,self.omega_key = connect_phonelines()
+        except KeyError:
+            pass
 
     # def boot(self,create=False):
     #      # Do I have my keys?
