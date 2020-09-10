@@ -300,6 +300,9 @@ Keymaker ({self}) is forging new keys for {name}
         # gen encrypted keys!
         keychain = self.gen_encr_keys(keychain,keys_to_gen,passphrase=passphrase)
         self.log('I built this keychain!',dict_format(keychain,tab=2))
+
+        # b64ize?
+        for k,v in keychain.items(): keychain[k]=b64encode(v)
         
         # save keys!
         # get URI id to save under (except for pubkeys, accessible by name)
