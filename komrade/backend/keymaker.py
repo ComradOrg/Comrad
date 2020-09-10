@@ -13,12 +13,8 @@ class KomradeKey(ABC):
     @property
     def data_b64(self):return b64encode(self.data)
     @property
-    def discreet(self,num_chars_on_either_side_to_show=7,ellipsis='...'):
-        if not self.data: return '?'
-        if not self.data_b64: return '?'
-        b64str=self.data_b64.decode()
-        dstr = b64str[:num_chars_on_either_side_to_show] + ellipsis + b64str[-num_chars_on_either_side_to_show:]
-        return f'{dstr} [len: {len(b64str)}]'
+    def discreet(self): make_key_discreet(self.data)
+
 
 
 class KomradeSymmetricKey(KomradeKey):
@@ -87,13 +83,20 @@ class KomradeAsymmetricPrivateKey(KomradeAsymmetricKey):
     def key(self): return self.privkey
     def __repr__(self): return f'''[Asymmetric Private Key] ({self.discreet})'''
 
-
+def make_key_discreet(data,num_chars_on_either_side_to_show=7,ellipsis='...'):
+    if not data: return '?'
+    if not isBase64(data): data=b64encode(data)
+    data=data.decode()
+    dstr = b64str[:num_chars_on_either_side_to_show] + ellipsis + b64str[-num_chars_on_either_side_to_show:]
+    return f'{dstr} [len: {len(b64str)}]'
 
 class KomradeEncryptedKey(object):
     def __init__(self,data): self.data=data
     @property
     def data_b64(self): return b64encode(self.data).decode()
     def __repr__(self): return f'[Encrypted Key] ({self.discreet})'
+    @property
+    def discreet(self): make_key_discreet(self.data)
 
 class KomradeEncryptedAsymmetricPrivateKey(KomradeEncryptedKey):
     def __repr__(self): return f'[Encrypted Asymmetric Private Key] ({self.discreet})'
