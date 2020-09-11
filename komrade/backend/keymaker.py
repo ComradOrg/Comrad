@@ -117,19 +117,19 @@ class KomradeAsymmetricPrivateKey(KomradeAsymmetricKey):
     def key(self): return self.privkey
     def __repr__(self): return f'''[Asymmetric Private Key] ({self.discreet})'''
 
-def make_key_discreet(data,chance_bowdlerize=0.5):
+def make_key_discreet(data,chance_redacted=0.5):
     import random
 
     if not data: return '?'
     if not isBase64(data): data=b64encode(data)
     key=data.decode()
 
-    return ''.join((k if random.random()<chance_bowdlerize else '-') for k in key)
+    return ''.join((k if random.random()<chance_redacted else '-') for k in key)
 
-def make_key_discreet_str(string,chance_bowdlerize=0.5):
+def make_key_discreet_str(string,chance_redacted=0.5):
     import random
     if not string: return '?'
-    return ''.join((k if random.random()<chance_bowdlerize else '-') for k in string)
+    return ''.join((k if random.random()<chance_redacted else '-') for k in string)
 
 
 def make_key_discreet1(data,len_start=10,len_end=10,ellipsis='.',show_len=True):

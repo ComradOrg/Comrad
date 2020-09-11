@@ -58,25 +58,31 @@ class Persona(Caller):
 
 
 
-        # forge public/private keys
+        # 1) forge public/private keys
         keypair = KomradeAsymmetricKey()
         pubkey,privkey = keypair.pubkey_obj,keypair.privkey_obj
 
-        # make sure we have passphrase
-        if SHOW_STATUS:
+        # 2) make sure we have passphrase
+        passphrase=self.crypt_keys.hash(b'boogywoogy')
+        if SHOW_STATUS and not passphrase:
             passphrase = self.cli.status_keymaker_body(
                 name,
                 passphrase,
                 pubkey,
                 privkey,
-                self.crypt_keys.hash
+                self.crypt_keys.hash,
+                self
             )
         else:
             if not passphrase: passphrase=getpass('Enter a memorable password to encrypt your private key with: ')
 
-        # encrypt private key
-        exit()
+        # 3) form an encryption key
+        privkey_decr = KomradeSymmetricKeyWithPassphrase(passphrase)
+        privkey_encr = privkey_decr.encrypt(privkey.data)
 
+        self.cli.status_keymaker_part3(privkey,privkey_decr,privkey_encr,passphrase)
+
+        exit()
 
         # save the ones we should on server
         data = {

@@ -71,7 +71,7 @@ class Logger(object):
         # except KeyboardInterrupt:
         # exit()
 
-    def print(*x,width=STATUS_LINE_WIDTH,end='\n',indent=1,scan=False,**y):
+    def print(*x,width=STATUS_LINE_WIDTH,end='\n',indent=1,ret=False,scan=False,**y):
         if not scan and not width:
             print(*x,end=end,**y)
         else:
@@ -82,6 +82,7 @@ class Logger(object):
                 # xw = [_ for _ in tw.wrap(xs,width=width)]
                 xs=end.join(xw)
             xs = tw.indent(xs,' '*indent)
+            if ret: return xs
             print(xs) if scan==False else scan_print(xs)
 
     def status(self,*msg,pause=True,clear=False,ticks=[],tab=2,speed=10,end=None,indent=0,width=80,scan=False):
@@ -114,7 +115,7 @@ class Logger(object):
             elif type(para) is set: # logo/image
                 pl = [x for x in para if type(x)==str]
                 txt=pl[0]
-                speed =[x for x in para if type(x)==int]
+                speed =[x for x in para if type(x) in {int,float}]
                 speed = speed[0] if speed else 1
                 if True in para:
                     scan_print(txt,speed=speed)
@@ -260,13 +261,13 @@ def capture_stdout(func):
 
 
 
-def scan_print(xstr,min_pause=0,max_pause=0.015,speed=100000):
+def scan_print(xstr,min_pause=0,max_pause=.001,speed=1):
     import random,time
     for c in xstr:
         print(c,end='',flush=True)
-        # naptime=random.uniform(min_pause, max_pause / speed)
-        # time.sleep(naptime)
-        time.sleep(.001)
+        naptime=random.uniform(min_pause, max_pause / speed)
+        time.sleep(naptime)
+        # time.sleep()
         
 
 
@@ -277,3 +278,9 @@ def get_qr_str(data):
     ascii = capture_stdout(qr.print_ascii)
     ascii = ascii[:-1] # removing last line break
     return '\n    ' + ascii.strip()
+
+
+
+def indent_str(x,n):
+    import textwrap as tw
+    return  tw.indent(x,' '*n)

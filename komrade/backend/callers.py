@@ -23,4 +23,3 @@ class Caller(Operator):
 
 
     # @hack: repurposing this for now as a narrator
-e

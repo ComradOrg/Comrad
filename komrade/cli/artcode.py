@@ -282,6 +282,59 @@ ART_KEY_PAIR2B = """
 
 """
 
+             
+ART_KEY_PAIR_SPLITTING1 = """
+       _           
+      /o               
+      \             
+      <   
+      <                    
+      <               
+
+ (2A)               
+ symmetric          
+ encryption              
+ key, from           
+ hashed
+ passphrase                 
+
+"""
+
+             
+ART_KEY_PAIR_SPLITTING2 = """
+       _                   __      
+      /o                  / o\\         
+      \                   \_ /           
+      <  --(encrypts)-->   <|    
+      <                    <|            
+      <                    <|               
+
+ (2A)                   (2)                
+ symmetric              asymmetric       
+ encryption             private          
+ key, from              key                
+ hashed
+ passphrase                 
+
+"""
+             
+ART_KEY_PAIR_SPLITTING3 = """
+       _                   __                 _    
+      /o                  / o\\                \\
+      \                   \_ /                  /
+      <  --(encrypts)-->   <|   --(into)-->  |
+      <                    <|                  | 
+      <                    <|                 |
+
+ (2A)                   (2)                (2B)
+ symmetric              asymmetric         encrypted form
+ encryption             private            of asymmetric
+ key, from              key                private key (2)
+ hashed
+ passphrase                 
+
+"""
+
 
 
 
@@ -319,6 +372,14 @@ ART_KEY_PAIR3A2 = """
    
 """ 
 
+ART_KEY_KEY2A = """       _         
+      /o       
+      \      
+      <     
+      <        
+      <       
+                   
+"""
 
 ART_KEY_PAIR3B2 = """
 
@@ -496,6 +557,24 @@ ART_KEY_PAIR4Z1 = """
                    form of (2)
                               
 """ 
+ART_KEY_PAIR4ZZ = """
+
+                   __
+                  /o \\_____
+                  \__/-="="`
+                      
+       ?         _
+      ??          \\
+      ?         _   /
+      ?         |
+      ?           | 
+      ?          | 
+                    
+                    
+                              
+""" 
+
+
 ART_KEY_PAIR4Z2 = """
 
                    __
