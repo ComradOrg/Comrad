@@ -105,8 +105,8 @@ KEYMAKER_DEFAULT_KEY_TYPES = {
     'adminkey':KEY_TYPE_SYMMETRIC_WITHOUT_PASSPHRASE,
     
     'pubkey_decr':KEY_TYPE_SYMMETRIC_WITHOUT_PASSPHRASE,
-    'privkey_decr':KEY_TYPE_SYMMETRIC_WITHOUT_PASSPHRASE,
-    'adminkey_decr':KEY_TYPE_SYMMETRIC_WITHOUT_PASSPHRASE,
+    'privkey_decr':KEY_TYPE_SYMMETRIC_WITH_PASSPHRASE,
+    'adminkey_decr':KEY_TYPE_SYMMETRIC_WITH_PASSPHRASE,
 
     'pubkey_decr_decr':KEY_TYPE_SYMMETRIC_WITHOUT_PASSPHRASE,
     'privkey_decr_decr':KEY_TYPE_SYMMETRIC_WITH_PASSPHRASE,
@@ -151,7 +151,6 @@ PATH_OPERATOR_WEB_CONTACTS_DIR = '/home/ryan/www/website-komrade/.contacts'
 PATH_OPERATOR_WEB_CONTACT_OP_URL = f'http://{KOMRADE_URL}/.contacts/TheOperator.png'
 PATH_OPERATOR_WEB_CONTACT_PH_URL = f'http://{KOMRADE_URL}/.contacts/TheTelephone.png'
 
-PAUSE_LOGGER = True
 
 # dangerous! leave on only if absolutely necessary for initial dev
 ALLOW_CLEARNET = True
@@ -182,9 +181,11 @@ DEFAULT_USER_SETTINGS = {
     'visibility':VISIBILITY_TYPE_SEMIPUBLIC
 }
 
-SHOW_LOG = True
-SHOW_STATUS = True
+SHOW_LOG = 1
+SHOW_STATUS = 1
+PAUSE_LOGGER = 1
 
 
 CLI_TITLE = 'KOMRADE'
-CLI_FONT = 'colossal'
+CLI_FONT = 'clr5x6'#'colossal'
+STATUS_LINE_WIDTH = 50

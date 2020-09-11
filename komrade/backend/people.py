@@ -1,12 +1,15 @@
 import os,sys; sys.path.append(os.path.abspath(os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__),'..')),'..')))
 from komrade import *
 from komrade.backend import *
-
+from komrade.backend.keymaker import *
 
 class Persona(Caller):
 
     def __init__(self, name=None, passphrase=DEBUG_DEFAULT_PASSPHRASE):
         super().__init__(name=name,passphrase=passphrase)
+        if SHOW_STATUS:
+            from komrade.cli import CLI
+            self.cli = CLI()
     #     self.boot(create=False)
 
     # def boot(self,create=False):
@@ -42,22 +45,38 @@ class Persona(Caller):
     # def login(self):
         # if keys.get('pubkey') and keys.get('privkey')
 
-    def register(self, name = None, passphrase = None, is_group=None):
+    def register(self, name = None, passphrase = None, is_group=None, show_intro=0,show_body=True):
         # defaults
         if name and not self.name: self.name=name
         if not name and self.name: name=self.name
         if not name and not self.name: name=''
+        clear_screen()
 
-        if not passphrase: passphrase=getpass('Enter a memorable password: ')
+        # intro narration?
+        if SHOW_STATUS and show_intro:
+           name = self.cli.status_keymaker_intro(name)
 
-        # make and save keys locally
-        uri_id,keys_returned = self.forge_new_keys(
-            name=name,
-            passphrase=passphrase,
-            keys_to_save = KEYMAKER_DEFAULT_KEYS_TO_SAVE_ON_CLIENT,
-            keys_to_return = KEYMAKER_DEFAULT_KEYS_TO_SAVE_ON_SERVER
-        )
-        self.log(f'my new uri is {uri_id} and I got new keys!: {dict_format(keys_returned)}')
+
+
+        # forge public/private keys
+        keypair = KomradeAsymmetricKey()
+        pubkey,privkey = keypair.pubkey_obj,keypair.privkey_obj
+
+        # make sure we have passphrase
+        if SHOW_STATUS:
+            passphrase = self.cli.status_keymaker_body(
+                name,
+                passphrase,
+                pubkey,
+                privkey,
+                self.crypt_keys.hash
+            )
+        else:
+            if not passphrase: passphrase=getpass('Enter a memorable password to encrypt your private key with: ')
+
+        # encrypt private key
+        exit()
+
 
         # save the ones we should on server
         data = {
@@ -96,15 +115,16 @@ def test_register():
     marxbot.register()
 
 if __name__=='__main__':
-    marx = Persona('marx')
-    elon = Persona('elon')
+    test_register()
+    # marx = Persona('marx')
+    # elon = Persona('elon')
 
-    marx.register()
-    # elon.register()
-    # person.register()
-    # print(person.pubkey)
+    # marx.register()
+    # # elon.register()
+    # # person.register()
+    # # print(person.pubkey)
 
-    # elon.send_msg_to('youre dumb',marx)
-    #Caller('elon').ring_ring({'_route':'say_hello','_msg':'my dumb message to operator'})
+    # # elon.send_msg_to('youre dumb',marx)
+    # #Caller('elon').ring_ring({'_route':'say_hello','_msg':'my dumb message to operator'})
 
-    # print(marx.exists_on_server())
+    # # print(marx.exists_on_server())

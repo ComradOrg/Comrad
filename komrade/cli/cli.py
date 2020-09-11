@@ -2,6 +2,7 @@ import os,sys; sys.path.append(os.path.abspath(os.path.join(os.path.abspath(os.p
 from komrade import *
 from komrade.backend import *
 import art
+import textwrap as tw
 
 
 
@@ -16,8 +17,8 @@ class CLI(Logger):
         self.name=''
         self.cmd=''
 
-    async def run(self,inp,name=''):
-        if name: self.name=name
+    def run(self,inp='',name=''):
+        self.name=name
         clear_screen()
         self.boot()
         self.help()
@@ -26,11 +27,11 @@ class CLI(Logger):
 
         while True:
             try:
-                inp=input()
+                inp=input(f'@{self.name if self.name else "?"}: ')
             except KeyboardInterrupt:
                 exit()
             self.route(inp)
-            await asyncio.sleep(0.5)
+            #await asyncio.sleep(0.5)
 
     def route(self,inp):
         inp=inp.strip()
@@ -42,37 +43,42 @@ class CLI(Logger):
             f=getattr(self,cmd)
             return f(dat)
 
-    def boot(self):
-        print(art.text2art(CLI_TITLE,font=CLI_FONT))
+    def boot(self,indent=5):
+        logo=art.text2art(CLI_TITLE,font=CLI_FONT)
+        # logo=make_key_discreet_str(logo,chance_bowdlerize=0.1) #.decode()
+        logo=tw.indent(logo, ' '*indent)
+        scan_print(logo,max_pause=0.005)
 
     def help(self):
         print()
         for cmd,info in self.ROUTES.items():
             print(f'    /{cmd}: {info}')
+            # print('\n')
         print('\n')
 
     def intro(self):
         self.status(None,)
     
-    ## routes
-    def register(self,name=None):
-        # defaults
-        if name and not self.name: self.name=name
-        if not name and self.name: name=self.name
-        if not name and not self.name: name=''
-        
-        # self.status(None,ART_PAYPHONE,3,pause=False) #,ticks = None)
+    def register(self,dat):
+        self.persona = Persona(self.name)
+        self.persona.register()
 
-        # hello, op?
+
+
+
+    ### DIALOGUES
+
+    # hello, op?
+    def status_keymaker_intro(self,name):
+        self.status(None,{ART_OLDPHONE4+'\n',True},3) #,scan=False,width=None,pause=None,clear=None)
+        
         nm=name if name else '?'
         self.status(
-            f'\n\n@{nm}: Uh yes hello, Operator? I would like to join Komrade, the socialist network. Could you patch me through?',clear=False)
+            f'\n\n\n@{nm}: Uh yes hello, Operator? I would like to join Komrade, the socialist network. Could you patch me through?',clear=False)
 
         while not name:
             name=self.status(('name','@TheTelephone: Of course, Komrade...?\n@')).get('vals').get('name').strip()
             print()
-        self.name = name
-        self.persona = Persona(name)
         
         self.status(
             f'@TheTelephone: Of course, Komrade @{name}. A fine name.',
@@ -81,7 +87,7 @@ class CLI(Logger):
             
             '''Komrade @TheOperator lives on the deep web. She's the one you want to speak with.''',
 
-            f'''@{name}: Hm, ok. Well, could you patch me through to the remote operator then?''',
+            None,{ART_OLDPHONE4},f'''@{name}: Hm, ok. Well, could you patch me through to the remote operator then?''',
             
             f'''@{TELEPHONE_NAME}: I could, but it's not safe yet. Your information could be exposed. You need to forge your encryption keys first.''',
 
@@ -91,64 +97,159 @@ class CLI(Logger):
             
             clear=False,pause=True)
 
-
-
-
         ### KEYMAKER
-        self.status(None,ART_KEY,3,pause=False,clear=False)
+        self.status(None,{tw.indent(ART_KEY,' '*5)+'\n',True},3) #,clear=False,indent=10,pause=False)
         # convo
-        self.status('',
-            f'@{name}: Hello, Komrade @Keymaker? I would like help forging a new set of keys.',
+        self.status(
+            f'\n@{name}: Hello, Komrade @Keymaker? I would like help forging a new set of keys.',
 
             f'@Keymaker: Of course, Komrade @{name}.',
-
-            '''We will make three keys. First, a matching, "asymmetric" pair.''',
-
-            '\t1) A "public key" you can share with anyone.',
-            
-            '\t2) A "private key" other no one can ever, ever see.',
-
-            'With both together, you can communicate privately and securely with anyone who also has their own key pair.',
-
-            'We will use the use the iron-clad Elliptic Curve algorthm to generate the keypair, accessed via a high-level cryptography library, Themis (https://github.com/cossacklabs/themis).',
-
         )
+
+        return name
+
+
+
+    def status_keymaker_body(self,name,passphrase,pubkey,privkey,hasher):
+        # gen what we need
+        uri_id = pubkey.data_b64
+        qr_str = get_qr_str(uri_id)
+        qr_path = os.path.join(PATH_QRCODES,name+'.png')
+
+        # # what are pub/priv?
+        # self.status(
+        #     'I will forge for you two matching keys, part of an "asymmetric" pair.',
+        #     'Please, watch me work.',
+            
+        #     None,{tw.indent(ART_KEY,' '*5)+'\n'},
+            
+        #     'I use a high-level cryptographic function from Themis, a well-respected open-source cryptography library.',
+        #     'I use the iron-clad Elliptic Curve algorthm to generate the asymmetric keypair.',
+        #     '> GenerateKeyPair(KEY_PAIR_TYPE.EC)',
+        #     3
+        # )
+        # self.status(
+        #     None,
+        #     {ART_KEY_PAIR,True}
+        # ) #,clear=False,indent=10,pause=False)
+        # self.status(
+        #     None,{ART_KEY_PAIR},
+        #     'A matching set of keys have been generated.',
+        #     None,{ART_KEY_PAIR2A+'\n\nA matching set of keys have been generated.'},
+        #     '1)  First, I have made a "public key" which you can share with anyone:',
+        #     f'{repr(pubkey)}',
+        #     'This key is a randomly-generated binary string, which acts as your "address" on Komrade.',
+        #     'By sharing this key with someone, you enable them to write you an encrypted message which only you can read.'
+        # )
+        # self.status(
+        #     None,{ART_KEY_PAIR2A},
+        #     f'You can share your public key by copy/pasting it to them over a secure channel (e.g. Signal).',
+        #     'Or, you can share it as a QR code, especially phone to phone:',
+        #     {qr_str+'\n\n',True,5},
+        #     f'\n\n(If registration is successful, this QR code be saved as an image to your device at: {qr_path}.)'
+        # )
         
-        # make and save keys locally
-        self.log(f'{KEYMAKER_DEFAULT_KEYS_TO_SAVE_ON_CLIENT + KEYMAKER_DEFAULT_KEYS_TO_SAVE_ON_SERVER}!!!!!')
-        uri_id,keys_returned = self.persona.forge_new_keys(
-            name=name,
-            passphrase=None,
-            keys_to_save = [],
-            keys_to_return = KEYMAKER_DEFAULT_KEYS_TO_SAVE_ON_CLIENT + KEYMAKER_DEFAULT_KEYS_TO_SAVE_ON_SERVER
+        # private keys
+        # self.status(None,
+        #     {ART_KEY_PAIR2B},
+        #     'Second, I have forged a matching "private key":',
+        #     f'{repr(privkey)}',
+        #     'With it, you can decrypt any message sent to you via your public key.',
+        #     'You you should never, ever give this key to anyone.',
+        #     'In fact, this key is so dangerous that I will immediately destroy it by splitting it into two half-keys:'
+        # )
+        # self.status(None,
+        #     {ART_KEY_PAIR31A},
+        #     {ART_KEY_PAIR3B+'\n',True},
+        #     3,'Allow me to explain.',
+        #     '(2A) is a separate encryption key generated by your password.',
+        #     '(2B) is a version of (2) which has been encrypted by (2A).',
+        #     "Because (2) will be destroyed, to rebuild it requires decrypting (2B) with (2A).",
+        # )
+        # self.status(
+        #     None,{ART_KEY_PAIR5+'\n'},
+        #     "However, in a final move, I will now destroy (2A), too.",   
+        #     None,{ART_KEY_PAIR4Z1+'\n'},
+        #     'Why? Because now only you can regenerate it, by remembering the password which created it.',
+        #     # None,{ART_KEY_PAIR4Z1+'\n'},
+        #     'However, this also means that if you lose or forget your password, you\'re screwed.',
+        #     None,{ART_KEY_PAIR4Z2+'\n'},
+        #     "Because without key (2A),you couldn never unlock (2B).",
+        #     None,{ART_KEY_PAIR4Z3+'\n'},
+        #     "And without (2B) and (2A) together, you could never re-assemble the private key of (2).",
+        #     None,{ART_KEY_PAIR4Z42+'\n'},
+        #     "And without (2), you couldn't read messages sent to your public key.",
+            
         )
-        self.status('got back',dict_format(keys_returned))
-        #self.log(f'my new uri is {uri_id} and I got new keys!: {dict_format(keys_returned)}')
-
         self.status(
-            'Generating public key now: ',5,'\n\t',repr(KomradeAsymmetricPublicKey(keychain['pubkey'])),'\n\n',
-            'Generating private key now: ',5,'\n\t',repr(KomradeAsymmetricPrivateKey(keychain['privkey'])),
-            clear=False,pause=False,end=' ',speed=2
+            None,{ART_KEY_PAIR4Z1},
+            'So choosing a password is an important thing!'
         )
+            
+        if not passphrase:
+            self.status(
+                'And it looks like you haven\'t yet chosen a password.',
+                3,"Don't tell it to me! Never tell it to anyone.",
+                "Ideally, don't even save it on your computer; just remember it, or write it down on paper.",
+                "Instead, whisper it to Komrade @Hasher, who scrambles information '1-way', like a blender.",
+            )
+            res = self.status(None,
+                {ART_FROG_BLENDER,True},
+                "@Keymaker: Go ahead, try it. Type anything to @Hasher.",
+                ('str_to_hash',f'@{name}: ',input)
+            )
+            str_to_hash = res.get('vals').get('str_to_hash')
+            hashed_str = hasher(str_to_hash.encode())
+            res = self.status(
+                '@Hasher: '+hashed_str
+            )
 
+            res = self.status(
+                '@Keymaker: See? Ok, now type in a password.'
+                ('str_to_hash',f'@{name}: ',getpass)
+            )
+            str_to_hash = res.get('vals').get('str_to_hash')
+            hashed_pass1 = hasher(str_to_hash.encode())
+            res = self.status(
+                '@Hasher: '+hashed_pass1
+            )
 
-        # save the ones we should on server
-        data = {
-            **{'name':name, 'passphrase':self.crypt_keys.hash(passphrase.encode()), ROUTE_KEYNAME:'register_new_user'}, 
-            **keys_returned
-        }
-        self.log('sending to server:',dict_format(data,tab=2))
-        # msg_to_op = self.compose_msg_to(data, self.op)
+            res = self.status(
+                '@Keymaker: Whatever you entered, it\'s already forgotten. That hashed mess is all that remains.',
+                'Now type in the same password one more time to verify it:',
+                ('str_to_hash',f'@{name}: ',getpass)
+            )
+            str_to_hash = res.get('vals').get('str_to_hash')
+            hashed_pass2 = hasher(str_to_hash.encode())
+            res = self.status(
+                '@Hasher: '+hashed_pass2
+            )
+
+            if hashed_pass1==hashed_pass2:
+                self.status('The passwords matched.')
+            else:
+                self.status('The passwords did not match.')
             
 
-        # ring operator
-        # call from phone since I don't have pubkey on record on Op yet
-        resp_msg_obj = self.phone.ring_ring(data)
-        self.log('register got back from op:',dict_format(resp_msg_obj,tab=2))
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 def run_cli():
     cli = CLI()
-    asyncio.run(cli.run('/register',name='elon'))
+    cli.run('/register','elon') #'/register',name='elon')
 
 if __name__=='__main__':
     run_cli()

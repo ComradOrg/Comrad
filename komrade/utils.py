@@ -26,10 +26,14 @@ def log(*x):
 
 def clear_screen():
     import os
+    # pass
     os.system('cls' if os.name == 'nt' else 'clear')
 
 def do_pause():
-    input('')
+    try:
+        input('')
+    except KeyboardInterrupt:
+        exit('\n\nGoodbye.')
 
 
 def dict_format(d, tab=0):
@@ -47,11 +51,11 @@ def dict_format(d, tab=0):
 
         # s.append('%s%r: %s (%s),\n' % ('  '*tab, k, v, type(v).__name__))
         s.append('%s%r: %s,\n\n' % ('  '*tab, k, reppr(v)))
-    s.append('%s}' % ('  '*tab))
+    s.append('%s}' % ('  '*(tab-2)))
     return ''.join(s)
 
 import inspect,time
-from komrade.constants import PAUSE_LOGGER,SHOW_LOG,SHOW_STATUS
+from komrade.constants import *
 class Logger(object):
     def log(self,*x,pause=PAUSE_LOGGER,clear=PAUSE_LOGGER):
         if not SHOW_LOG: return
@@ -65,9 +69,22 @@ class Logger(object):
         if pause: do_pause()
         if pause: clear_screen()
         # except KeyboardInterrupt:
-        exit()
+        # exit()
 
-    def status(self,*msg,pause=True,clear=False,ticks=[],tab=2,speed=2,end=None):
+    def print(*x,width=STATUS_LINE_WIDTH,end='\n',indent=1,scan=False,**y):
+        if not scan and not width:
+            print(*x,end=end,**y)
+        else:
+            import textwrap as tw
+            xs=end.join(str(xx) for xx in x if type(xx)==str)
+            if width:
+                xw = [_.strip() for _ in tw.wrap(xs,width=width)]
+                # xw = [_ for _ in tw.wrap(xs,width=width)]
+                xs=end.join(xw)
+            xs = tw.indent(xs,' '*indent)
+            print(xs) if scan==False else scan_print(xs)
+
+    def status(self,*msg,pause=True,clear=False,ticks=[],tab=2,speed=10,end=None,indent=0,width=80,scan=False):
         import random
         if not SHOW_STATUS: return
         # if len(msg)==1 and type(msg[0])==str:
@@ -76,17 +93,33 @@ class Logger(object):
         paras=[]
         res={}
         for para in msg:
+            indentstr=' '*indent
             plen = para if type(para)==int or type(para)==float else None
             if type(para) in {int,float}:
                 plen=int(para)
-                for i in range(plen * speed):
+                # print()
+                print(' '*indent,end='',flush=True)
+                for i in range(plen):
                     tick = ticks[i] if i<len(ticks) else '.'
-                    print(tick,end=end if end else ' ',flush=True)
-                    time.sleep(random.random() / speed)
+                    print(tick,end=end if end else ' ',flush=True) #,scan=scan)
+                    # time.sleep(random.random() / speed)
+                    time.sleep(random.uniform(0.05,0.2))
+                # print()
             elif para is None:
                 clear_screen()
             elif para is False:
                 pass
+            elif para is True:
+                pass
+            elif type(para) is set: # logo/image
+                pl = [x for x in para if type(x)==str]
+                txt=pl[0]
+                speed =[x for x in para if type(x)==int]
+                speed = speed[0] if speed else 1
+                if True in para:
+                    scan_print(txt,speed=speed)
+                else:
+                    print(txt,end=end)
             elif type(para) is tuple:
                 k=para[0]
                 q=para[1]
@@ -100,11 +133,11 @@ class Logger(object):
             elif para is 0:
                 do_pause()
             elif pause:
-                print(para,flush=True,end=end if end else '\n')
+                self.print(para,flush=True,end=end if end else '\n',scan=scan,indent=indent)
                 paras+=[para]  
                 do_pause()
             else:
-                print(para,flush=True,end=end if end else '\n')
+                self.print(para,flush=True,end=end if end else '\n',scan=scan,indent=indent)
                 paras+=[para]    
         return {'paras':paras, 'vals':res}
 
@@ -223,3 +256,24 @@ def capture_stdout(func):
         func()
     out = f.getvalue()
     return out
+
+
+
+
+def scan_print(xstr,min_pause=0,max_pause=0.015,speed=100000):
+    import random,time
+    for c in xstr:
+        print(c,end='',flush=True)
+        # naptime=random.uniform(min_pause, max_pause / speed)
+        # time.sleep(naptime)
+        time.sleep(.001)
+        
+
+
+def get_qr_str(data):
+    import qrcode
+    qr=qrcode.QRCode()
+    qr.add_data(data)
+    ascii = capture_stdout(qr.print_ascii)
+    ascii = ascii[:-1] # removing last line break
+    return '\n    ' + ascii.strip()
