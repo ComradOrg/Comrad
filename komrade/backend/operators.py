@@ -191,14 +191,15 @@ class Operator(Keymaker):
 
     def ring_ring(self,msg,to_whom,get_resp_from=None):
         # ring ring
-        self.log(f'''
-        ring ring!
-        I am {self}.
-        I have been told to pass onto {to_whom},
-        by way of function {get_resp_from},
-        the following msg:
-        {dict_format(msg,tab=5)}
-        ''')
+        from komrade.cli.artcode import ART_PHONE_SM1
+        self.log(f'''ring ring! {ART_PHONE_SM1} ring ring!
+I am {self}.
+
+I have been told to pass onto {to_whom},
+by way of function {get_resp_from},
+the following msg:
+{dict_format(msg,tab=5)}
+''')
         
         # get encr msg obj
         msg_obj = self.compose_msg_to(

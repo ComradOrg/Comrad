@@ -32,7 +32,7 @@ ART_PHONE_SM1 = """
     |  LI LI LI  |   ,@'
     |  LI LI LI  |  ,@'
     |  LI LI LI  |@@'
-jgs \\            /'
+    \\            /'
      `----------'
 """
 

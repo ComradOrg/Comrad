@@ -46,63 +46,43 @@ class Persona(Caller):
         # if keys.get('pubkey') and keys.get('privkey')
 
     def register(self, name = None, passphrase = None, is_group=None, show_intro=0,show_body=True):
-        # defaults
+        ## Defaults
         if name and not self.name: self.name=name
         if not name and self.name: name=self.name
         if not name and not self.name: name=''
-        clear_screen()
-
-        # intro narration?
+        
+        ## 1) Have name?
         if SHOW_STATUS and show_intro:
-           name = self.cli.status_keymaker_part1(name)
+            name = self.cli.status_keymaker_part1(name)
+        else:
+            name = input('@Keymaker: What is the name for this new account?\n@?: ')
 
-        # 1) forge public/private keys
+        ## 2) Make pub public/private keys
         keypair = KomradeAsymmetricKey()
         pubkey,privkey = keypair.pubkey_obj,keypair.privkey_obj
         self.log(f'Keymaker has cut private and public keys:\n\n(1) {pubkey}\n\n(2) {privkey}')
 
-        # 2) make sure we have passphrase
-        # passphrase=self.crypt_keys.hash(b'boogywoogy')
+        ## 3) Have passphrase?
         if SHOW_STATUS and not passphrase:
-            passphrase = self.cli.status_keymaker_part2(
-                name,
-                passphrase,
-                pubkey,
-                privkey,
-                self.crypt_keys.hash,
-                self
-            )
+            passphrase = self.cli.status_keymaker_part2(name,passphrase,pubkey,privkey,self.crypt_keys.hash,self)
         else:
             if not passphrase: passphrase=getpass('Enter a memorable password to encrypt your private key with: ')
 
-        # 2) hash password
+        ## 4) Get hashed password
         passhash = self.crypt_keys.hash(passphrase.encode())
-        # self.log(f'Hasher has scrambled inputted password using SHA-256 hashing algorithm (partly redacted):\n\n[Hashed Password] {make_key_discreet_str(passhash)}')
-        self.log(f'''Keymaker has created a symmetric encryption cell using the disguised password:
-    
-    (2A) [Symmetric Encryption Key]
-         ({make_key_discreet_str(passhash)})''')
+        self.log(f'''Keymaker has created a symmetric encryption cell using the disguised password:\n\n\t(2A) [Symmetric Encryption Key]\n\t({make_key_discreet_str(passhash)})''')
 
-        # 3) form an encryption key
+        ## 5) Encrypt private key
         privkey_decr = KomradeSymmetricKeyWithPassphrase(passhash)
         privkey_encr = privkey_decr.encrypt(privkey.data)
         privkey_encr_obj = KomradeEncryptedAsymmetricPrivateKey(privkey_encr)
+        self.log(f"This pass-generated key has now transformed the private key (2) into the following encrypted form (redacted):\n\n\t(2B) [Encrypted Private Key]\n\t({make_key_discreet_str(privkey_encr_obj.data_b64)})")
 
-        self.log(f'''This pass-generated key has now transformed the private key (2) into the following encrypted form (redacted):
-
-    (2B) [Encrypted Private Key]
-         ({make_key_discreet_str(privkey_encr_obj.data_b64)}''')
-
+        ## 6) More narration?
         if SHOW_STATUS:
-            self.cli.status_keymaker_part3(
-                privkey,
-                privkey_decr,
-                privkey_encr,
-                passphrase,
-            )
+            self.cli.status_keymaker_part3(privkey,privkey_decr,privkey_encr,passphrase)
 
-        
-        # save the ones we should on server
+        ## 7) Save data to server
         data = {
             'name':name, 
             'pubkey': pubkey.data,
@@ -113,7 +93,11 @@ class Persona(Caller):
         
         # ring operator
         # call from phone since I don't have pubkey on record on Op yet
-        resp_msg_obj = self.phone.ring_ring(data)
+        # self.log('my keychain:',self._keychain,pubkey,self.op._keychain)
+        self._keychain['pubkey']=pubkey.data
+        self._keychain['privkey']=privkey.data
+
+        resp_msg_obj = self.ring_ring(data)
         self.log('register got back from op:',dict_format(resp_msg_obj,tab=2))
 
 
