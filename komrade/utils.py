@@ -183,9 +183,18 @@ def hashish(binary_data):
     import hashlib
     return hashlib.sha256(binary_data).hexdigest()
 
+def create_secret():
+    if not os.path.exists(PATH_CRYPT_SECRET):    
+        secret = get_random_binary_id()
+        from komrade.backend.keymaker import make_key_discreet
+        print('shhh! creating secret:',make_key_discreet(secret))
+        with open(PATH_CRYPT_SECRET,'wb') as of:
+            of.write(secret)
+
 def hasher(dat,secret=None):
     import hashlib
     if not secret:
+        create_secret()
         with open(PATH_CRYPT_SECRET,'rb') as f:
             secret = f.read()
     if type(dat)==str:
