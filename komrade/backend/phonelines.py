@@ -44,7 +44,7 @@ def create_phonelines():
     
 
     # create keys for Op
-    op_uri,op_decr_keys = op.forge_new_keys(
+    op_decr_keys = op.forge_new_keys(
         key_types=key_types,
         keys_to_save=op_keys_to_keep_on_server,
         keys_to_return=op_keys_to_keep_on_client + op_keys_to_keep_on_3rdparty # on clients only
@@ -54,7 +54,7 @@ def create_phonelines():
     p#print(op_decr_keys)
 
     # create keys for phone
-    phone_uri,phone_decr_keys = phone.forge_new_keys(
+    phone_decr_keys = phone.forge_new_keys(
         key_types=key_types,
         keys_to_save=phone_keys_to_keep_on_server,  # on server only
         keys_to_return=phone_keys_to_keep_on_client + phone_keys_to_keep_on_3rdparty   # on clients only
@@ -63,7 +63,7 @@ def create_phonelines():
     #print(phone_decr_keys)
 
     # create keys for world
-    world_uri,world_decr_keys = world.forge_new_keys(
+    world_decr_keys = world.forge_new_keys(
         key_types=key_types,
         keys_to_save=world_keys_to_keep_on_server,
         keys_to_return=world_keys_to_keep_on_client + world_keys_to_keep_on_3rdparty # on clients only
