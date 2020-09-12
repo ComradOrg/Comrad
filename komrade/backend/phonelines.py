@@ -5,29 +5,44 @@ from komrade.backend import *
 
 
 
+# def create_phonelines():
+#     prime_entities = [
+#         {
+#             'name':OPERATOR_NAME,
+#             'keys_to_save_on_srv': ['pubkey','privkey_encr'],
+#             'keys_to_'
+
+#         }
+#     ]
+
+
+
+
+
+
+
 
 ### CREATE PRIME ENTITIES
 def create_phonelines():
     ## CREATE OPERATOR
     op = Keymaker(name=OPERATOR_NAME)
     op_keys_to_keep_on_client = ['pubkey']  # kept on app, stored under name
-    op_keys_to_keep_on_3rdparty = ['privkey_decr']  # kept on .onion site
+    op_keys_to_keep_on_3rdparty = []  # kept on .onion site
     op_keys_to_keep_on_server = ['pubkey',   # stored under name
                                 'privkey_encr',
-                                'adminkey_encr',
-                                'adminkey_decr']   # kept on op server
+                                'privkey_decr']   # kept on op server
 
     ## create phone
     phone = Keymaker(name=TELEPHONE_NAME)
-    phone_keys_to_keep_on_client = ['pubkey','privkey_encr'] # kept on app; need both to init connection 
-    phone_keys_to_keep_on_3rdparty = ['privkey_decr']  # dl by phone
+    phone_keys_to_keep_on_client = ['pubkey','privkey'] # kept on app; need both to init connection 
+    phone_keys_to_keep_on_3rdparty = ['']  # dl by phone
     phone_keys_to_keep_on_server = ['pubkey']  # kept on op server
 
     ## create phone
     world = Keymaker(name=WORLD_NAME)
-    world_keys_to_keep_on_client = op_keys_to_keep_on_client
-    world_keys_to_keep_on_3rdparty = op_keys_to_keep_on_3rdparty
-    world_keys_to_keep_on_server = op_keys_to_keep_on_server
+    world_keys_to_keep_on_client = ['pubkey','privkey_encr','privkey_decr']
+    world_keys_to_keep_on_3rdparty = []
+    world_keys_to_keep_on_server = ['pubkey']
 
 
     # key types
@@ -45,13 +60,14 @@ def create_phonelines():
 
     # create keys for Op
     op_decr_keys = op.forge_new_keys(
-        key_types=key_types,
+        # key_types=key_types,
         keys_to_save=op_keys_to_keep_on_server,
         keys_to_return=op_keys_to_keep_on_client + op_keys_to_keep_on_3rdparty # on clients only
         
     )
     #print('op!',op_uri)
     print(op_decr_keys)
+    exit()
 
     # create keys for phone
     phone_decr_keys = phone.forge_new_keys(
