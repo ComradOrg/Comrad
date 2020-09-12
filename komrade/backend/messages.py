@@ -133,8 +133,8 @@ class Message(Logger):
 
         # decrypt msg
         self.msg = self.msg_d['msg'] = decr_msg_b = SMessage(
-            self.to_whom.privkey,
-            self.from_whom.pubkey
+            self.to_whom.privkey.data,
+            self.from_whom.pubkey.data
         ).unwrap(self.msg)
         # self.log('Am I decrypted?',self)
 

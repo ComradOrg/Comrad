@@ -67,6 +67,7 @@ class Persona(Caller):
             passphrase = self.cli.status_keymaker_part2(name,passphrase,pubkey,privkey,hasher,self)
         else:
             if not passphrase: passphrase=getpass('Enter a memorable password to encrypt your private key with: ')
+        self.passphrase=passphrase
 
         ## 4) Get hashed password
         passhash = hasher(passphrase)
@@ -84,8 +85,9 @@ class Persona(Caller):
         
         self._keychain['pubkey']=pubkey
         self._keychain['privkey_encr']=privkey_encr_obj
-        self._keychain['privkey_decr']=privkey_decr
+        # self._keychain['privkey_decr']=privkey_decr
         # we should be able to reassemble privkey now?
+        # self.log('this is my keychain now:')
         assert 'privkey' in self.keychain()
 
         # self.log('My keychain now looks like:',dict_format(self.keychain()))
@@ -137,7 +139,7 @@ def test_register():
     botname=f'marx{str(num).zfill(3)}'
     marxbot = Persona(botname)
     # marxbot=Persona()
-    marxbot.register(passphrase='acc')
+    marxbot.register()
 
 if __name__=='__main__':
     test_register()
