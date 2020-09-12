@@ -148,9 +148,10 @@ def test_phonelines():
     phone = TheTelephone()
     op = TheOperator(passphrase=getpass())
 
-    print('phone',dict_format(phone._keychain))
-    print('op',dict_format(op._keychain))
+    print('phone',dict_format(phone.keychain()))
+    print('op',dict_format(op.keychain()))
 
+    print(op.privkey)
 
 if __name__ == '__main__':
     test_phonelines()
