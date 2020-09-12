@@ -59,10 +59,10 @@ class Message(Logger):
         else:
             msg=self.msg
         return f"""    
-    from: {'@'+self.from_name if self.from_name else ''} 
+    from: {'@'+self.from_name if self.from_name else '(not given)'} 
           ({b64encode(self.from_pubkey).decode()})
     
-    to:   {'@'+self.to_name if self.to_name else ''}
+    to:   {'@'+self.to_name if self.to_name else '(not given)'}
           ({b64encode(self.to_pubkey).decode()})
 
     msg:  {msg}
