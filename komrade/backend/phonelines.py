@@ -56,8 +56,7 @@ def create_phonelines():
         {
             'name':TELEPHONE_NAME,
             'pubkey':phone_pubkey.data,
-            'privkey_encr':phone_privkey_encr.data,
-            'privkey_decr':phone_privkey_decr.data
+            'privkey':phone_privkey.data,
         },
         {
             'name':WORLD_NAME,
