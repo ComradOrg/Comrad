@@ -33,7 +33,7 @@ def create_phonelines():
 
     ## create phone
     phone = Keymaker(name=TELEPHONE_NAME)
-    phone_keys_to_keep_on_client = ['pubkey','privkey'] # kept on app; need both to init connection 
+    phone_keys_to_keep_on_client = ['pubkey','privkey_encr','privkey_decr'] # kept on app; need both to init connection 
     phone_keys_to_keep_on_3rdparty = ['']  # dl by phone
     phone_keys_to_keep_on_server = ['pubkey']  # kept on op server
 
@@ -55,11 +55,11 @@ def create_phonelines():
         'adminkey_decr':KomradeSymmetricKeyWithPassphrase,
     }
 
-    
+    key_types_phone = {**key_types, **{'privkey_decr':KomradeSymmetricKeyWithoutPassphrase}}
 
     # create keys for Op
     op_decr_keys = op.forge_new_keys(
-        # key_types=key_types,
+        key_types=key_types,
         keys_to_save=op_keys_to_keep_on_server,
         keys_to_return=op_keys_to_keep_on_client + op_keys_to_keep_on_3rdparty # on clients only
         
@@ -70,7 +70,7 @@ def create_phonelines():
 
     # create keys for phone
     phone_decr_keys = phone.forge_new_keys(
-        key_types=key_types,
+        key_types=key_types_phone,
         keys_to_save=phone_keys_to_keep_on_server,  # on server only
         keys_to_return=phone_keys_to_keep_on_client + phone_keys_to_keep_on_3rdparty   # on clients only
     )
