@@ -104,6 +104,7 @@ class Crypt(Logger):
         return k_b
 
     def unpackage_val(self,k_b):
+        from komrade import ThemisError
         try:
             if self.cell is not None:
                 k_b = self.cell.decrypt(k_b)
