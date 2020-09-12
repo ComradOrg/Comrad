@@ -469,7 +469,7 @@ Keymaker ({self}) is forging new keys for {name}
         if save_keychain:
             # get URI id to save under (except for pubkeys, accessible by name)
             uri_id,keys_saved_d,keychain = self.save_keychain(name,keychain,keys_to_save)
-            self.log('I saved this keychain:',dict_format(keys_saved_d,tab=2),'using the generated-from-pubkey URI ID',uri_id)
+            self.log(f'Trying to save these keys ({keys_to_save}), I saved this keychain:',dict_format(keys_saved_d,tab=2),'using the generated-from-pubkey URI ID',uri_id)
 
         # return keys!
         if return_all_keys:
