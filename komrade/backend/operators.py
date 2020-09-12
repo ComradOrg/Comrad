@@ -52,11 +52,11 @@ class Operator(Keymaker):
                          path_crypt_keys=path_crypt_keys, path_crypt_data=path_crypt_data)
         
         
-    def boot(self):
-        ## get both name and pubkey somehow
-        if not self.pubkey and self.name:
-            self._keychain['pubkey'] = self.find_pubkey()
-        elif self.pubkey and not self.name:
+    # def boot(self):
+    #     ## get both name and pubkey somehow
+    #     if not self.pubkey and self.name:
+    #         self._keychain['pubkey'] = self.find_pubkey()
+    #     elif self.pubkey and not self.name:
 
 
     # def boot(self,create=False):
