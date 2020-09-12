@@ -302,9 +302,9 @@ class Keymaker(Logger):
             pubkey = self.find_pubkey(name)
         elif pubkey and not name:
             self.name = self.find_name(pubkey)
-        else:
-            self.log('error! Neither name nor pubkey! Who am I?')
-            return (None,None)
+        # else:
+            # self.log('error! Neither name nor pubkey! Who am I?')
+            # return (None,None)
         
         self._keychain['pubkey'] = pubkey
         self.name = name
