@@ -104,10 +104,13 @@ class Operator(Keymaker):
             raise KomradeException('why do I not know whom I\'m writing to?')
 
         # otherwise create msg
+        frompub = self.pubkey.data if hasattr(self.pubkey,'data') else self.pubkey 
+        topub = another.pubkey.data if hasattr(another.pubkey,'data') else another.pubkey 
+
         msg_d = {
-            'from':self.pubkey.data,
+            'from':frompub,
             # 'from_name':self.name,
-            'to':another.pubkey.data,
+            'to':topub,
             # 'to_name':another.name,
             'msg':msg
         }
