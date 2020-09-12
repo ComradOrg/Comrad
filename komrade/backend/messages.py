@@ -43,9 +43,13 @@ class Message(Logger):
         else:
             msg=self.msg
         return f"""    
-    from: {self.from_whom}
-    to: {self.to_whom}
-    msg: {msg}
+    from: {self.from_whom} 
+          ({self.from_whom.pubkey.data_b64.decode()})
+    
+    to:   {self.to_whom}
+          ({self.to_whom.pubkey.data_b64.decode()})
+
+    msg:  {msg}
 """
 
 
@@ -161,7 +165,7 @@ class Message(Logger):
     def encrypt(self): # each child message should already be encrypted before coming to its parent message ,recursive=False):
         if self._is_encrypted: return
         # self.log(f'attempting to encrypt msg {self.msg} from {self.from_whom} to {self.to_whom}')
-        self.log(f'I ({self.from_whom}) am about to encrypt my message to {self.to_whom},\n "end to end" so that only {self.to_whom} can read it.\n\n Before encryption, I look like:\n{self}')
+        self.log(f'Before encrypting the message from {self.from_whom} to {self.to_whom}, it looks like:\n{self}')
         
         # make sure msg is not meeta
         if self.has_embedded_msg:
@@ -180,7 +184,7 @@ class Message(Logger):
 
         self.msg_decr = self.msg
         self.msg_d['msg'] = self.msg = b64encode(msg_encr)
-        self.log(f'I ({self.from_whom}) am about to encrypt my message to {self.to_whom}\n "end to end" so that only {self.to_whom} can read it.\n\n And after encryption, I look like:\n{self}')
+        self.log(f'After encrypting the message from {self.from_whom} to {self.to_whom}, it looks like:\n{self}')
         self.msg_d['msg'] = self.msg = msg_encr
         self._is_encrypted = True
 

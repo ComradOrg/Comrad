@@ -60,7 +60,7 @@ class Persona(Caller):
         ## 2) Make pub public/private keys
         keypair = KomradeAsymmetricKey()
         pubkey,privkey = keypair.pubkey_obj,keypair.privkey_obj
-        self.log(f'@Keymaker has cut private and public keys:\n\n(1) {pubkey}\n\n(2) {privkey}')
+        self.log(f'Keymaker has cut private and public keys:\n\n(1) {pubkey}\n\n(2) {privkey}')
 
         ## 3) Have passphrase?
         if SHOW_STATUS and not passphrase:
@@ -70,13 +70,13 @@ class Persona(Caller):
 
         ## 4) Get hashed password
         passhash = hasher(passphrase)
-        self.log(f'''@Keymaker has created a symmetric encryption cell using the disguised password:\n\n\t(2A) [Symmetric Encryption Key]\n\t({make_key_discreet_str(passhash)})''')
+        # self.log(f'''Keymaker has created a symmetric encryption cell using the disguised password:\n\n\t(2A) [Symmetric Encryption Key]\n\t({make_key_discreet_str(passhash)})''')
 
         ## 5) Encrypt private key
         privkey_decr = KomradeSymmetricKeyWithPassphrase(passphrase)
         privkey_encr = privkey_decr.encrypt(privkey.data)
         privkey_encr_obj = KomradeEncryptedAsymmetricPrivateKey(privkey_encr)
-        self.log(f"This pass-generated key has now transformed the private key (2) into the following encrypted form (redacted):\n\n\t(2B) [Encrypted Private Key]\n\t({make_key_discreet_str(privkey_encr_obj.data_b64)})")
+        self.log(f"For my private key, I will store it only on my device as it was encrypted by my password-generated key:\n\n[Encrypted Private Key]\n({make_key_discreet_str(privkey_encr_obj.data_b64)})")
 
         ## 6) Test keychain works
         privkey_decr2 = KomradeSymmetricKeyWithPassphrase(passphrase)
@@ -88,7 +88,7 @@ class Persona(Caller):
         # we should be able to reassemble privkey now?
         assert 'privkey' in self.keychain()
 
-        self.log('My keychain now looks like:',dict_format(self.keychain()))
+        # self.log('My keychain now looks like:',dict_format(self.keychain()))
 
         ## 6) More narration?
         if SHOW_STATUS:
@@ -99,7 +99,7 @@ class Persona(Caller):
             'name':name, 
             'pubkey': pubkey.data,
         }
-        # self.log('I will be sending this data to @TheOperator, on the remote server:',dict_format(data,tab=2))
+        self.log('For my public key, I will be sending it to @Operator on the remote server:',dict_format(data,tab=2))
         
         # ring operator
         # call from phone since I don't have pubkey on record on Op yet

@@ -19,6 +19,7 @@ def create_phonelines():
     # save pub and priv
     op_uri = op_pubkey.data_b64
     keycrypt.set(OPERATOR_NAME,op_pubkey.data,prefix='/pubkey/')
+    
     keycrypt.set(op_uri,op_privkey_encr.data,prefix='/privkey_encr/')
     
 

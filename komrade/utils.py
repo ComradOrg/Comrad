@@ -39,7 +39,7 @@ def do_pause():
 def dict_format(d, tab=0):
     def reppr(v):
         if type(v)==bytes and not isBase64(v):
-            return b64encode(v)
+            return b64encode(v).decode()
         return v
 
     s = ['{\n\n']

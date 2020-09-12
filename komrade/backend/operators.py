@@ -107,7 +107,7 @@ class Operator(Keymaker):
     def seal_msg(self,msg_d):
         msg_b = pickle.dumps(msg_d)
         self.log('Message has being sealed in a final binary package:',b64encode(msg_b))
-        return msg_b_encr
+        return msg_b
 
     def unseal_msg(self,msg_b_encr,from_whom=None,to_whom=None):
         # default to assumption that I am the recipient
@@ -128,7 +128,7 @@ class Operator(Keymaker):
     def __repr__(self):
         clsname=(type(self)).__name__
         #name = clsname+' '+
-        name = 'Komrade @'+self.name # if self.name!=clsname else clsname
+        name = '@'+self.name # if self.name!=clsname else clsname
         # try:
         #     keystr= 'on device: ' + ('+'.join(self.top_keys) if self.pubkey else '')
         # except TypeError:
@@ -203,9 +203,11 @@ class Operator(Keymaker):
 #     {dict_format(msg,tab=4)}
 # ''')
         if caller!=self:
-            self.log(f'ring ring! I ({self}) have received a message from {caller},\n which I will now encrypt and send on to {to_whom}.')
+            from komrade.cli.artcode import ART_PHONE_SM1
+            self.log(f'ring ring! I the {self} have received a message from {caller},\n which I will now encrypt and send along to {to_whom}.\n {ART_PHONE_SM1} ')
         else:
-            self.log(f'I ({self}) will now compose and send an encrypted message to {to_whom}.')
+            pass
+            # self.log(f'I ({self}) will now compose and send an encrypted message to {to_whom}.')
 
         if route and type(msg)==dict and not ROUTE_KEYNAME in msg:
             msg[ROUTE_KEYNAME] = route
@@ -216,7 +218,7 @@ class Operator(Keymaker):
             msg,
             to_whom
         )
-        self.log(f'Here is the message object I ({self}) made, to send to {to_whom}: {msg_obj}')
+        self.log(f'Here is the message I will now encrypt and to send to {to_whom}:\n {msg_obj}')
         
         # encrypting
         msg_obj.encrypt()
