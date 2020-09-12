@@ -260,7 +260,6 @@ class Keymaker(Logger):
         return keychain
 
     def find_pubkey_and_name(self,name=None,pubkey=None):
-        if not pubkey: pubkey = self._keychain.get('pubkey')
         if not name: name = self.name
 
         if pubkey:
