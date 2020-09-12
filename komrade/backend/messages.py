@@ -191,16 +191,12 @@ class Message(Logger):
 
         # binarize msg
         msg_b = pickle.dumps(self.msg)
-        # self.log('msg_b = ',msg_b)
-        print(self.from_whom.privkey.data,
-            self.to_pubkey
-        )
 
         # encrypt it!
         msg_encr = SMessage(
             self.from_whom.privkey.data,
             self.to_pubkey
-        ).wrap(self.msg)
+        ).wrap(msg_b)
 
         self.msg_decr = self.msg
         self.msg_d['msg'] = self.msg = b64encode(msg_encr)
