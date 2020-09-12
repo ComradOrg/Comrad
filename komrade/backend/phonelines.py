@@ -107,7 +107,7 @@ def check_phonelines():
     create_secret()
 
     # is world there?
-    keycrypt = Crypt(PATH_CRYPT_OP_KEYS)
+    keycrypt = Crypt(fn=PATH_CRYPT_OP_KEYS)
     
     # builtins
     with open(PATH_BUILTIN_KEYCHAIN,'rb') as f:        
