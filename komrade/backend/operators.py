@@ -24,12 +24,12 @@ def locate_an_operator(name=None,pubkey=None):
     
     if name == OPERATOR_NAME:
         return OPERATOR
-    if pubkey and pubkey == OPERATOR.pubkey.data_b64:
+    if pubkey and pubkey == OPERATOR.pubkey:
         return OPERATOR
 
     if name==TELEPHONE_NAME:
         return TELEPHONE
-    if pubkey and pubkey == TELEPHONE.pubkey.data_b64:
+    if pubkey and pubkey == TELEPHONE.pubkey:
         return TELEPHONE
     
     return Caller(name=name,pubkey=pubkey)
