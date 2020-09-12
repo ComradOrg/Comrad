@@ -44,6 +44,8 @@ class Message(Logger):
             self.to_pubkey=self.to_whom.pubkey.data
         if not self.from_pubkey:
             self.from_pubkey=self.from_whom.pubkey.data
+        if isBase64(self.to_pubkey): self.to_pubkey = b64decode(self.to_pubkey)
+        if isBase64(self.from_pubkey): self.from_pubkey = b64decode(self.from_pubkey)
 
     def __repr__(self):
         msg_d_str=dict_format(self.msg_d,tab=6)
