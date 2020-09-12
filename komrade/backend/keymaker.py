@@ -288,7 +288,8 @@ class Keymaker(Logger):
             # make sure they match
             #assert self.find_pubkey(name) == self.find_name(pubkey)
             if self.find_pubkey(name) != self.find_name:
-                self.log(f'! {name} and {pubkey} do not match?')
+                pass
+                # self.log(f'! {name} and {pubkey} do not match?')
         elif name and not pubkey:
             pubkey = self.find_pubkey(name)
         elif pubkey and not name:
