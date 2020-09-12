@@ -12,7 +12,9 @@ class TheTelephone(Operator):
     def __init__(self, caller=None):
         super().__init__(name=TELEPHONE_NAME)
         self.caller=caller
-        # self._keychain = self.load_keychain_from_bytes(self.telephone_keychain)
+        from komrade.backend.phonelines import check_phonelines
+        keychain = check_phonelines()[TELEPHONE_NAME]
+        self._keychain = self.load_keychain_from_bytes(keychain)
 
     # def find_pubkey(self):
         # return self.telephone_keychain.get('pubkey')
@@ -72,8 +74,9 @@ Please send this message along, would you: {msg_b64_str}
     
 def test_call():
     phone = TheTelephone()
-    pprint(phone.keychain())
 
+    pprint(phone.keychain())
+    
 
     # caller = Caller('marx33') #Caller('marx')
     # caller.boot(create=True)

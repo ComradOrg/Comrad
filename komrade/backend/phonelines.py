@@ -115,27 +115,22 @@ def check_phonelines():
     builtin_keys = pickle.loads(builtin_keys_b)
     # print(builtin_keys)
 
-    for keyring in builtin_keys:
-        name = keyring.get('name')
-        keychain = dict((k,v) for k,v in keyring.items() if k!='name')
-        print(name,keychain)
-        if not 'pubkey' in keyring: continue
-        uri = b64encode(keychain.get('pubkey'))
+    for name in builtin_keys:
+        pubkey=builtin_keys[name]['pubkey']
+        uri_id=b64encode(pubkey)
+        for keyname,keyval in builtin_keys[name].items():
+            uri=name if keyname=='pubkey' else uri_id
+            if not keycrypt.has(uri,f'/{keyname}/'):
+                keycrypt.set(uri,keyval,f'/{keyname}/')
 
-        if not keycrypt.has(name,prefix='/pubkey/'):
-            keycrypt.set(name,keychain['pubkey'],prefix='/pubkey/')
-
-        for key in [k for k in keychain if k!='pubkey']:
-            if not keycrypt.has(uri,prefix=f'/{key}/'):
-                keycrypt.set(uri,keychain[key],prefix=f'/{key}/')
-
-        # make sure world's qr is there too
-        if name==WORLD_NAME:
-            import pyqrcode
-            qr = pyqrcode.create(uri)
-            ofnfn = os.path.join(PATH_QRCODES,name+'.png')
-            qr.png(ofnfn,scale=5)
-            # print('>> saved:',ofnfn)
+    # make sure world's qr is there too
+    ofnfn = os.path.join(PATH_QRCODES,WORLD_NAME+'.png')
+    if not os.path.exists(ofnfn):
+        world_uri = b64encode(builtin_keys[WORLD_NAME]['pubkey'])  
+        import pyqrcode
+        qr = pyqrcode.create(world_uri)
+        qr.png(ofnfn,scale=5)
+        #print('>> saved:',ofnfn)
 
 
     return builtin_keys

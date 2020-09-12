@@ -33,7 +33,9 @@ class TheOperator(Operator):
             path_crypt_keys=PATH_CRYPT_OP_KEYS,
             path_crypt_data=PATH_CRYPT_OP_DATA
         )
-        # self._keychain = self.load_keychain_from_bytes(self.operator_keychain)
+        from komrade.backend.phonelines import check_phonelines
+        keychain = check_phonelines()[OPERATOR_NAME]
+        self._keychain = self.load_keychain_from_bytes(keychain)
         
     def ring(self,
         from_caller=None,
