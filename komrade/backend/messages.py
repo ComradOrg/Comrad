@@ -54,10 +54,10 @@ class Message(Logger):
             msg=self.msg
         return f"""    
     from: {self.from_name} 
-          ({self.from_pubkey})
+          ({b64encode(self.from_pubkey).decode()})
     
     to:   {self.to_name}
-          ({self.to_pubkey})
+          ({b64encode(self.to_pubkey).decode()})
 
     msg:  {msg}
 """
