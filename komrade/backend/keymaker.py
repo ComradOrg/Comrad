@@ -23,7 +23,7 @@ class KomradeKey(ABC,Logger):
     def data_b64(self):return b64encode(self.data) if type(self.data)==bytes else self.data.data_b64
     @property
     def data_b64_s(self):
-        reeturn self.data_b64.decode()
+        return self.data_b64.decode()
     @property
     def discreet(self): return make_key_discreet(self.data)
     def __str__(self):
