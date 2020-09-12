@@ -123,13 +123,13 @@ def check_phonelines():
     builtin_keys = pickle.loads(b64decode(builtin_keys_b64))
     # print(builtin_keys)
 
-    # for name in builtin_keys:
-    #     pubkey=builtin_keys[name]['pubkey']
-    #     uri_id=b64encode(pubkey)
-    #     for keyname,keyval in builtin_keys[name].items():
-    #         uri=name if keyname=='pubkey' else uri_id
-    #         if not keycrypt.has(uri,f'/{keyname}/'):
-    #             keycrypt.set(uri,keyval,f'/{keyname}/')
+    for name in builtin_keys:
+        pubkey=builtin_keys[name]['pubkey']
+        uri_id=b64encode(pubkey)
+        keycrypt.set(uri.decode(),name,f'/{name}/',override=True)
+        for keyname,keyval in builtin_keys[name].items():
+            uri=name if keyname=='pubkey' else uri_id
+            keycrypt.set(uri,keyval,f'/{keyname}/',override=True)
 
     # make sure world's qr is there too
     ofnfn = os.path.join(PATH_QRCODES,WORLD_NAME+'.png')
