@@ -127,10 +127,18 @@ def check_phonelines():
         pubkey=builtin_keys[name]['pubkey']
         uri_id=b64encode(pubkey)
         print(name,pubkey,uri_id)
-        keycrypt.set(uri_id.decode(),name,f'/{name}/',override=True)
+        keycrypt.set(
+            uri_id.decode(),
+            name,
+            prefix=f'/name/',override=True
+        )
         for keyname,keyval in builtin_keys[name].items():
             uri=name if keyname=='pubkey' else uri_id
-            keycrypt.set(uri,keyval,f'/{keyname}/',override=True)
+            keycrypt.set(
+                uri,
+                keyval,
+                prefix=f'/{keyname}/',override=True
+            )
 
     # make sure world's qr is there too
     ofnfn = os.path.join(PATH_QRCODES,WORLD_NAME+'.png')
