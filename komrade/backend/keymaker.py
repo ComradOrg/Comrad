@@ -308,6 +308,7 @@ class Keymaker(Logger):
             # return (None,None)
         
         if pubkey:
+            print(type(pubkey),pubkey)
             pubkey=KomradeEncryptedAsymmetricPublicKey(pubkey)
         
         self._keychain['pubkey'] = pubkey
