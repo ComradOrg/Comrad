@@ -308,7 +308,8 @@ class Keymaker(Logger):
             # return (None,None)
         
         if pubkey:
-            self.log('!?!?!?!?',type(pubkey),pubkey)
+            # self.log('!?!?!?!?',type(pubkey),pubkey)
+            pubkey = b64decode(pubkey) if isBase64(pubkey) else pubkey
             pubkey=KomradeEncryptedAsymmetricPublicKey(pubkey)
         
         self._keychain['pubkey'] = pubkey
