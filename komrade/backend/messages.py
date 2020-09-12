@@ -183,7 +183,7 @@ class Message(Logger):
     def encrypt(self): # each child message should already be encrypted before coming to its parent message ,recursive=False):
         if self._is_encrypted: return
         # self.log(f'attempting to encrypt msg {self.msg} from {self.from_whom} to {self.to_whom}')
-        # self.log(f'Before encrypting the message from {self.from_whom} to {self.to_whom}, it looks like:\n{self}')
+        self.log(f'Before encrypting the message from @{self.from_name} to @{self.to_name}, it looks like:\n{self}')
         
         # make sure msg is not meeta
         if self.has_embedded_msg:
@@ -201,7 +201,7 @@ class Message(Logger):
         msg_encr = SMessage(
             self.from_whom.privkey.data,
             self.to_pubkey
-        )
+        ).wrap(self.msg)
 
         self.msg_decr = self.msg
         self.msg_d['msg'] = self.msg = b64encode(msg_encr)
