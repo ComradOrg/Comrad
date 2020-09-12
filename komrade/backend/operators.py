@@ -21,13 +21,15 @@ def locate_an_operator(name=None,pubkey=None):
     if pubkey:
         assert type(pubkey)==bytes
         if not isBase64(pubkey): pubkey=b64encode(pubkey)
+    
     if name == OPERATOR_NAME:
         return OPERATOR
     if pubkey and pubkey == OPERATOR.pubkey.data_b64:
         return OPERATOR
+
     if name==TELEPHONE_NAME:
         return TELEPHONE
-    if pubkey and pubkey == TELEPHONE.pubkey.data_b64
+    if pubkey and pubkey == TELEPHONE.pubkey.data_b64:
         return TELEPHONE
     
     return Caller(name=name,pubkey=pubkey)
@@ -55,7 +57,7 @@ class Operator(Keymaker):
         if not self.pubkey and self.name:
             self._keychain['pubkey'] = self.find_pubkey()
         elif self.pubkey and not self.name:
-            
+
 
     # def boot(self,create=False):
     #      # Do I have my keys?
