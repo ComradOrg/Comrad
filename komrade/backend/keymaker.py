@@ -245,7 +245,7 @@ class Keymaker(Logger):
             return self._keychain['pubkey']
         
         res = self.crypt_keys.get(name, prefix='/pubkey/')
-        self.log('result from crypt for name:',res)
+        # self.log('result from crypt for name:',res)
         # if res: return res
         
         res = self.load_qr(self.name)
@@ -265,7 +265,7 @@ class Keymaker(Logger):
         q=pubkey_b64.decode() if type(pubkey_b64)!=str else pubkey_b64
         print('Q?',q)
         res = self.crypt_keys.get(q, prefix='/name/')
-        self.log('result from crypt for name:',res)
+        # self.log('result from crypt for name:',res)
         return res
         
 
