@@ -96,13 +96,13 @@ class Message(Logger):
     @property
     def from_whom(self):
         if not self._from_whom:
-            self._from_whom,self._to_whom = self.get_from_whoms()
+            self._from_whom,self._to_whom = self.get_whoms()
         return self._from_whom
 
     @property
     def to_whom(self):
         if not self._to_whom:
-            self._from_whom,self._to_whom = self.get_from_whoms()
+            self._from_whom,self._to_whom = self.get_whoms()
         return self._to_whom
     
     def get_whoms(self):
