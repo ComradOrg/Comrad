@@ -39,11 +39,14 @@ class KomradeSymmetricKey(KomradeKey):
     def encrypt(self,msg,**kwargs):
         if issubclass(type(msg), KomradeKey) or issubclass(type(msg),KomradeEncryptedKey):
             msg=msg.data
+        print('??? dec',msg,kwargs)
+        
         return self.cell.encrypt(msg,**kwargs)
     def decrypt(self,msg,**kwargs):
-        print('??? dec',msg,kwargs)
         if issubclass(type(msg), KomradeKey) or issubclass(type(msg),KomradeEncryptedKey):
             msg=msg.data
+        print('??? dec',msg,kwargs)
+        
         try:
             return self.cell.decrypt(msg,**kwargs)
         except TypeError:
