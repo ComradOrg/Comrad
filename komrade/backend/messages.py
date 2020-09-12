@@ -47,6 +47,8 @@ class Message(Logger):
         if isBase64(self.to_pubkey): self.to_pubkey = b64decode(self.to_pubkey)
         if isBase64(self.from_pubkey): self.from_pubkey = b64decode(self.from_pubkey)
 
+        self.log('loaded message: to pub',self.to_pubkey,'from pub',self.from_pubkey)
+
     def __repr__(self):
         self.log('my type??',type(self.msg),self.msg)
         if type(self.msg)==dict:
