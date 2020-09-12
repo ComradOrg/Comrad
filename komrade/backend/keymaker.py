@@ -371,7 +371,7 @@ class Keymaker(Logger):
         asymmetric_privkey=None
         keychain = {}
 
-        self.log('got key types:',key_types)
+        self.log('got key types:',dict_format(key_types))
         
         # gen keys requested
         for key_name,key_class in key_types.items():
@@ -390,6 +390,7 @@ class Keymaker(Logger):
             elif key_class == KomradeSymmetricKeyWithPassphrase:
                 keychain[key_name] = KomradeSymmetricKeyWithPassphrase(passphrase)
             else:
+                print('??',key_name,key_class)
                 keychain[key_name] = key_class()
             
         self.log('keytypes -> keychain',dict_format(keychain))
