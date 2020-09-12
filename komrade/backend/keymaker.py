@@ -370,6 +370,8 @@ class Keymaker(Logger):
         asymmetric_pubkey=None
         asymmetric_privkey=None
         keychain = {}
+
+        self.log('got key types:',key_types)
         
         # gen keys requested
         for key_name,key_class in key_types.items():
@@ -458,10 +460,10 @@ Keymaker ({self}) is forging new keys for {name}
         # gen decryptor keys!
         keychain = self.gen_keys_from_types(key_types,passphrase=passphrase)
         # gen encrypted keys!
-        # self.log('I built this keychain v1!',dict_format(keychain,tab=2))
+        self.log('I built this keychain v1!',dict_format(keychain,tab=2))
         
         keychain = self.gen_encr_keys(keychain,keys_to_gen,passphrase=passphrase)
-        # self.log('I built this keychain!',dict_format(keychain,tab=2))
+        self.log('I built this keychain v2!',dict_format(keychain,tab=2))
         self.status('@Keymaker: I ended up building these keys:',keychain)
         
 
