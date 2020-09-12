@@ -603,54 +603,8 @@ Keymaker ({self}) is forging new keys for {name}
             return SCellSeal(passphrase=str_or_key_or_cell)
         elif type(str_or_key_or_cell)==bytes:
             return SCellSeal(key=str_or_key_or_cell)
-
-
-    # def keychain(self,
-    #             passphrase=DEBUG_DEFAULT_PASSPHRASE,
-    #             extra_keys={},
-    #             keys_to_gen=KEYMAKER_DEFAULT_KEYS_TO_GEN,
-    #             uri_id=None,
-    #             **kwargs):
-
-    #     # assemble as many keys as we can!
-    #     self.log(f'''keychain(
-    #         passphrase={passphrase},
-    #         extra_keys={extra_keys},
-    #         keys_to_gen={keys_to_gen},
-    #         uri_id={uri_id},
-    #         **kwargs = {kwargs}
-    #     )''')
-
-    #     if not uri_id: uri_id = self.uri_id
-    #     if not uri_id and not self.uri_id: 
-    #         raise KomradeException('Need URI id to complete finding of keys!')
-    #     self.log('getting keychain for uri ID:',uri_id)
-
-    #     # if not force and hasattr(self,'_keychain') and self._keychain: return self._keychain
-    #     if passphrase: self.passphrase=passphrase
-
-    #     # start off keychain
-    #     _keychain = {**extra_keys, **self._keychain}
-    #     self.log('_keychain at start of keychain() =',_keychain)
-        
-    #     # find
-    #     for keyname in keys_to_gen:
-    #         if keyname in _keychain and _keychain[keyname]: continue
-    #         # self.log('??',keyname,keyname in self._keychain,'...')
-    #         newkey = self.crypt_keys.get(uri_id,prefix=f'/{keyname}/')
-    #         if newkey: _keychain[keyname] = newkey
-        
-    #     # return
-    #     _keychain = self.assemble(_keychain)
-    #     self._keychain = _keychain
-    #     return _keychain
-
-        
-
-
-
-        return _keychain
-        
+        elif issubclass(type(str_or_key_or_cell),KomradeSymmetricKey):
+            return str_or_key_or_cell.cell
 
 
 if __name__ == '__main__':

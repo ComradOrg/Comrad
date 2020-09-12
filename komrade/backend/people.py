@@ -54,7 +54,7 @@ class Persona(Caller):
         ## 1) Have name?
         if SHOW_STATUS and show_intro:
             name = self.cli.status_keymaker_part1(name)
-        else:
+        elif not name:
             name = input('@Keymaker: What is the name for this new account?\n@?: ')
 
         ## 2) Make pub public/private keys
@@ -78,6 +78,16 @@ class Persona(Caller):
         privkey_encr_obj = KomradeEncryptedAsymmetricPrivateKey(privkey_encr)
         self.log(f"This pass-generated key has now transformed the private key (2) into the following encrypted form (redacted):\n\n\t(2B) [Encrypted Private Key]\n\t({make_key_discreet_str(privkey_encr_obj.data_b64)})")
 
+        ## 6) Test keychain works
+        privkey_decr2 = KomradeSymmetricKeyWithPassphrase(passhash)
+        
+        self._keychain['pubkey']=pubkey.data
+        self._keychain['privkey_encr']=privkey_encr_obj.data
+        self._keychain['privkey_decr']=privkey_decr
+
+        self.log('My keychain now looks like:',dict_format(self.keychain()))
+
+
         ## 6) More narration?
         if SHOW_STATUS:
             self.cli.status_keymaker_part3(privkey,privkey_decr,privkey_encr,passphrase)
@@ -88,14 +98,11 @@ class Persona(Caller):
             'pubkey': pubkey.data,
             ROUTE_KEYNAME:'register_new_user'
         }
-        self.log('sending to server:',dict_format(data,tab=2))
-        # msg_to_op = self.compose_msg_to(data, self.op)
+        self.log('I will be sending this data to @TheOperator, on the remote server:',dict_format(data,tab=2))
         
         # ring operator
         # call from phone since I don't have pubkey on record on Op yet
         # self.log('my keychain:',self._keychain,pubkey,self.op._keychain)
-        self._keychain['pubkey']=pubkey.data
-        self._keychain['privkey']=privkey.data
 
         resp_msg_obj = self.ring_ring(data)
         self.log('register got back from op:',dict_format(resp_msg_obj,tab=2))

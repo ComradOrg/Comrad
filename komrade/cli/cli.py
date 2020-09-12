@@ -358,18 +358,6 @@ class CLI(Logger):
         )
 
 
-    def register():
-        # Get name (narration part 1)
-        name = self.cli.status_keymaker_part1(name)
-        passphrase = self.cli.status_keymaker_part2(
-            name,
-            passphrase,
-            pubkey,
-            privkey,
-            self.crypt_keys.hash,
-            self
-        )
-        # get passphrase (narration part 2)
 
 
 
