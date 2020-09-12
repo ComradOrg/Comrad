@@ -3,7 +3,10 @@ from komrade import *
 from komrade.backend import *
 import art
 import textwrap as tw
+import curses,time,random
 
+CLI_NCOLS = 50
+CLI_NROWS = 100
 
 
 class CLI(Logger):
@@ -13,26 +16,91 @@ class CLI(Logger):
         'login':'log back in'
     }
 
-    def __init__(self,name='',cmd='',persona=None):
+    def __init__(self,name='',cmd='',persona=None,stdscr=None):
         self.name=name
         self.cmd=cmd
         self.persona=persona
+
+        self.boot(stdscr=stdscr)
+
+
+
+    def boot(self,indent=5,stdscr=None):
+        
+        if not stdscr:
+            self.stdscr = stdscr = curses.initscr()
+        else:
+            self.stdscr = stdscr
+
+        # curses.noecho()
+        # curses.cbreak()
+        # stdscr.keypad(True)
+
+        stdscr.clear()
+        stdscr.refresh()
+        curses.start_color()
+        curses.init_pair(1, curses.COLOR_CYAN, curses.COLOR_BLACK)
+        curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)
+        curses.init_pair(3, curses.COLOR_BLACK, curses.COLOR_WHITE)
+
+
+        self.win = curses.newwin(
+            CLI_NROWS,
+            CLI_NCOLS,
+        )
+
+    def shutdown(self):
+        # curses.nocbreak()
+        # stdscr.keypad(False)
+        # curses.echo()
+        exit('Goodbye')
+
+    def scan_print(self,string,start_x=0,start_y=0):
+        for li,ln in enumerate(string.split('\n')):
+            for xi,x in enumerate(ln):
+                pos_x = start_x + xi
+                pos_y = start_y + li
+                self.stdscr.addstr(pos_y,pos_x,x)
+                time.sleep(random.uniform(0,0.01))
+                self.stdscr.refresh()
+
 
     def run(self,inp='',name=''):
         self.name=name
         clear_screen()
         # self.boot()
+        self.logo()
+
         # self.help()
+        inp = chr(self.stdscr.getch())
 
         if inp: self.route(inp)
 
         while True:
+            i = random.randint(0,CLI_NCOLS)
+            j = random.randint(0,CLI_NCOLS)
+            self.stdscr.addstr(i,j,'!')
+
             try:
-                inp=input(f'@{self.name if self.name else "?"}: ')
+                # inp=input(f'@{self.name if self.name else "?"}: ')
+                inp = k = chr(self.stdscr.getch())
             except KeyboardInterrupt:
-                exit()
+                self.shutdown()
             self.route(inp)
+            self.stdscr.refresh()
             #await asyncio.sleep(0.5)
+
+
+
+
+    # @property
+    def logo(self):
+        import textwrap as tw
+        logo=art.text2art(CLI_TITLE,font=CLI_FONT)
+        self.scan_print(logo)
+        return logo
+
+
 
     def route(self,inp):
         inp=inp.strip()
@@ -44,11 +112,6 @@ class CLI(Logger):
             f=getattr(self,cmd)
             return f(dat)
 
-    def boot(self,indent=5):
-        logo=art.text2art(CLI_TITLE,font=CLI_FONT)
-        # logo=make_key_discreet_str(logo,chance_redacted=0.1) #.decode()
-        logo=tw.indent(logo, ' '*indent)
-        scan_print(logo,max_pause=0.005)
 
     def help(self):
         print()
@@ -157,16 +220,15 @@ class CLI(Logger):
         self.status(None,
             {ART_KEY_PAIR2B},
             'Second, I have cut a matching "private key".',
-            "It's too dangerous to show in full, so here it is 66% redacted:",
+            "It's too dangerous to show in full, so I've redacted most of it:",
             f'(2) {make_key_discreet(privkey.data_b64,0.3)}',
-            'With it, you can decrypt and read any message sent to you via your public key.',
-            'You can also encrypt and send messages to other people whose public keys you have.',
+            'With it, you can decrypt any message sent to you via your public key.',
+            'You can also encrypt messages ',
         )
 
         # private keys
         self.status(None,
             {CUBEKEY},
-            'So if someone were to steal your private key, they could read your mail and forge your signature.'
             'You you should never, ever give your private key to anyone.',
             'In fact, this key is so dangerous that we need to lock it away immediately.',
             "We'll even throw away the key we use to lock this private key with!",
@@ -278,6 +340,9 @@ class CLI(Logger):
 
             return passphrase
 
+
+
+
     def status_keymaker_part3(self,privkey,privkey_decr,privkey_encr,passphrase):
         self.status(
             None,{tw.indent(ART_KEY,' '*5)+'\n',True},
@@ -361,17 +426,19 @@ class CLI(Logger):
 
 
 
+def main():
+    import curses
+    curses.wrapper(run_cli)
 
 
-
-def run_cli():
-    cli = CLI()
+def run_cli_curses(stdscr):
+    cli = CLI(stdscr=stdscr)
     cli.run('/register','elon') #'/register',name='elon')
 
 if __name__=='__main__':
-    run_cli()
+    # run_cli()
     # asyncio.run(test_async())
-
+    main()
 
 
 

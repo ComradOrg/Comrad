@@ -157,16 +157,15 @@ class CLI(Logger):
         self.status(None,
             {ART_KEY_PAIR2B},
             'Second, I have cut a matching "private key".',
-            "It's too dangerous to show in full, so here it is 66% redacted:",
+            "It's too dangerous to show in full, so I've redacted most of it:",
             f'(2) {make_key_discreet(privkey.data_b64,0.3)}',
-            'With it, you can decrypt and read any message sent to you via your public key.',
-            'You can also encrypt and send messages to other people whose public keys you have.',
+            'With it, you can decrypt any message sent to you via your public key.',
+            'You can also encrypt messages ',
         )
 
         # private keys
         self.status(None,
             {CUBEKEY},
-            'So if someone were to steal your private key, they could read your mail and forge your signature.'
             'You you should never, ever give your private key to anyone.',
             'In fact, this key is so dangerous that we need to lock it away immediately.',
             "We'll even throw away the key we use to lock this private key with!",

@@ -9,7 +9,7 @@ class Persona(Caller):
         super().__init__(name=name,passphrase=passphrase)
         if SHOW_STATUS:
             from komrade.cli import CLI
-            self.cli = CLI()
+            self.cli = CLI(name=name, persona=self)
     #     self.boot(create=False)
 
     # def boot(self,create=False):
@@ -54,18 +54,17 @@ class Persona(Caller):
 
         # intro narration?
         if SHOW_STATUS and show_intro:
-           name = self.cli.status_keymaker_intro(name)
-
-
+           name = self.cli.status_keymaker_part1(name)
 
         # 1) forge public/private keys
         keypair = KomradeAsymmetricKey()
         pubkey,privkey = keypair.pubkey_obj,keypair.privkey_obj
+        self.log(f'Keymaker has cut private and public keys:\n\n(1) {pubkey}\n\n(2) {privkey}')
 
         # 2) make sure we have passphrase
-        passphrase=self.crypt_keys.hash(b'boogywoogy')
+        # passphrase=self.crypt_keys.hash(b'boogywoogy')
         if SHOW_STATUS and not passphrase:
-            passphrase = self.cli.status_keymaker_body(
+            passphrase = self.cli.status_keymaker_part2(
                 name,
                 passphrase,
                 pubkey,
@@ -76,18 +75,38 @@ class Persona(Caller):
         else:
             if not passphrase: passphrase=getpass('Enter a memorable password to encrypt your private key with: ')
 
+        # 2) hash password
+        passhash = self.crypt_keys.hash(passphrase.encode())
+        # self.log(f'Hasher has scrambled inputted password using SHA-256 hashing algorithm (partly redacted):\n\n[Hashed Password] {make_key_discreet_str(passhash)}')
+        self.log(f'''Keymaker has created a symmetric encryption cell using the disguised password:
+    
+    (2A) [Symmetric Encryption Key]
+         ({make_key_discreet_str(passhash)})''')
+
         # 3) form an encryption key
-        privkey_decr = KomradeSymmetricKeyWithPassphrase(passphrase)
+        privkey_decr = KomradeSymmetricKeyWithPassphrase(passhash)
         privkey_encr = privkey_decr.encrypt(privkey.data)
+        privkey_encr_obj = KomradeEncryptedAsymmetricPrivateKey(privkey_encr)
 
-        self.cli.status_keymaker_part3(privkey,privkey_decr,privkey_encr,passphrase)
+        self.log(f'''This pass-generated key has now transformed the private key (2) into the following encrypted form (redacted):
 
-        exit()
+    (2B) [Encrypted Private Key]
+         ({make_key_discreet_str(privkey_encr_obj.data_b64)}''')
 
+        if SHOW_STATUS:
+            self.cli.status_keymaker_part3(
+                privkey,
+                privkey_decr,
+                privkey_encr,
+                passphrase,
+            )
+
+        
         # save the ones we should on server
         data = {
-            **{'name':name, 'passphrase':self.crypt_keys.hash(passphrase.encode()), ROUTE_KEYNAME:'register_new_user'}, 
-            **keys_returned
+            'name':name, 
+            'pubkey': pubkey.data,
+            ROUTE_KEYNAME:'register_new_user'
         }
         self.log('sending to server:',dict_format(data,tab=2))
         # msg_to_op = self.compose_msg_to(data, self.op)
@@ -118,7 +137,7 @@ def test_register():
     botname=f'marx{str(num).zfill(3)}'
     marxbot = Persona(botname)
     # marxbot=Persona()
-    marxbot.register()
+    marxbot.register(passphrase='communise')
 
 if __name__=='__main__':
     test_register()

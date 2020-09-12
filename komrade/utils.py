@@ -44,11 +44,15 @@ def dict_format(d, tab=0):
 
     s = ['{\n\n']
     for k,v in sorted(d.items()):
+        v=reppr(v)
+        #print(k,v,type(v))
+
         if isinstance(v, dict):
             v = dict_format(v, tab+1)
         else:
             v = repr(v)
 
+        
         # s.append('%s%r: %s (%s),\n' % ('  '*tab, k, v, type(v).__name__))
         s.append('%s%r: %s,\n\n' % ('  '*tab, k, reppr(v)))
     s.append('%s}' % ('  '*(tab-2)))
@@ -63,7 +67,7 @@ class Logger(object):
         calframe = inspect.getouterframes(curframe, 2)
         mytype = type(self).__name__
         caller = calframe[1][3]
-        log(f'\n[{mytype}.{caller}()]',*x)
+        log(f'[{mytype}.{caller}()]\n\n',*x)
 
         # try:
         if pause: do_pause()
@@ -94,7 +98,6 @@ class Logger(object):
         paras=[]
         res={}
         for para in msg:
-            indentstr=' '*indent
             plen = para if type(para)==int or type(para)==float else None
             if type(para) in {int,float}:
                 plen=int(para)
@@ -109,9 +112,9 @@ class Logger(object):
             elif para is None:
                 clear_screen()
             elif para is False:
-                pass
+                do_pause()
             elif para is True:
-                pass
+                print()
             elif type(para) is set: # logo/image
                 pl = [x for x in para if type(x)==str]
                 txt=pl[0]
@@ -131,8 +134,6 @@ class Logger(object):
                 res[k]=ans
             elif type(para) is dict:
                 print(dict_format(para,tab=tab))
-            elif para is 0:
-                do_pause()
             elif pause:
                 self.print(para,flush=True,end=end if end else '\n',scan=scan,indent=indent)
                 paras+=[para]  
@@ -261,7 +262,7 @@ def capture_stdout(func):
 
 
 
-def scan_print(xstr,min_pause=0,max_pause=.001,speed=1):
+def scan_print(xstr,min_pause=0,max_pause=.01,speed=1):
     import random,time
     for c in xstr:
         print(c,end='',flush=True)
