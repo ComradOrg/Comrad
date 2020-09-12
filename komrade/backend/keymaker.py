@@ -262,7 +262,9 @@ class Keymaker(Logger):
         # return res
 
     def find_name(self,pubkey_b64):
-        res = self.crypt_keys.get(pubkey_b64.decode(), prefix='/name/')
+        q=pubkey_b64.decode()
+        print('Q?',q)
+        res = self.crypt_keys.get(q, prefix='/name/')
         self.log('result from crypt for name:',res)
         return res
         
