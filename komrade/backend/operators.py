@@ -8,34 +8,54 @@ from komrade import *
 from komrade.backend import *
         
 
-def locate_an_operator(name):
+def locate_an_operator(name=None,pubkey=None):
     global OPERATOR,TELEPHONE
 
     from komrade.backend.the_operator import TheOperator
     from komrade.backend.the_telephone import TheTelephone
     from komrade.backend.callers import Caller
 
+    if not OPERATOR: OPERATOR = TheOperator()
+    if not TELEPHONE: TELEPHONE = TheTelephone()
+
+    if pubkey:
+        assert type(pubkey)==bytes
+        if not isBase64(pubkey): pubkey=b64encode(pubkey)
     if name == OPERATOR_NAME:
-        return OPERATOR if OPERATOR else TheOperator()
-    if name == TELEPHONE_NAME:
-        return TELEPHONE if TELEPHONE else TheTelephone()
-    return Caller(name)
+        return OPERATOR
+    if pubkey and pubkey == OPERATOR.pubkey.data_b64:
+        return OPERATOR
+    if name==TELEPHONE_NAME:
+        return TELEPHONE
+    if pubkey and pubkey == TELEPHONE.pubkey.data_b64
+        return TELEPHONE
+    
+    return Caller(name=name,pubkey=pubkey)
 
 
 from komrade.constants import OPERATOR_ROUTES
 class Operator(Keymaker):
     ROUTES = OPERATOR_ROUTES
     
-    def __init__(self, name, passphrase=DEBUG_DEFAULT_PASSPHRASE, keychain = {}, path_crypt_keys=PATH_CRYPT_CA_KEYS, path_crypt_data=PATH_CRYPT_CA_DATA):
+    def __init__(self, name=None, pubkey=None, passphrase=DEBUG_DEFAULT_PASSPHRASE, keychain = {}, path_crypt_keys=PATH_CRYPT_CA_KEYS, path_crypt_data=PATH_CRYPT_CA_DATA):
+        if pubkey:
+            assert type(pubkey)==bytes
+            if isBase64(pubkey): pubkey = b64decode(pubkey)
+            if keychain.get('pubkey'):
+                assert keychain.get('pubkey').data == pubkey:
+            else:
+                keychain['pubkey']=KomradeAsymmetricPublicKey(pubkey)
+        
         super().__init__(name=name,passphrase=passphrase, keychain=keychain,
                          path_crypt_keys=path_crypt_keys, path_crypt_data=path_crypt_data)
-        # self.boot(create=False)
-        from komrade.backend.phonelines import check_phonelines
-        check_phonelines()
-
-        # print(self.crypt_keys.get(OPERATOR_NAME,prefix='/pubkey/'))
-        # stop
         
+        
+    def boot(self):
+        ## get both name and pubkey somehow
+        if not self.pubkey and self.name:
+            self._keychain['pubkey'] = self.find_pubkey()
+        elif self.pubkey and not self.name:
+            
 
     # def boot(self,create=False):
     #      # Do I have my keys?
@@ -149,12 +169,7 @@ class Operator(Keymaker):
             pubk = ''
         return f'{name}' #' ({keystr})'
 
-    def locate_an_operator(self,name):
-        if name == OPERATOR_NAME:
-            return TheOperator()
-        if name == TELEPHONE_NAME:
-            return TheTelephone()
-        return Caller(name)
+    
 
 
     def route_msg(self,msg_obj,reencrypt=True):

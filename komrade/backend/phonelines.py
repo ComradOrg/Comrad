@@ -19,6 +19,7 @@ def create_phonelines():
     # save pub and priv
     op_uri = op_pubkey.data_b64
     keycrypt.set(OPERATOR_NAME,op_pubkey.data,prefix='/pubkey/')
+    keycrypt.set(op_pubkey.data_b64_s,OPERATOR_NAME,prefix='/name/')
     
     keycrypt.set(op_uri,op_privkey_encr.data,prefix='/privkey_encr/')
     
@@ -32,6 +33,7 @@ def create_phonelines():
 
     # save pub and priv
     keycrypt.set(TELEPHONE_NAME,phone_pubkey.data,prefix='/pubkey/')
+    keycrypt.set(phone_pubkey.data_b64_s,TELEPHONE_NAME,prefix='/name/')
 
     ## world
     world_keypair = KomradeAsymmetricKey()
@@ -43,6 +45,7 @@ def create_phonelines():
     # save pub and priv
     world_uri = world_pubkey.data_b64
     keycrypt.set(WORLD_NAME,world_pubkey.data,prefix='/pubkey/')
+    keycrypt.set(world_pubkey.data_b64_s,WORLD_NAME,prefix='/name/')
     keycrypt.set(world_uri,world_privkey_encr.data,prefix='/privkey_encr/')
 
 

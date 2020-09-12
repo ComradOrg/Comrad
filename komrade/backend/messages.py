@@ -73,9 +73,9 @@ class Message(Logger):
         if new_msg:
             self.msg=self.msg_d['msg']=new_msg
 
-    def get_whom(self,name):
+    def get_whom(self,name=None,pubkey=None):
         from komrade.backend.operators import locate_an_operator
-        return locate_an_operator(name)
+        return locate_an_operator(name=None,pubkey=None)
 
     @property
     def from_whom(self):
@@ -89,8 +89,15 @@ class Message(Logger):
             self._from_whom,self._to_whom = self.get_from_whoms()
         return self._to_whom
     
-    ## loading messages
     def get_whoms(self):
+        if self._from_whom is None or self._to_whom is None:
+            self._from_whom = locate_an_operator(self.from_name,self.from_pub)
+            self._to_whom = locate_an_operator(self.to_name,self.to_pub)
+        return self._from_whom,self._to_whom
+        
+
+    ## loading messages
+    def get_whoms1(self):
         if self._from_whom is not None and self._to_whom is not None:
             return (self._from_whom,self._to_whom) 
         alleged_from_whom = self.get_whom(self.from_name)

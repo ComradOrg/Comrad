@@ -70,15 +70,18 @@ class Crypt(Logger):
         k_b = self.force_binary(k)
         if self.cell is not None:
             k_b = self.cell.encrypt(k_b)
-        return b64encode(k_b)
+        if not isBase64(k_b): k_b = b64encode(k_b)
+        return k_b
 
     def unpackage_val(self,k_b):
         try:
             if self.cell is not None:
                 k_b = self.cell.decrypt(k_b)
-            return b64decode(k_b)
-        except ThemisError:
-            pass
+        except ThemisError as e:
+            self.log('error decrypting!',e,k_b)
+            return
+        if isBase64(k_b): k_b = b64decode(k_b)
+        return k_b
 
     def has(self,k,prefix=''):
         k_b=self.package_key(k,prefix=prefix)
