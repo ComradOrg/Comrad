@@ -40,6 +40,10 @@ class Message(Logger):
             self.from_name=self.from_whom.name
         if not self.to_name:
             self.to_name=self.to_whom.name
+        if not self.to_pub:
+            self.to_pub=self.to_whom.pubkey.data
+        if not self.from_pub:
+            self.from_pub=self.from_whom.pubkey.data
 
     def __repr__(self):
         msg_d_str=dict_format(self.msg_d,tab=6)
@@ -49,10 +53,10 @@ class Message(Logger):
             msg=self.msg
         return f"""    
     from: {self.from_name} 
-          ({self.from_pubkey})
+          ({self.from_pubkey.decode()})
     
     to:   {self.to_name}
-          ({self.to_pubkey})
+          ({self.to_pubkey.decode()})
 
     msg:  {msg}
 """

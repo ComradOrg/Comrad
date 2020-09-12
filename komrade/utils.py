@@ -42,7 +42,7 @@ def dict_format(d, tab=0):
             if not isBase64(v):
                 v=b64encode(v)
             v=v.decode()
-            v='\n'.join(tw.wrap(v,10))
+            # v='\n'.join(tw.wrap(v,10))
         return v
 
     s = ['{\n\n']
