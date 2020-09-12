@@ -51,7 +51,7 @@ def create_phonelines():
         
     )
     #print('op!',op_uri)
-    p#print(op_decr_keys)
+    print(op_decr_keys)
 
     # create keys for phone
     phone_decr_keys = phone.forge_new_keys(
@@ -60,7 +60,7 @@ def create_phonelines():
         keys_to_return=phone_keys_to_keep_on_client + phone_keys_to_keep_on_3rdparty   # on clients only
     )
     #print('phone!',op_uri)
-    #print(phone_decr_keys)
+    print(phone_decr_keys)
 
     # create keys for world
     world_decr_keys = world.forge_new_keys(
@@ -69,7 +69,7 @@ def create_phonelines():
         keys_to_return=world_keys_to_keep_on_client + world_keys_to_keep_on_3rdparty # on clients only
     )
     #print('world!',op_uri)
-    #print(world_decr_keys)
+    print(world_decr_keys)
     ## store remote keys
     THIRD_PARTY_DICT = {OPERATOR_NAME:{}, TELEPHONE_NAME:{}, WORLD_NAME:{}}
     for key in op_keys_to_keep_on_3rdparty:
