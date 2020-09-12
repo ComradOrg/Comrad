@@ -48,17 +48,16 @@ class Message(Logger):
         if isBase64(self.from_pubkey): self.from_pubkey = b64decode(self.from_pubkey)
 
     def __repr__(self):
-        msg_d_str=dict_format(self.msg_d,tab=6)
         if type(self.msg)==dict:
             msg=dict_format(self.msg,tab=4)
         else:
             msg=self.msg
         return f"""    
     from: {self.from_name} 
-          ({self.from_pubkey.decode()})
+          ({self.from_pubkey})
     
     to:   {self.to_name}
-          ({self.to_pubkey.decode()})
+          ({self.to_pubkey})
 
     msg:  {msg}
 """
