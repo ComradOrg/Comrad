@@ -9,7 +9,7 @@ from flask_classful import FlaskView
 
 class TheSwitchboard(FlaskView, Logger):
     default_methods = ['GET']
-    excluded_methods = ['phone','op','send']
+    excluded_methods = ['phone','op','send','printt','log','status']
 
     @property
     def op(self):
