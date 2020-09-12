@@ -439,7 +439,7 @@ class Keymaker(Logger):
         # show user what's happening
         self.log(f'''
 Keymaker ({self}) is forging new keys for {name}
-''' + ('''
+''' + (f'''
 * I will save these keys in this crypt: {', '.join(keys_to_save)}
 ''' if save_keychain else '') #+ #'''
 # * I will also save this user's pubkey (as b64 URI) to:
