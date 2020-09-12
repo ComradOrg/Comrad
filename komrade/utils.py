@@ -155,6 +155,7 @@ def isBase64(sb):
         elif isinstance(sb, bytes):
             sb_bytes = sb
         else:
+            return False
             raise ValueError("Argument must be string or bytes")
         return base64.b64encode(base64.b64decode(sb_bytes)) == sb_bytes
     except binascii.Error:
