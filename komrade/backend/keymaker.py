@@ -32,7 +32,7 @@ class KomradeSymmetricKey(KomradeKey):
     def cell(self):
         if not hasattr(self,'_cell'):
             if hasattr(self,'passphrase') and self.passphrase:
-                self._cell = SCellSeal(passphrase=self.passphrase)
+                self._cell = SCellSeal(passphrase=hasher(self.passphrase))
             elif hasattr(self,'key') and self.key:
                 self._cell = SCellSeal(key=self.key)
         return self._cell
