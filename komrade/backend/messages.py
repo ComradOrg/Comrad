@@ -54,6 +54,8 @@ class Message(Logger):
                 msg = textwrap.indent(repr(Message(self.msg)),' '*10)
             else:
                 msg=dict_format(self.msg,tab=4)
+        elif type(self.msg)==bytes:
+            msg=b64encode(self.msg).decode() if not isBase64(self.msg) else self.msg
         else:
             msg=self.msg
         return f"""    
@@ -63,7 +65,7 @@ class Message(Logger):
     to:   @{self.to_name}
           ({b64encode(self.to_pubkey).decode()})
 
-    msg:  {msg.decode() if isBase64(msg) else msg}
+    msg:  {msg}
 """
 
 

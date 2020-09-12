@@ -178,6 +178,14 @@ def get_class_that_defined_method(meth):
             return cls
     return getattr(meth, '__objclass__', None)  # handle special descriptor objects
 
+def d2b64(d):
+    d2={}
+    for k,v in d.items():
+        if type(v)==bytes and not isBase64(v):
+            d2[k]=b64encode(v)
+        else:
+            d2[k]=v
+    return d2
 
 def hashish(binary_data):
     import hashlib
