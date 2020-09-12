@@ -8,6 +8,8 @@ from simplekv.memory.redisstore import RedisStore
 import redis
 import hashlib,os
 import zlib
+from komrade.backend.keymaker import make_key_discreet_str
+from komrade.backend.keymaker import KomradeSymmetricKeyWithoutPassphrase
 
 
 
@@ -38,15 +40,15 @@ class Crypt(Logger):
         self.encrypt_values = encrypt_values
         
         if encrypt_values:
+
+
             if self.cell:
                 pass
             elif path_encrypt_key:
                 if not os.path.exists(path_encrypt_key):
-                    from komrade.backend.keymaker import KomradeSymmetricKeyWithoutPassphrase
                     self.encryptor_key = KomradeSymmetricKeyWithoutPassphrase()
                     with open(path_encrypt_key,'wb') as of:
                         of.write(self.encryptor_key.data)
-                        from komrade.backend.keymaker import make_key_discreet_str
                         self.log(f'shhh! creating secret at {path_encrypt_key}:',make_key_discreet_str(self.encryptor_key.data_b64_s))
                 else:
                     with open(path_encrypt_key,'rb') as f:
