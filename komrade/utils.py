@@ -35,11 +35,14 @@ def do_pause():
     except KeyboardInterrupt:
         exit('\n\nGoodbye.')
 
-
+import textwrap as tw
 def dict_format(d, tab=0):
     def reppr(v):
-        if type(v)==bytes and not isBase64(v):
-            return b64encode(v).decode()
+        if type(v)==bytes:
+            if not isBase64(v):
+                v=b64encode(v)
+            v=v.decode()
+            v='\n'.join(tw.wrap(v,10))
         return v
 
     s = ['{\n\n']

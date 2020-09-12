@@ -58,12 +58,13 @@ class TheOperator(Operator):
     # ends the ring_ring() chain
     def answer_phone(self,data_b):
         # route incoming call from the switchboard
-        self.log('Hello, this is the Operator. You said: ',data_b)
+        self.log('Hello, this is the Operator. I heard you say:\n\n',b64encode(data_b))
 
         # unseal
         msg_obj = self.unseal_msg(
             data_b,
-            from_whom=self.phone
+            from_whom=self.phone,
+            to_whom = self
         )
         self.log(f'Operator understood message: {msg_obj} {msg_obj.route}')
         
