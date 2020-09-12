@@ -414,7 +414,7 @@ class Keymaker(Logger):
         # setup
         keys_to_gen = set(keys_to_gen) | set(keys_to_save) | set(keys_to_return)
         keys_to_gen = sorted(list(keys_to_gen),key=lambda x: x.count('_'))
-        key_types = dict([(k,key_types[k]) for k in keys_to_gen])
+        key_types = dict([(k,key_types[k]) for k in keys_to_gen if k])
         if not name: name=self.name
 
 
