@@ -22,7 +22,7 @@ class Crypt(Logger):
         if use_secret and path_secret:
             if not os.path.exists(path_secret):
                 self.secret = get_random_binary_id()
-                self.log('shhh! creating secret:',self.secret)
+                self.log('shhh! creating secret:',make_key_discreet(self.secret))
                 with open(path_secret,'wb') as of:
                     of.write(self.secret)
             else:
