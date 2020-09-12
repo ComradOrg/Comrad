@@ -75,7 +75,7 @@ class Logger(object):
         # except KeyboardInterrupt:
         # exit()
 
-    def print(*x,width=STATUS_LINE_WIDTH,end='\n',indent=1,ret=False,scan=False,**y):
+    def printt(*x,width=STATUS_LINE_WIDTH,end='\n',indent=1,ret=False,scan=False,**y):
         if not scan and not width:
             print(*x,end=end,**y)
         else:
@@ -135,11 +135,11 @@ class Logger(object):
             elif type(para) is dict:
                 print(dict_format(para,tab=tab))
             elif pause:
-                self.print(para,flush=True,end=end if end else '\n',scan=scan,indent=indent)
+                self.printt(para,flush=True,end=end if end else '\n',scan=scan,indent=indent)
                 paras+=[para]  
                 do_pause()
             else:
-                self.print(para,flush=True,end=end if end else '\n',scan=scan,indent=indent)
+                self.printt(para,flush=True,end=end if end else '\n',scan=scan,indent=indent)
                 paras+=[para]    
         return {'paras':paras, 'vals':res}
 

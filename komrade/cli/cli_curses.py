@@ -354,10 +354,10 @@ class CLI(Logger):
         )
 
         s0=str.center('[Encryption Process]',CLI_WIDTH)
-        s1=s0 + '\n\n' + self.print('Now that we have (2A), we can use it to encrypt the super-sensitive private key (2):',ret=True)
-        s2a = self.print(f"(2A) {make_key_discreet_str(passphrase)}",ret=True)
-        s2 = self.print(f"(2)  {make_key_discreet(privkey.data_b64)}",ret=True)
-        s2b = self.print(f"(2B) {make_key_discreet(b64encode(privkey_encr))}",ret=True)
+        s1=s0 + '\n\n' + self.printt('Now that we have (2A), we can use it to encrypt the super-sensitive private key (2):',ret=True)
+        s2a = self.printt(f"(2A) {make_key_discreet_str(passphrase)}",ret=True)
+        s2 = self.printt(f"(2)  {make_key_discreet(privkey.data_b64)}",ret=True)
+        s2b = self.printt(f"(2B) {make_key_discreet(b64encode(privkey_encr))}",ret=True)
         self.status(
             # screen 1
             None,{f'{s1}'},
@@ -380,7 +380,7 @@ class CLI(Logger):
         )
 
         
-        shdr=str.center('[Decryption Process]',CLI_WIDTH) + '\n\n' + self.print('Once we have (2B), we don\'t need (2A) or (2) anymore. We can regenerate them!',ret=True)
+        shdr=str.center('[Decryption Process]',CLI_WIDTH) + '\n\n' + self.printt('Once we have (2B), we don\'t need (2A) or (2) anymore. We can regenerate them!',ret=True)
         from getpass import getpass
         
         passhash = None
@@ -389,7 +389,7 @@ class CLI(Logger):
             res = self.status(
                 None,{shdr},False if passhash is None else True,
 
-                ("pass",self.print(f"Let's try. Re-type your password into @Hasher:",ret=True)+f" \n ",getpass)
+                ("pass",self.printt(f"Let's try. Re-type your password into @Hasher:",ret=True)+f" \n ",getpass)
             )
         
             passhash = self.persona.crypt_keys.hash(res.get('vals').get('pass').encode())
