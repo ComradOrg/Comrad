@@ -319,12 +319,13 @@ class Keymaker(Logger):
         name,pubkey = self.find_pubkey_and_name()
 
         # get uri
-        uri = b64encode(pubkey) if type(pubkey)==bytes else b64encode(pubkey.encode())
-
-        # get from cache
-        for keyname in look_for:
-            if keyname in keys and keys[keyname]: continue
-            key = self.crypt_keys.get(uri,prefix=f'/{keyname}/')
+        if pubkey:
+            uri = b64encode(pubkey) if not isBase64(pubkey) and type(pubkey) == bytes else pubkey.data_b64_s
+            #uri = b64encode(pubkey) if type(pubkey)==bytes else b64encode(pubkey.encode())
+            # get from cache
+            for keyname in look_for:
+                if keyname in keys and keys[keyname]: continue
+                key = self.crypt_keys.get(uri,prefix=f'/{keyname}/')
         
         # try to assemble
         keys = self.assemble(self.assemble(keys))
