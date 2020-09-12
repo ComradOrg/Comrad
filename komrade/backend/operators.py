@@ -104,10 +104,10 @@ class Operator(Keymaker):
     # def compose_reply(self,msg,another):
 
 
-    def seal_msg(self,msg_d):
-        msg_b = pickle.dumps(msg_d)
-        self.log('Message has being sealed in a final binary package:',b64encode(msg_b))
-        return msg_b
+    # def seal_msg(self,msg_d):
+    #     msg_b = pickle.dumps(msg_d)
+    #     self.log('Message has being sealed in a final binary package:',b64encode(msg_b))
+    #     return msg_b
 
     def unseal_msg(self,msg_b_encr,from_whom=None,to_whom=None):
         # default to assumption that I am the recipient
@@ -218,7 +218,7 @@ class Operator(Keymaker):
             msg,
             to_whom
         )
-        self.log(f'Here is the message I will now encrypt and to send to {to_whom}:\n {msg_obj}')
+        self.log(f'Here is the message I will now encrypt and to send to {to_whom}:\n\n {dict_format(msg_obj.msg,tab = 2)}')
         
         # encrypting
         msg_obj.encrypt()
