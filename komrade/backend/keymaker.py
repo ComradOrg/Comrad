@@ -306,6 +306,9 @@ class Keymaker(Logger):
             # self.log('error! Neither name nor pubkey! Who am I?')
             # return (None,None)
         
+        if pubkey:
+            pubkey=KomradeEncryptedAsymmetricPublicKey(pubkey)
+        
         self._keychain['pubkey'] = pubkey
         self.name = name
         
@@ -320,7 +323,7 @@ class Keymaker(Logger):
 
         # get uri
         if pubkey:
-            uri = b64encode(pubkey) if not isBase64(pubkey) else pubkey
+            uri = pubkey.data_b64
             #uri = b64encode(pubkey) if type(pubkey)==bytes else b64encode(pubkey.encode())
             # get from cache
             for keyname in look_for:
