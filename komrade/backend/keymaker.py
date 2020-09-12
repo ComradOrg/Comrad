@@ -68,9 +68,9 @@ class KomradeSymmetricKeyWithPassphrase(KomradeSymmetricKey):
 
     def __init__(self,passphrase=DEBUG_DEFAULT_PASSPHRASE, why=WHY_MSG):
         if not passphrase:
-            self.passphrase=hasher(getpass(why))
+            self.passphrase=getpass(why)
         else:
-            self.passphrase=hasher(passphrase)
+            self.passphrase=passphrase
 
     @property
     def data(self): return KEY_TYPE_SYMMETRIC_WITH_PASSPHRASE.encode('utf-8')

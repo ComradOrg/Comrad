@@ -16,7 +16,13 @@ from komrade.backend import *
 #     ]
 
 
-
+def create_secret():
+    if not os.path.exists(PATH_CRYPT_SECRET):    
+        secret = get_random_binary_id()
+        from komrade.backend.keymaker import make_key_discreet
+        print('shhh! creating secret:',make_key_discreet(secret))
+        with open(PATH_CRYPT_SECRET,'wb') as of:
+            of.write(secret)
 
 
 
@@ -24,6 +30,9 @@ from komrade.backend import *
 
 ### CREATE PRIME ENTITIES
 def create_phonelines():
+    # create secret
+    create_secret()
+
     ## CREATE OPERATOR
     op = Keymaker(name=OPERATOR_NAME)
     op_keys_to_keep_on_client = ['pubkey']  # kept on app, stored under name
