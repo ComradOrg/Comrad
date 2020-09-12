@@ -49,7 +49,8 @@ class Message(Logger):
 
     def __repr__(self):
         if type(self.msg)==dict:
-            msg=dict_format(self.msg,tab=4)
+            # msg=dict_format(self.msg,tab=4)
+            msg=repr(Message(self.msg))
         else:
             msg=self.msg
         return f"""    
