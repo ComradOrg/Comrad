@@ -51,7 +51,7 @@ class Operator(Keymaker):
                 # kcpubk = b64decode(kcpubk) if isBase64(kcpubk) else kcpubk
                 # assert kcpubk == pubkey
             else:
-                keychain['pubkey']=KomradeAsymmetricPublicKey(pubkey)
+                keychain['pubkey']=pubkey #KomradeAsymmetricPublicKey(pubkey)
         
         super().__init__(name=name,passphrase=passphrase, keychain=keychain,
                          path_crypt_keys=path_crypt_keys, path_crypt_data=path_crypt_data)
