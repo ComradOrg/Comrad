@@ -431,7 +431,7 @@ class Keymaker(Logger):
             elif key_class == KomradeSymmetricKeyWithPassphrase:
                 keychain[key_name] = KomradeSymmetricKeyWithPassphrase(passphrase)
             else:
-                print('??',key_name,key_class)
+                # print('??',key_name,key_class)
                 keychain[key_name] = key_class(None)
             
         self.log('keytypes -> keychain',dict_format(keychain))

@@ -95,13 +95,7 @@ def create_phonelines():
 
 
 
-def create_secret():
-    if not os.path.exists(PATH_CRYPT_SECRET):    
-        secret = get_random_binary_id()
-        from komrade.backend.keymaker import make_key_discreet
-        print('shhh! creating secret:',make_key_discreet(secret))
-        with open(PATH_CRYPT_SECRET,'wb') as of:
-            of.write(secret)
+
 
 
 
@@ -126,7 +120,7 @@ def check_phonelines():
     for name in builtin_keys:
         pubkey=builtin_keys[name]['pubkey']
         uri_id=b64encode(pubkey)
-        print(name,pubkey,uri_id)
+        # print(name,pubkey,uri_id)
         keycrypt.set(
             uri_id.decode(),
             name,
