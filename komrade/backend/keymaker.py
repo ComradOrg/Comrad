@@ -385,13 +385,11 @@ class Keymaker(Logger):
                 elif key_class == KomradeAsymmetricPrivateKey:
                     keychain[key_name]=asymmetric_privkey
 
-            ## otherwise, just gen?
-            elif key_type_desc==KEY_TYPE_SYMMETRIC_WITHOUT_PASSPHRASE:
-                keychain[key_name]=KomradeSymmetricKeyWithoutPassphrase()
+                elif key_class == KomradeSymmetricKeyWithPassphrase:
+                    keychain[key_name] = KomradeSymmetricKeyWithPassphrase(passphrase)
+                else:
+                    keychain[key_name] = key_class()
             
-            elif key_type_desc==KEY_TYPE_SYMMETRIC_WITH_PASSPHRASE:
-                keychain[key_name]=KomradeSymmetricKeyWithPassphrase(passphrase=passphrase)
-        
         return keychain
 
 
