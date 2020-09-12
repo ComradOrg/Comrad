@@ -43,6 +43,7 @@ class Operator(Keymaker):
         if pubkey:
             assert type(pubkey)==bytes
             if isBase64(pubkey): pubkey = b64decode(pubkey)
+            print(pubkey,keychain,'??',name)
             if keychain.get('pubkey'):
                 assert keychain.get('pubkey') == pubkey
             else:
