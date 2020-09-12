@@ -292,19 +292,19 @@ class Keymaker(Logger):
             else:
                 pubkey=b64encode(pubkey) if not isBase64(pubkey) else pubkey
 
-        if name and pubkey:
+        # if name and pubkey:
             # make sure they match
             #assert self.find_pubkey(name) == self.find_name(pubkey)
-            if self.find_pubkey(name) != self.find_name:
-                pass
+            # if self.find_pubkey(name) != self.find_name:
+                # pass
                 # self.log(f'! {name} and {pubkey} do not match?')
-        elif name and not pubkey:
+        if name and not pubkey:
             pubkey = self.find_pubkey(name)
         elif pubkey and not name:
             self.name = self.find_name(pubkey)
-        else:
-            self.log('error! Neither name nor pubkey! Who am I?')
-            return (None,None)
+        # else:
+            # self.log('error! Neither name nor pubkey! Who am I?')
+            # return (None,None)
         
         self._keychain['pubkey'] = pubkey
         self.name = name
