@@ -287,6 +287,7 @@ class Keymaker(Logger):
         if not name: name = self.name
 
         if pubkey:
+            print('??',pubkey)
             if hasattr(pubkey,'data'):
                 pubkey=pubkey.data_b64
             else:
