@@ -144,9 +144,9 @@ def check_phonelines():
 def test_phonelines():
     from komrade.backend.the_telephone import TheTelephone
     from komrade.backend.the_operator import TheOperator
-
+    from getpass import getpass
     phone = TheTelephone()
-    op = TheOperator()
+    op = TheOperator(passphrase=getpass())
 
     print('phone',dict_format(phone._keychain))
     print('op',dict_format(op._keychain))
