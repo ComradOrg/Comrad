@@ -66,7 +66,7 @@ def create_phonelines():
     )
     #print('op!',op_uri)
     print(op_decr_keys)
-    exit()
+    # exit()
 
     # create keys for phone
     phone_decr_keys = phone.forge_new_keys(
