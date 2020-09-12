@@ -449,7 +449,7 @@ Keymaker ({self}) is forging new keys for {name}
         # gen decryptor keys!
         keychain = self.gen_keys_from_types(key_types,passphrase=passphrase)
         # gen encrypted keys!
-        # self.log('I built this keychain v1!',dict_format(keychain,tab=2))
+        self.log('I built this keychain v1!',dict_format(keychain,tab=2))
         
         keychain = self.disassemble(keychain,passphrase=passphrase)
         self.log('I built this keychain!',dict_format(keychain,tab=2))
@@ -566,12 +566,12 @@ Keymaker ({self}) is forging new keys for {name}
             # self.log('?',decr_key,decr_key_name,encr_key_name,keychain[encr_key_name])
             if decrypt:
                 encr_key = keychain.get(encr_key_name)
-                # self.log(f'about to decrypt {encr_key} with {decr_key}')
+                self.log(f'about to decrypt {encr_key} with {decr_key}')
                 unencr_key = decr_key.decrypt(encr_key.data)
                 keychain[unencr_key_name] = get_key_obj(unencr_key_name,unencr_key.data)
             else:
                 unencr_key = keychain.get(unencr_key_name)
-                # self.log(f'about to encrypt {unencr_key} with {decr_key}')
+                self.log(f'about to encrypt {unencr_key} with {decr_key}')
                 encr_key = decr_key.encrypt(unencr_key.data)
                 keychain[encr_key_name] = get_key_obj(encr_key_name,encr_key.data)
 
