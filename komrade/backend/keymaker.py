@@ -240,10 +240,31 @@ class Keymaker(Logger):
 
 
     def find_pubkey(self,name=None):
-        return self.find_pubkey_and_name(name=name if name else self.name)[1]
+        if not name: name=self.name
+        if 'pubkey' in self._keychain and self._keychain['pubkey']:
+            return self._keychain['pubkey']
+        
+        res = self.crypt_keys.get(name, prefix='/pubkey/')
+        self.log('result from crypt for name:',res)
+        # if res: return res
+        
+        res = self.load_qr(self.name)
+        # if res: return res
 
-    def find_name(self,pubkey):
-        return self.find_pubkey_and_name(pubkey=pubkey)[0]
+        if not res: return
+        
+        if type(res)==str: res=res.encode()
+        if isBase64(res): res=b64decode(res)
+        return res
+        
+        # self.log('I don\'t know my public key! Do I need to register?')
+        # raise KomradeException(f'I don\'t know my public key!\n{self}\n{self._keychain}')
+        # return res
+
+    def find_name(self,pubkey_b64):
+        res = self.crypt_keys.get(pubkey_b64.decode(), prefix='/name/')
+        self.log('result from crypt for name:',res)
+        return res
         
 
     @property
@@ -260,6 +281,7 @@ class Keymaker(Logger):
         return keychain
 
     def find_pubkey_and_name(self,name=None,pubkey=None):
+        if not pubkey: pubkey = self._keychain.get('pubkey')
         if not name: name = self.name
 
         if pubkey:
