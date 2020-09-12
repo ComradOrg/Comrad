@@ -59,7 +59,7 @@ class Message(Logger):
     to:   @{self.to_name}
           ({b64encode(self.to_pubkey).decode()})
 
-    msg:  {isBase64(msg)}
+    msg:  {msg.decode() if isBase64(msg) else msg}
 """
 
 
