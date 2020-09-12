@@ -392,6 +392,7 @@ class Keymaker(Logger):
                 else:
                     keychain[key_name] = key_class()
             
+        self.log('keytypes -> keychain',dict_format(keychain))
         return keychain
 
 
