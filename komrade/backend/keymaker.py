@@ -41,6 +41,7 @@ class KomradeSymmetricKey(KomradeKey):
             msg=msg.data
         return self.cell.encrypt(msg,**kwargs)
     def decrypt(self,msg,**kwargs):
+        print('??? dec',msg,kwargs)
         if issubclass(type(msg), KomradeKey) or issubclass(type(msg),KomradeEncryptedKey):
             msg=msg.data
         try:
@@ -95,14 +96,15 @@ class KomradeAsymmetricKey(KomradeKey):
         self.pubkey_obj = KomradeAsymmetricPublicKey(pubkey,privkey)
 
     def encrypt(self,msg,pubkey=None,privkey=None):
-        if issubclass(type(msg), KomradeKey): msg=msg.data
+        if issubclass(type(msg), KomradeKey) or issubclass(type(msg), KomradeEncryptedKey): msg=msg.data
         pubkey=pubkey if pubkey else self.pubkey
         privkey=privkey if privkey else self.privkey
         return SMessage(privkey,pubkey).wrap(msg)
     def decrypt(self,msg,pubkey=None,privkey=None):
+        if issubclass(type(msg), KomradeKey) or issubclass(type(msg), KomradeEncryptedKey): msg=msg.data
         pubkey=pubkey if pubkey else self.pubkey
         privkey=privkey if privkey else self.privkey
-        return SMessage(privkey,pubkey).unwrap(msg)
+        return SMessage(privkey.data,pubkey.data).unwrap(msg)
     @property
     def data(self): return self.key
     
