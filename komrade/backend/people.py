@@ -66,7 +66,8 @@ class Persona(Caller):
         if SHOW_STATUS and not passphrase:
             passphrase = self.cli.status_keymaker_part2(name,passphrase,pubkey,privkey,hasher,self)
         else:
-            if not passphrase: passphrase=getpass('Enter a memorable password to encrypt your private key with: ')
+            while not passphrase:
+                passphrase=getpass('Enter a memorable password to encrypt your private key with: ')
         self.passphrase=passphrase
 
         ## 4) Get hashed password
