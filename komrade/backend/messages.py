@@ -57,6 +57,7 @@ class Message(Logger):
         elif type(self.msg)==bytes:
             msg=b64encode(self.msg).decode() if not isBase64(self.msg) else self.msg.decode()
         else:
+            self.log('my type??',type(self.msg),self.msg)
             msg=self.msg
         return f"""    
     from: @{self.from_name if self.from_name else ''} 
