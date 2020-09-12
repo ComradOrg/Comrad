@@ -23,10 +23,11 @@ class TheOperator(Operator):
         return TELEPHONE
     
 
-    def __init__(self, name = OPERATOR_NAME, passphrase=DEBUG_DEFAULT_PASSPHRASE):
+    def __init__(self, name = OPERATOR_NAME, passphrase=None):
         """
         Boot up the operator. Requires knowing or setting a password of memory.
         """
+        self.passphrase=passphrase
         super().__init__(
             name,
             passphrase,
