@@ -396,26 +396,7 @@ class Keymaker(Logger):
 
 
 
-    def gen_encr_keys(self,keychain,keys_to_gen,passphrase=DEBUG_DEFAULT_PASSPHRASE):
-        """
-        Encrypt other keys with still other keys!
-        """
-        # generate encrypted keys too
-        for key_name in keys_to_gen:
-            if key_name.endswith('_encr') and key_name not in keychain:
-
-                # get data to encrypt
-                name_of_what_to_encrypt = key_name[:-len('_encr')]
-                the_key_to_encrypt_it_with = name_of_what_to_encrypt + '_decr'
-                
-                if the_key_to_encrypt_it_with in keychain and name_of_what_to_encrypt in keychain:
-                    _key_decr_obj = keychain[the_key_to_encrypt_it_with]
-                    _key = keychain[name_of_what_to_encrypt]
-                    _key_encr = _key_decr.encrypt(_key.data)
-                    _key_encr_obj = get_encrypted_key_obj(_key_encr, name_of_what_to_encrypt)
-
-                    keychain[key_name]=_key_encr_obj
-        return keychain
+    
 
 
     def forge_new_keys(self,
@@ -462,7 +443,7 @@ Keymaker ({self}) is forging new keys for {name}
         # gen encrypted keys!
         self.log('I built this keychain v1!',dict_format(keychain,tab=2))
         
-        keychain = self.gen_encr_keys(keychain,keys_to_gen,passphrase=passphrase)
+        keychain = self.disassemble(keychain,passphrase=passphrase)
         self.log('I built this keychain v2!',dict_format(keychain,tab=2))
         self.status('@Keymaker: I ended up building these keys:',keychain)
         
@@ -559,7 +540,7 @@ Keymaker ({self}) is forging new keys for {name}
 
         return (uri_id,keys_saved_d,keychain)
 
-    def assemble(self,keychain,passphrase=None,key_types=KEYMAKER_DEFAULT_KEY_TYPES):
+    def assemble(self,keychain,passphrase=None,key_types=KEYMAKER_DEFAULT_KEY_TYPES,decrypt=True):
         encr_keys = [k for k in keychain.keys() if k.endswith('_encr')]
         for encr_key_name in encr_keys:
             decr_key_name = encr_key_name[:-5] + '_decr'
@@ -573,11 +554,21 @@ Keymaker ({self}) is forging new keys for {name}
                 else:
                     continue
             decr_key = keychain.get(decr_key_name)
-            encr_key = keychain.get(encr_key_name)
             # self.log('?',decr_key,decr_key_name,encr_key_name,keychain[encr_key_name])
-            unencr_key = decr_key.decrypt(encr_key)
-            keychain[unencr_key_name] = get_key_obj(unencr_key_name,unencr_key)
+            if decrypt:
+                encr_key = keychain.get(encr_key_name)
+                unencr_key = decr_key.decrypt(encr_key)
+                keychain[unencr_key_name] = get_key_obj(unencr_key_name,unencr_key)
+            else:
+                unencr_key = keychain.get(unencr_key_name)
+                encr_key = decr_key.encrypt(unencr_key)
+                keychain[encr_key_name] = get_key_obj(encr_key_name,encr_key)
+
         return keychain
+
+    def disassemble(self,keychain,**kwargs):
+        return self.assemble(keychain,decrypt=False,**kwargs)
+
 
 
 if __name__ == '__main__':
