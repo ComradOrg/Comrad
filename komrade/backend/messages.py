@@ -66,10 +66,10 @@ class Message(Logger):
             msg=self.msg
         return f"""    
     from: @{self.from_name if self.from_name else ''} 
-          ({self.from_pub})
+          ({self.from_pubkey})
     
     to:   @{self.to_name if self.to_name else ''}
-          ({self.to_pub})
+          ({self.to_pubkey})
 
     msg:  {msg}
 """
