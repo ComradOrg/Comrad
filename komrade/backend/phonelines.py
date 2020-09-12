@@ -126,7 +126,8 @@ def check_phonelines():
     for name in builtin_keys:
         pubkey=builtin_keys[name]['pubkey']
         uri_id=b64encode(pubkey)
-        keycrypt.set(uri.decode(),name,f'/{name}/',override=True)
+        print(name,pubkey,uri_id)
+        keycrypt.set(uri_id.decode(),name,f'/{name}/',override=True)
         for keyname,keyval in builtin_keys[name].items():
             uri=name if keyname=='pubkey' else uri_id
             keycrypt.set(uri,keyval,f'/{keyname}/',override=True)
