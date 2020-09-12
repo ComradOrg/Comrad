@@ -36,6 +36,11 @@ class Message(Logger):
         if not self._from_whom or not self._to_whom:
             self.get_whoms()
 
+        if not self.from_name:
+            self.from_name=self.from_whom.name
+        if not self.to_name:
+            self.to_name=self.to_whom.name
+
     def __repr__(self):
         msg_d_str=dict_format(self.msg_d,tab=6)
         if type(self.msg)==dict:
