@@ -33,7 +33,7 @@ class Operator(Keymaker):
         from komrade.backend.phonelines import check_phonelines
         check_phonelines()
 
-        print(self.crypt_keys.get(OPERATOR_NAME,prefix='/pubkey/'))
+        # print(self.crypt_keys.get(OPERATOR_NAME,prefix='/pubkey/'))
         # stop
         
 
@@ -75,7 +75,7 @@ class Operator(Keymaker):
         return OPERATOR
 
 
-    def compose_msg_to(self,msg,another,route=None):
+    def compose_msg_to(self,msg,another,incl_from_name=False,incl_to_name=False):
         if not self.privkey or not self.pubkey:
             raise KomradeException('why do I have no pub/privkey pair!?',self,self.name,self.pubkey,self.privkey,self.keychain())
         if not another.name or not another.pubkey:
@@ -83,13 +83,14 @@ class Operator(Keymaker):
 
         # otherwise create msg
         msg_d = {
-            '_from_pub':self.pubkey,
-            '_from_name':self.name,
-            '_to_pub':another.pubkey,
-            '_to_name':another.name,
-            '_msg':msg,
-            ROUTE_KEYNAME:route
+            'from':self.pubkey.data,
+            # 'from_name':self.name,
+            'to':another.pubkey.data,
+            # 'to_name':another.name,
+            'msg':msg
         }
+        if incl_from_name: msg_d['from_name']=self.name
+        if incl_to_name: msg_d['to_name']=self.name
         # self.log(f'I am {self} packaging a message to {another}: {msg_d}')
         from komrade.backend.messages import Message
         
@@ -104,24 +105,16 @@ class Operator(Keymaker):
 
 
     def seal_msg(self,msg_d):
-        # make sure encrypted
-        self.log('sealing msg!:',dict_format(msg_d))
-        # msg_obj.encrypt(recursive=True)
-        # return pure binary version of self's entire msg_d
         msg_b = pickle.dumps(msg_d)
-        self.log('pickled!',msg_b)
-
-        # encrypt by omega key
-        msg_b_encr = self.omega_key.encrypt(msg_b)
-        self.log('final seal:',msg_b_encr)
-
+        self.log('Message has being sealed in a final binary package:',b64encode(msg_b))
         return msg_b_encr
 
     def unseal_msg(self,msg_b_encr,from_whom=None,to_whom=None):
         # default to assumption that I am the recipient
         if not to_whom: to_whom=self
         # decrypt by omega
-        msg_b = self.omega_key.decrypt(msg_b_encr)
+        # msg_b = self.omega_key.decrypt(msg_b_encr)
+        msg_b = msg_b_encr
         # unpackage from transmission
         msg_d = pickle.loads(msg_b)
         # get message obj
@@ -134,19 +127,21 @@ class Operator(Keymaker):
 
     def __repr__(self):
         clsname=(type(self)).__name__
-        name = clsname+' '+self.name if self.name!=clsname else clsname
-        try:
-            keystr='+'.join(self.top_keys) if self.pubkey else ''
-        except TypeError:
-            keystr=''
-        # if self.pubkey:
+        #name = clsname+' '+
+        name = 'Komrade @'+self.name # if self.name!=clsname else clsname
+        # try:
+        #     keystr= 'on device: ' + ('+'.join(self.top_keys) if self.pubkey else '')
+        # except TypeError:
+        #     keystr=''
+        # # if self.pubkey:
+        keystr=''
         if False:
             pubk=self.pubkey_b64.decode()
             pubk=pubk[-5:]
             pubk = f' ({pubk})'# if pubk else ''
         else:
             pubk = ''
-        return f'[{name}]{pubk} ({keystr})'
+        return f'{name}' #' ({keystr})'
 
     def locate_an_operator(self,name):
         if name == OPERATOR_NAME:
@@ -171,12 +166,12 @@ class Operator(Keymaker):
             # route it!
             func = getattr(self,route)
             new_data = func(**data)
-            msg_obj.msg = msg_obj.msg_d['_msg'] = new_data
+            msg_obj.msg = msg_obj.msg_d['msg'] = new_data
 
         # try passing it on?
         if msg_obj.has_embedded_msg:
             new_data = self.route_msg(msg_obj.msg)
-            msg_obj.msg = msg_obj.msg_d['_msg'] = new_data
+            msg_obj.msg = msg_obj.msg_d['msg'] = new_data
 
         # time to turn around and encrypt
         msg_obj.mark_return_to_sender()
@@ -189,36 +184,46 @@ class Operator(Keymaker):
         return msg_obj
 
 
-    def ring_ring(self,msg,to_whom,from_whom=None,get_resp_from=None,route=None):
+    def ring_ring(self,msg,to_whom,get_resp_from=None,route=None,caller=None):
         # ring ring
         from komrade.cli.artcode import ART_PHONE_SM1
         import textwrap as tw
-        self.log(f'''
+        nxt=get_class_that_defined_method(get_resp_from).__name__
+        nxtfunc=get_resp_from.__name__
+#         if from_whom != self:
+#             self.status(f'''ring ring! 
+# @{self}: *picks up phone*
+# @{from_whom}: I have a message I need you to send for me.
+# @{self}: To whom?
+# @{from_whom}: To @{to_whom}. But not directly.
+# @{self}: Who should it I pass it through?
+# @{from_whom}: Pass it to {nxt}. Tell them to use "{nxtfunc}".
+# @{self}: Got it... So what's the message?
+# @{from_whom}: The message is:
+#     {dict_format(msg,tab=4)}
+# ''')
+        if caller!=self:
+            self.log(f'ring ring! I ({self}) have received a message from {caller},\n which I will now encrypt and send on to {to_whom}.')
+        else:
+            self.log(f'I ({self}) will now compose and send an encrypted message to {to_whom}.')
 
-{ART_PHONE_SM1} 
-ring ring ring!
+        if route and type(msg)==dict and not ROUTE_KEYNAME in msg:
+            msg[ROUTE_KEYNAME] = route
 
-I am {self}. I have been given a message by {from_whom}, and told to pass it onto {to_whom}, by way of the function {get_resp_from}.
-
-The message is:
-
-    {dict_format(msg)}
-''')
-        
         # get encr msg obj
+        
         msg_obj = self.compose_msg_to(
             msg,
-            to_whom,
-            route=route
+            to_whom
         )
-        self.log(f'ring ring! here is the message object I made, to send to {to_whom}: {msg_obj}')
+        self.log(f'Here is the message object I ({self}) made, to send to {to_whom}: {msg_obj}')
         
         # encrypting
         msg_obj.encrypt()
 
         # pass through the telephone wire by the get_resp_from function
         if not get_resp_from: get_resp_from=to_whom.ring_ring
-        resp_msg_obj = get_resp_from(msg_obj.msg_d,from_whom=from_whom)
+        resp_msg_obj = get_resp_from(msg_obj.msg_d,caller=caller)
         self.log('resp_msg_obj <-',resp_msg_obj)
 
         # decrypt
@@ -243,7 +248,7 @@ The message is:
         # route_response = self.route_msg(msg_obj)
         # self.log('route_response',route_response)
         # # set this to be the new msg
-        # #msg_obj.msg = msg_obj.msg_d['_msg'] = response
+        # #msg_obj.msg = msg_obj.msg_d['msg'] = response
         # #self.log('what msg_obj looks like now:',msg_obj)
 
         # # send new content back

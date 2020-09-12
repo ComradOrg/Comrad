@@ -4,12 +4,13 @@ from komrade.backend import *
 
 def is_valid_msg_d(msg_d):
     if not type(msg_d)==dict: return False
-    to_name=msg_d.get('_to_name')
-    to_pub=msg_d.get('_to_pub')
-    from_name=msg_d.get('_from_name')
-    from_pub=msg_d.get('_from_pub')
-    msg=msg_d.get('_msg')
-    if to_name and to_pub and from_name and from_pub and msg: return True
+    to_name=msg_d.get('to_name')
+    to_pub=msg_d.get('to')
+    from_name=msg_d.get('from_name')
+    from_pub=msg_d.get('from')
+    msg=msg_d.get('msg')
+    # if to_name and to_pub and from_name and from_pub and msg: return True
+    if to_pub and from_pub and msg: return True
     return False
 
 
@@ -20,11 +21,11 @@ class Message(Logger):
             raise KomradeException('This is not a valid msg_d:',msg_d)
         # set fields
         self.msg_d=msg_d
-        self.to_name=msg_d.get('_to_name')
-        self.to_pubkey=msg_d.get('_to_pub')
-        self.from_name=msg_d.get('_from_name')
-        self.from_pubkey=msg_d.get('_from_pub')
-        self.msg=msg_d.get('_msg')
+        self.to_name=msg_d.get('to_name')
+        self.to_pubkey=msg_d.get('to')
+        self.from_name=msg_d.get('from_name')
+        self.from_pubkey=msg_d.get('from')
+        self.msg=msg_d.get('msg')
         self.embedded_msg=embedded_msg  # only if this message has an embedded one
         self._route=msg_d.get(ROUTE_KEYNAME)
         self._from_whom=from_whom
@@ -37,13 +38,15 @@ class Message(Logger):
 
     def __repr__(self):
         msg_d_str=dict_format(self.msg_d,tab=6)
+        if type(self.msg)==dict:
+            msg=dict_format(self.msg,tab=4)
+        else:
+            msg=self.msg
         return f"""    
-<MSG>
-    self.from_whom={self.from_whom}
-    self.to_whom={self.to_whom}
-    self.msg={dict_format(self.msg,tab=4) if type(self.msg)==dict else self.msg}
-</MSG>
-        """
+    from: {self.from_whom}
+    to: {self.to_whom}
+    msg: {msg}
+"""
 
 
     @property
@@ -52,21 +55,20 @@ class Message(Logger):
         msg_d=self.msg_d
         while msg_d:
             for k,v in msg_d.items(): md[k]=v
-            msg_d = msg_d.get('_msg',{})
+            msg_d = msg_d.get('msg',{})
             if type(msg_d)!=dict: msg_d=None
-        if '_msg' in md and type(md['_msg']) == dict:
-            del md['_msg']
+        if 'msg' in md and type(md['msg']) == dict:
+            del md['msg']
         del md[ROUTE_KEYNAME]
         return md
 
     def mark_return_to_sender(self,new_msg=None):
         self._from_whom,self._to_whom = self._to_whom,self._from_whom
-        self.msg_d['_from_pub'],self.msg_d['_to_pub'] = self.msg_d['_to_pub'],self.msg_d['_from_pub'],
-        self.msg_d['_from_name'],self.msg_d['_to_name'] = self.msg_d['_to_name'],self.msg_d['_from_name'],
+        self.msg_d['from'],self.msg_d['to'] = self.msg_d['to'],self.msg_d['from'],
+        self.msg_d['from_name'],self.msg_d['to_name'] = self.msg_d['to_name'],self.msg_d['from_name'],
         if new_msg:
-            self.msg=self.msg_d['_msg']=new_msg
+            self.msg=self.msg_d['msg']=new_msg
 
-        
     def get_whom(self,name):
         from komrade.backend.operators import locate_an_operator
         return locate_an_operator(name)
@@ -126,14 +128,14 @@ class Message(Logger):
         self.log(f'attempting to decrypt {self}')
 
         # decrypt msg
-        self.msg = self.msg_d['_msg'] = decr_msg_b = SMessage(
+        self.msg = self.msg_d['msg'] = decr_msg_b = SMessage(
             self.to_whom.privkey,
             self.from_whom.pubkey
         ).unwrap(self.msg)
         # self.log('Am I decrypted?',self)
 
         # unpickle        
-        self.msg = self.msg_d['_msg'] = decr_msg = pickle.loads(decr_msg_b)
+        self.msg = self.msg_d['msg'] = decr_msg = pickle.loads(decr_msg_b)
         self.log('I am now decrypted and unpickled:',self)
 
         # now, is the decrypted message itself a message?
@@ -159,7 +161,7 @@ class Message(Logger):
     def encrypt(self): # each child message should already be encrypted before coming to its parent message ,recursive=False):
         if self._is_encrypted: return
         # self.log(f'attempting to encrypt msg {self.msg} from {self.from_whom} to {self.to_whom}')
-        self.log(f'About to encrypt self.msg! I now look like v1: {self}')
+        self.log(f'I ({self.from_whom}) am about to encrypt my message to {self.to_whom},\n "end to end" so that only {self.to_whom} can read it.\n\n Before encryption, I look like:\n{self}')
         
         # make sure msg is not meeta
         if self.has_embedded_msg:
@@ -177,9 +179,9 @@ class Message(Logger):
         ).wrap(msg_b)
 
         self.msg_decr = self.msg
-        self.msg = msg_encr
-        self.msg_d['_msg'] = msg_encr
-        self.log(f'Encrypted! I now look like v2: {self}')
+        self.msg_d['msg'] = self.msg = b64encode(msg_encr)
+        self.log(f'I ({self.from_whom}) am about to encrypt my message to {self.to_whom}\n "end to end" so that only {self.to_whom} can read it.\n\n And after encryption, I look like:\n{self}')
+        self.msg_d['msg'] = self.msg = msg_encr
         self._is_encrypted = True
 
 
@@ -216,8 +218,8 @@ class Message(Logger):
     def delete_route(self):
         if type(self.msg)==dict:
             del self.msg[ROUTE_KEYNAME]
-            if ROUTE_KEYNAME in self.msg_d['_msg']:
-                del self.msg_d['_msg'][ROUTE_KEYNAME]
+            if ROUTE_KEYNAME in self.msg_d['msg']:
+                del self.msg_d['msg'][ROUTE_KEYNAME]
             
         if self.has_embedded_msg:
             self.msg.delete_route()

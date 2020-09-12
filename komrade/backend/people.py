@@ -60,7 +60,7 @@ class Persona(Caller):
         ## 2) Make pub public/private keys
         keypair = KomradeAsymmetricKey()
         pubkey,privkey = keypair.pubkey_obj,keypair.privkey_obj
-        self.log(f'Keymaker has cut private and public keys:\n\n(1) {pubkey}\n\n(2) {privkey}')
+        self.log(f'@Keymaker has cut private and public keys:\n\n(1) {pubkey}\n\n(2) {privkey}')
 
         ## 3) Have passphrase?
         if SHOW_STATUS and not passphrase:
@@ -70,7 +70,7 @@ class Persona(Caller):
 
         ## 4) Get hashed password
         passhash = hasher(passphrase)
-        self.log(f'''Keymaker has created a symmetric encryption cell using the disguised password:\n\n\t(2A) [Symmetric Encryption Key]\n\t({make_key_discreet_str(passhash)})''')
+        self.log(f'''@Keymaker has created a symmetric encryption cell using the disguised password:\n\n\t(2A) [Symmetric Encryption Key]\n\t({make_key_discreet_str(passhash)})''')
 
         ## 5) Encrypt private key
         privkey_decr = KomradeSymmetricKeyWithPassphrase(passphrase)
@@ -97,21 +97,29 @@ class Persona(Caller):
         ## 7) Save data to server
         data = {
             'name':name, 
-            'pubkey': pubkey
+            'pubkey': pubkey.data,
         }
-        self.log('I will be sending this data to @TheOperator, on the remote server:',dict_format(data,tab=2))
+        # self.log('I will be sending this data to @TheOperator, on the remote server:',dict_format(data,tab=2))
         
         # ring operator
         # call from phone since I don't have pubkey on record on Op yet
         # self.log('my keychain:',self._keychain,pubkey,self.op._keychain)
 
-        resp_msg_obj = self.ring_ring(data,route='register_new_user',from_whom=self)
+        resp_msg_obj = self.ring_ring(
+            {
+                'name':name, 
+                'pubkey': pubkey.data,
+            },
+            route='register_new_user'
+        )
         self.log('register got back from op:',dict_format(resp_msg_obj,tab=2))
 
 
 
-    def ring_ring(self,msg,**y):
-        return super().ring_ring(msg,**y)
+    def ring_ring(self,msg,route=None,**y):
+        if type(msg)==dict and not ROUTE_KEYNAME in msg:
+            msg[ROUTE_KEYNAME]=route
+        return super().ring_ring(msg,caller=self,**y)
 
     def send_msg_to(self,msg,to_whom):
         msg = self.compose_msg_to(msg,to_whom)
@@ -142,6 +150,6 @@ if __name__=='__main__':
     # # print(person.pubkey)
 
     # # elon.send_msg_to('youre dumb',marx)
-    # #Caller('elon').ring_ring({'_route':'say_hello','_msg':'my dumb message to operator'})
+    # #Caller('elon').ring_ring({'_route':'say_hello','msg':'my dumb message to operator'})
 
     # # print(marx.exists_on_server())

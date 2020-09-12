@@ -65,15 +65,18 @@ def create_phonelines():
     from base64 import b64encode
     builtin_keys_b = pickle.dumps(builtin_keys)
 
-    omega_key = KomradeSymmetricKeyWithoutPassphrase()
-    builtin_keys_b_encr = omega_key.encrypt(builtin_keys_b)
-    builtin_keys_b_encr_with_key = omega_key.data + BSEP + builtin_keys_b_encr
-    builtin_keys_b_encr_with_key_b64 = b64encode(builtin_keys_b_encr_with_key)
+    # omega_key = KomradeSymmetricKeyWithoutPassphrase()
+    # builtin_keys_b_encr = omega_key.encrypt(builtin_keys_b)
+    # builtin_keys_b_encr_with_key = omega_key.data + BSEP + builtin_keys_b_encr
+    # builtin_keys_b_encr_with_key_b64 = b64encode(builtin_keys_b_encr_with_key)
+    builtin_keys_b64 = b64encode(builtin_keys_b)
 
     with open(PATH_BUILTIN_KEYCHAIN,'wb') as of:
-        of.write(builtin_keys_b_encr_with_key_b64)
+        of.write(builtin_keys_b64)
+        # of.write(builtin_keys_b_encr_with_key_b64)
         print('>> saved:',PATH_BUILTIN_KEYCHAIN)
-        print(builtin_keys_b_encr_with_key_b64)
+        # print(builtin_keys_b_encr_with_key_b64)
+        print(builtin_keys_b64)
 
 
 
@@ -107,12 +110,13 @@ def check_phonelines():
     
     # builtins
     with open(PATH_BUILTIN_KEYCHAIN,'rb') as f:        
-        builtin_keys_encr_b64 = f.read()
-    builtin_keys_encr = b64decode(builtin_keys_encr_b64)
-    omega_key_b,builtin_keys_encr = builtin_keys_encr.split(BSEP)
-    omega_key = KomradeSymmetricKeyWithoutPassphrase(omega_key_b)
-    builtin_keys_b = omega_key.decrypt(builtin_keys_encr)
-    builtin_keys = pickle.loads(builtin_keys_b)
+        # builtin_keys_encr_b64 = f.read()
+        builtin_keys_b64 = f.read()
+    # builtin_keys_encr = b64decode(builtin_keys_encr_b64)
+    # omega_key_b,builtin_keys_encr = builtin_keys_encr.split(BSEP)
+    # omega_key = KomradeSymmetricKeyWithoutPassphrase(omega_key_b)
+    # builtin_keys_b = omega_key.decrypt(builtin_keys_encr)
+    builtin_keys = pickle.loads(b64decode(builtin_keys_b64))
     # print(builtin_keys)
 
     for name in builtin_keys:

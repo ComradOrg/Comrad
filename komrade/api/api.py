@@ -374,8 +374,8 @@ class Api(object):
             timestamp = b64decode(time_b64).decode()
             tmpP = Persona(from_name)
             await tmpP.boot()
-            from_pubkey_b64_acc_to_name = tmpP.pubkey_b64
-            assert from_pubkey_b64==from_pubkey_b64_acc_to_name
+            from_pubkey_b64_accto_name = tmpP.pubkey_b64
+            assert from_pubkey_b64==from_pubkey_b64_accto_name
 
             encrypted_payload_b64 = self.verify(signed_encrypted_payload_b64, from_pubkey_b64)
             self.log('encrypted_payload_b64 =',encrypted_payload_b64)

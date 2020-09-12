@@ -2,7 +2,8 @@
 # change this to your external ip address for your server
 #(needs to be external to allow tor routing)
 from config import *
-
+import os,sys; sys.path.append(os.path.abspath(os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__),'..')),'..')))
+from komrade import *
 
 
 
@@ -52,9 +53,6 @@ import shutil,sys
 from kivy.uix.image import Image
 import sys
 sys.path.append("..") # Adds higher directory to python modules path.
-
-from p2p.api import *
-from p2p.persona import *
 
 from kivy.event import EventDispatcher
 import threading,asyncio,sys

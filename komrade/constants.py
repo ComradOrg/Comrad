@@ -33,8 +33,8 @@ BSEP=b'||||||||||'
 BSEP2=b'@@@@@@@@@@'
 BSEP3=b'##########'
 
-OPERATOR_NAME = 'TheOperator'
-TELEPHONE_NAME = 'TheTelephone'
+OPERATOR_NAME = 'Operator'
+TELEPHONE_NAME = 'Telephone'
 WORLD_NAME = 'komrades'
 PATH_APP = os.path.abspath(os.path.dirname(__file__))
 # PATH_BUILTIN_KEYCHAINS_ENCR = os.path.join(PATH_APP,'.builtin.keychains.encr')
@@ -131,7 +131,7 @@ ALLOW_CLEARNET = True
 DEBUG_DEFAULT_PASSPHRASE = None # 'all your base are belong to us'
 
 
-ROUTE_KEYNAME = '_route'
+ROUTE_KEYNAME = 'request'
 
 OPERATOR_ROUTES = [
     'forge_new_keys',

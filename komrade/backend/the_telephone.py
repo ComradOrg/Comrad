@@ -19,7 +19,7 @@ class TheTelephone(Operator):
     # def find_pubkey(self):
         # return self.telephone_keychain.get('pubkey')
 
-    def send_and_receive(self,msg_d):
+    def send_and_receive(self,msg_d,**y):
         # seal for transport
         msg_b_sealed = self.seal_msg(msg_d)
 
