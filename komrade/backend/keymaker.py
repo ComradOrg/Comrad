@@ -38,12 +38,12 @@ class KomradeSymmetricKey(KomradeKey):
         return self._cell
     def encrypt(self,msg,**kwargs):
         if hasattr(msg,'data'): msg=msg.data
-        print('??? dec',msg,kwargs)
+        # print('??? dec',msg,kwargs)
         
         return self.cell.encrypt(msg,**kwargs)
     def decrypt(self,msg,**kwargs):
         if hasattr(msg,'data'): msg=msg.data
-        print('??? dec',msg,kwargs)
+        # print('??? dec',msg,kwargs)
         
         try:
             return self.cell.decrypt(msg,**kwargs)
