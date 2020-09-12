@@ -43,11 +43,11 @@ class Message(Logger):
         else:
             msg=self.msg
         return f"""    
-    from: {self.from_whom} 
-          ({self.from_whom.pubkey.data_b64.decode()})
+    from: {self.from_name} 
+          ({self.from_pubkey})
     
-    to:   {self.to_whom}
-          ({self.to_whom.pubkey.data_b64.decode()})
+    to:   {self.to_name}
+          ({self.to_pubkey})
 
     msg:  {msg}
 """
