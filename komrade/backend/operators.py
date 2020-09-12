@@ -53,6 +53,7 @@ class Operator(Keymaker):
         super().__init__(name=name,passphrase=passphrase, keychain=keychain,
                          path_crypt_keys=path_crypt_keys, path_crypt_data=path_crypt_data)
         
+        self.find_pubkey_and_name(name,pubkey)
         
     # def boot(self):
     #     ## get both name and pubkey somehow
