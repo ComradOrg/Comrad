@@ -199,9 +199,7 @@ class Operator(Keymaker):
 {ART_PHONE_SM1} 
 ring ring ring!
 
-I am {self}.
-
-I have been given a message by {from_whom}, and told to pass it onto {to_whom}, by way of the function {get_resp_from}.
+I am {self}. I have been given a message by {from_whom}, and told to pass it onto {to_whom}, by way of the function {get_resp_from}.
 
 The message is:
 
@@ -221,7 +219,7 @@ The message is:
 
         # pass through the telephone wire by the get_resp_from function
         if not get_resp_from: get_resp_from=to_whom.ring_ring
-        resp_msg_obj = get_resp_from(msg_obj.msg_d)
+        resp_msg_obj = get_resp_from(msg_obj.msg_d,from_whom=from_whom)
         self.log('resp_msg_obj <-',resp_msg_obj)
 
         # decrypt

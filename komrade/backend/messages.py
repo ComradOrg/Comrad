@@ -172,8 +172,8 @@ class Message(Logger):
 
         # encrypt it!
         msg_encr = SMessage(
-            self.from_whom.privkey,
-            self.to_whom.pubkey,
+            self.from_whom.privkey.data,
+            self.to_whom.pubkey.data,
         ).wrap(msg_b)
 
         self.msg_decr = self.msg
