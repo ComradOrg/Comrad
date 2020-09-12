@@ -122,7 +122,7 @@ def check_phonelines():
         if not 'pubkey' in keyring: continue
         uri = b64encode(keychain.get('pubkey')
 
-        if not keycrypt.has(name,prefix='/pubkey/')
+        if not keycrypt.has(name,prefix='/pubkey/'):
             keycrypt.set(name,keychain['pubkey'],prefix='/pubkey/')
 
         for key in [k for k in keychain if k!='pubkey']:
