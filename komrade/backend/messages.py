@@ -104,8 +104,8 @@ class Message(Logger):
     
     def get_whoms(self):
         if self._from_whom is None or self._to_whom is None:
-            self._from_whom = locate_an_operator(self.from_name,self.from_pub)
-            self._to_whom = locate_an_operator(self.to_name,self.to_pub)
+            self._from_whom = locate_an_operator(self.from_name,self.from_pubkey)
+            self._to_whom = locate_an_operator(self.to_name,self.to_pubkey)
         return self._from_whom,self._to_whom
         
 
