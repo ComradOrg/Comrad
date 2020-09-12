@@ -381,16 +381,16 @@ class Keymaker(Logger):
                     asymmetric_keys = KomradeAsymmetricKey()
                     asymmetric_pubkey = asymmetric_keys.pubkey_obj
                     asymmetric_privkey = asymmetric_keys.privkey_obj
-                
-                if key_class == KomradeAsymmetricPublicKey:
-                    keychain[key_name]=asymmetric_pubkey
-                elif key_class == KomradeAsymmetricPrivateKey:
-                    keychain[key_name]=asymmetric_privkey
+            
+            if key_class == KomradeAsymmetricPublicKey:
+                keychain[key_name]=asymmetric_pubkey
+            elif key_class == KomradeAsymmetricPrivateKey:
+                keychain[key_name]=asymmetric_privkey
 
-                elif key_class == KomradeSymmetricKeyWithPassphrase:
-                    keychain[key_name] = KomradeSymmetricKeyWithPassphrase(passphrase)
-                else:
-                    keychain[key_name] = key_class()
+            elif key_class == KomradeSymmetricKeyWithPassphrase:
+                keychain[key_name] = KomradeSymmetricKeyWithPassphrase(passphrase)
+            else:
+                keychain[key_name] = key_class()
             
         self.log('keytypes -> keychain',dict_format(keychain))
         return keychain
