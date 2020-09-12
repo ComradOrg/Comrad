@@ -556,8 +556,8 @@ Keymaker ({self}) is forging new keys for {name}
             if decrypt and unencr_key_name in keychain: continue
             if not decr_key_name in keychain:
                 keychain[decr_key_name] = KomradeSymmetricKeyWithPassphrase(passphrase if passphrase else self.passphrase)
-                else:
-                    continue
+            else:
+                continue
             decr_key = keychain.get(decr_key_name)
             # self.log('?',decr_key,decr_key_name,encr_key_name,keychain[encr_key_name])
 
