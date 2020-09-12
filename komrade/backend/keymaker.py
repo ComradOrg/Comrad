@@ -570,6 +570,7 @@ Keymaker ({self}) is forging new keys for {name}
                 keychain[unencr_key_name] = get_key_obj(unencr_key_name,unencr_key)
             else:
                 unencr_key = keychain.get(unencr_key_name)
+                self.log(f'about to encrypt {unencr_key} with {decr_key}')
                 encr_key = decr_key.encrypt(unencr_key)
                 keychain[encr_key_name] = get_key_obj(encr_key_name,encr_key)
 
