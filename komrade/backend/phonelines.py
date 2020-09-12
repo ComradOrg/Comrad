@@ -24,7 +24,7 @@ def create_secret():
         with open(PATH_CRYPT_SECRET,'wb') as of:
             of.write(secret)
 
-
+create_secret()
 
 
 
