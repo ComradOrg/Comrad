@@ -317,8 +317,7 @@ class Keymaker(Logger):
         name,pubkey = self.find_pubkey_and_name()
 
         # get uri
-        # uri = b64encode(pubkey) if type(pubkey)==bytes else b64encode(pubkey.encode())
-        uri = pubkey.data_b64_s
+        uri = b64encode(pubkey) if type(pubkey)==bytes else b64encode(pubkey.encode())
 
         # get from cache
         for keyname in look_for:
