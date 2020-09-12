@@ -37,14 +37,12 @@ class KomradeSymmetricKey(KomradeKey):
                 self._cell = SCellSeal(key=self.key)
         return self._cell
     def encrypt(self,msg,**kwargs):
-        if issubclass(type(msg), KomradeKey) or issubclass(type(msg),KomradeEncryptedKey):
-            msg=msg.data
+        if hasattr(msg,'data'): msg=msg.data
         print('??? dec',msg,kwargs)
         
         return self.cell.encrypt(msg,**kwargs)
     def decrypt(self,msg,**kwargs):
-        if issubclass(type(msg), KomradeKey) or issubclass(type(msg),KomradeEncryptedKey):
-            msg=msg.data
+        if hasattr(msg,'data'): msg=msg.data
         print('??? dec',msg,kwargs)
         
         try:
