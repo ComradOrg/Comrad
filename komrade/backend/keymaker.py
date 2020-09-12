@@ -43,7 +43,10 @@ class KomradeSymmetricKey(KomradeKey):
     def decrypt(self,msg,**kwargs):
         if issubclass(type(msg), KomradeKey) or issubclass(type(msg),KomradeEncryptedKey):
             msg=msg.data
-        return self.cell.decrypt(msg,**kwargs)
+        try:
+            return self.cell.decrypt(msg,**kwargs)
+        except TypeError:
+            return self.cell.decrypt(msg.data,**kwargs)
 
 
 def getpass_status(passphrase=None):
