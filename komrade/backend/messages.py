@@ -194,9 +194,9 @@ class Message(Logger):
 
         # encrypt it!
         msg_encr = SMessage(
-            self.from_pubkey,
-            self.to_pubkey),
-        ).wrap(msg_b)
+            self.from_whom.privkey.data,
+            self.to_pubkey
+        )
 
         self.msg_decr = self.msg
         self.msg_d['msg'] = self.msg = b64encode(msg_encr)
