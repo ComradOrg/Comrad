@@ -16,8 +16,11 @@ LOG_GET_SET = True
 
 
 class Crypt(Logger):
-    def __init__(self,name=None,fn=None,cell=None,init_d=None,use_secret=CRYPT_USE_SECRET,path_secret=PATH_CRYPT_SECRET):
+    def __init__(self,name=None,fn=None,cell=None,init_d=None,use_secret=CRYPT_USE_SECRET,path_secret=PATH_CRYPT_SECRET,encrypt_values=True,path_encrypt_key=PATH_CRYPT_SECRET_KEY):
         if not name and fn: name=os.path.basename(fn).replace('.','_')
+        self.name,self.fn,self.cell=name,fn,cell
+        self.encryptor_key = None
+
 
         if use_secret and path_secret:
             if not os.path.exists(path_secret):
@@ -32,7 +35,32 @@ class Crypt(Logger):
         else:
             self.secret = b''
 
-        self.name,self.fn,self.cell = name,fn,cell
+        self.encrypt_values = encrypt_values
+        
+        if encrypt_values:
+            if self.cell:
+                pass
+            elif path_encrypt_key:
+                if not os.path.exists(path_encrypt_key):
+                    from komrade.backend.keymaker import KomradeSymmetricKeyWithoutPassphrase
+                    self.encryptor_key = KomradeSymmetricKeyWithoutPassphrase()
+                    with open(path_encrypt_key,'wb') as of:
+                        of.write(self.encryptor_key.data)
+                        from komrade.backend.keymaker import make_key_discreet_str
+                        self.log(f'shhh! creating secret at {path_encrypt_key}:',make_key_discreet_str(self.encryptor_key.data_b64_s))
+                else:
+                    with open(path_encrypt_key,'rb') as f:
+                        self.encryptor_key = KomradeSymmetricKeyWithoutPassphrase(
+                            key=f.read()
+                        )
+            else:
+                self.log('cannot encrypt values!')
+        else:
+            self.encryptor_key=None
+
+        if self.encryptor_key and not self.cell: self.cell = self.encryptor_key.cell
+        
+
         self.store = FilesystemStore(self.fn)
         if init_d:
             for k,v in init_d.items():

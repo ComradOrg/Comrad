@@ -85,8 +85,6 @@ class TheOperator(Operator):
         return msg_sealed
 
 
-    # def find_pubkey(self):
-        # return self.operator_keychain['pubkey']
 
 
     def send(self,encr_data_b):

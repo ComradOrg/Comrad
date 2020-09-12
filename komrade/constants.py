@@ -21,12 +21,15 @@ PATH_CRYPT_OP_DATA = os.path.join(PATH_KOMRADE_DATA,'.op.db.data.encr')
 PATH_CRYPT_CA_KEYS = PATH_CRYPT_OP_KEYS
 PATH_CRYPT_CA_DATA = PATH_CRYPT_OP_DATA
 PATH_QRCODES = os.path.join(PATH_KOMRADE,'.contacts')
-for x in [PATH_KOMRADE,PATH_KOMRADE_DATA,PATH_KOMRADE_KEYS,PATH_QRCODES]:
+PATH_SECRETS = os.path.join(PATH_KOMRADE,'.secret')
+
+for x in [PATH_KOMRADE,PATH_KOMRADE_DATA,PATH_KOMRADE_KEYS,PATH_QRCODES,PATH_SECRETS]:
     if not os.path.exists(x):
         os.makedirs(x)
 
 CRYPT_USE_SECRET = True
-PATH_CRYPT_SECRET = os.path.join(PATH_KOMRADE,'.secret')
+PATH_CRYPT_SECRET = os.path.join(PATH_SECRETS,'.salt')
+PATH_CRYPT_SECRET_KEY = os.path.join(PATH_SECRETS,'.key')
 
 # etc
 BSEP=b'||||||||||'

@@ -16,8 +16,6 @@ class TheTelephone(Operator):
         keychain = check_phonelines()[TELEPHONE_NAME]
         self._keychain = self.load_keychain_from_bytes(keychain)
 
-    # def find_pubkey(self):
-        # return self.telephone_keychain.get('pubkey')
 
     def send_and_receive(self,msg_d,**y):
         msg_b=msg_d["msg"]
