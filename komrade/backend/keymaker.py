@@ -283,7 +283,7 @@ class Keymaker(Logger):
             if key: keys[keyname]=get_key_obj(keyname,key) #get_encrypted_key_obj(key,keyname)
         
         # try to assemble
-        keys = self.assemble(keys)
+        keys = self.assemble(self.assemble(keys))
         
         #store to existing set
         self._keychain = keys
