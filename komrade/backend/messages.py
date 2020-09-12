@@ -50,7 +50,8 @@ class Message(Logger):
     def __repr__(self):
         if type(self.msg)==dict:
             if is_valid_msg_d(self.msg):
-                msg = repr(Message(self.msg))
+                import textwrap
+                msg = textwrap.indent(repr(Message(self.msg)),' '*10)
             else:
                 msg=dict_format(self.msg,tab=4)
         else:
