@@ -30,13 +30,12 @@ class Operator(Keymaker):
         super().__init__(name=name,passphrase=passphrase, keychain=keychain,
                          path_crypt_keys=path_crypt_keys, path_crypt_data=path_crypt_data)
         # self.boot(create=False)
+        from komrade.backend.phonelines import check_phonelines
+        check_phonelines()
 
-        # connect phonelines?
-        from komrade.backend.phonelines import connect_phonelines
-        try:
-            self.operator_keychain,self.telephone_keychain,self.world_keychain,self.omega_key = connect_phonelines()
-        except KeyError:
-            pass
+        print(self.crypt_keys.get(OPERATOR_NAME,prefix='/pubkey/'))
+        # stop
+        
 
     # def boot(self,create=False):
     #      # Do I have my keys?

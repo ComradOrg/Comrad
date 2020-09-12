@@ -237,18 +237,17 @@ class Keymaker(Logger):
 
 
     def find_pubkey(self):
-        global TELEPHONE_KEYCHAIN,OPERATOR_KEYCHAIN
-        #self.log('keychain?',self.keychain())
         if 'pubkey' in self._keychain and self._keychain['pubkey']:
             return self._keychain['pubkey']
         
         res = self.crypt_keys.get(self.name, prefix='/pubkey/')
+        self.log('result from crypt for name:',res)
         if res: return res
         
         res = self.load_qr(self.name)
         if res: return res
 
-        self.log('I don\'t know my public key! Do I need to register?',do_pause=False)
+        self.log('I don\'t know my public key! Do I need to register?')
         # raise KomradeException(f'I don\'t know my public key!\n{self}\n{self._keychain}')
         return None
 

@@ -12,10 +12,10 @@ class TheTelephone(Operator):
     def __init__(self, caller=None):
         super().__init__(name=TELEPHONE_NAME)
         self.caller=caller
-        self._keychain = self.load_keychain_from_bytes(self.telephone_keychain)
+        # self._keychain = self.load_keychain_from_bytes(self.telephone_keychain)
 
-    def find_pubkey(self):
-        return self.telephone_keychain.get('pubkey')
+    # def find_pubkey(self):
+        # return self.telephone_keychain.get('pubkey')
 
     def send_and_receive(self,msg_d):
         # seal for transport

@@ -33,7 +33,7 @@ class TheOperator(Operator):
             path_crypt_keys=PATH_CRYPT_OP_KEYS,
             path_crypt_data=PATH_CRYPT_OP_DATA
         )
-        self._keychain = self.load_keychain_from_bytes(self.operator_keychain)
+        # self._keychain = self.load_keychain_from_bytes(self.operator_keychain)
         
     def ring(self,
         from_caller=None,
@@ -79,8 +79,8 @@ class TheOperator(Operator):
         return msg_sealed
 
 
-    def find_pubkey(self):
-        return self.operator_keychain['pubkey']
+    # def find_pubkey(self):
+        # return self.operator_keychain['pubkey']
 
 
     def send(self,encr_data_b):

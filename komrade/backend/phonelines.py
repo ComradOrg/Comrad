@@ -100,7 +100,46 @@ def create_secret():
         with open(PATH_CRYPT_SECRET,'wb') as of:
             of.write(secret)
 
-create_secret()
+
+
+def check_phonelines():
+    # if needed
+    create_secret()
+
+    # is world there?
+    keycrypt = Crypt(PATH_CRYPT_OP_KEYS)
+    
+    # builtins
+    with open(PATH_BUILTIN_KEYCHAIN,'rb') as f:        
+        builtin_keys_encr_b64 = f.read()
+    builtin_keys_encr = b64decode(builtin_keys_encr_b64)
+    omega_key_b,builtin_keys_encr = builtin_keys_encr.split(BSEP)
+    omega_key = KomradeSymmetricKeyWithoutPassphrase(omega_key_b)
+    builtin_keys_b = omega_key.decrypt(builtin_keys_encr)
+    builtin_keys = pickle.loads(builtin_keys_b)
+    # print(builtin_keys)
+
+    for keyring in builtin_keys:
+        name = keyring.get('name')
+        keychain = dict((k,v) for k,v in keyring.items() if k!='name')
+        if not 'pubkey' in keyring: continue
+        uri = b64encode(keychain.get('pubkey'))
+        if not keycrypt.has(name,prefix='/pubkey/'):
+            keycrypt.set(name,keychain['pubkey'],prefix='/pubkey/')
+        for key in [k for k in keychain if k!='pubkey']:
+            if not keycrypt.has(uri,prefix=f'/{key}/'):
+                keycrypt.set(uri,keychain[key],prefix=f'/{key}/')
+
+        # make sure world's qr is there too
+        if name==WORLD_NAME:
+            import pyqrcode
+            qr = pyqrcode.create(uri)
+            ofnfn = os.path.join(PATH_QRCODES,name+'.png')
+            qr.png(ofnfn,scale=5)
+            # print('>> saved:',ofnfn)
+
+
+    return builtin_keys
 
 
 
@@ -302,8 +341,16 @@ create_secret()
 #     # ##print('>>>> loaded TELEPHONE_KEYCHAIN',TELEPHONE_KEYCHAIN)
 #     return (OPERATOR_KEYCHAIN,TELEPHONE_KEYCHAIN,WORLD_KEYCHAIN,OMEGA_KEY)
 
+def test_phonelines():
+    from komrade.backend.the_telephone import TheTelephone
+    from komrade.backend.the_operator import TheOperator
+
+    phone = TheTelephone()
+    op = TheOperator()
+
+    print('phone',dict_format(phone.keychain()))
+    print('op',dict_format(op.keychain()))
 
 
 if __name__ == '__main__':
-    phone = TheTelephone()
-    op = TheOperator()
+    test_phonelines()
