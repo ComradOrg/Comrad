@@ -443,10 +443,10 @@ Keymaker ({self}) is forging new keys for {name}
         # gen decryptor keys!
         keychain = self.gen_keys_from_types(key_types,passphrase=passphrase)
         # gen encrypted keys!
-        self.log('I built this keychain v1!',dict_format(keychain,tab=2))
+        # self.log('I built this keychain v1!',dict_format(keychain,tab=2))
         
         keychain = self.disassemble(keychain,passphrase=passphrase)
-        self.log('I built this keychain v2!',dict_format(keychain,tab=2))
+        self.log('I built this keychain!',dict_format(keychain,tab=2))
         self.status('@Keymaker: I ended up building these keys:',keychain)
         
 
@@ -547,7 +547,8 @@ Keymaker ({self}) is forging new keys for {name}
         for encr_key_name in encr_keys:
             decr_key_name = encr_key_name[:-5] + '_decr'
             unencr_key_name = encr_key_name[:-5]
-            if unencr_key_name in keychain: continue
+            # self.log(encr_key_name,decr_key_name,unencr_key_name)
+            if decrypt and unencr_key_name in keychain: continue
             if not decr_key_name in keychain:
                 if type(key_types[decr_key_name])==KomradeSymmetricKeyWithPassphrase:
                     keychain[decr_key_name] = KomradeSymmetricKeyWithPassphrase(

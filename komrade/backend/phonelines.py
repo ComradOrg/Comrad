@@ -29,8 +29,7 @@ def create_phonelines():
     op_keys_to_keep_on_client = ['pubkey']  # kept on app, stored under name
     op_keys_to_keep_on_3rdparty = []  # kept on .onion site
     op_keys_to_keep_on_server = ['pubkey',   # stored under name
-                                'privkey_encr',
-                                'privkey_decr']   # kept on op server
+                                'privkey_encr']   # kept on op server
 
     ## create phone
     phone = Keymaker(name=TELEPHONE_NAME)
@@ -40,7 +39,7 @@ def create_phonelines():
 
     ## create phone
     world = Keymaker(name=WORLD_NAME)
-    world_keys_to_keep_on_client = ['pubkey','privkey_encr','privkey_decr']
+    world_keys_to_keep_on_client = ['pubkey','privkey_encr']
     world_keys_to_keep_on_3rdparty = []
     world_keys_to_keep_on_server = ['pubkey']
 
