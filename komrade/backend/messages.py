@@ -48,6 +48,7 @@ class Message(Logger):
         if isBase64(self.from_pubkey): self.from_pubkey = b64decode(self.from_pubkey)
 
     def __repr__(self):
+        self.log('my type??',type(self.msg),self.msg)
         if type(self.msg)==dict:
             if is_valid_msg_d(self.msg):
                 import textwrap
@@ -57,7 +58,7 @@ class Message(Logger):
         elif type(self.msg)==bytes:
             msg=b64encode(self.msg).decode() if not isBase64(self.msg) else self.msg.decode()
         else:
-            self.log('my type??',type(self.msg),self.msg)
+            
             msg=self.msg
         return f"""    
     from: @{self.from_name if self.from_name else ''} 
