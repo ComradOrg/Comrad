@@ -46,8 +46,8 @@ class Message(Logger):
             self.from_pubkey=self.from_whom.pubkey.data
         if isBase64(self.to_pubkey): self.to_pubkey = b64decode(self.to_pubkey)
         if isBase64(self.from_pubkey): self.from_pubkey = b64decode(self.from_pubkey)
-        if hasattr(self.to_pubkey,'data'): self.to_pubkey=self.to_whom.data
-        if hasattr(self.from_pubkey,'data'): self.from_pubkey=self.from_whom.data
+        if hasattr(self.to_pubkey,'data'): self.to_pubkey=self.to_pubkey.data
+        if hasattr(self.from_pubkey,'data'): self.from_pubkey=self.from_pubkey.data
 
         self.log('loaded message: to pub',self.to_pubkey,'from pub',self.from_pubkey)
 
