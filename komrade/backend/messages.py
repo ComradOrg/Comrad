@@ -52,7 +52,7 @@ class Message(Logger):
         self.log('loaded message: to pub',self.to_pubkey,'from pub',self.from_pubkey)
 
     def __repr__(self):
-        self.log('my type??',type(self.msg),self.msg)
+        # self.log('my type??',type(self.msg),self.msg)
         if type(self.msg)==dict:
             if is_valid_msg_d(self.msg):
                 import textwrap
@@ -66,11 +66,9 @@ class Message(Logger):
             msg=self.msg
         return f"""    
     from: @{self.from_name if self.from_name else ''} 
-          ({b64encode(self.from_pubkey).decode()})
-    
+          
     to:   @{self.to_name if self.to_name else ''}
-          ({b64encode(self.to_pubkey).decode()})
-
+          
     msg:  {msg}
 """
 
