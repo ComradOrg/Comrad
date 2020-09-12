@@ -305,7 +305,7 @@ class Keymaker(Logger):
         keys = self._keychain
         
         # make sure we have the pubkey
-        name,pubkey = self.find_pubkey_and_name
+        name,pubkey = self.find_pubkey_and_name()
 
         # get uri
         uri = b64encode(pubkey) if type(pubkey)==bytes else b64encode(pubkey.data)
