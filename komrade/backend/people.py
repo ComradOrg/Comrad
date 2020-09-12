@@ -64,29 +64,31 @@ class Persona(Caller):
 
         ## 3) Have passphrase?
         if SHOW_STATUS and not passphrase:
-            passphrase = self.cli.status_keymaker_part2(name,passphrase,pubkey,privkey,self.crypt_keys.hash,self)
+            passphrase = self.cli.status_keymaker_part2(name,passphrase,pubkey,privkey,hasher,self)
         else:
             if not passphrase: passphrase=getpass('Enter a memorable password to encrypt your private key with: ')
 
         ## 4) Get hashed password
-        passhash = self.crypt_keys.hash(passphrase.encode())
+        passhash = hasher(passphrase)
         self.log(f'''Keymaker has created a symmetric encryption cell using the disguised password:\n\n\t(2A) [Symmetric Encryption Key]\n\t({make_key_discreet_str(passhash)})''')
 
         ## 5) Encrypt private key
-        privkey_decr = KomradeSymmetricKeyWithPassphrase(passhash)
+        privkey_decr = KomradeSymmetricKeyWithPassphrase(passphrase)
         privkey_encr = privkey_decr.encrypt(privkey.data)
         privkey_encr_obj = KomradeEncryptedAsymmetricPrivateKey(privkey_encr)
         self.log(f"This pass-generated key has now transformed the private key (2) into the following encrypted form (redacted):\n\n\t(2B) [Encrypted Private Key]\n\t({make_key_discreet_str(privkey_encr_obj.data_b64)})")
 
         ## 6) Test keychain works
-        privkey_decr2 = KomradeSymmetricKeyWithPassphrase(passhash)
+        privkey_decr2 = KomradeSymmetricKeyWithPassphrase(passphrase)
+        assert privkey_decr2.decrypt(privkey_encr) == privkey.data
         
-        self._keychain['pubkey']=pubkey.data
-        self._keychain['privkey_encr']=privkey_encr_obj.data
+        self._keychain['pubkey']=pubkey
+        self._keychain['privkey_encr']=privkey_encr_obj
         self._keychain['privkey_decr']=privkey_decr
+        # we should be able to reassemble privkey now?
+        assert 'privkey' in self.keychain()
 
         self.log('My keychain now looks like:',dict_format(self.keychain()))
-
 
         ## 6) More narration?
         if SHOW_STATUS:
@@ -95,8 +97,7 @@ class Persona(Caller):
         ## 7) Save data to server
         data = {
             'name':name, 
-            'pubkey': pubkey.data,
-            ROUTE_KEYNAME:'register_new_user'
+            'pubkey': pubkey
         }
         self.log('I will be sending this data to @TheOperator, on the remote server:',dict_format(data,tab=2))
         
@@ -104,13 +105,13 @@ class Persona(Caller):
         # call from phone since I don't have pubkey on record on Op yet
         # self.log('my keychain:',self._keychain,pubkey,self.op._keychain)
 
-        resp_msg_obj = self.ring_ring(data)
+        resp_msg_obj = self.ring_ring(data,route='register_new_user',from_whom=self)
         self.log('register got back from op:',dict_format(resp_msg_obj,tab=2))
 
 
 
-    def ring_ring(self,msg):
-        return super().ring_ring(msg)
+    def ring_ring(self,msg,**y):
+        return super().ring_ring(msg,**y)
 
     def send_msg_to(self,msg,to_whom):
         msg = self.compose_msg_to(msg,to_whom)
@@ -128,7 +129,7 @@ def test_register():
     botname=f'marx{str(num).zfill(3)}'
     marxbot = Persona(botname)
     # marxbot=Persona()
-    marxbot.register(passphrase='communise')
+    marxbot.register(passphrase='acc')
 
 if __name__=='__main__':
     test_register()

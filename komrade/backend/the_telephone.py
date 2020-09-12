@@ -12,7 +12,7 @@ class TheTelephone(Operator):
     def __init__(self, caller=None):
         super().__init__(name=TELEPHONE_NAME)
         self.caller=caller
-        self._keychain = self.telephone_keychain
+        self._keychain = self.load_keychain_from_bytes(self.telephone_keychain)
 
     def find_pubkey(self):
         return self.telephone_keychain.get('pubkey')
@@ -61,11 +61,12 @@ Please send this message along, would you: {msg_b64_str}
         # return self.pronto_pronto(resp_msg_obj)
 
 
-    def ring_ring(self,msg):
+    def ring_ring(self,msg,**y):
         return super().ring_ring(
             msg,
             to_whom=self.op,
-            get_resp_from=self.send_and_receive
+            get_resp_from=self.send_and_receive,
+            **y
         )
         
     

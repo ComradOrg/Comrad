@@ -99,39 +99,11 @@ KEY_TYPE_SYMMETRIC_WITH_PASSPHRASE = 'symmetric_key_with_passphrase'
 ENCRYPTED_KEY = 'encrypted_key'
 
 
-KEYMAKER_DEFAULT_KEY_TYPES = {
-    'pubkey':KEY_TYPE_ASYMMETRIC_PUBKEY,
-    'privkey':KEY_TYPE_ASYMMETRIC_PRIVKEY,
-    'adminkey':KEY_TYPE_SYMMETRIC_WITHOUT_PASSPHRASE,
-    
-    'pubkey_decr':KEY_TYPE_SYMMETRIC_WITHOUT_PASSPHRASE,
-    'privkey_decr':KEY_TYPE_SYMMETRIC_WITH_PASSPHRASE,
-    'adminkey_decr':KEY_TYPE_SYMMETRIC_WITH_PASSPHRASE,
-
-    'pubkey_decr_decr':KEY_TYPE_SYMMETRIC_WITHOUT_PASSPHRASE,
-    'privkey_decr_decr':KEY_TYPE_SYMMETRIC_WITH_PASSPHRASE,
-    'adminkey_decr_decr':KEY_TYPE_SYMMETRIC_WITH_PASSPHRASE,
-
-    'pubkey_encr_decr':KEY_TYPE_SYMMETRIC_WITHOUT_PASSPHRASE,
-    'privkey_encr_decr':KEY_TYPE_SYMMETRIC_WITH_PASSPHRASE,
-    'adminkey_encr_decr':KEY_TYPE_SYMMETRIC_WITH_PASSPHRASE,
 
 
-    # encrypted keys
-    'pubkey_encr':ENCRYPTED_KEY,
-    'privkey_encr':ENCRYPTED_KEY,
-    'adminkey_encr':ENCRYPTED_KEY,
-    'pubkey_encr_encr':ENCRYPTED_KEY,
-    'privkey_encr_encr':ENCRYPTED_KEY,
-    'adminkey_encr_encr':ENCRYPTED_KEY,
-    'pubkey_decr_encr':ENCRYPTED_KEY,
-    'privkey_decr_encr':ENCRYPTED_KEY,
-    'adminkey_decr_encr':ENCRYPTED_KEY
-}
+KEYMAKER_DEFAULT_ALL_KEY_NAMES = KEYNAMES
 
-KEYMAKER_DEFAULT_ALL_KEY_NAMES = sorted(list(KEYMAKER_DEFAULT_KEY_TYPES.keys()), key=lambda x: x.count('_'))
-
-WHY_MSG = 'Forge the password of memory: '
+WHY_MSG = 'What is the password of memory for this account? '
 
 
 

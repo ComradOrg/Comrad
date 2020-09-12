@@ -164,6 +164,17 @@ def hashish(binary_data):
     import hashlib
     return hashlib.sha256(binary_data).hexdigest()
 
+def hasher(dat,secret=None):
+    import hashlib
+    if not secret:
+        with open(PATH_CRYPT_SECRET,'rb') as f:
+            secret = f.read()
+    if type(dat)==str:
+        dat=dat.encode()
+
+    # print(dat,secret[:10])
+    return b64encode(hashlib.sha256(dat + secret).hexdigest().encode()).decode()
+
 
 from base64 import b64encode,b64decode
 import ujson as json

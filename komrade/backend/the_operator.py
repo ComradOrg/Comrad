@@ -33,7 +33,7 @@ class TheOperator(Operator):
             path_crypt_keys=PATH_CRYPT_OP_KEYS,
             path_crypt_data=PATH_CRYPT_OP_DATA
         )
-        self._keychain = self.operator_keychain
+        self._keychain = self.load_keychain_from_bytes(self.operator_keychain)
         
     def ring(self,
         from_caller=None,

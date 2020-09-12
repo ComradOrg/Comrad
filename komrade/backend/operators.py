@@ -76,7 +76,7 @@ class Operator(Keymaker):
         return OPERATOR
 
 
-    def compose_msg_to(self,msg,another):
+    def compose_msg_to(self,msg,another,route=None):
         if not self.privkey or not self.pubkey:
             raise KomradeException('why do I have no pub/privkey pair!?',self,self.name,self.pubkey,self.privkey,self.keychain())
         if not another.name or not another.pubkey:
@@ -89,6 +89,7 @@ class Operator(Keymaker):
             '_to_pub':another.pubkey,
             '_to_name':another.name,
             '_msg':msg,
+            ROUTE_KEYNAME:route
         }
         # self.log(f'I am {self} packaging a message to {another}: {msg_d}')
         from komrade.backend.messages import Message
@@ -189,22 +190,29 @@ class Operator(Keymaker):
         return msg_obj
 
 
-    def ring_ring(self,msg,to_whom,get_resp_from=None):
+    def ring_ring(self,msg,to_whom,from_whom=None,get_resp_from=None,route=None):
         # ring ring
         from komrade.cli.artcode import ART_PHONE_SM1
-        self.log(f'''ring ring! {ART_PHONE_SM1} ring ring!
+        import textwrap as tw
+        self.log(f'''
+
+{ART_PHONE_SM1} 
+ring ring ring!
+
 I am {self}.
 
-I have been told to pass onto {to_whom},
-by way of function {get_resp_from},
-the following msg:
-{dict_format(msg,tab=5)}
+I have been given a message by {from_whom}, and told to pass it onto {to_whom}, by way of the function {get_resp_from}.
+
+The message is:
+
+    {dict_format(msg)}
 ''')
         
         # get encr msg obj
         msg_obj = self.compose_msg_to(
             msg,
-            to_whom
+            to_whom,
+            route=route
         )
         self.log(f'ring ring! here is the message object I made, to send to {to_whom}: {msg_obj}')
         

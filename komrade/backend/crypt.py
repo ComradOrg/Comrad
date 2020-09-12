@@ -49,7 +49,8 @@ class Crypt(Logger):
             super().log(*x)
         
     def hash(self,binary_data):
-        return b64encode(hashlib.sha256(binary_data + self.secret).hexdigest().encode()).decode()
+        return hasher(binary_data,self.secret)
+        # return b64encode(hashlib.sha256(binary_data + self.secret).hexdigest().encode()).decode()
         # return zlib.adler32(binary_data)
 
     def force_binary(self,k_b):

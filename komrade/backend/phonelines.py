@@ -15,8 +15,7 @@ def create_phonelines():
     op_keys_to_keep_on_server = ['pubkey',   # stored under name
                                 'privkey_encr',
                                 'adminkey_encr',
-                                'adminkey_decr_encr',
-                                'adminkey_decr_decr']   # kept on op server
+                                'adminkey_decr']   # kept on op server
 
     ## create phone
     phone = Keymaker(name=TELEPHONE_NAME)
@@ -30,32 +29,47 @@ def create_phonelines():
     world_keys_to_keep_on_3rdparty = op_keys_to_keep_on_3rdparty
     world_keys_to_keep_on_server = op_keys_to_keep_on_server
 
+
+    # key types
+    key_types = {
+        'pubkey':KomradeAsymmetricPublicKey,
+        'privkey':KomradeAsymmetricPrivateKey,
+        'privkey_encr':KomradeEncryptedAsymmetricPrivateKey,
+        'privkey_decr':KomradeSymmetricKeyWithoutPassphrase,
+        'adminkey':KomradeSymmetricKeyWithoutPassphrase,
+        'adminkey_encr':KomradeEncryptedSymmetricKey,
+        'adminkey_decr':KomradeSymmetricKeyWithPassphrase,
+    }
+
     
 
     # create keys for Op
     op_uri,op_decr_keys = op.forge_new_keys(
+        key_types=key_types,
         keys_to_save=op_keys_to_keep_on_server,
         keys_to_return=op_keys_to_keep_on_client + op_keys_to_keep_on_3rdparty # on clients only
+        
     )
     #print('op!',op_uri)
     p#print(op_decr_keys)
 
     # create keys for phone
     phone_uri,phone_decr_keys = phone.forge_new_keys(
-        name=TELEPHONE_NAME,
+        key_types=key_types,
         keys_to_save=phone_keys_to_keep_on_server,  # on server only
         keys_to_return=phone_keys_to_keep_on_client + phone_keys_to_keep_on_3rdparty   # on clients only
     )
     #print('phone!',op_uri)
-    p#print(phone_decr_keys)
+    #print(phone_decr_keys)
 
     # create keys for world
     world_uri,world_decr_keys = world.forge_new_keys(
+        key_types=key_types,
         keys_to_save=world_keys_to_keep_on_server,
         keys_to_return=world_keys_to_keep_on_client + world_keys_to_keep_on_3rdparty # on clients only
     )
     #print('world!',op_uri)
-    p#print(world_decr_keys)
+    #print(world_decr_keys)
     ## store remote keys
     THIRD_PARTY_DICT = {OPERATOR_NAME:{}, TELEPHONE_NAME:{}, WORLD_NAME:{}}
     for key in op_keys_to_keep_on_3rdparty:
