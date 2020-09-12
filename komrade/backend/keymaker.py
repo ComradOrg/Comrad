@@ -320,7 +320,7 @@ class Keymaker(Logger):
 
         # get uri
         if pubkey:
-            uri = b64encode(pubkey) if not isBase64(pubkey) and type(pubkey) == bytes else pubkey.data_b64_s
+            uri = b64encode(pubkey) if not isBase64(pubkey) else pubkey
             #uri = b64encode(pubkey) if type(pubkey)==bytes else b64encode(pubkey.encode())
             # get from cache
             for keyname in look_for:
