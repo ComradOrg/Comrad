@@ -188,10 +188,10 @@ class Operator(Keymaker):
 
         # time to turn around and encrypt
         # @unsure?
-        from komrade.backend.komrades import Komrade
-        if self != self.phone and type(self)!=Komrade:
-            # if client, let the request rest
-            return msg_obj
+        # from komrade.backend.komrades import Komrade
+        # if self != self.phone and type(self)!=Komrade:
+        #     # if client, let the request rest
+        #     return msg_obj
 
         # if remote operator, keep going?
         self.log('time to flip msg around and return to sender. v1:',msg_obj,new_data,reencrypt,msg_obj.route)
