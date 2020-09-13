@@ -39,7 +39,7 @@ from komrade.constants import OPERATOR_ROUTES
 class Operator(Keymaker):
     ROUTES = OPERATOR_ROUTES
     
-    def __init__(self, name=None, pubkey=None, passphrase=DEBUG_DEFAULT_PASSPHRASE, keychain = {}, path_crypt_keys=PATH_CRYPT_CA_KEYS, path_crypt_data=PATH_CRYPT_CA_DATA):
+    def __init__(self, name=None, passphrase=DEBUG_DEFAULT_PASSPHRASE, pubkey=None, keychain = {}, path_crypt_keys=PATH_CRYPT_CA_KEYS, path_crypt_data=PATH_CRYPT_CA_DATA):
         print('booting opertor with ...',name,pubkey,'??')
 
         if pubkey:
