@@ -40,7 +40,7 @@ class TheOperator(Operator):
         self._keychain = self.keychain()
         # self.log('@Operator booted with keychain:',dict_format(self._keychain),'and passphrase',self.passphrase)
         clear_screen()
-        self.log(f'@Operator waiting for incoming calls on {OPERATOR_API_URL}...',pause=False)
+        
 
     def ring(self,
         from_caller=None,

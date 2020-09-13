@@ -16,12 +16,15 @@ class TheSwitchboard(FlaskView, Logger):
     @property
     def op(self):
         global OP_PASS
+        
         from komrade.backend.the_operator import TheOperator
         if type(self)==TheOperator: return self
         if hasattr(self,'_op'): return self._op
         global OPERATOR,OPERATOR_KEYCHAIN
         if OPERATOR: return OPERATOR
         self._op=OPERATOR=TheOperator()
+        
+        self.log(f'@Operator waiting for incoming calls on {OPERATOR_API_URL}...',pause=False)
         return OPERATOR
 
     
