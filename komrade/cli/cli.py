@@ -24,8 +24,8 @@ class CLI(Logger):
 
     def run(self,inp='',name=''):
         # if name: self._name=name
-        clear_screen()
-        self.boot()
+        # clear_screen()
+        # self.boot()
         self.help()
 
         if inp: self.route(inp)
