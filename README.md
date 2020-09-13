@@ -22,13 +22,13 @@ All network traffic is routed through Tor, a "deep web" of computers so dense ev
 
 What's untraceable is also unmonetizable: your data can't be harvested by technology companies and used for advertising algorithms. You're protected from both surveillance capitalism and the surveillance state.
 
-### Decentralized
-
-Data is deleted as soon as possible from Komrade. Komrade's "Operator" simply sorts and holds the mail temporarily: as soon as users log in to download their mail, the messages are deleted from the internet forever.
-
 ### Democratized
 
-Group accounts or 'collectives', like @portland or @socialists, grow as existing members 'vouch for' new ones. Other komrades can see how many times a given person has been vouched for, both within a group and overall, but not who has vouched for them. In order to join a group, at least one member must vouch for you; this minimum (or 'quorum') may grow as the group grows.
+Group accounts or 'collectives', like @portland or @socialists, grow as existing members 'vouch for' new ones, forming webs of 'trust'. Other komrades can see how many times a given person has been vouched for, both within a group and overall, but not who has vouched for them. In order to join a group, at least one member must vouch for you; this minimum (or 'quorum') may grow as the group grows.
+
+### (Semi-)decentralized
+
+Data is deleted as soon as possible from Komrade. Komrade's "Operator" simply sorts and holds the mail temporarily: as soon as users log in to download their mail, the messages are deleted from the internet forever.
 
 ### Anti-profit
 
@@ -78,21 +78,7 @@ As of the 23rd of August.
 
 See [here](https://www.dropbox.com/s/8r8gqgfswojmtwd/komrade-terminal-preview--2020-09-13.mkv?dl=0).
 
-## Design
 
-### Old design: decentralized
-
-After a good discussion at /r/privacy [here](https://www.reddit.com/r/privacy/comments/ii4zw9/introducing_komrade_a_decentralized/), problems in the fully decentralized model originally proposed were pointed out.
-
-<img src="docs/cryptosystems-Kademlia.png" />
-
-Here's a diagram I made of the old system. It's thoroughly decentralized -- there's no central server at all, just a few 'seed nodes' which let the user know where the other nodes are. But P2P systems generally require knowing the IPs of other users (so: not Anonymous). And that also allows any node to write data to network, and potentially overwhelm the true information with false information (so: no guaranteed Authenticity).
-
-### New design: semi-centralized
-
-<img src="docs/cryptosystems-Operator.png" />
-
-Here's the new system. The downside is it's now only half decentralized. The upside is it's fully anonymous, confidential, and its authenticity can be verified. Users route all requests to a central server called the Operator (so not decentralized). But these requests are end-to-encryped (so confidential), and they're routed through the the global Tor "Maze" via the user's local Tor proxy (so it's Anonymous, all IP addresses masked). Only the Operator knows the address of other users, keeping encrypted versions of their keys which are necessary to know where they are, how to write to them, and even how to manage their settings [blocked users, etc]. That ensures authenticity of users (it acts like a PGP keyserver). Also, only the Operator can access and decrypt the (non user key related) data which it uploads to "The Ether", which would be Freenet or some other global p2p data store; so in fact all data's authenticity can be proved, not just user data.
 
 
 ## Technical details
