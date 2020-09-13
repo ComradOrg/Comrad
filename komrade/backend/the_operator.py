@@ -172,36 +172,26 @@ class TheOperator(Operator):
             self.log('names did not match!')
             success = False 
         # # check pubkey?
-        elif pubkey != pubkey_record:
-            self.log('pubkeys did not match!')
-            pass
-        #     name,
-        #     prefix='/pubkey/'
-        # )):
-        #     success = False
+        elif uri != pubkey_record:
+            self.log('pubkeys did not match!',uri,pubkey_record)
+            success = False
+        elif secret_login != secret_record:
+            self.log('secrets did not match!')
+            success = False
+        else:
+            success = True
 
-        # # check secret login
-        # elif b64enc(secret_login) != b64enc(self.crypt_keys.get(
-        #     b64enc(pubkey),
-        #     prefix='/secret_login/'
-        # )):
-        #     success = False
-        
-        # # otherwise we succeed
-        # else:
-        #     success = True
-
-        # ## return res
-        # if success:
-        #     return {
-        #         'success': True,
-        #         'status':'Login succeeded.'
-        #     }
-        # else:
-        #     return {
-        #         'success': False,
-        #         'status':'Login failed.'
-        #     }
+        ## return res
+        if success:
+            return {
+                'success': True,
+                'status':'Login succeeded.'
+            }
+        else:
+            return {
+                'success': False,
+                'status':'Login failed.'
+            }
 
     def register_new_user(self,name,pubkey,**data):
         # self.log('setting pubkey under name')
