@@ -58,7 +58,7 @@ class Message(Logger):
                 import textwrap
                 msg = textwrap.indent(repr(Message(self.msg)),' '*10)
             else:
-                msg=dict_format(self.msg,tab=4)
+                msg=dict_format(self.msg,tab=6)
         elif type(self.msg)==bytes:
             msg=b64enc_s(self.msg)
         else:

@@ -282,7 +282,7 @@ class Operator(Keymaker):
 ...
 
 {self}: pronto?
-{msg_obj.from_whom}: Ciao. I have a message for you: {msg_obj}\n''')
+{msg_obj.from_whom}: Ciao ciao. I have a message for you:\n{msg_obj}\n''')
 
         return self.route_msg(msg_obj,reencrypt=True)
 
