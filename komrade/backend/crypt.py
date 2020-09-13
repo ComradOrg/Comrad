@@ -127,10 +127,11 @@ class Crypt(Logger):
         k_b_hash = self.hash(k_b)
         v_b=self.package_val(v)
         if not override:
-            self.log(f'''Crypt.set(\n\t{k_b}\n\n\t{v_b}\n)''')
+            self.log(f'''Crypt.set(\n\t{k_b}\n\n\t{k_b_hash}\n\n\t{v_b}\n)''')
         # store
         self.store.put(k_b_hash,v_b)
         #return (True,k_b_hash,v_b)
+        self.log('now keys are:',list(self.store.iter_keys()))
         return True
 
     def exists(self,k,prefix=''):
