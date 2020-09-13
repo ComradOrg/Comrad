@@ -186,6 +186,11 @@ class Operator(Keymaker):
 
         # time to turn around and encrypt
         # @unsure?
+        if self != self.phone and type(self)!=Komrade:
+            # if client, let the request rest
+            return msg_obj
+
+        # if remote operator, keep going?
         self.log('time to flip msg around and return to sender. v1:',msg_obj,new_data,reencrypt,msg_obj.route)
         new_msg_obj = msg_obj.to_whom.compose_msg_to(
             msg=new_data,
