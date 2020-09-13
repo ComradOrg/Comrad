@@ -209,7 +209,7 @@ class Komrade(Caller):
         # get result
         self.log('Got result back from operator:',resp_msg)
 
-
+        return resp_msg
 
 
 
