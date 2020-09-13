@@ -181,10 +181,10 @@ class Operator(Keymaker):
             msg_obj.msg = msg_obj.msg_d['msg'] = new_data
 
         # time to turn around and encrypt
-        self.log('time to flip msg around and return to sender. v1:',self)
-        new_msg_obj = msg_obj.from_whom.compose_msg_to(
+        self.log('time to flip msg around and return to sender. v1:',msg_obj)
+        new_msg_obj = msg_obj.to_whom.compose_msg_to(
             msg=new_data,
-            another=msg_obj.to_whom
+            another=msg_obj.from_whom
         ) #msg_obj.mark_return_to_sender()
         self.log('returning to sender as:',new_msg_obj)
 
