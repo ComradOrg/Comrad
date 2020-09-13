@@ -137,10 +137,8 @@ DEBUG_DEFAULT_PASSPHRASE = None # 'all your base are belong to us'
 ROUTE_KEYNAME = 'request'
 
 OPERATOR_ROUTES = [
-    'forge_new_keys',
-    'does_username_exist',
-    'hello_world',
-    'register_new_user'
+    'register_new_user',
+    'login'
 ]
 
 OPERATOR_INTRO = 'Hello, this is the Operator speaking. '

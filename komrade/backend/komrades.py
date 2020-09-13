@@ -167,6 +167,42 @@ class Komrade(Caller):
         # done!
         self.log(f'Congratulations. Welcome, Komrade {self}.')
 
+    @property
+    def secret_login(self):
+        return self.crypt_keys.get(
+            self.pubkey.data_b64_s,
+            prefix='/secret/'
+        )
+
+    def login(self):
+        if not self.pubkey:
+            self.log('''Login impossible. I do not have this komrade's public key, much less private one.''')
+            return
+        if not self.privkey:
+            self.log('''Login impossible. I do not have this komrade's private key on this hardware.''')
+            return
+        
+        # compose message
+        msg = {
+            'name':self.name,
+            'pubkey':self.pubkey.data,
+            'secret_login':self.secret_login
+        }
+
+        # ask operator and get response
+        resp_msg = self.ring_ring(
+            msg,
+            route='login'
+        )
+
+        # get result
+        self.log('Got result back from operator:',resp_msg)
+
+
+
+
+
+
 
     def ring_ring(self,msg,route=None,**y):
         if type(msg)==dict and not ROUTE_KEYNAME in msg:

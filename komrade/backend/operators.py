@@ -171,10 +171,10 @@ class Operator(Keymaker):
                 raise KomradeException(f'Not a valid route!: {route}')
             
             # route it!
-            self.log(f'routing msg to {self}.{route}() for msg data:{dict_format(msg_obj.data,tab=4)}')
+            self.log(f'Routing msg to {self}.{route}() for msg data:\n\n{dict_format(msg_obj.data,tab=4)}')
             func = getattr(self,route)
             new_data = func(**data)
-            self.log(f'new data was received from {self}.{route}() = {new_data}')
+            self.log(f'New data was received back from {self}.{route}() route:\b\b{dict_format(new_data,tab=4)}')
             msg_obj.msg = msg_obj.msg_d['msg'] = new_data
 
         # try passing it on?
