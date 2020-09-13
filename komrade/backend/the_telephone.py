@@ -49,7 +49,7 @@ class TheTelephone(Operator):
         
         # response back from Operator!
         resp_msg_b64_str = phonecall.text
-        # self.log('resp_msg_b64_str',resp_msg_b64_str)
+        self.log(f'{self}: Received response from Operator! We got back:\n\n',resp_msg_b64_str)
 
         resp_msg_b64 = resp_msg_b64_str.encode()
         resp_msg_b = b64decode(resp_msg_b64)
