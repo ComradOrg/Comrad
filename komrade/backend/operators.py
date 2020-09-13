@@ -241,7 +241,7 @@ class Operator(Keymaker):
             self.log(f'ring ring! I the {self} have received a message from {caller},\n which I will now encrypt and send along to {to_whom}.\n {ART_PHONE_SM1} ')
         else:
             pass
-            # self.log(f'I ({self}) will now compose and send an encrypted message to {to_whom}.')
+            self.log(f'I ({self}) will now compose and send an encrypted message to {to_whom}.')
 
         if route and type(msg)==dict and not ROUTE_KEYNAME in msg:
             msg[ROUTE_KEYNAME] = route
@@ -252,7 +252,7 @@ class Operator(Keymaker):
             msg,
             to_whom
         )
-        # self.log(f'Here is the message I will now encrypt and to send to {to_whom}:\n\n {dict_format(msg_obj.msg,tab = 2)}')
+        self.log(f'Here is the message I will now encrypt and to send to {to_whom}:\n\n {dict_format(msg_obj.msg,tab = 2)}')
         
         # encrypting
         msg_obj.encrypt()
