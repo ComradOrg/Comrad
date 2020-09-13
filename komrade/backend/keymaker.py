@@ -72,7 +72,7 @@ class KomradeSymmetricKeyWithPassphrase(KomradeSymmetricKey):
     def __init__(self,passphrase=DEBUG_DEFAULT_PASSPHRASE, why=WHY_MSG):
         if not passphrase:
             # raise KomradeException
-            self.passphrase=getpass(why)
+            self.passphrase=None #getpass(why)
         else:
             self.passphrase=passphrase
         # if passphrase: self.passphrase=passphrase
