@@ -40,7 +40,7 @@ class Operator(Keymaker):
     ROUTES = OPERATOR_ROUTES
     
     def __init__(self, name=None, passphrase=DEBUG_DEFAULT_PASSPHRASE, pubkey=None, keychain = {}, path_crypt_keys=PATH_CRYPT_CA_KEYS, path_crypt_data=PATH_CRYPT_CA_DATA):
-        print('booting opertor with ...',name,pubkey,'??')
+        # print('booting opertor with ...',name,pubkey,'??')
 
         if pubkey:
             print(pubkey,'pubkey !?')
@@ -58,7 +58,7 @@ class Operator(Keymaker):
                          path_crypt_keys=path_crypt_keys, path_crypt_data=path_crypt_data)
         
         self.find_pubkey_and_name(name,pubkey)
-        print('booted with operator with:',self.name,self.pubkey,self.find_pubkey(name),'??')
+        # print('booted with operator with:',self.name,self.pubkey,self.find_pubkey(name),'??')
         
     # def boot(self):
     #     ## get both name and pubkey somehow
