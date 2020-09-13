@@ -133,7 +133,7 @@ class Komrade(Caller):
 
         self.crypt_keys.set(
             self.name,
-            pubkey_b),
+            pubkey_b,
             prefix='/pubkey/')
         self.crypt_keys.set(
             b64enc_s(pubkey_b),
@@ -144,8 +144,9 @@ class Komrade(Caller):
 
         # save qr too:
         qr_str=self.qr_str()
-        fnfn=self.save_uri_as_qrcode(b64enc(pubkey_b)
-        self.log(f'saved QR code to: {fnfn}')
+        fnfn=self.save_uri_as_qrcode(b64enc(pubkey_b))
+        self.log(f'saved public key as QR code to:\n {fnfn}\n\n{qr_str}')
+
         
         # done!
         self.log(f'Congratulations. Welcome, Komrade {self}.')}')
