@@ -79,7 +79,8 @@ class TheOperator(Operator):
         self.log('route_result <-',resp_msg_obj)
 
         # send back down encrypted
-        msg_sealed = self.seal_msg(resp_msg_obj.msg_d)
+        
+        msg_sealed = pickle.dumps(resp_msg_obj.msg_d)
 
         # return back to phone and back down to chain
         return msg_sealed
