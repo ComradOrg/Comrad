@@ -277,10 +277,9 @@ class Operator(Keymaker):
 
 
     def pronto_pronto(self, msg_obj):
-        self.log(f'''
-        pronto pronto!
-        >> {msg_obj}
-        ''')
+        self.log(f'''*ring *ring* ...
+{self}: pronto?
+voice: {msg_obj}''')
 
         return self.route_msg(msg_obj,reencrypt=True)
 
