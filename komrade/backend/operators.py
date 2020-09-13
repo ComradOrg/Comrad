@@ -13,7 +13,8 @@ def locate_an_operator_somehow(str_or_byte_or_obj):
     if type(str_or_byte_or_obj)==bytes: return locate_an_operator(pubkey=str_or_byte_or_obj)
     raise KomradeException(type(str_or_byte_or_obj),'???')
 
-def comlink(name_or_pubkey): return locate_an_operator_somehow(x)
+def comlink(name_or_pubkey):
+    return locate_an_operator_somehow(name_or_pubkey)
 
 PHONEBOOK = {}
 
