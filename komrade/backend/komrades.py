@@ -11,7 +11,7 @@ class Komrade(Caller):
         # if SHOW_STATUS:
         #     from komrade.cli import CLI
         #     self.cli = CLI(name=name, komrade=self)
-        # self.boot(create=False)
+        self.boot(create=False)
         # self.name=name
         # pass
 
