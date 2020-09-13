@@ -22,7 +22,7 @@ class CLI(Logger):
         self._komrade=None
 
     def run(self,inp='',name=''):
-        if name: self._name=name
+        # if name: self._name=name
         clear_screen()
         self.boot()
         self.help()
@@ -65,8 +65,10 @@ class CLI(Logger):
     def register(self,name=None):
         if not self._komrade:
             self._komrade = Komrade(name if name else self.name)
-        print(self._komrade.register())
-        self._name=self._komrade.name
+        res=self._komrade.register()
+        if 'success' in res and res['success']:
+            self._name=self._komrade.name
+        print('@Operator: '+res.get('status','?'))
 
     def login(self,name):
         name=self.name if not name else name
