@@ -78,6 +78,23 @@ As of the 23rd of August.
 
 See [here](https://www.dropbox.com/s/8r8gqgfswojmtwd/komrade-terminal-preview--2020-09-13.mkv?dl=0).
 
+## Design
+
+### Old design: decentralized
+
+After a good discussion at /r/privacy [here](https://www.reddit.com/r/privacy/comments/ii4zw9/introducing_komrade_a_decentralized/), problems in the fully decentralized model originally proposed were pointed out.
+
+<img src="docs/cryptosystems-Kademlia.png" />
+
+Here's a diagram I made of the old system. It's thoroughly decentralized -- there's no central server at all, just a few 'seed nodes' which let the user know where the other nodes are. But P2P systems generally require knowing the IPs of other users (so: not Anonymous). And that also allows any node to write data to network, and potentially overwhelm the true information with false information (so: no guaranteed Authenticity).
+
+### New design: demi-centralized
+
+<img src="docs/cryptosystems-Operator.png" />
+
+Here's the new system. The downside is it's now only half decentralized. The upside is it's fully anonymous, confidential, and its authenticity can be verified. Users route all requests to a central server called the Operator (so not decentralized). But these requests are end-to-encryped (so confidential), and they're routed through the the global Tor "Maze" via the user's local Tor proxy (so it's Anonymous, all IP addresses masked). Only the Operator knows the address of other users, keeping encrypted versions of their keys which are necessary to know where they are, how to write to them, and even how to manage their settings [blocked users, etc]. That ensures authenticity of users (it acts like a PGP keyserver). Also, only the Operator can access and decrypt the (non user key related) data which it uploads to "The Ether", which would be Freenet or some other global p2p data store; so in fact all data's authenticity can be proved, not just user data.
+
+
 ## Technical details
 
 Design details are changing rapidly, but these are what we have so far.
@@ -86,9 +103,17 @@ Design details are changing rapidly, but these are what we have so far.
 
 The cross-platform app is made with [KivyMD](https://github.com/kivymd/KivyMD), a variant of [Kivy](https://kivy.org/), a cross-platform mobile development framework in Python. Python is an easy and versatile progamming language to learn, which keeps the code accessible to as many people as possible.
 
+### Cryptography
+
+We are using [Themis](https://github.com/cossacklabs/themis), a high-level cross-platform cryptography library, for all cryptographic functions, rather than handling any primitives ourselves.
+
+### API and terminal app
+
+All simple object-oriented stuff in Python.
+
 ### Database
 
-The database is a [Kademlia](https://github.com/bmuller/kademlia) Distributed Hash Table, a p2p data store, written in Python.
+The database is a simple key-value store written in Python, "simplekv".
 
 ## Install
 
