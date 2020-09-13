@@ -259,7 +259,7 @@ class Keymaker(Logger):
         res = self.crypt_keys.get(name, prefix='/pubkey/')
         res = self.load_qr(self.name)
         if not res: return
-        return b64dec(res)
+        return KomradeAsymmetricPublicKey(b64dec(res))
         
         # self.log('I don\'t know my public key! Do I need to register?')
         # raise KomradeException(f'I don\'t know my public key!\n{self}\n{self._keychain}')
