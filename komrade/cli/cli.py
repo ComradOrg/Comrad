@@ -58,6 +58,8 @@ class CLI(Logger):
         scan_print(logo,max_pause=0.005)
 
     def help(self,*x,**y):
+        clear_screen()
+        self.boot()
         print(HELPSTR)
 
     def intro(self):
