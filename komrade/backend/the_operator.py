@@ -27,7 +27,6 @@ class TheOperator(Operator):
         """
         Boot up the operator. Requires knowing or setting a password of memory.
         """
-        self.passphrase=passphrase
         super().__init__(
             name,
             passphrase,

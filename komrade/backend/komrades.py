@@ -7,24 +7,23 @@ class Komrade(Caller):
 
     def __init__(self, name=None, passphrase=DEBUG_DEFAULT_PASSPHRASE):
         super().__init__(name=name,passphrase=passphrase)
-        self.passphrase=passphprase if passphrase else None
         if SHOW_STATUS:
             from komrade.cli import CLI
-            self.cli = CLI(name=name, persona=self)
-    #     self.boot(create=False)
+            self.cli = CLI(name=name, komrade=self)
+        self.boot(create=False)
 
-    # def boot(self,create=False):
-    #     # Do I already have my keys?
-    #     # yes? -- login
+    def boot(self,create=False):
+        # Do I already have my keys?
+        # yes? -- login
 
-    #     keys = self.keychain()
-    #     if keys.get('pubkey') and keys.get('privkey'):
-    #         self.log('booted!')
-    #         return True
+        keys = self.keychain()
+        if keys.get('pubkey') and keys.get('privkey'):
+            self.log('booted!')
+            return True
         
-    #     # If not, forge them -- only once!
-    #     if not have_keys and create:
-    #         self.get_new_keys()
+        # If not, forge them -- only once!
+        if not have_keys and create:
+            self.get_new_keys()
 
 
     def exists_locally_as_contact(self):
@@ -82,7 +81,6 @@ class Komrade(Caller):
             while not passphrase:
                 passphrase=getpass(f'@Keymaker: Enter a memorable password to encrypt your private key with: \n\n@{self.name}: ')
                 clear_screen()
-        self.passphrase=passphrase
         ## 4) Get hashed password
         passhash = hasher(passphrase)
         self.log(f'''@Keymaker: I have replaced your password with a disguised, hashed version\nusing a salted SHA-256 algorithm from python's hashlib:\n\n\t{make_key_discreet_str(passhash)}''')
@@ -191,7 +189,6 @@ class Komrade(Caller):
             return
 
         # check password
-        if not passphrase: passphrase=self.passphrase
         # while not passphrase:
             # from getpass import getpass
             # passphrase = getpass('@Keymaker: Enter password for {self} in order to decrypt the encrypted private key:\n\n')

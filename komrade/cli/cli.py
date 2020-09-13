@@ -19,13 +19,13 @@ class CLI(Logger):
     }
 
     def __init__(self,name='',cmd='',persona=None):
-        self._name=name
+        self.name=name
         self.cmd=cmd
-        self._komrade=None
-        self._loggedin=False
+        self.komrade=None
+        self.loggedin=False
 
     def run(self,inp='',name=''):
-        # if name: self._name=name
+        # if name: self.name=name
         # clear_screen()
         # self.boot()
         self.help()
@@ -70,52 +70,39 @@ class CLI(Logger):
     def register(self,name=None):
         if not name: name=input('name: ')
         if not name: return
-        self._komrade = Komrade(name)
-        res=self._komrade.register()
+        self.komrade = Komrade(name)
+        res=self.komrade.register()
         if res and type(res)==dict and 'success' in res and res['success']:
-            self._name=self._komrade.name
-            self._loggedin=True
+            self.name=self.komrade.name
+            self.loggedin=True
         else:
-            self._name=None
-            self._loggedin=False
-            self._komrade=None
+            self.name=None
+            self.loggedin=False
+            self.komrade=None
         if 'status' in res:
             print('@Operator: '+res.get('status','?'))
 
     def login(self,name):
+        print(self,name,self.name,self.komrade,self.loggedin)
         if not name: name=input('name: ')
         if not name: return
-        self._komrade=Komrade(name)
+        self.komrade=Komrade(name)
         
-        res = self._komrade.login()
+        res = self.komrade.login()
 
         if res and type(res)==dict and 'success' in res and res['success']:
-            self._name=self._komrade.name
-            self._loggedin=True
+            self.name=self.komrade.name
+            self.loggedin=True
         else:
-            self._name=None
-            self._loggedin=False
-            self._komrade=None
+            self.name=None
+            self.loggedin=False
+            self.komrade=None
         if 'status' in res:
             print('@Operator: '+res.get('status','?')+'\n')
 
     @property
-    def komrade(self):
-        if not hasattr(self,'_komrade'):
-            self._komrade = Komrade(self._name)
-        return self._komrade
-    @property
-    def name(self):
-        if not hasattr(self,'_name'):
-            if hasattr(self,'_komrade'):
-                self._name=self._komrade.name
-            else:
-                return None
-        return self._name
-
-    @property
     def logged_in(self):
-        return (self._loggedin and self._komrade and self._name)
+        return (self.loggedin and self.komrade and self.name)
 
     def meet(self,name):
         if not self.logged_in:
@@ -176,11 +163,11 @@ class CLI(Logger):
 
             None,{ART_OLDPHONE4},f'''@{name}: Hm, ok. Well, could you patch me through to the remote operator then?''',
             
-            f'''@{TELEPHONE_NAME}: I could, but it's not safe yet. Your information could be exposed. You need to cut your encryption keys first.''',
+            f'''@{TELEPHONEname}: I could, but it's not safe yet. Your information could be exposed. You need to cut your encryption keys first.''',
 
             f'@{name}: Fine, but how do I do that?',
             
-            f'@{TELEPHONE_NAME}: Visit the Keymaker.',
+            f'@{TELEPHONEname}: Visit the Keymaker.',
             
             clear=False,pause=True)
 
