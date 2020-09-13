@@ -18,8 +18,7 @@ class TheSwitchboard(FlaskView, Logger):
         if hasattr(self,'_op'): return self._op
         global OPERATOR,OPERATOR_KEYCHAIN
         if OPERATOR: return OPERATOR
-        from getpass import getpass
-        self._op=OPERATOR=TheOperator(passphrase=getpass('Op pass? '))        
+        self._op=OPERATOR=TheOperator()        
         return OPERATOR
 
     
@@ -47,6 +46,7 @@ class TheSwitchboard(FlaskView, Logger):
         return resp_data_b64_str
 
 def run_forever(port='8080'):
+    OPERATOR_KEYCHAIN,TELEPHONE_KEYCHAIN,WORLD_KEYCHAIN,OMEGA_KEY=connect_phonelines()
     TELEPHONE = TheTelephone()
     OPERATOR = TheOperator()
     app = Flask(__name__)
