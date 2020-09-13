@@ -47,7 +47,8 @@ class TheSwitchboard(FlaskView, Logger):
 
 def run_forever(port='8080'):
     TELEPHONE = TheTelephone()
-    OPERATOR = TheOperator()
+    from getpass import getpass
+    OPERATOR = TheOperator(passphrase=getpass('@op pass? '))
     print(OPERATOR,'!?',OPERATOR.keychain())
     app = Flask(__name__)
     TheSwitchboard.register(app, route_base='/op/', route_prefix=None)
