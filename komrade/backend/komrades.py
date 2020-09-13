@@ -126,20 +126,35 @@ class Komrade(Caller):
     
         # otherwise, save things on our end
         self.log(f'Registration successful. Message from operator was:\n\n{dict_format(resp_msg_d)}')
-        self.log('Now saving name and public key on local device:')
+
         self.name=resp_msg_d.get('name')
         pubkey_b = b64dec(resp_msg_d.get('pubkey'))
+        sec_login = b64dec(resp_msg_d.get('pubkey'))
+
         pubkey=self._keychain['pubkey']=KomradeAsymmetricPublicKey(pubkey_b)
+        uri_id = b64enc_s(pubkey_b)
 
         self.crypt_keys.set(
             self.name,
             pubkey_b,
             prefix='/pubkey/')
         self.crypt_keys.set(
-            b64enc_s(pubkey_b),
+            uri_id,
             self.name,
             prefix='/name/')
+        self.crypt_keys.set(
+            uri_id,
+            b64enc(sec_login),
+            prefix='/secret_login/'
+        )
         
+        self.log(f'''Now saving name and public key on local device:
+/name/{uri_id} = {self.name}
+
+/pubkey/{self.name} = {pubkey_b}
+
+/secret_login/{uri_id} = {b64enc(sec_login)}
+''')
         
 
         # save qr too:
