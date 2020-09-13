@@ -38,7 +38,7 @@ class TheOperator(Operator):
         keychain = check_phonelines()[OPERATOR_NAME]
         self._keychain = self.load_keychain_from_bytes(keychain)
         self._keychain = self.keychain()
-        self.log('@Operator booted with keychain:',dict_format(self._keychain))
+        self.log('@Operator booted with keychain:',dict_format(self._keychain),'and passphrase',self.passphrase)
 
     def ring(self,
         from_caller=None,
