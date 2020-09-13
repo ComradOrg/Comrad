@@ -157,7 +157,7 @@ def test_op():
     from komrade.backend.the_telephone import TheTelephone
 
     from getpass import getpass
-    op = TheOperator(passphrase=getpass('op pass? '))
+    op = TheOperator()
     # op.boot()
     
     keychain_op = op.keychain()

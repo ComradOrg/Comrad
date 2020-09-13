@@ -21,7 +21,7 @@ class TheSwitchboard(FlaskView, Logger):
         if hasattr(self,'_op'): return self._op
         global OPERATOR,OPERATOR_KEYCHAIN
         if OPERATOR: return OPERATOR
-        self._op=OPERATOR=TheOperator(passphrase=OP_PASS)
+        self._op=OPERATOR=TheOperator()
         return OPERATOR
 
     
@@ -49,10 +49,10 @@ class TheSwitchboard(FlaskView, Logger):
         return resp_data_b64_str
 
 def run_forever(port='8080'):
-    global OP_PASS
-    OP_PASS = getpass('@op pass? ')
+    # global OP_PASS
+    # OP_PASS = getpass('@op pass? ')
     TELEPHONE = TheTelephone()
-    OPERATOR = TheOperator(passphrase=OP_PASS)
+    OPERATOR = TheOperator()
     print(OPERATOR,'!?',OPERATOR.keychain())
     app = Flask(__name__)
     TheSwitchboard.register(app, route_base='/op/', route_prefix=None)
