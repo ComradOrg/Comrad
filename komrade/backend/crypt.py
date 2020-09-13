@@ -157,6 +157,7 @@ class Crypt(Logger):
         except KeyError:
             return None
         v_b=self.unpackage_val(v)
+        self.log(f'Crypt.get(\n\t{k}\n\n\t{v_b}')
         return v_b
 
 
