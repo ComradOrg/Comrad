@@ -51,11 +51,10 @@ class CLI(Logger):
             f=getattr(self,cmd)
             return f(dat)
 
-    def boot(self,indent=5):
+    def boot(self,indent=25):
         logo=art.text2art(CLI_TITLE,font=CLI_FONT)
         # logo=make_key_discreet_str(logo,chance_redacted=0.1) #.decode()
-        # logo=tw.indent(logo, ' '*indent)
-        logo = logo.center(100)
+        logo=tw.indent(logo, ' '*indent)
         scan_print(logo,max_pause=0.005)
 
     def help(self,*x,**y):
