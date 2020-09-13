@@ -259,7 +259,9 @@ class Operator(Keymaker):
         # pass through the telephone wire by the get_resp_from function
         if not get_resp_from: get_resp_from=to_whom.ring_ring
         resp_msg_obj = get_resp_from(msg_obj.msg_d,caller=caller)
-        self.log('resp_msg_obj <-',resp_msg_obj)
+            #self.log('resp_msg_obj <-',resp_msg_obj)
+        if not resp_msg_obj:
+            return None
 
         # decrypt
         if resp_msg_obj.is_encrypted:

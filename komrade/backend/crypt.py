@@ -98,19 +98,19 @@ class Crypt(Logger):
 
     def package_val(self,k):
         k_b = self.force_binary(k)
-        if self.cell is not None:
-            k_b = self.cell.encrypt(k_b)
+        # if self.cell is not None:
+            # k_b = self.cell.encrypt(k_b)
         if not isBase64(k_b): k_b = b64encode(k_b)
         return k_b
 
     def unpackage_val(self,k_b):
         from komrade import ThemisError
-        try:
-            if self.cell is not None:
-                k_b = self.cell.decrypt(k_b)
-        except ThemisError as e:
-            self.log('error decrypting!',e,k_b)
-            return
+        # try:
+            # if self.cell is not None:
+                # k_b = self.cell.decrypt(k_b)
+        # except ThemisError as e:
+            # self.log('error decrypting!',e,k_b)
+            # return
         if isBase64(k_b): k_b = b64decode(k_b)
         return k_b
 
