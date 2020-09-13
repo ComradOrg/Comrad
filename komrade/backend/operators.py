@@ -19,7 +19,7 @@ PHONEBOOK = {}
 def locate_an_operator(name=None,pubkey=None):
     global OPERATOR,TELEPHONE,PHONEBOOK
     if name in PHONEBOOK: return PHONEBOOK[name]
-    if pubkey in PHONEBOOK: return PHONEBOOK[pubkey]
+    # if pubkey in PHONEBOOK: return PHONEBOOK[pubkey]
 
     from komrade.backend.the_operator import TheOperator
     from komrade.backend.the_telephone import TheTelephone
@@ -43,9 +43,9 @@ def locate_an_operator(name=None,pubkey=None):
         return TELEPHONE
     
 
-    self.log('name????')
+    print('name????',name)
     from komrade.backend.komrades import Komrade
-    PHONEBOOK[name] = PHONEBOOK[pubkey] = caller = Komrade(name=name)
+    PHONEBOOK[name] = caller = Komrade(name=name)
     return caller
 
 from komrade.constants import OPERATOR_ROUTES
