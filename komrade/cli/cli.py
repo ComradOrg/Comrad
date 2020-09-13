@@ -55,7 +55,7 @@ class CLI(Logger):
         logo=art.text2art(CLI_TITLE,font=CLI_FONT)
         # logo=make_key_discreet_str(logo,chance_redacted=0.1) #.decode()
         # logo=tw.indent(logo, ' '*indent)
-        logo = logo.center(CLI_WIDTH)
+        logo = logo.center(500)
         scan_print(logo,max_pause=0.005)
 
     def help(self,*x,**y):
