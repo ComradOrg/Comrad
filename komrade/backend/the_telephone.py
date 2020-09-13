@@ -51,7 +51,7 @@ class TheTelephone(Operator):
         resp_msg_b = b64decode(resp_msg_b64)
         self.log('resp_msg_b:',resp_msg_b)
         resp_msg_d = pickle.loads(resp_msg_b)
-        self.log('unpickled:',resp_msg)
+        self.log('unpickled:',resp_msg_d)
 
         # unseal
         resp_msg_obj = Message(resp_msg) #self.unseal_msg(resp_msg_b)
