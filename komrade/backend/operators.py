@@ -123,7 +123,7 @@ class Operator(Keymaker):
             'msg':msg
         }
         if incl_from_name: msg_d['from_name']=self.name
-        if incl_to_name: msg_d['to_name']=self.name
+        if incl_to_name: msg_d['to_name']=another.name
         # self.log(f'I am {self} packaging a message to {another}: {msg_d}')
         from komrade.backend.messages import Message
         
