@@ -60,9 +60,8 @@ class Message(Logger):
             else:
                 msg=dict_format(self.msg,tab=4)
         elif type(self.msg)==bytes:
-            msg=b64encode(self.msg).decode() if not isBase64(self.msg) else self.msg.decode()
+            msg=b64enc_s(self.msg)
         else:
-            
             msg=self.msg
         return f"""    
     from: @{self.from_name if self.from_name else ''} 
@@ -71,7 +70,7 @@ class Message(Logger):
     to:   @{self.to_name if self.to_name else ''}
           ({b64enc_s(self.to_pubkey)})
 
-    msg:  {b64enc(msg)}
+    msg:  {msg}
 """
 
 
