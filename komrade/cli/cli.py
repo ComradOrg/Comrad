@@ -73,14 +73,9 @@ class CLI(Logger):
         if not name: name=input('name: ')
         if not name: return
 
-        from getpass import getpass
-        passphrase=None
-        if not passphrase: passphrase=getpass('password: ')
-        if not passphrase: return
-
         if not self._komrade:
             self._komrade = Komrade(name if name else self.name)
-        print(self._komrade.login(passphrase=passphrase))
+        print(self._komrade.login())
         self._name=self._komrade.name
 
     @property
