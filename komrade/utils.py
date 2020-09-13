@@ -188,6 +188,17 @@ def d2b64(d):
             d2[k]=v
     return d2
 
+def b64enc(x):
+    if type(x)==str: x=x.encode()
+    if not isBase64(x): x=b64encode(x)
+    return x
+
+
+def b64dec(x):
+    if isBase64(x): x=b64decode(x)
+    return x
+
+
 def hashish(binary_data):
     import hashlib
     return hashlib.sha256(binary_data).hexdigest()
