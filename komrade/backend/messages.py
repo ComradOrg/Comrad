@@ -200,7 +200,7 @@ class Message(Logger):
         # make sure msg is not meeta
         if self.has_embedded_msg:
             self.msg = self.msg.msg_d
-            self.log('woops, first had to replace Message object with dict',self)
+            # self.log('woops, first had to replace Message object with dict',self)
 
         # binarize msg
         msg_b = pickle.dumps(self.msg)

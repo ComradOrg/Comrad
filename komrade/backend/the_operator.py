@@ -105,12 +105,12 @@ class TheOperator(Operator):
         success,ck,cv_b64 = self.crypt_keys.set(name,pubkey,prefix='/pubkey/')
         if not isBase64(pubkey): pubkey=b64encode(pubkey)
         
-        self.log(f'''
-got result from crypt:
-success = {success}
-ck = {ck}
-cv = {cv_b64}
-''')
+#         self.log(f'''
+# got result from crypt:
+# success = {success}
+# ck = {ck}
+# cv = {cv_b64}
+# ''')
         success,ck,cv_b64 = self.crypt_keys.set(pubkey,name,prefix='/name/')
         # self.log(f'''
         # got result from crypt:
