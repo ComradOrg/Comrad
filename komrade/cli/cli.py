@@ -90,7 +90,7 @@ class CLI(Logger):
             self._loggedin=False
             self._komrade=None
         if 'status' in res:
-            print('@Operator: '+res.get('status','?'))
+            print('@Operator: '+res.get('status','?')+'\n')
 
     @property
     def komrade(self):
