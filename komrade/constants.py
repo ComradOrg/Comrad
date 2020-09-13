@@ -106,7 +106,7 @@ ENCRYPTED_KEY = 'encrypted_key'
 
 KEYMAKER_DEFAULT_ALL_KEY_NAMES = KEYNAMES
 
-WHY_MSG = 'What is the password of memory for this account? '
+WHY_MSG = 'password: '#What is the password of memory for this account? '
 
 
 
