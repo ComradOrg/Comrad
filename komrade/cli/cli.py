@@ -12,17 +12,17 @@ HELPSTR = """
 class CLI(Logger):
     ROUTES = {
         'help':'seek help',
-        'register [name]':'join the komrades',
-        'login [name]':'log back in'
+        'register':'join the komrades',
+        'login':'log back in'
     }
 
     def __init__(self,name='',cmd='',persona=None):
-        self.name=name
+        self._name=name
         self.cmd=cmd
-        self.persona=persona
+        self._komrade=None
 
     def run(self,inp='',name=''):
-        self.name=name
+        if name: self._name=name
         clear_screen()
         self.boot()
         self.help()
@@ -32,7 +32,7 @@ class CLI(Logger):
         while True:
             try:
                 inp=input(f'@{self.name if self.name else "?"}: ')
-                print(inpp,'??')
+                # print(inp,'??')
             except KeyboardInterrupt:
                 exit()
             self.route(inp)
@@ -40,11 +40,12 @@ class CLI(Logger):
 
     def route(self,inp):
         inp=inp.strip()
-        # print('route got:',inp)
+        # print('route got:',[inp])
         if not inp.startswith('/'): return
         cmd=inp.split()[0]
         dat=inp[len(cmd):].strip()
         cmd=cmd[1:]
+        # print([cmd,dat])
         if cmd in self.ROUTES and hasattr(self,cmd):
             f=getattr(self,cmd)
             return f(dat)
@@ -62,10 +63,33 @@ class CLI(Logger):
         self.status(None,)
     
     def register(self,name=None):
-        if not name: name=self.name
-        self.komrade = Komrade(name)
-        self.komrade.register()
-        self.name=self.komrade.name
+        if not self._komrade:
+            self._komrade = Komrade(name if name else self.name)
+        print(self._komrade.register())
+        self._name=self._komrade.name
+
+    def login(self,name):
+        if not self._komrade:
+            self._komrade = Komrade(name if name else self.name)
+        print(self._komrade.login())
+        self._name=self._komrade.name
+
+    @property
+    def komrade(self):
+        if not hasattr(self,'_komrade'):
+            self._komrade = Komrade(self._name)
+        return self._komrade
+    @property
+    def name(self):
+        if not hasattr(self,'_name'):
+            if hasattr(self,'_komrade'):
+                self._name=self._komrade.name
+            else:
+                return None
+        return self._name
+
+    
+
 
 
 

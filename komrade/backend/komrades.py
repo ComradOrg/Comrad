@@ -47,11 +47,12 @@ class Komrade(Caller):
         # if keys.get('pubkey') and keys.get('privkey')
 
     def register(self, name = None, passphrase = None, is_group=None, show_intro=0,show_body=True):
+        # print('got name:',name)
         ## Defaults
         if name and not self.name: self.name=name
         if not name and self.name: name=self.name
         # if not name and not self.name: name=''
-
+        # print('got name',name)
         
         ## 1) Have name?
         tolog=''

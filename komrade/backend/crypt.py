@@ -11,7 +11,7 @@ import zlib
 
 
 
-LOG_GET_SET = 1
+LOG_GET_SET = 0
 
 
 

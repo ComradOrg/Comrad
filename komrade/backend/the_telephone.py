@@ -61,7 +61,7 @@ class TheTelephone(Operator):
         from komrade.backend.messages import Message
         resp_msg_obj = Message(resp_msg_d,from_whom=self.op,to_whom=self) #self.unseal_msg(resp_msg_b)
         # res =  resp_msg_b_unsealed
-        self.log('Decoding binary, message discovered:',resp_msg_obj)
+        self.log('Decoding binary, message discovered:\n',resp_msg_obj)
 
         # decrypt
         # resp_msg_obj.decrypt()

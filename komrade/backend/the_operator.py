@@ -127,8 +127,8 @@ class TheOperator(Operator):
             b64enc(pubkey),
             prefix='/name/'
         )
-        self.log('pks:',pubkey,pk)
-        self.log('nms:',name,nm)
+        # self.log('pks:',pubkey,pk)
+        # self.log('nms:',name,nm)
         return pk or nm
 
     def login(self,name,pubkey,secret_login,**data):
