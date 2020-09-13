@@ -176,7 +176,7 @@ class Message(Logger):
 
         # unpickle        
         self.msg = self.msg_d['msg'] = decr_msg = pickle.loads(decr_msg_b)
-        self.log('Message decrypted:\n\n',self)
+        self.log('Message decrypted:\n',self)
 
         # now, is the decrypted message itself a message?
         if is_valid_msg_d(decr_msg):
