@@ -60,7 +60,7 @@ class Komrade(Caller):
             name = input('@Keymaker: What is the name for this new account?\n@?: ')
 
         self.log(f'Hello, this is Komrade @{name}.\n\nI would like to sign up for the socialist network revolution.')
-        self.log(f'{ART_KEY} @Keymaker: To communicate with komrades securely,\nyou must first cut your encryption keys.')
+        self.log(f'@Keymaker: To communicate with komrades securely,\n\nyou must first cut your encryption keys.{ART_KEY} ')
 
         ## 2) Make pub public/private keys
         keypair = KomradeAsymmetricKey()
