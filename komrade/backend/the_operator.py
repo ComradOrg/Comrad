@@ -133,8 +133,9 @@ class TheOperator(Operator):
 
     def login(self,name,pubkey,secret_login,**data):
         # get my records
+        uri = b64enc(pubkey)
         name_record = self.crypt_keys.get(
-            b64enc(pubkey),
+            uri,
             prefix='/name/'
         )
         pubkey_record = self.crypt_keys.get(
@@ -142,7 +143,7 @@ class TheOperator(Operator):
             prefix='/pubkey/'
         )
         secret_record = self.crypt_keys.get(
-            b64enc(pubkey),
+            uri,
             prefix='/secret_login/'
         )
 
@@ -153,48 +154,49 @@ class TheOperator(Operator):
  vs.
 {my_name} (record)
 
-{pubkey} (input)
+{uri} (input)
  vs.
 {pubkey_record} (record)
 
-{secret_record} (input)
+{secret_login} (input)
  vs.
 {pubkey_record} (record)
 ''')
         
-        # check name?
-        if name != : 
-            success = False
+        stop
+        # # check name?
+        # if name != my_name: 
+        #     success = False
         
-        # check pubkey?
-        elif b64dec(pubkey) != b64dec(self.crypt_keys.get(
-            name,
-            prefix='/pubkey/'
-        )):
-            success = False
+        # # check pubkey?
+        # elif b64dec(pubkey) != b64dec(self.crypt_keys.get(
+        #     name,
+        #     prefix='/pubkey/'
+        # )):
+        #     success = False
 
-        # check secret login
-        elif b64enc(secret_login) != b64enc(self.crypt_keys.get(
-            b64enc(pubkey),
-            prefix='/secret_login/'
-        )):
-            success = False
+        # # check secret login
+        # elif b64enc(secret_login) != b64enc(self.crypt_keys.get(
+        #     b64enc(pubkey),
+        #     prefix='/secret_login/'
+        # )):
+        #     success = False
         
-        # otherwise we succeed
-        else:
-            success = True
+        # # otherwise we succeed
+        # else:
+        #     success = True
 
-        ## return res
-        if success:
-            return {
-                'success': True,
-                'status':'Login succeeded.'
-            }
-        else:
-            return {
-                'success': False,
-                'status':'Login failed.'
-            }
+        # ## return res
+        # if success:
+        #     return {
+        #         'success': True,
+        #         'status':'Login succeeded.'
+        #     }
+        # else:
+        #     return {
+        #         'success': False,
+        #         'status':'Login failed.'
+        #     }
 
     def register_new_user(self,name,pubkey,**data):
         # self.log('setting pubkey under name')
