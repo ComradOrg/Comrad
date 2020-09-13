@@ -73,13 +73,11 @@ We present a simplified set of social media features drawn from everything that'
 
 As of the 23rd of August.
 
-<img src="app/assets/komrade-screen-preview-2020-08-23.gif" height="600" alt="GIF animation" />
+<img src="komrade/app/assets/komrade-screen-preview-2020-08-23.gif" height="600" alt="GIF animation" />
 
 ### Backend preview
 
-<video>
-  <source="https://www.dropbox.com/s/8r8gqgfswojmtwd/komrade-terminal-preview--2020-09-13.mkv?dl=1" type="video/mp4">
-</video>
+See [here](https://www.dropbox.com/s/8r8gqgfswojmtwd/komrade-terminal-preview--2020-09-13.mkv?dl=0).
 
 ## Technical details
 
