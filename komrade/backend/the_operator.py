@@ -236,7 +236,7 @@ class TheOperator(Operator):
         # compose result
         res = {
             'success':success,
-            'pubkey':pubkey,
+            'pubkey':pubkey_b,
             'secret_login':shared_secret,
             'name':name,
         }
