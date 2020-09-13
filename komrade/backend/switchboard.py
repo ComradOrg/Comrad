@@ -6,6 +6,7 @@ from komrade.backend import *
 # external imports
 from flask import Flask, request, jsonify
 from flask_classful import FlaskView
+OP_PASS = None
 
 class TheSwitchboard(FlaskView, Logger):
     default_methods = ['GET']
@@ -13,12 +14,13 @@ class TheSwitchboard(FlaskView, Logger):
 
     @property
     def op(self):
+        global OP_PASS
         from komrade.backend.the_operator import TheOperator
         if type(self)==TheOperator: return self
         if hasattr(self,'_op'): return self._op
         global OPERATOR,OPERATOR_KEYCHAIN
         if OPERATOR: return OPERATOR
-        self._op=OPERATOR=TheOperator()        
+        self._op=OPERATOR=TheOperator(passphrase=OP_PASS)
         return OPERATOR
 
     
@@ -46,9 +48,11 @@ class TheSwitchboard(FlaskView, Logger):
         return resp_data_b64_str
 
 def run_forever(port='8080'):
+    global OP_PASS
+    OP_PASS = getpass('@op pass? ')
     TELEPHONE = TheTelephone()
     from getpass import getpass
-    OPERATOR = TheOperator(passphrase=getpass('@op pass? '))
+    OPERATOR = TheOperator(passphrase=OP_PASS)
     print(OPERATOR,'!?',OPERATOR.keychain())
     app = Flask(__name__)
     TheSwitchboard.register(app, route_base='/op/', route_prefix=None)
