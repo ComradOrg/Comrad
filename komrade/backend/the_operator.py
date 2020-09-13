@@ -35,8 +35,8 @@ class TheOperator(Operator):
         )
         from komrade.backend.phonelines import check_phonelines
         keychain = check_phonelines()[OPERATOR_NAME]
-        self._keychain = self.load_keychain_from_bytes(keychain)
-        self._keychain = self.keychain()
+        self._keychain = {**self.load_keychain_from_bytes(keychain)}
+        self._keychain = {**self.keychain()}
         # self.log('@Operator booted with keychain:',dict_format(self._keychain),'and passphrase',self.passphrase)
         clear_screen()
         

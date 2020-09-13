@@ -14,7 +14,7 @@ class TheTelephone(Operator):
         self.caller=caller
         from komrade.backend.phonelines import check_phonelines
         keychain = check_phonelines()[TELEPHONE_NAME]
-        self._keychain = self.load_keychain_from_bytes(keychain)
+        self._keychain ={**self.load_keychain_from_bytes(keychain)}
 
 
     def send_and_receive(self,msg_d,**y):

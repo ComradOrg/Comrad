@@ -246,7 +246,7 @@ class Keymaker(Logger):
         self.name=name
         self._uri_id=uri_id
         self._pubkey=None
-        self._keychain=keychain
+        self._keychain={**keychain}
         self.path_crypt_keys=path_crypt_keys
         self.path_crypt_data=path_crypt_data
 
@@ -344,7 +344,7 @@ class Keymaker(Logger):
         keys = self.assemble(self.assemble(keys,passphrase=passphrase),passphrase=passphrase)
         
         #store to existing set
-        self._keychain = keys
+        self._keychain = {**keys}
         
         #return
         return keys
@@ -602,7 +602,7 @@ Keymaker ({self}) is forging new keys for {name}
             self.save_uri_as_qrcode(name=name, uri_id=uri_id)
 
         # set to my keychain right away
-        self._keychain = keychain
+        self._keychain = {**keychain}
 
         return (uri_id,keys_saved_d,keychain)
 
