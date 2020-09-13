@@ -261,7 +261,8 @@ class Operator(Keymaker):
         resp_msg_obj = get_resp_from(msg_obj.msg_d,caller=caller)
             #self.log('resp_msg_obj <-',resp_msg_obj)
         if not resp_msg_obj:
-            return None
+            print('!! no response from op !!')
+            exit()
 
         # decrypt
         if resp_msg_obj.is_encrypted:
