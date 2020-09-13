@@ -129,7 +129,7 @@ class Crypt(Logger):
         if not override:
             self.log(f'''Crypt.set(\n\t{k_b}\n\n\t{v_b}\n)''')
         # store
-        #self.store.put(k_b_hash,v_b)
+        self.store.put(k_b_hash,v_b)
         #return (True,k_b_hash,v_b)
         return True
 
