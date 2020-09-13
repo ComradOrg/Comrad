@@ -68,7 +68,7 @@ class CLI(Logger):
     def register(self,name=None):
         self._komrade = Komrade(name if name else self.name)
         res=self._komrade.register()
-        if 'success' in res and res['success']:
+        if res and type(res)==dict and 'success' in res and res['success']:
             self._name=self._komrade.name
             self._loggedin=True
         else:
@@ -84,7 +84,7 @@ class CLI(Logger):
         if not name: return
         self._komrade=Komrade(name if name else self.name)
         res = self._komrade.login()
-        if 'success' in res and res['success']:
+        if res and type(res)==dict and 'success' in res and res['success']:
             self._name=self._komrade.name
             self._loggedin=True
         else:
