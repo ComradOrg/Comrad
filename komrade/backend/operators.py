@@ -134,35 +134,7 @@ class Operator(Keymaker):
 
         return msg_obj
 
-    # def compose_reply(self,msg,another):
 
-
-    # def seal_msg(self,msg_d):
-    #     msg_b = pickle.dumps(msg_d)
-    #     self.log('Message has being sealed in a final binary package:',b64encode(msg_b))
-    #     return msg_b
-
-    def unseal_msg(self,msg_b,from_whom=None,to_whom=None):
-        # default to assumption that I am the recipient
-        if not to_whom: to_whom=self
-        # decrypt by omega
-        # msg_b = self.omega_key.decrypt(msg_b_encr)
-        # msg_b = msg_b_encr
-        # unpackage from transmission
-        # msg_d = pickle.loads(msg_b)
-        # get message obj
-        # print('unsealed msg:',msg_d)
-        self.log('received msg to unseal:',msg_b,'from whom',from_whom,'to whom',to_whom,self)
-        msg_d = {
-            'from':from_whom.pubkey.data,
-            'to':to_whom.pubkey.data,
-            'msg':msg_b
-        }
-        
-        from komrade.backend.messages import Message
-        msg_obj = Message(msg_d,from_whom=from_whom,to_whom=to_whom)
-        # decrypt msg
-        return msg_obj
 
 
     def __repr__(self):
