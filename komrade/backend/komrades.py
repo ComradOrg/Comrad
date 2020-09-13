@@ -64,7 +64,7 @@ class Komrade(Caller):
         ## 2) Make pub public/private keys
         keypair = KomradeAsymmetricKey()
         pubkey,privkey = keypair.pubkey_obj,keypair.privkey_obj
-        self.log(f'@Keymaker: I have cut a private and public asymmetric key pair\nusing the Elliptic Curve algorithm from PyThemis:\n\n(1) {pubkey}\n\n(2) {privkey}')
+        self.log(f'@Keymaker: I have cut a private and public asymmetric key pair\nusing the Elliptic Curve algorithm from Themis:\n\n(1) {pubkey}\n\n(2) {privkey}')
 
         ## 3) Have passphrase?
         if SHOW_STATUS and not passphrase:
@@ -77,7 +77,7 @@ class Komrade(Caller):
         self.passphrase=passphrase
         ## 4) Get hashed password
         passhash = hasher(passphrase)
-        self.log(f'''@Keymaker: I have replaced your password with a disguised, hashed versiom\nusing a salted SHA-256 algorithm from python's hashlib:\n\n\t{make_key_discreet_str(passhash)}''')
+        self.log(f'''@Keymaker: I have replaced your password with a disguised, hashed version\nusing a salted SHA-256 algorithm from python's hashlib:\n\n\t{make_key_discreet_str(passhash)}''')
         ## 5) Encrypt private key
         privkey_decr = KomradeSymmetricKeyWithPassphrase(passphrase)
         privkey_encr = privkey_decr.encrypt(privkey.data)
