@@ -127,7 +127,7 @@ class Crypt(Logger):
     def set(self,k,v,prefix='',override=False):
         if self.has(k,prefix=prefix) and not override:
             self.log("I'm afraid I can't let you do that, overwrite someone's data!")
-            return (False,None,None)
+            return False #(False,None,None)
         
         k_b=self.package_key(k,prefix=prefix)
         k_b_hash = self.hash(k_b)
@@ -135,8 +135,9 @@ class Crypt(Logger):
         if not override:
             self.log(f'''Crypt.set(\n\t{k_b}\n\n\t{v_b}\n)''')
         # store
-        self.store.put(k_b_hash,v_b)
-        return (True,k_b_hash,v_b)
+        #self.store.put(k_b_hash,v_b)
+        #return (True,k_b_hash,v_b)
+        return True
 
     def exists(self,k,prefix=''):
         return self.has(k,prefix=prefix)

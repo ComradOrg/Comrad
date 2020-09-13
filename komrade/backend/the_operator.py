@@ -140,11 +140,18 @@ class TheOperator(Operator):
         # ok then set what we need
         uri_id = b64enc_s(pubkey)
         pubkey_b = b64dec(pubkey)
-        self.crypt_keys.set(name,pubkey_b,prefix='/pubkey/')
-        self.crypt_keys.set(uri_id,name,prefix='/name/')
-
+        r1=self.crypt_keys.set(name,pubkey_b,prefix='/pubkey/')
+        r2=self.crypt_keys.set(uri_id,name,prefix='/name/')
         # hide secret as key
-        self.crypt_keys.set(shared_secret_str,uri_id,prefix='/secret_login/')
+        r3=self.crypt_keys.set(shared_secret_str,uri_id,prefix='/secret_login/')
+
+        # success?
+        success = r1 and r2 and r3
+        if not success:
+            return {
+                'success':False,
+                'status': f"{OPERATOR_INTRO}I'm sorry, but I can't register the name of {name}."
+            }
 
         # compose result
         res = {
