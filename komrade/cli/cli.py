@@ -20,6 +20,7 @@ class CLI(Logger):
         self._name=name
         self.cmd=cmd
         self._komrade=None
+        self._loggedin=False
 
     def run(self,inp='',name=''):
         # if name: self._name=name
@@ -63,11 +64,15 @@ class CLI(Logger):
         self.status(None,)
     
     def register(self,name=None):
-        if not self._komrade:
-            self._komrade = Komrade(name if name else self.name)
+        self._komrade = Komrade(name if name else self.name)
         res=self._komrade.register()
         if 'success' in res and res['success']:
             self._name=self._komrade.name
+            self._loggedin=True
+        else:
+            self._name=None
+            self._loggedin=False
+            self._komrade=None
         if 'status' in res:
             print('@Operator: '+res.get('status','?'))
 
@@ -75,11 +80,17 @@ class CLI(Logger):
         name=self.name if not name else name
         if not name: name=input('name: ')
         if not name: return
-
-        if not self._komrade:
-            self._komrade = Komrade(name if name else self.name)
-        print(self._komrade.login())
-        self._name=self._komrade.name
+        self._komrade=Komrade(name if name else self.name)
+        res = self._komrade.login()
+        if 'success' in res and res['success']:
+            self._name=self._komrade.name
+            self._loggedin=True
+        else:
+            self._name=None
+            self._loggedin=False
+            self._komrade=None
+        if 'status' in res:
+            print('@Operator: '+res.get('status','?'))
 
     @property
     def komrade(self):
