@@ -152,7 +152,7 @@ class Operator(Keymaker):
         # get message obj
         # print('unsealed msg:',msg_d)
         msg_d = {
-            'from':from_whom.pubkey,
+            'from':from_whom,
             'to':to_whom,
             'msg':msg_b
         }
