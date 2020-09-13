@@ -117,6 +117,7 @@ class CLI(Logger):
     def meet(self,name):
         if not self.logged_in:
             print('@Operator: You must be logged in first.\n')
+            return
         if not name:
             name=input(f'@Operator: To whom would you like to introduce yourself?\n\n@{self.name}: ')
         if not name: return
