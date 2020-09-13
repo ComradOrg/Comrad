@@ -66,12 +66,12 @@ class Message(Logger):
             msg=self.msg
         return f"""    
     from: @{self.from_name if self.from_name else ''} 
-          ({self.from_pubkey})
+          ({b64enc_s(self.from_pubkey)})
     
     to:   @{self.to_name if self.to_name else ''}
-          ({self.to_pubkey})
+          ({b64enc_s(self.to_pubkey)})
 
-    msg:  {msg}
+    msg:  {b64enc(msg)}
 """
 
 
