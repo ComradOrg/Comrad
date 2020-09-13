@@ -330,7 +330,7 @@ class Keymaker(Logger):
             #uri = b64encode(pubkey) if type(pubkey)==bytes else b64encode(pubkey.encode())
             # get from cache
             for keyname in look_for:
-                print(self,'looking for key:',keyname)
+                print(self.name,'looking for key:',keyname)
                 if keyname in keys and keys[keyname]: continue
                 key = self.crypt_keys.get(uri,prefix=f'/{keyname}/')
                 print('found in crypt:',key,'for',keyname)
