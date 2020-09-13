@@ -69,6 +69,10 @@ class CLI(Logger):
         self._name=self._komrade.name
 
     def login(self,name):
+        name=self.name if not name else name
+        names = '?' if not name else name
+        from getpass import getpass
+        passphrase=getpass('\nPassword: ')
         if not self._komrade:
             self._komrade = Komrade(name if name else self.name)
         print(self._komrade.login())
