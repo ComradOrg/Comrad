@@ -168,8 +168,8 @@ class Komrade(Caller):
     @property
     def secret_login(self):
         return self.crypt_keys.get(
-            self.pubkey.data_b64_s,
-            prefix='/secret/'
+            self.pubkey.data_b64,
+            prefix='/secret_login/'
         )
 
     def login(self,passphrase=None):
