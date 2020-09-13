@@ -615,7 +615,7 @@ Keymaker ({self}) is forging new keys for {name}
             else:
                 continue
             decr_key = keychain.get(decr_key_name)
-            self.log('?',decr_key,decr_key_name,encr_key_name,keychain[encr_key_name])
+            # self.log('?',decr_key,decr_key_name,encr_key_name,keychain[encr_key_name])
 
             try:
                 if decrypt:
