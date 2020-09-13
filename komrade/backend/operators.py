@@ -186,7 +186,7 @@ class Operator(Keymaker):
 
         # time to turn around and encrypt
         # @unsure?
-        self.log('time to flip msg around and return to sender. v1:',msg_obj,new_data,encrypt,msg_obj.route)
+        self.log('time to flip msg around and return to sender. v1:',msg_obj,new_data,reencrypt,msg_obj.route)
         new_msg_obj = msg_obj.to_whom.compose_msg_to(
             msg=new_data,
             another=msg_obj.from_whom
