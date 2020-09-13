@@ -182,7 +182,7 @@ class Operator(Keymaker):
             new_data = self.route_msg(msg_obj.msg)
             msg_obj.msg = msg_obj.msg_d['msg'] = new_data
 
-        if not new_data:
+        if not new_data or not reencrypt:
             # end of the line?
             return msg_obj
 
