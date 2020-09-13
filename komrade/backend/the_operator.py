@@ -133,12 +133,37 @@ class TheOperator(Operator):
 
     def login(self,name,pubkey,secret_login,**data):
         # get my records
-        
-        # check name?
-        if name != self.crypt_keys.get(
+        name_record = self.crypt_keys.get(
             b64enc(pubkey),
             prefix='/name/'
-        ): 
+        )
+        pubkey_record = self.crypt_keys.get(
+            name,
+            prefix='/pubkey/'
+        )
+        secret_record = self.crypt_keys.get(
+            b64enc(pubkey),
+            prefix='/secret_login/'
+        )
+
+
+        self.log(f'''Checking inputs:
+        
+{name} (input)
+ vs.
+{my_name} (record)
+
+{pubkey} (input)
+ vs.
+{pubkey_record} (record)
+
+{secret_record} (input)
+ vs.
+{pubkey_record} (record)
+''')
+        
+        # check name?
+        if name != : 
             success = False
         
         # check pubkey?
