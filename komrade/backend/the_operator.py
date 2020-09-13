@@ -170,7 +170,7 @@ class TheOperator(Operator):
             self.log('names did not match!')
             success = False 
         # # check pubkey?
-        elif uri != b64enc(pubkey_record):
+        elif uri != pubkey_record:
             pass
         #     name,
         #     prefix='/pubkey/'

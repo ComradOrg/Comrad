@@ -183,9 +183,9 @@ class Komrade(Caller):
 
         # check password
         if not passphrase: passphrase=self.passphrase
-        while not passphrase:
-            from getpass import getpass
-            passphrase = getpass('@Keymaker: Enter password for {self} in order to decrypt the encrypted private key:\n\n')
+        # while not passphrase:
+            # from getpass import getpass
+            # passphrase = getpass('@Keymaker: Enter password for {self} in order to decrypt the encrypted private key:\n\n')
         
         # assemble privkey?
         privkey = self.keychain(passphrase=passphrase).get('privkey')
