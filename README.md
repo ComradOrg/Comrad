@@ -16,7 +16,7 @@ All of your data are strongly encrypted end-to-end: only you and those you write
 
 ### Anonymous
 
-All network traffic is routed through Tor, a "deep web" maze of computers so dense even the FBI can't follow you through it. "Komrade @Operator", the central server for the app, is accessible only from this deep web. It's impossible to tell who is sending what to whom, or even who is using the app at all. Komrade's central server, the "Operator", lives on the deep web at and is communicable
+All network traffic is routed through Tor, a "deep web" maze of computers so dense even the FBI can't follow you through it. The "Operator" or the central server for the app is accessible only from this deep web. It's impossible to tell who is sending what to whom, or even who is using the app at all.
 
 ### Unmonetizable
 
@@ -26,13 +26,13 @@ What's untraceable is also unmonetizable: your data can't be harvested by techno
 
 Data is deleted as soon as possible from Komrade. The remote Operator simply delivers the mail: incoming messages are stored in the inboxes for the accounts written to, but as soon as these accounts download their mail, they're deleted from the internet forever. Messages to a group inbox or 'channel' delete as soon as their founding member downloads them; from there they travel (encrypted end-to-end) through the web of trust through which members joined the group.
 
-### Trust
+### Webs of trust
 
-Group accounts or 'collectives', like @portland or @socialists, grow as old members 'vouch for' new members. Other Komrades can see how many times a given person has been vouched for, both within a group and overall. In order to join a group, at least one member must vouch for you; this minimum (or 'quorum') may grow over time.
+Group accounts or 'collectives', like @portland or @socialists, grow as existing members 'vouch for' new ones. Other Komrades can see how many times a given person has been vouched for, both within a group and overall, but not who has vouched for them. In order to join a group, at least one member must vouch for you; this minimum (or 'quorum') may grow as the group grows.
 
 ### Anti-profit
 
-Not just non-profit, we're anti-profit. 
+Not just non-profit, we're anti-profit.
 
 ### Open-source
 
@@ -40,21 +40,21 @@ Information wants to be communist.
 
 ## Social media features
 
-We present a simplified set of social media features drawn from everything that's out there and then some:
+We present a simplified set of social media features drawn from everything that's out there:
 
 #### Profile
   * Curate a profile with photo and posts (e.g. Twitter)
   * Show profile to world (e.g. Twitter)
-  * Show profile only to friends (e.g. Facebook)
+  * Show profile only to those you trust (e.g. Facebook)
   * Show profile only to your local area (e.g. Nextdoor)
 
 #### Posting
   * Post up to 1 image and/or 1000 characters
   * Post to the entire world (e.g. Twitter)
-  * Post to your friends (e.g. Facebook)
+  * Post to those you trust (e.g. Facebook)
   * Post to your surrounding area by a distance radius (e.g. Nextdoor)
   * Anonymously up-vote or down-vote posts (e.g. Reddit)
-  * Post anonymously or from your account (new)
+  * Post anonymously or from your account
 
 #### Organizing
   * Host events and invite others (e.g. Facebook)
@@ -67,7 +67,6 @@ We present a simplified set of social media features drawn from everything that'
 
 
 ## Progress
-
 
 ### Preview animation
 
@@ -103,12 +102,17 @@ cd Komrade
 . script/bootstrap
 ```
 
-Then run the client:
+~~Then run the client:  (this is broken temporarily)~~
 ```
 cd client
 ./run.sh
 ```
 
+Run the terminal client:
+
+```
+python komrade/cli/cli.py
+```
 
 ### As user
 
