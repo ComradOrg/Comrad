@@ -70,12 +70,12 @@ class KomradeSymmetricKeyWithPassphrase(KomradeSymmetricKey):
     def hash(self,x): return self.crypt_keys.hash(x)
 
     def __init__(self,passphrase=DEBUG_DEFAULT_PASSPHRASE, why=WHY_MSG):
-        # if not passphrase:
-        #     # raise KomradeException
-        #     self.passphrase=hasher(getpass(why))
-        # else:
-        #     self.passphrase=hasher(passphrase)
-        if passphrase: self.passphrase=passphrase
+        if not passphrase:
+            # raise KomradeException
+            self.passphrase=getpass(why)
+        else:
+            self.passphrase=passphrase
+        # if passphrase: self.passphrase=passphrase
 
     @property
     def data(self): return KEY_TYPE_SYMMETRIC_WITH_PASSPHRASE.encode('utf-8')
