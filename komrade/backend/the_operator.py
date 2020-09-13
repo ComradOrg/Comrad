@@ -86,18 +86,18 @@ class TheOperator(Operator):
 
         # carry out message instructions
         resp_msg_obj = self.route_msg(msg_obj,reencrypt=True) #,route=msg_obj.route)
-        self.log('route_result <-',resp_msg_obj)
+        self.log('Response from message routing:',resp_msg_obj)
 
         # send back down encrypted
-        self.log('route msgd',dict_format(resp_msg_obj.msg_d))
-        self.log('route msg',resp_msg_obj.msg)
+        # self.log('route msgd',dict_format(resp_msg_obj.msg_d))
+        # self.log('route msg',resp_msg_obj.msg)
         # self.log('route msg data',resp_msg_obj.data)
-        self.log('route msg obj',resp_msg_obj)
+        # self.log('route msg obj',resp_msg_obj)
 
 
         
         msg_sealed = pickle.dumps(resp_msg_obj.msg_d)
-        self.log('msg_sealed =',msg_sealed)
+        # self.log('msg_sealed =',msg_sealed)
 
         # return back to phone and back down to chain
         return msg_sealed
