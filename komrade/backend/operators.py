@@ -43,6 +43,8 @@ def locate_an_operator(name=None,pubkey=None):
         return TELEPHONE
     
 
+    self.log('name????')
+    from komrade.backend.komrades import Komrade
     PHONEBOOK[name] = PHONEBOOK[pubkey] = caller = Komrade(name=name)
     return caller
 
