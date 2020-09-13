@@ -73,6 +73,7 @@ class Komrade(Caller):
             if not passphrase: passphrase = DEBUG_DEFAULT_PASSPHRASE
             while not passphrase:
                 passphrase=getpass('@Keymaker: Enter a memorable password to encrypt your private key with: \n\n')
+                clear_screen()
         self.passphrase=passphrase
         ## 4) Get hashed password
         passhash = hasher(passphrase)
