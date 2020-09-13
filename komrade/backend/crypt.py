@@ -129,6 +129,7 @@ class Crypt(Logger):
         if not override:
             self.log(f'''Crypt.set(\n\t{k_b}\n\n\t{k_b_hash}\n\n\t{v_b}\n)''')
         # store
+        stop
         self.store.put(k_b_hash,v_b)
         #return (True,k_b_hash,v_b)
         self.log('now keys are:',list(self.store.iter_keys()))
