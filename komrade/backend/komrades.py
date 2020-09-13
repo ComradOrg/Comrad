@@ -59,10 +59,12 @@ class Komrade(Caller):
         elif not name:
             name = input('@Keymaker: What is the name for this new account?\n@?: ')
 
+        self.log(f'Hello Komrade @Keymaker, I am Komrade @{name}.\n\nI need your help cutting a pair of encryption keys.\n\nI need them in order to communicate securely with my komrades.')
+
         ## 2) Make pub public/private keys
         keypair = KomradeAsymmetricKey()
         pubkey,privkey = keypair.pubkey_obj,keypair.privkey_obj
-        self.log(f'Keymaker has cut private and public keys:\n\n(1) {pubkey}\n\n(2) {privkey}')
+        self.log(f'@Keymaker: I have cut a private and public asymmetric key pair:\n\n(1) {pubkey}\n\n(2) {privkey}')
 
         ## 3) Have passphrase?
         if SHOW_STATUS and not passphrase:
