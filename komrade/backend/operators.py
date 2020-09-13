@@ -158,7 +158,7 @@ class Operator(Keymaker):
     
 
 
-    def route_msg(self,msg_obj,reencrypt=True):
+    def route_msg(self,msg_obj,reencrypt=True,new_data=None):
         # decrypt
         # self.log('got msg_obj!',msg_obj)
         if msg_obj.is_encrypted:
@@ -180,9 +180,11 @@ class Operator(Keymaker):
             new_data = self.route_msg(msg_obj.msg)
             msg_obj.msg = msg_obj.msg_d['msg'] = new_data
 
+        if not new_data:
+            # end of the line?
+            return msg_obj
+
         # time to turn around and encrypt
-        if not reencrypt: return msg_obj
-        
         # @unsure?
         self.log('time to flip msg around and return to sender. v1:',msg_obj)
         new_msg_obj = msg_obj.to_whom.compose_msg_to(
