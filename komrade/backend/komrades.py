@@ -168,6 +168,8 @@ class Komrade(Caller):
         fnfn=self.save_uri_as_qrcode(uri_id)
         # self.log(f'saved public key as QR code to:\n {fnfn}\n\n{qr_str}')
 
+        return resp_msg_d
+
         
         # done!
         self.log(f'Congratulations. Welcome, Komrade {self}.')
