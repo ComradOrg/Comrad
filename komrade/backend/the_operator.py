@@ -61,7 +61,8 @@ class TheOperator(Operator):
     # ends the ring_ring() chain
     def answer_phone(self,data_b):
         # route incoming call from the switchboard
-        self.log('Hello, this is the Operator. I heard you say:\n\n',b64encode(data_b))
+        from komrade.cli.artcode import ART_OLDPHONE4
+        self.log(f'{ART_OLDPHONE4}\nHello, this is the Operator. I heard you say:\n\n',b64encode(data_b))
 
         # unseal
         msg_obj = self.unseal_msg(
@@ -69,14 +70,14 @@ class TheOperator(Operator):
             from_whom=self.phone,
             to_whom = self
         )
-        self.log(f'Operator understood message: {msg_obj} {msg_obj.route}')
+        self.log(f'Operator understood message: {msg_obj}')
         
         # decrypt?
         msg_obj.decrypt()
 
         # carry out message instructions
         resp_msg_obj = self.pronto_pronto(msg_obj) #,route=msg_obj.route)
-        self.log('route_result <-',resp_msg_obj)
+        # self.log('route_result <-',resp_msg_obj)
 
         # send back down encrypted
         

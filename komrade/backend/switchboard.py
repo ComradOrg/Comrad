@@ -26,6 +26,7 @@ class TheSwitchboard(FlaskView, Logger):
 
     
     def get(self,data_b64_str_esc):
+        clear_screen()
         self.log('Incoming call!:',data_b64_str_esc)
         if not data_b64_str_esc:
             self.log('empty request!')
@@ -53,7 +54,7 @@ def run_forever(port='8080'):
     # OP_PASS = getpass('@op pass? ')
     TELEPHONE = TheTelephone()
     OPERATOR = TheOperator()
-    print(OPERATOR,'!?',OPERATOR.keychain())
+    # print(OPERATOR,'!?',OPERATOR.keychain())
     app = Flask(__name__)
     TheSwitchboard.register(app, route_base='/op/', route_prefix=None)
     app.run(debug=False, port=port, host='0.0.0.0')
