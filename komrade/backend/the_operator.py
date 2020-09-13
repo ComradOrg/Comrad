@@ -112,19 +112,19 @@ ck = {ck}
 cv = {cv_b64}
 ''')
         success,ck,cv_b64 = self.crypt_keys.set(pubkey,name,prefix='/name/')
-        self.log(f'''
-        got result from crypt:
-        success = {success}
-        ck = {ck}
-        cv = {cv_b64}
-        ''')
+        # self.log(f'''
+        # got result from crypt:
+        # success = {success}
+        # ck = {ck}
+        # cv = {cv_b64}
+        # ''')
         # check input back from crypt
         # if success and b64decode(cv)!=pubkey: success=False
         # if success and name!=self.crypt_keys.key2hash(name): success=False
         from komrade.utils import b64dec
         res = {
             'success':success,
-            'pubkey':b64dec(cv_b64),
+            'pubkey':pubkey,
             'name':name,
         }
         if not success:
