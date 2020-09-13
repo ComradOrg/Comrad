@@ -141,7 +141,7 @@ def test_register():
     botname=f'marx{str(num).zfill(3)}'
     marxbot = Persona(botname)
     # marxbot=Persona()
-    marxbot.register()
+    marxbot.register(passphrase=DEBUG_DEFAULT_PASSPHRASE)
 
 if __name__=='__main__':
     test_register()
