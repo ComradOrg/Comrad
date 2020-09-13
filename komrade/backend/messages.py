@@ -180,7 +180,7 @@ class Message(Logger):
 
         # now, is the decrypted message itself a message?
         if is_valid_msg_d(decr_msg):
-            self.log('Once decrypted, I discovered that I contain a valid msg in its own right!\n',self)
+            self.log('Once decrypted, I discovered that I contain an enclosed encrypted message!\n\n',self)
             # then ... make that, a message object and decrypt it too!
             self.msg = Message(decr_msg)
 
