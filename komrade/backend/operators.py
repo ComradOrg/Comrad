@@ -201,7 +201,10 @@ class Operator(Keymaker):
 
         # encrypt
         if reencrypt:
+            self.log('reencrypting v1',new_msg_obj)
             new_msg_obj.encrypt()
+            self.log('reencrypting v2',new_msg_obj)
+
 
         return new_msg_obj
 
