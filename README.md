@@ -16,7 +16,7 @@ All of your data are strongly encrypted end-to-end: only you and those you write
 
 ### Untraceable
 
-All network traffic is routed through Tor, a "deep web" maze of computers so dense even the FBI can't follow you through it. The "Operator" or the central server for the app is accessible only from this deep web. It's impossible to tell who is sending what to whom, or even who is using the app at all.
+All network traffic is routed through Tor, a "deep web" of computers so dense even the FBI can't follow you through it. Komrade's "Operator" or central server is accessible only from Tor. It's impossible to tell who is sending what to whom, or even who is using the app at all.
 
 ### Unmonetizable
 
@@ -24,7 +24,7 @@ What's untraceable is also unmonetizable: your data can't be harvested by techno
 
 ### Decentralized
 
-Data is deleted as soon as possible from Komrade. The remote Operator simply delivers the mail: incoming messages are stored in the inboxes for the accounts written to, but as soon as these accounts download their mail, they're deleted from the internet forever. Messages to a group inbox or 'channel' delete as soon as their founding member downloads them; from there they travel (encrypted end-to-end) through the "web of trust" through which members joined the group.
+Data is deleted as soon as possible from Komrade. Komrade's "Operator" simply sorts and holds the mail temporarily: as soon as users log in to download their mail, the messages are deleted from the internet forever.
 
 ### Democratized
 
