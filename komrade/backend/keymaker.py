@@ -251,38 +251,25 @@ class Keymaker(Logger):
         self.path_crypt_data=path_crypt_data
 
         # boot keychain
-        self._keychain = self.keychain(passphrase=passphrase)
+        # self._keychain = self.keychain(passphrase=passphrase)
 
 
     def find_pubkey(self,name=None):
         if not name: name=self.name
         if 'pubkey' in self._keychain and self._keychain['pubkey']:
             return self._keychain['pubkey']
-        
         res = self.crypt_keys.get(name, prefix='/pubkey/')
-        # self.log('result from crypt for name:',res)
-        # if res: return res
-        
         res = self.load_qr(self.name)
-        # if res: return res
-
         if not res: return
-        
-        if type(res)==str: res=res.encode()
-        if isBase64(res): res=b64decode(res)
-        return res
+        return b64dec(res)
         
         # self.log('I don\'t know my public key! Do I need to register?')
         # raise KomradeException(f'I don\'t know my public key!\n{self}\n{self._keychain}')
         # return res
 
     def find_name(self,pubkey_b64):
-        q=pubkey_b64.decode() if type(pubkey_b64)!=str else pubkey_b64
-        # print('Q?',q)
-        res = self.crypt_keys.get(q, prefix='/name/')
-        # self.log('result from crypt for name:',res)
+        res = self.crypt_keys.get(b64enc(q), prefix='/name/')
         return res
-        
 
     @property
     def keys(self):
@@ -298,15 +285,15 @@ class Keymaker(Logger):
         return keychain
 
     def find_pubkey_and_name(self,name=None,pubkey=None):
-        if not pubkey: pubkey = self._keychain.get('pubkey')
-        if not name: name = self.name
+        #if not pubkey: pubkey = self._keychain.get('pubkey')
+        #if not name: name = self.name
 
         if pubkey:
             # print('??',pubkey)
             if hasattr(pubkey,'data'):
                 pubkey=pubkey.data_b64
             else:
-                pubkey=b64encode(pubkey) if not isBase64(pubkey) else pubkey
+                pubkey=b64enc(pubkey)
 
         # if name and pubkey:
             # make sure they match
@@ -324,11 +311,13 @@ class Keymaker(Logger):
         
         if pubkey:
             # self.log('!?!?!?!?',type(pubkey),pubkey)
-            pubkey = b64decode(pubkey) if isBase64(pubkey) else pubkey
+            pubkey = b64dec(pubkey)
             pubkey=KomradeEncryptedAsymmetricPublicKey(pubkey)
         
         self._keychain['pubkey'] = pubkey
         self.name = name
+
+        self.log('found for name and pubkey',name,pubkey)
         
         return (name,pubkey)
 
