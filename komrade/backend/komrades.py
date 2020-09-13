@@ -125,7 +125,7 @@ class Komrade(Caller):
             return
     
         # otherwise, save things on our end
-        self.log(f'Registration successful. Message from operator was:\n\n{dict_format(resp_msg_d)')
+        self.log(f'Registration successful. Message from operator was:\n\n{dict_format(resp_msg_d)}')
         self.log('Now saving name and public key on local device:')
         self.name=resp_msg_d.get('name')
         pubkey_b = b64dec(resp_msg_d.get('pubkey'))
