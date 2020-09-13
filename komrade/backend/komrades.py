@@ -149,13 +149,18 @@ class Komrade(Caller):
         )
         
         self.log(f'''Now saving name and public key on local device:
-/name/{uri_id} = {self.name}
 
-/pubkey/{self.name} = {pubkey_b}
+# pubkey -> name
+/name/{uri_id}
+= {self.name}
 
+# name -> pubkey
+/pubkey/{self.name}
+= {uri_id}
+
+# pubkey -> secret
 /secret_login/{uri_id} = {b64enc(sec_login)}
 ''')
-        
 
         # save qr too:
         uri_id = b64enc(pubkey_b)
