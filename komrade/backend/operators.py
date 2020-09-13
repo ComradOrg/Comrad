@@ -277,9 +277,11 @@ class Operator(Keymaker):
 
 
     def pronto_pronto(self, msg_obj):
-        self.log(f'''*ring *ring* ...
+        self.log(f'''*ring *ring* 
+...
+
 {self}: pronto?
-voice: {msg_obj}''')
+{msg_obj.from_whom}: Ciao. Please send this msg to {msg_obj.to_whom}? {msg_obj}''')
 
         return self.route_msg(msg_obj,reencrypt=True)
 
