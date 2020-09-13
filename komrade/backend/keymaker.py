@@ -312,7 +312,7 @@ class Keymaker(Logger):
         if pubkey:
             # self.log('!?!?!?!?',type(pubkey),pubkey)
             pubkey = b64dec(pubkey)
-            pubkey=KomradedAsymmetricPublicKey(pubkey)
+            pubkey=KomradeAsymmetricPublicKey(pubkey)
         
         self._keychain['pubkey'] = pubkey
         self.name = name
