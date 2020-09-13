@@ -43,6 +43,7 @@ class Operator(Keymaker):
         print('booting opertor with ...',name,pubkey,'??')
 
         if pubkey:
+            print(pubkey,'pubkey !?')
             assert type(pubkey)==bytes
             if isBase64(pubkey): pubkey = b64decode(pubkey)
             # print(pubkey,keychain,'??',name)
