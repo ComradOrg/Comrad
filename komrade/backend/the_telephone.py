@@ -21,7 +21,7 @@ class TheTelephone(Operator):
         msg_b=msg_d["msg"]
         msg_b64 = b64encode(msg_b)
         msg_b64_str = msg_b64.decode()
-        self.log(f'But because I am @Telephone, and @Operator communicates only with me directly,\n I will omit all metadata and send only the encrypted packcage:\n\n{msg_b64_str}')
+        self.log(f'''@Operator knows it's me, so I'll omit all metadata\nand send only the encrypted packcage:\n\n{msg_b64_str}''')
 
         # seal for transport
         msg_b64_str_esc = msg_b64_str.replace('/','_')
