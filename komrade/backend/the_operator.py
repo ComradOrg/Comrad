@@ -119,11 +119,17 @@ class TheOperator(Operator):
         return bool(pubkey)
 
     def has_user(self,name=None,pubkey=None):
-        return (
+        
+        
+        x= (
             (self.crypt_keys.get(name,prefix='/pubkey/'))
             or
             (self.crypt_keys.get(b64enc_s(pubkey),prefix='/name/'))
         )
+        self.log('!?!?!?',x)
+        stop
+
+        return x
 
     def login(self,name,pubkey,secret_login,**data):
         # get my records
