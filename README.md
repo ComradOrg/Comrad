@@ -10,11 +10,11 @@ But a digital network can be redesigned. The technology behind these social medi
 
 ## Core principles
 
-### Private
+### Illegible
 
 All of your data are strongly encrypted end-to-end: only you and those you write to can decrypt and read it. To anyone without the right decryption 'key', the data is nonsense.
 
-### Anonymous
+### Untraceable
 
 All network traffic is routed through Tor, a "deep web" maze of computers so dense even the FBI can't follow you through it. The "Operator" or the central server for the app is accessible only from this deep web. It's impossible to tell who is sending what to whom, or even who is using the app at all.
 
@@ -24,9 +24,9 @@ What's untraceable is also unmonetizable: your data can't be harvested by techno
 
 ### Decentralized
 
-Data is deleted as soon as possible from Komrade. The remote Operator simply delivers the mail: incoming messages are stored in the inboxes for the accounts written to, but as soon as these accounts download their mail, they're deleted from the internet forever. Messages to a group inbox or 'channel' delete as soon as their founding member downloads them; from there they travel (encrypted end-to-end) through the web of trust through which members joined the group.
+Data is deleted as soon as possible from Komrade. The remote Operator simply delivers the mail: incoming messages are stored in the inboxes for the accounts written to, but as soon as these accounts download their mail, they're deleted from the internet forever. Messages to a group inbox or 'channel' delete as soon as their founding member downloads them; from there they travel (encrypted end-to-end) through the "web of trust" through which members joined the group.
 
-### Webs of trust
+### Democratized
 
 Group accounts or 'collectives', like @portland or @socialists, grow as existing members 'vouch for' new ones. Other komrades can see how many times a given person has been vouched for, both within a group and overall, but not who has vouched for them. In order to join a group, at least one member must vouch for you; this minimum (or 'quorum') may grow as the group grows.
 
@@ -88,7 +88,7 @@ After a good discussion at /r/privacy [here](https://www.reddit.com/r/privacy/co
 
 Here's a diagram I made of the old system. It's thoroughly decentralized -- there's no central server at all, just a few 'seed nodes' which let the user know where the other nodes are. But P2P systems generally require knowing the IPs of other users (so: not Anonymous). And that also allows any node to write data to network, and potentially overwhelm the true information with false information (so: no guaranteed Authenticity).
 
-### New design: demi-centralized
+### New design: semi-centralized
 
 <img src="docs/cryptosystems-Operator.png" />
 
