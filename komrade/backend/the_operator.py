@@ -70,7 +70,7 @@ class TheOperator(Operator):
         self.log('got:',data_b)
         msg_d = {
             'msg':data_b,
-            'from_name':self.phone,
+            'from_name':self.phone.name,
             'from':self.phone.pubkey.data,
             'to_name':self.name,
             'to':self.pubkey.data,
