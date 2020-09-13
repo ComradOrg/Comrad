@@ -3,8 +3,11 @@ from komrade import *
 from komrade.backend import *
 import art
 import textwrap as tw
-
-
+HELPSTR = """
+    /login [name]           log back in
+    /register [name]        new komrade
+    /help                   seek help
+"""
 
 class CLI(Logger):
     ROUTES = {
@@ -52,11 +55,7 @@ class CLI(Logger):
         scan_print(logo,max_pause=0.005)
 
     def help(self):
-        print()
-        for cmd,info in self.ROUTES.items():
-            print(f'    /{cmd}: {info}')
-            # print('\n')
-        print('\n')
+        print(HELPSTR)
 
     def intro(self):
         self.status(None,)
