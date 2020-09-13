@@ -110,7 +110,7 @@ ck = {ck}
 cv = {cv_b64}
 ''')
         success,ck,cv_b64 = self.crypt_keys.set(pubkey,name,prefix='/name/')
-                self.log(f'''
+        self.log(f'''
         got result from crypt:
         success = {success}
         ck = {ck}
