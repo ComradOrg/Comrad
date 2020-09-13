@@ -62,7 +62,7 @@ class TheOperator(Operator):
     def answer_phone(self,data_b):
         # route incoming call from the switchboard
         from komrade.cli.artcode import ART_OLDPHONE4
-        self.log(f'''{ART_OLDPHONE4}Hello, this is the Operator. I heard you say:\n\n {b64enc_s(data_b)}''')
+        self.log(f'''Hello, this is the Operator. I heard you say:\n\n {b64enc_s(data_b)}''')
 
         # unseal
         msg_obj = self.unseal_msg(
@@ -70,7 +70,7 @@ class TheOperator(Operator):
             from_whom=self.phone,
             to_whom = self
         )
-        self.log(f'Operator understood message: {msg_obj}')
+        self.log(f'Decoding the binary, I understood: {msg_obj}')
         
         # decrypt?
         msg_obj.decrypt()
