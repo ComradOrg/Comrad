@@ -132,13 +132,8 @@ class Crypt(Logger):
         k_b=self.package_key(k,prefix=prefix)
         k_b_hash = self.hash(k_b)
         v_b=self.package_val(v)
-        self.log(f'''
-Crypt.set(
-    {k_b}
-        
-    {v_b}
-)')
-        ''')
+        if not override:
+            self.log(f'''Crypt.set(\n\t{k_b}\n\n\t{v_b}\n)''')
         # store
         self.store.put(k_b_hash,v_b)
         return (True,k_b_hash,v_b)
