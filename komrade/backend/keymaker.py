@@ -333,6 +333,8 @@ class Keymaker(Logger):
                 print(self,'looking for key:',keyname)
                 if keyname in keys and keys[keyname]: continue
                 key = self.crypt_keys.get(uri,prefix=f'/{keyname}/')
+                print('found in crypt:',key,'for',keyname)
+                if key: keychain[keyname]=key
         
         # try to assemble
         keys = self.assemble(self.assemble(keys))
