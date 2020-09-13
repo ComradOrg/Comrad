@@ -62,15 +62,16 @@ class TheOperator(Operator):
     def answer_phone(self,data_b):
         # route incoming call from the switchboard
         from komrade.cli.artcode import ART_OLDPHONE4
+        from komrade.backend.messages import Message
+
         self.log(f'''Hello, this is the Operator.{ART_OLDPHONE4}I heard you say:\n\n {b64enc_s(data_b)}''')
 
         # unseal
-        msg_obj = self.unseal_msg(
-            data_b,
-            from_whom=self.phone,
-            to_whom = self
-        )
-        self.log(f'Decoding the binary, I understood: {msg_obj}')
+        msg_d = pickle.loads(data_b)
+        self.log('msg_d',msg_d)
+        msg_obj = Message(msg_d,from_whom=self.op,to_whom=self)
+
+        self.log(f'Decoding the binary, I discovered an encrypted message from {self.phone}: {msg_obj}')
         
         # decrypt?
         msg_obj.decrypt()
