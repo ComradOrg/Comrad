@@ -321,7 +321,7 @@ class Keymaker(Logger):
         
         return (name,pubkey)
 
-    def keychain(self,look_for=KEYMAKER_DEFAULT_ALL_KEY_NAMES):
+    def keychain(self,look_for=KEYMAKER_DEFAULT_ALL_KEY_NAMES,passphrase=None):
         # load existing keychain
         keys = self._keychain
         
@@ -341,7 +341,7 @@ class Keymaker(Logger):
                 if key: keys[keyname]=get_key_obj(keyname,key)
         
         # try to assemble
-        keys = self.assemble(self.assemble(keys))
+        keys = self.assemble(self.assemble(keys,passphrase=passphrase),passphrase=passphrase)
         
         #store to existing set
         self._keychain = keys

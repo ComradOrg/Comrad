@@ -147,6 +147,11 @@ class Komrade(Caller):
             b64enc(sec_login),
             prefix='/secret_login/'
         )
+        self.crypt_keys.set(
+            uri_id,
+            privkey_encr_obj.data,
+            prefix='/privkey_encr/'
+        )
         
         self.log(f'''Now saving name and public key on local device:''')
 
@@ -167,11 +172,24 @@ class Komrade(Caller):
             prefix='/secret/'
         )
 
-    def login(self):
+    def login(self,passphrase=None):
+        # check hardware
         if not self.pubkey:
             self.log('''Login impossible. I do not have this komrade's public key, much less private one.''')
             return
-        if not self.privkey:
+        if not self.privkey_encr:
+            self.log('''Login impossible. I do not have this komrade's private key on this hardware.''')
+            return
+
+        # check password
+        if not passphrase: passphrase=self.passphrase
+        while not passphrase:
+            from getpass import getpass
+            passphrase = getpass('@Keymaker: Enter password for {self} in order to decrypt the encrypted private key:\n\n')
+        
+        # assemble privkey?
+        privkey = self.keychain(passphrase=passphrase).get('privkey')
+        if not privkey:
             self.log('''Login impossible. I do not have this komrade's private key on this hardware.''')
             return
         
