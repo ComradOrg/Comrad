@@ -122,13 +122,13 @@ cv = {cv_b64}
         
         res = {
             'success':success,
-            'pubkey':b64decode(cv_b64),
+            'pubkey':b64de(cv_b64),
             'name':name,
         }
         if not success:
             res['status']=self.status(f"{OPERATOR_INTRO}I'm sorry, but I can't register the name of {name}.")
-            self.log('Operator returning result:',dict_format(res,tab=2))
             return res
+        self.log('Operator returning result:',dict_format(res,tab=2))
         
         # give back decryptor
 
