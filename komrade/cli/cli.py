@@ -68,7 +68,8 @@ class CLI(Logger):
         res=self._komrade.register()
         if 'success' in res and res['success']:
             self._name=self._komrade.name
-        print('@Operator: '+res.get('status','?'))
+        if 'status' in res:
+            print('@Operator: '+res.get('status','?'))
 
     def login(self,name):
         name=self.name if not name else name
