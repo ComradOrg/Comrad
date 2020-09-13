@@ -167,7 +167,7 @@ class Message(Logger):
         self.log(f'Attempting to decrypt:\n{self}')
 
         # decrypt msg
-        # self.log('attempting to decrypt',self.msg,'from',self.from_pubkey,'to',self.to_whom,self.to_whom.keychain(),self.to_whom.assemble(self.to_whom.keychain()))
+        self.log('attempting to decrypt',self.msg,'from',self.from_pubkey,'to',self.to_whom,self.to_whom.keychain(),self.to_whom.assemble(self.to_whom.keychain()))
         self.msg = self.msg_d['msg'] = decr_msg_b = SMessage(
             self.to_whom.privkey.data,
             self.from_pubkey
