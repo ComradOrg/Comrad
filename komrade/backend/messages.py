@@ -206,6 +206,8 @@ class Message(Logger):
         msg_b = pickle.dumps(self.msg)
 
         # encrypt it!
+        self.log('from whom keychain:',self.from_whom.keychain())
+        self.log('to pubkey:',self.to_pubkey)
         msg_encr = SMessage(
             self.from_whom.privkey.data,
             self.to_pubkey
