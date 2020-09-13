@@ -59,7 +59,7 @@ class Komrade(Caller):
         elif not name:
             name = input('@Keymaker: What is the name for this new account?\n@?: ')
 
-        self.log(f'Hello Komrade @Keymaker, I am Komrade @{name}.\n\nI need your help cutting a pair of encryption keys.\n\nI need them in order to communicate securely with my komrades.')
+        self.log(f'Hello Komrade @Keymaker, I am Komrade @{name}.\n\nI need your help cutting a pair of encryption keys.')
 
         ## 2) Make pub public/private keys
         keypair = KomradeAsymmetricKey()
