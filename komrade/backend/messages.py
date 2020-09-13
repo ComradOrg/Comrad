@@ -88,12 +88,18 @@ class Message(Logger):
         return md
 
     def mark_return_to_sender(self,new_msg=None):
+        self.log('making return to sender. v1:',self)
         self._from_whom,self._to_whom = self._to_whom,self._from_whom
+
         self.msg_d['from'],self.msg_d['to'] = self.msg_d['to'],self.msg_d['from'],
+        
         if 'from_name' in self.msg_d and 'to_name' in self.msg_d:
           self.msg_d['from_name'],self.msg_d['to_name'] = self.msg_d['to_name'],self.msg_d['from_name']
+        
         if new_msg:
             self.msg=self.msg_d['msg']=new_msg
+        self.log('making return to sender. v2:',self)
+        
 
     def get_whom(self,name=None,pubkey=None):
         from komrade.backend.operators import locate_an_operator
