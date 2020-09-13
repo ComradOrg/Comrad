@@ -194,12 +194,12 @@ def test_op():
     op = TheOperator()
     # op.boot()
     
-    keychain_op = op.keychain(force=True)
+    keychain_op = op.keychain()
 
     
     phone = TheTelephone()
     # phone.boot()
-    keychain_ph = phone.keychain(force=True)
+    keychain_ph = phone.keychain()
     
     
     from pprint import pprint
