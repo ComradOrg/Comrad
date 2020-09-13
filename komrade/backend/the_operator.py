@@ -190,8 +190,8 @@ cv = {cv_b64}
 def test_op():
     from komrade.backend.the_telephone import TheTelephone
 
-    
-    op = TheOperator()
+    from getpass import getpass
+    op = TheOperator(passphrase=getpass('op pass? '))
     # op.boot()
     
     keychain_op = op.keychain()
