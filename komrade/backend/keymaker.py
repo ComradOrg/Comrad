@@ -324,7 +324,7 @@ class Keymaker(Logger):
         keys = self._keychain
         
         # make sure we have the pubkey
-        name,pubkey = self.find_pubkey_and_name()
+        # name,pubkey = self.find_pubkey_and_name()
 
         # get uri
         if pubkey:
@@ -333,7 +333,7 @@ class Keymaker(Logger):
             # get from cache
             for keyname in look_for:
                 # print(self.name,'looking for key:',keyname)
-                # if keyname in keys and keys[keyname]: continue
+                if keyname in keys and keys[keyname]: continue
                 key = self.crypt_keys.get(uri,prefix=f'/{keyname}/')
                 # print('found in crypt:',key,'for',keyname)
                 if key: keys[keyname]=get_key_obj(keyname,key)
