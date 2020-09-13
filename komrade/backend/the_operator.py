@@ -68,7 +68,10 @@ class TheOperator(Operator):
 
         # unseal
         self.log('got:',data_b)
-        msg_d = pickle.loads(data_b)
+        msg_d = {
+            'msg':data_b
+        }
+        # msg_d = pickle.loads(data_b)
         self.log('msg_d',msg_d)
         msg_obj = Message(msg_d,from_whom=self.op,to_whom=self)
 
