@@ -94,7 +94,8 @@ class TheOperator(Operator):
 
 
         
-        msg_sealed = pickle.dumps(resp_msg_obj.msg)
+        msg_sealed = pickle.dumps(resp_msg_obj.msg_d)
+        self.log('msg_sealed =',msg_sealed)
 
         # return back to phone and back down to chain
         return msg_sealed
