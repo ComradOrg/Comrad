@@ -290,7 +290,7 @@ def test_register():
 
 def test_msg():
     z = Komrade('zuck')
-    z.login()
+    z.login(passphrase='eee')
     s = Komrade('sergey')
     z.send_msg_to('you ssssssuck',s)
 
