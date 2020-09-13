@@ -249,7 +249,7 @@ class Keymaker(Logger):
         self.path_crypt_data=path_crypt_data
 
         # boot keychain
-        # self._keychain = self.keychain(passphrase=passphrase)
+        self._keychain = self.keychain(passphrase=passphrase)
 
 
     def find_pubkey(self,name=None):
