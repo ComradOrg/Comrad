@@ -46,9 +46,10 @@ class TheSwitchboard(FlaskView, Logger):
         return resp_data_b64_str
 
 def run_forever(port='8080'):
-    OPERATOR_KEYCHAIN,TELEPHONE_KEYCHAIN,WORLD_KEYCHAIN,OMEGA_KEY=connect_phonelines()
     TELEPHONE = TheTelephone()
+    print(OPERATOR,'!?')
     OPERATOR = TheOperator()
+    print(OPERATOR,'!!?!?!')
     app = Flask(__name__)
     TheSwitchboard.register(app, route_base='/op/', route_prefix=None)
     app.run(debug=False, port=port, host='0.0.0.0')
