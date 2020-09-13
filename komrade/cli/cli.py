@@ -21,8 +21,8 @@ class CLI(Logger):
     def run(self,inp='',name=''):
         self.name=name
         clear_screen()
-        # self.boot()
-        # self.help()
+        self.boot()
+        self.help()
 
         if inp: self.route(inp)
 
@@ -36,6 +36,7 @@ class CLI(Logger):
 
     def route(self,inp):
         inp=inp.strip()
+        # print('route got:',inp)
         if not inp.startswith('/'): return
         cmd=inp.split()[0]
         dat=inp[len(cmd):].strip()
@@ -60,10 +61,11 @@ class CLI(Logger):
     def intro(self):
         self.status(None,)
     
-    def register(self,dat):
-        self.komrade = Komrade(self.name)
-        self.persona.register()
-
+    def register(self,name=None):
+        if not name: name=self.name
+        self.komrade = Komrade(name)
+        self.komrade.register()
+        self.name=self.komrade.name
 
 
 
@@ -366,7 +368,7 @@ class CLI(Logger):
 
 def run_cli():
     cli = CLI()
-    cli.run('/register','elon') #'/register',name='elon')
+    cli.run() #'/register elon') #'/register',name='elon')
 
 if __name__=='__main__':
     run_cli()

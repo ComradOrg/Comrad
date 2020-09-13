@@ -19,8 +19,8 @@ LOG = None
 
 def log(*x):
     global LOG
-    if not LOG: LOG=logger().debug
-
+    #if not LOG: LOG=logger().debug
+    if not LOG: LOG=print
     tolog=' '.join(str(_) for _ in x)
     LOG(tolog)
 
@@ -70,7 +70,7 @@ class Logger(object):
         calframe = inspect.getouterframes(curframe, 2)
         mytype = type(self).__name__
         caller = calframe[1][3]
-        log(f'[{mytype}.{caller}()]\n\n',*x)
+        log(f'[{mytype}.{caller}()]'.center(CLI_WIDTH) + '\n\n',*x)
 
         # try:
         if pause: do_pause()

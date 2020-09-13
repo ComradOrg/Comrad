@@ -50,22 +50,28 @@ class Komrade(Caller):
         ## Defaults
         if name and not self.name: self.name=name
         if not name and self.name: name=self.name
-        if not name and not self.name: name=''
+        # if not name and not self.name: name=''
 
         
         ## 1) Have name?
+        tolog=''
         if SHOW_STATUS and show_intro:
-            name = self.cli.status_keymaker_part1(name)
+            self.name = name = self.cli.status_keymaker_part1(name)
         elif not name:
-            name = input('@Keymaker: What is the name for this new account?\n@?: ')
-
-        self.log(f'Hello, this is Komrade @{name}.\n\nI would like to sign up for the socialist network revolution.')
-        self.log(f'@Keymaker: To communicate with komrades securely,\n\nyou must first cut your encryption keys. ')
-
+            self.name = name = input('\nHello, this is Komrade @')
+            print('\nI would like to sign up for the socialist network revolution.',flush=True)
+            do_pause()
+        else:
+            print(f'Hello, this is Komrade @{name}.\n\nI would like to sign up for the socialist network revolution.')
+            do_pause()
+        
+        clear_screen()
+        self.log(f'@Keymaker: Excellent. But to communicate with komrades securely,\nyou must first cut your public & private encryption keys. ')
+        # do_pause()
         ## 2) Make pub public/private keys
         keypair = KomradeAsymmetricKey()
         pubkey,privkey = keypair.pubkey_obj,keypair.privkey_obj
-        self.log(f'@Keymaker: I have cut for you a private and public asymmetric key pair\nusing the Elliptic Curve algorithm from Themis cryptography library:\n\n(1) {pubkey}\n\n(2) {privkey}{ART_KEY_PAIR}')
+        self.log(f'@Keymaker: I have cut for you a private and public asymmetric key pair\nusing the Elliptic Curve algorithm from Themis cryptography library:\n\n(1) {pubkey}\n\n(2) {privkey}{ART_KEY_PAIR}',clear=False,pause=True)
 
         ## 3) Have passphrase?
         if SHOW_STATUS and not passphrase:
@@ -73,7 +79,7 @@ class Komrade(Caller):
         else:
             if not passphrase: passphrase = DEBUG_DEFAULT_PASSPHRASE
             while not passphrase:
-                passphrase=getpass('@Keymaker: Enter a memorable password to encrypt your private key with: \n\n')
+                passphrase=getpass(f'@Keymaker: Enter a memorable password to encrypt your private key with: \n\n@{self.name}: ')
                 clear_screen()
         self.passphrase=passphrase
         ## 4) Get hashed password
@@ -83,7 +89,7 @@ class Komrade(Caller):
         privkey_decr = KomradeSymmetricKeyWithPassphrase(passphrase)
         privkey_encr = privkey_decr.encrypt(privkey.data)
         privkey_encr_obj = KomradeEncryptedAsymmetricPrivateKey(privkey_encr)
-        self.log(f"@Keymaker: Store your private key on your device hardware ONLY\nand only as it was encrypted by your password-generated key:\n\n[Encrypted Private Key]\n({make_key_discreet_str(privkey_encr_obj.data_b64)})")
+        self.log(f"@Keymaker: Store your private key on your device hardware ONLY\nas it was encrypted by your password-generated key:\n\n[Encrypted Private Key]\n({make_key_discreet_str(privkey_encr_obj.data_b64)})")
 
         ## 6) Test keychain works
         privkey_decr2 = KomradeSymmetricKeyWithPassphrase(passphrase)
