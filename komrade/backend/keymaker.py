@@ -615,20 +615,21 @@ Keymaker ({self}) is forging new keys for {name}
             else:
                 continue
             decr_key = keychain.get(decr_key_name)
-            # self.log('?',decr_key,decr_key_name,encr_key_name,keychain[encr_key_name])
+            self.log('?',decr_key,decr_key_name,encr_key_name,keychain[encr_key_name])
 
             try:
                 if decrypt:
                     encr_key = keychain.get(encr_key_name)
-                    # self.log(f'about to decrypt {encr_key} with {decr_key}')
+                    self.log(f'about to decrypt {encr_key} with {decr_key}')
                     unencr_key = decr_key.decrypt(encr_key.data)
                     keychain[unencr_key_name] = get_key_obj(unencr_key_name,unencr_key)
                 else:
                     unencr_key = keychain.get(unencr_key_name)
-                    # self.log(f'about to encrypt {unencr_key} with {decr_key}')
+                    self.log(f'about to encrypt {unencr_key} with {decr_key}')
                     encr_key = decr_key.encrypt(unencr_key.data)
                     keychain[encr_key_name] = get_key_obj(encr_key_name,encr_key)
-            except ThemisError:
+            except ThemisError as e:
+                self.log('error!!',decrypt,decr_key,encr_key,decr_key_name,encr_key_name)
                 pass
 
         return keychain
