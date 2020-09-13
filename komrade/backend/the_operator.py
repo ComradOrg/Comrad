@@ -152,7 +152,7 @@ class TheOperator(Operator):
         
 {name} (input)
  vs.
-{my_name} (record)
+{name_record} (record)
 
 {uri} (input)
  vs.
