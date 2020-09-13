@@ -187,7 +187,7 @@ class Operator(Keymaker):
 
     def route_msg(self,msg_obj,reencrypt=True):
         # decrypt
-        self.log('got msg_obj!',msg_obj)
+        # self.log('got msg_obj!',msg_obj)
         if msg_obj.is_encrypted:
             msg_obj.decrypt()
         
@@ -281,7 +281,7 @@ class Operator(Keymaker):
 ...
 
 {self}: pronto?
-{msg_obj.from_whom}: Ciao. Please send this msg to {msg_obj.to_whom}? {msg_obj}''')
+{msg_obj.from_whom}: Ciao. I have a message for you: {msg_obj}\n''')
 
         return self.route_msg(msg_obj,reencrypt=True)
 
