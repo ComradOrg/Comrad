@@ -28,7 +28,7 @@ class TheSwitchboard(FlaskView, Logger):
     def get(self,data_b64_str_esc):
         clear_screen()
         from komrade.cli.artcode import ART_OLDPHONE4
-        self.log(f'Incoming call!: {data_b64_str_esc}{ART_OLDPHONE4}')
+        self.log(f'Incoming call!: {data_b64_str_esc}')
         if not data_b64_str_esc:
             self.log('empty request!')
             return OPERATOR_INTERCEPT_MESSAGE
