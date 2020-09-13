@@ -113,15 +113,42 @@ class Komrade(Caller):
         # call from phone since I don't have pubkey on record on Op yet
         # self.log('my keychain:',self._keychain,pubkey,self.op._keychain)
 
-        resp_msg_obj = self.ring_ring(
+        resp_msg_d = self.ring_ring(
             {
                 'name':name, 
                 'pubkey': pubkey.data,
             },
             route='register_new_user'
         )
-        self.log('register got back from op:',dict_format(resp_msg_obj,tab=2))
+        if not resp_msg_d.get('success'):
+            self.log(f'Registration failed. Message from operator was:\n\n{dict_format(resp_msg_d)}')
+            return
+    
+        # otherwise, save things on our end
+        self.log(f'Registration successful. Message from operator was:\n\n{dict_format(resp_msg_d)')
+        self.log('Now saving name and public key on local device:')
+        self.name=resp_msg_d.get('name')
+        pubkey_b = b64dec(resp_msg_d.get('pubkey'))
+        pubkey=self._keychain['pubkey']=KomradeAsymmetricPublicKey(pubkey_b)
 
+        self.crypt_keys.set(
+            self.name,
+            pubkey_b),
+            prefix='/pubkey/')
+        self.crypt_keys.set(
+            b64enc_s(pubkey_b),
+            self.name,
+            prefix='/name/')
+        
+        
+
+        # save qr too:
+        qr_str=self.qr_str()
+        fnfn=self.save_uri_as_qrcode(b64enc(pubkey_b)
+        self.log(f'saved QR code to: {fnfn}')
+        
+        # done!
+        self.log(f'Congratulations. Welcome, Komrade {self}.')}')
 
 
     def ring_ring(self,msg,route=None,**y):
