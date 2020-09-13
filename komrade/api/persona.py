@@ -17,7 +17,7 @@ class Model(Logger): pass
 
 class UserAlreadyExists(KomradeException): pass
 
-class Persona(Model):
+class Komrade(Model):
     def __init__(self, name, is_group=False):
         self.name = name
         self.is_group=is_group
@@ -72,7 +72,7 @@ class Persona(Model):
 if __name__ == '__main__':
     import random
     idnum = random.choice(list(range(1000)))
-    persona = Persona('Op'+str(idnum))
+    komrade = Komrade('Op'+str(idnum))
     print('\n\n\nREGISTERING\n\n\n')
     persona.register(passphrase='bb')
 

@@ -118,7 +118,7 @@ class NetworkStillConnectingError(OSError): pass
 
 
 
-class Persona(object):
+class Komrade(object):
 
     def __init__(self,name,api=None,node=None,create_if_missing=True):
         self.name=name
@@ -657,7 +657,7 @@ class Persona(object):
             from_name = b64decode(name_b64).decode()
             self.log('from_name =',from_name)
             timestamp = b64decode(time_b64).decode()
-            tmpP = Persona(from_name)
+            tmpP = Komrade(from_name)
             await tmpP.boot()
             from_pubkey_b64_accto_name = tmpP.pubkey_b64
             assert from_pubkey_b64==from_pubkey_b64_accto_name
@@ -698,9 +698,9 @@ async def main():
     await node.listen(PORT_LISTEN)
     await node.bootstrap(NODES_PRIME)
     
-    marx = Persona('marx',node=node)
-    elon = Persona('elon2',node=node)
-    world = Persona('world',node=node)
+    marx = Komrade('marx',node=node)
+    elon = Komrade('elon2',node=node)
+    world = Komrade('world',node=node)
     await world.boot()
 
 

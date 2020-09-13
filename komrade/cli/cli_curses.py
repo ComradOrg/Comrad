@@ -124,7 +124,7 @@ class CLI(Logger):
         self.status(None,)
     
     def register(self,dat):
-        self.persona = Persona(self.name)
+        self.komrade = Komrade(self.name)
         self.persona.register()
 
 

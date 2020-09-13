@@ -19,7 +19,7 @@ from threading import Thread
 from pathlib import Path
 
 # local imports
-from persona import *
+from komrade import *
 CACHE_DIR = os.path.join(os.path.expanduser('~'),'.komrade','.cache')
 if not os.path.exists(CACHE_DIR): os.makedirs(CACHE_DIR)
 MEMCACHE_FNFN=os.path.join(CACHE_DIR,'.memory')
@@ -223,7 +223,7 @@ class Api(object):
         self._keys = {}
         for key_name in key_names:
             self.log('key_name =',key_name)
-            self._keys[key_name] = Persona(key_name,api=self,create_if_missing=False)
+            self._keys[key_name] = Komrade(key_name,api=self,create_if_missing=False)
         
         # break into types
         self.accounts = [self._keys[name] for name in priv_key_names]
@@ -240,13 +240,13 @@ class Api(object):
 
     #async 
     def personate(self,persona_name,create_if_missing=True):
-        persona = Persona(persona_name,api=self,create_if_missing=create_if_missing)
+        komrade = Komrade(persona_name,api=self,create_if_missing=create_if_missing)
         res = persona.boot()
         self.log('personate() res =',res)
         return persona
-        # persona = self.keys[persona_name] if persona_name in self.keys else None
-        # if persona is None and create_if_missing:
-        #     self.keys[persona_name] = persona = Persona(persona_name, api=self, create_if_missing=create_if_missing) 
+        # komrade = self.keys[persona_name] if persona_name in self.keys else None
+        # if komrade is None and create_if_missing:
+        #     self.keys[persona_name] = komrade = Komrade(persona_name, api=self, create_if_missing=create_if_missing) 
         #     res = await persona.boot()
         #     self.log('BOOT RESULT:',res)
         # return persona
@@ -372,7 +372,7 @@ class Api(object):
             from_name = b64decode(name_b64).decode()
             self.log('from_name =',from_name)
             timestamp = b64decode(time_b64).decode()
-            tmpP = Persona(from_name)
+            tmpP = Komrade(from_name)
             await tmpP.boot()
             from_pubkey_b64_accto_name = tmpP.pubkey_b64
             assert from_pubkey_b64==from_pubkey_b64_accto_name
@@ -394,7 +394,7 @@ class Api(object):
     async def refresh_inboxes(self):
         uris_to_get=[]
 
-        for persona in self.accounts:
+        for komrade in self.accounts:
             inbox = await persona.load_inbox(decrypt_msg_uri=True, last=LAST_N_IN_INBOX)
             for decr_msg_uri in inbox:
                 uris_to_get.append(self.get_msg(decr_msg_uri))

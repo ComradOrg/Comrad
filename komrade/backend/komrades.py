@@ -3,7 +3,7 @@ from komrade import *
 from komrade.backend import *
 from komrade.backend.keymaker import *
 
-class Persona(Caller):
+class Komrade(Caller):
 
     def __init__(self, name=None, passphrase=DEBUG_DEFAULT_PASSPHRASE):
         super().__init__(name=name,passphrase=passphrase)
@@ -30,7 +30,7 @@ class Persona(Caller):
     def exists_locally_as_contact(self):
         return self.pubkey and not self.privkey
 
-    def exists_locally_as_persona(self):
+    def exists_locally_as_Komrade(self):
         return self.pubkey and self.privkey
 
     def exists_on_server(self):
@@ -139,14 +139,14 @@ def test_register():
     import random
     num = random.choice(list(range(0,1000)))
     botname=f'marx{str(num).zfill(3)}'
-    marxbot = Persona(botname)
-    # marxbot=Persona()
+    marxbot = Komrade(botname)
+    # marxbot=Komrade()
     marxbot.register(passphrase='spectre')
 
 if __name__=='__main__':
     test_register()
-    # marx = Persona('marx')
-    # elon = Persona('elon')
+    # marx = Komrade('marx')
+    # elon = Komrade('elon')
 
     # marx.register()
     # # elon.register()
