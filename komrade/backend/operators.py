@@ -252,7 +252,7 @@ class Operator(Keymaker):
             msg,
             to_whom
         )
-        self.log(f'Here is the message I will now encrypt and to send to {to_whom}:\n\n {dict_format(msg_obj.msg,tab = 2)}')
+        # self.log(f'Here is the message I will now encrypt and to send to {to_whom}:\n\n {dict_format(msg_obj.msg,tab = 2)}')
         
         # encrypting
         msg_obj.encrypt()

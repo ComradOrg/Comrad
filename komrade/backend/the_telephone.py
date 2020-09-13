@@ -19,6 +19,10 @@ class TheTelephone(Operator):
 
     def send_and_receive(self,msg_d,**y):
         self.log('send and receive got incoming msg:',msg_d)
+        
+        opp = Operator(pubkey=msg_d['to'])
+        self.log('got opp:',opp.pubkey.data == msg_d['to'], op.pubkey.data == msg_d['to'])
+        
         msg_b=msg_d["msg"]
         msg_b64 = b64encode(msg_b)
         msg_b64_str = msg_b64.decode()
