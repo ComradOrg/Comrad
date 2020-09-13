@@ -202,9 +202,17 @@ class TheOperator(Operator):
             'secret_login':shared_secret_str.encode(),
             'name':name,
         }
+        res_safe = {
+            **res, 
+            **{
+                'secret_login':make_key_discreet(
+                    res['secret_login']
+                )
+            }
+        }
 
         # return
-        self.log('Operator returning result:',dict_format(res,tab=4))
+        self.log('Operator returning result:',dict_format(res_safe,tab=4))
         return res
         
 
