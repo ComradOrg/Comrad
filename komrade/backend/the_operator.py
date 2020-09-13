@@ -120,7 +120,7 @@ class TheOperator(Operator):
 
     def has_user(self,name=None,pubkey=None):
         pk=self.crypt_keys.get(name,prefix='/pubkey/')
-        nm=self.crypt_keys.get(b64enc_s(pubkey),prefix='/name/
+        nm=self.crypt_keys.get(b64enc_s(pubkey),prefix='/name/')
         self.log('pks:',pubkey,pk)
         self.log('nms:',name,nm)
         return pk or nm
