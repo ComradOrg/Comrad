@@ -132,7 +132,7 @@ class Komrade(Caller):
         sec_login = b64dec(resp_msg_d.get('pubkey'))
 
         pubkey=self._keychain['pubkey']=KomradeAsymmetricPublicKey(pubkey_b)
-        uri_id = b64enc_s(pubkey_b)
+        uri_id = b64enc(pubkey_b)
 
         self.crypt_keys.set(
             self.name,
