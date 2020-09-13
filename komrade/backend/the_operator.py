@@ -138,14 +138,14 @@ class TheOperator(Operator):
             uri,
             prefix='/name/'
         )
-        pubkey_record = self.crypt_keys.get(
+        pubkey_record = b64enc(self.crypt_keys.get(
             name,
             prefix='/pubkey/'
-        )
-        secret_record = self.crypt_keys.get(
+        ))
+        secret_record = b64enc(self.crypt_keys.get(
             uri,
             prefix='/secret_login/'
-        )
+        ))
 
 
         self.log(f'''Checking inputs:
@@ -156,20 +156,21 @@ class TheOperator(Operator):
 
 {uri} (input)
  vs.
-{pubkey_record} (record)
+{uri_record} (record)
 
 {secret_login} (input)
  vs.
 {pubkey_record} (record)
 ''')
         
-        stop
-        # # check name?
-        # if name != my_name: 
-        #     success = False
-        
+        # stop
+        # check name?
+        name_b = name.encode() if type(name)==str else name
+        if name_b != my_name:
+            self.log('names did not match!')
+            success = False 
         # # check pubkey?
-        # elif b64dec(pubkey) != b64dec(self.crypt_keys.get(
+        elif uri != b64enc(pubkey_record)
         #     name,
         #     prefix='/pubkey/'
         # )):
