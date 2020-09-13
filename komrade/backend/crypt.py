@@ -126,7 +126,7 @@ class Crypt(Logger):
 
     def set(self,k,v,prefix='',override=False):
         if self.has(k,prefix=prefix): # and not override:
-            # self.log(f"I'm afraid I can't let you do that, overwrite someone's data!\n\nat {prefix}{k} = {v}")
+            self.log(f"I'm afraid I can't let you do that, overwrite someone's data!\n\nat {prefix}{k} = {v}")
             return False #(False,None,None)
         
         k_b=self.package_key(k,prefix=prefix)
@@ -157,7 +157,7 @@ class Crypt(Logger):
         except KeyError:
             return None
         v_b=self.unpackage_val(v)
-        # self.log(f'Crypt.get(\n\t{prefix}{k}\n\n\t{v_b}')
+        self.log(f'Crypt.get(\n\t{prefix}{k}\n\n\t{v_b}')
         return v_b
 
 
