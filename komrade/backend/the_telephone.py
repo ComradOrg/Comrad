@@ -53,9 +53,9 @@ class TheTelephone(Operator):
 
         resp_msg_b64 = resp_msg_b64_str.encode()
         resp_msg_b = b64decode(resp_msg_b64)
-        self.log('resp_msg_b:',resp_msg_b)
+        # self.log('resp_msg_b:',resp_msg_b)
         resp_msg_d = pickle.loads(resp_msg_b)
-        self.log('unpickled:',resp_msg_d)
+        # self.log('unpickled:',resp_msg_d)
 
         # unseal
         from komrade.backend.messages import Message
