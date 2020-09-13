@@ -105,7 +105,7 @@ class Komrade(Caller):
             'name':name, 
             'pubkey': pubkey.data,
         }
-        self.log('For my public key, I will be sending it to @Operator on the remote server:',dict_format(data,tab=2))
+        self.log('@Keymaker: Store your public key on your device hardware,\nand also register it with Komrade @Operator on the remote server:',dict_format(data,tab=2))
         
         # ring operator
         # call from phone since I don't have pubkey on record on Op yet
