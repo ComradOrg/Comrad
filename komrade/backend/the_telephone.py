@@ -30,7 +30,7 @@ class TheTelephone(Operator):
         msg_b=msg_d["msg"]
         msg_b64 = b64encode(msg_b)
         msg_b64_str = msg_b64.decode()
-        self.log(f'''Sending total encrypted package:\n\n{msg_b64_str}''')
+        self.log(f'''Sending the encrypted content package:\n\n{msg_b64_str}''')
 
         # seal for transport
         msg_b64_str_esc = msg_b64_str.replace('/','_')
