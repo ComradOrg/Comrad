@@ -126,7 +126,7 @@ class TheOperator(Operator):
             or
             (self.crypt_keys.get(b64enc_s(pubkey),prefix='/name/'))
         )
-        self.log('!?!?!?',x)
+        self.log('!?!?!?',x,name,pubkey)
         stop
 
         return x
