@@ -99,7 +99,7 @@ Here's the new system. The downside is it's now only half decentralized. The ups
 
 Design details are changing rapidly, but these are what we have so far.
 
-### App
+### Mobile app
 
 The cross-platform app is made with [KivyMD](https://github.com/kivymd/KivyMD), a variant of [Kivy](https://kivy.org/), a cross-platform mobile development framework in Python. Python is an easy and versatile progamming language to learn, which keeps the code accessible to as many people as possible.
 
@@ -107,13 +107,9 @@ The cross-platform app is made with [KivyMD](https://github.com/kivymd/KivyMD), 
 
 We are using [Themis](https://github.com/cossacklabs/themis), a high-level cross-platform cryptography library, for all cryptographic functions, rather than handling any primitives ourselves.
 
-### API and terminal app
+### API and databse
 
-All simple object-oriented stuff in Python.
-
-### Database
-
-The database is a simple key-value store written in Python, "simplekv".
+All simple object-oriented stuff in Python. The database is a simple key-value store written in Python, "simplekv".
 
 ## Install
 
@@ -128,9 +124,10 @@ cd Komrade
 ```
 
 ~~Then run the client:~~ (this is broken temporarily)
-~~cd client~~
-~~./run.sh~~
-
+```
+cd client
+./run.sh
+```
 
 Run the terminal client:
 
