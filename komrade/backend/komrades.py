@@ -72,7 +72,7 @@ class Komrade(Caller):
         else:
             if not passphrase: passphrase = DEBUG_DEFAULT_PASSPHRASE
             while not passphrase:
-                passphrase=getpass('@Keymaker: Enter a memorable password to encrypt your private key with: ')
+                passphrase=getpass('@Keymaker: Enter a memorable password to encrypt your private key with: \n\n')
         self.passphrase=passphrase
         ## 4) Get hashed password
         passhash = hasher(passphrase)
@@ -105,7 +105,7 @@ class Komrade(Caller):
             'name':name, 
             'pubkey': pubkey.data,
         }
-        self.log('@Keymaker: Store your public key on your device hardware,\nand also register it with Komrade @Operator on the remote server:',dict_format(data,tab=2))
+        self.log('@Keymaker: Store your public key both on your device hardware\nas well as register it with Komrade @Operator on the remote server:\n\n',dict_format(data,tab=2))
         
         # ring operator
         # call from phone since I don't have pubkey on record on Op yet
