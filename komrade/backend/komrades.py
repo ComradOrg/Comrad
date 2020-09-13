@@ -288,11 +288,15 @@ def test_register():
     marxbot.register(passphrase='spectre')
 
 
+
 def test_msg():
-    z = locate_an_operator('zuck')
+    z = comlink('zuck')
     z.login(passphrase='eee')
-    s = locate_an_operator('sergey')
-    z.send_msg_to('you ssssssuck',s)
+    
+    s = comlink('sergey')
+    
+    z.send_msg_to('you ssssssuck')
+
 
 if __name__=='__main__':
     test_msg()

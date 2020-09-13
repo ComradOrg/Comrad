@@ -9,10 +9,11 @@ from komrade.backend import *
         
 def locate_an_operator_somehow(str_or_byte_or_obj):
     if issubclass(type(str_or_byte_or_obj),Operator): return str_or_byte_or_obj
-    if type(str_or_byte_or_obj)==bytes: return locate_an_operator(name=str_or_byte_or_obj)
+    if type(str_or_byte_or_obj)==str: return locate_an_operator(name=str_or_byte_or_obj)
     if type(str_or_byte_or_obj)==bytes: return locate_an_operator(pubkey=str_or_byte_or_obj)
     raise KomradeException(type(str_or_byte_or_obj),'???')
 
+def comlink(name_or_pubkey): return locate_an_operator_somehow(x)
 
 PHONEBOOK = {}
 
