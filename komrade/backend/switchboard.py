@@ -2,6 +2,7 @@
 import os,sys; sys.path.append(os.path.abspath(os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__),'..')),'..')))
 from komrade import *
 from komrade.backend import *
+from getpass import getpass
 
 # external imports
 from flask import Flask, request, jsonify
@@ -51,7 +52,6 @@ def run_forever(port='8080'):
     global OP_PASS
     OP_PASS = getpass('@op pass? ')
     TELEPHONE = TheTelephone()
-    from getpass import getpass
     OPERATOR = TheOperator(passphrase=OP_PASS)
     print(OPERATOR,'!?',OPERATOR.keychain())
     app = Flask(__name__)
