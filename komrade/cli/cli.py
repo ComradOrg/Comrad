@@ -57,7 +57,7 @@ class CLI(Logger):
         logo=tw.indent(logo, ' '*indent)
         scan_print(logo,max_pause=0.005)
 
-    def help(self,x):
+    def help(self,*x,**y):
         print(HELPSTR)
 
     def intro(self):
