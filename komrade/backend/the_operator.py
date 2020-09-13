@@ -69,11 +69,15 @@ class TheOperator(Operator):
         # unseal
         self.log('got:',data_b)
         msg_d = {
-            'msg':data_b
+            'msg':data_b,
+            'from_name':self.phone,
+            'from':self.phone.pubkey.data,
+            'to_name':self.name,
+            'to':self.pubkey.data,
         }
         # msg_d = pickle.loads(data_b)
         self.log('msg_d',msg_d)
-        msg_obj = Message(msg_d,from_whom=self.op,to_whom=self)
+        msg_obj = Message(msg_d,from_whom=self.phone,to_whom=self)
 
         self.log(f'Decoding the binary, I discovered an encrypted message from {self.phone}: {msg_obj}')
         
