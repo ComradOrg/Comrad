@@ -32,6 +32,7 @@ class CLI(Logger):
         while True:
             try:
                 inp=input(f'@{self.name if self.name else "?"}: ')
+                print(inpp,'??')
             except KeyboardInterrupt:
                 exit()
             self.route(inp)
