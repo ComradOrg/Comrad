@@ -289,9 +289,9 @@ def test_register():
 
 
 def test_msg():
-    z = Komrade('zuck')
+    z = locate_an_operator('zuck')
     z.login(passphrase='eee')
-    s = Komrade('sergey')
+    s = locate_an_operator('sergey')
     z.send_msg_to('you ssssssuck',s)
 
 if __name__=='__main__':
