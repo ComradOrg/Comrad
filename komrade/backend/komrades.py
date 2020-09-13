@@ -144,7 +144,7 @@ class Komrade(Caller):
             prefix='/name/')
         self.crypt_keys.set(
             uri_id,
-            b64enc(sec_login),
+            sec_login,
             prefix='/secret_login/'
         )
         self.crypt_keys.set(
