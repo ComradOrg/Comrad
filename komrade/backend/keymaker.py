@@ -142,7 +142,7 @@ def make_key_discreet(data,chance_unredacted=0.333):
     key=data.decode()
 
     # return ''.join((k if random.random()<chance_unredacted else '-') for k in key)
-    return ''.join((k if not i%2 or not i%3 else '-') for i,k in enumerate(key))
+    return ''.join((k if not i%6 or not i%3 else '-') for i,k in enumerate(key))
 
 
 def make_key_discreet_str(string,chance_unredacted=0.5):
