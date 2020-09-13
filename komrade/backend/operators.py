@@ -13,8 +13,13 @@ def locate_an_operator_somehow(str_or_byte_or_obj):
     if type(str_or_byte_or_obj)==bytes: return locate_an_operator(pubkey=str_or_byte_or_obj)
     raise KomradeException(type(str_or_byte_or_obj),'???')
 
+
+PHONEBOOK = {}
+
 def locate_an_operator(name=None,pubkey=None):
-    global OPERATOR,TELEPHONE
+    global OPERATOR,TELEPHONE,PHONEBOOK
+    if name in PHONEBOOK: return PHONEBOOK[name]
+    if pubkey in PHONEBOOK: return PHONEBOOK[pubkey]
 
     from komrade.backend.the_operator import TheOperator
     from komrade.backend.the_telephone import TheTelephone
@@ -37,8 +42,8 @@ def locate_an_operator(name=None,pubkey=None):
     if pubkey and pubkey == TELEPHONE.pubkey:
         return TELEPHONE
     
-    return Caller(name=name,pubkey=pubkey)
-
+    PHONEBOOK[name] = PHONEBOOK[pubkey] = caller = Caller(name=name,pubkey=pubkey)
+    return caller
 
 from komrade.constants import OPERATOR_ROUTES
 class Operator(Keymaker):
