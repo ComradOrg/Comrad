@@ -181,14 +181,18 @@ class Operator(Keymaker):
             msg_obj.msg = msg_obj.msg_d['msg'] = new_data
 
         # time to turn around and encrypt
-        msg_obj.mark_return_to_sender()
-        self.log('returning to sender as:',msg_obj)
+        self.log('time to flip msg around and return to sender. v1:',self)
+        new_msg_obj = msg_obj.from_whom.compose_msg_to(
+            msg=new_data,
+            another=msg_obj.to_whom
+        ) #msg_obj.mark_return_to_sender()
+        self.log('returning to sender as:',new_msg_obj)
 
         # encrypt
         if reencrypt:
-            msg_obj.encrypt()
+            new_msg_obj.encrypt()
 
-        return msg_obj
+        return new_msg_obj
 
 
     def ring_ring(self,msg,to_whom,get_resp_from=None,route=None,caller=None):
