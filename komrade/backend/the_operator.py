@@ -132,6 +132,9 @@ class TheOperator(Operator):
         return pk or nm
 
     def login(self,name,pubkey,secret_login,**data):
+        name=name.encode() if type(name)==str else name
+        pubkey=pubkey.encode() if type(pubkey)==str else pubkey
+        secret_login=secret_login.encode() if type(secret_login)==str else secret_login
         # get my records
         uri = b64enc(pubkey)
         name_record = self.crypt_keys.get(
@@ -156,21 +159,21 @@ class TheOperator(Operator):
 
 {uri} (input)
  vs.
-{uri_record} (record)
+{pubkey_record} (record)
 
 {secret_login} (input)
  vs.
-{pubkey_record} (record)
+{secret_record} (record)
 ''')
         
         # stop
         # check name?
-        name_b = name.encode() if type(name)==str else name
-        if name_b != my_name:
+        if name != name_record:
             self.log('names did not match!')
             success = False 
         # # check pubkey?
-        elif uri != pubkey_record:
+        elif pubkey != pubkey_record:
+            self.log('pubkeys did not match!')
             pass
         #     name,
         #     prefix='/pubkey/'
