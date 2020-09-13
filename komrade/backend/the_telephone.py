@@ -18,15 +18,19 @@ class TheTelephone(Operator):
 
 
     def send_and_receive(self,msg_d,**y):
-        self.log('send and receive got incoming msg:',msg_d)
+        # self.log('send and receive got incoming msg:',msg_d)
         
-        opp = Operator(pubkey=msg_d['to'])
-        self.log('got opp:',opp.pubkey.data == msg_d['to'], self.op.pubkey.data == msg_d['to'])
+        # assert that people can speak only with operator in their first enclosed message!
+        # if so, dropping the "to"
+        if msg_d['to'] != self.op.pubkey.data:
+            raise KomradeException('Komrades must communicate securely with Operator first.')
+        # opp = Operator(pubkey=msg_d['to'])
+        # self.log('got opp:',opp.pubkey.data == msg_d['to'], self.op.pubkey.data == msg_d['to'])
         
         msg_b=msg_d["msg"]
         msg_b64 = b64encode(msg_b)
         msg_b64_str = msg_b64.decode()
-        self.log(f'''@Operator knows it's me, so I'll omit all metadata\nand send only the encrypted packcage:\n\n{msg_b64_str}''')
+        self.log(f'''@Operator knows it's me, so I'll omit all metadata\nand send only the encrypted package:\n\n{msg_b64_str}''')
 
         # seal for transport
         msg_b64_str_esc = msg_b64_str.replace('/','_')
