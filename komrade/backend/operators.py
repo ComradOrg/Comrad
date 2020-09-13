@@ -59,8 +59,8 @@ class Operator(Keymaker):
         super().__init__(name=name,passphrase=passphrase, keychain=keychain,
                          path_crypt_keys=path_crypt_keys, path_crypt_data=path_crypt_data)
         
-        self.find_pubkey_and_name(name,pubkey)
-        print('booted with operator with:',self.name,self.pubkey,self.find_pubkey(name),'??')
+        # self.find_pubkey_and_name(name,pubkey)
+        self.log('booted with operator with:',self.name,self.pubkey,self.find_pubkey(name),'??')
         
     # def boot(self):
     #     ## get both name and pubkey somehow
@@ -73,7 +73,7 @@ class Operator(Keymaker):
     #      # Do I have my keys?
     #     have_keys = self.exists()
         
-    #     # If not, forge them -- only once!
+    #     # If not, forge them -- only once!``
     #     if not have_keys and create:
     #         self.get_new_keys()
         
