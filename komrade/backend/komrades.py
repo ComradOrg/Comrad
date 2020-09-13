@@ -60,12 +60,12 @@ class Komrade(Caller):
             name = input('@Keymaker: What is the name for this new account?\n@?: ')
 
         self.log(f'Hello, this is Komrade @{name}.\n\nI would like to sign up for the socialist network revolution.')
-        self.log(f'@Keymaker: You must first cut your encryption keys.')
+        self.log(f'@Keymaker: To communicate with komrades securely,\nyou must first cut your encryption keys.')
 
         ## 2) Make pub public/private keys
         keypair = KomradeAsymmetricKey()
         pubkey,privkey = keypair.pubkey_obj,keypair.privkey_obj
-        self.log(f'@Keymaker: Here. I have cut for you a private and public asymmetric key pair\nusing the Elliptic Curve algorithm from Themis cryptography library:\n\n(1) {pubkey}\n\n(2) {privkey}')
+        self.log(f'{ART_KEY_PAIR}@Keymaker: I have cut for you a private and public asymmetric key pair\nusing the Elliptic Curve algorithm from Themis cryptography library:\n\n(1) {pubkey}\n\n(2) {privkey}')
 
         ## 3) Have passphrase?
         if SHOW_STATUS and not passphrase:
