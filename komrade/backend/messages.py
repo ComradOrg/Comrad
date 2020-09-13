@@ -159,10 +159,10 @@ class Message(Logger):
 
         # otherwise lets do it
         self.msg_encr = self.msg
-        self.log(f'attempting to decrypt {self}')
+        self.log(f'Attempting to decrypt {self}')
 
         # decrypt msg
-        self.log('attempting to decrypt',self.msg,'from',self.from_pubkey,'to',self.to_whom,self.to_whom.keychain(),self.to_whom.assemble(self.to_whom.keychain()))
+        # self.log('attempting to decrypt',self.msg,'from',self.from_pubkey,'to',self.to_whom,self.to_whom.keychain(),self.to_whom.assemble(self.to_whom.keychain()))
         self.msg = self.msg_d['msg'] = decr_msg_b = SMessage(
             self.to_whom.privkey.data,
             self.from_pubkey
@@ -171,7 +171,7 @@ class Message(Logger):
 
         # unpickle        
         self.msg = self.msg_d['msg'] = decr_msg = pickle.loads(decr_msg_b)
-        self.log('I am now decrypted and unpickled:',self)
+        self.log('Message decrypted:',self)
 
         # now, is the decrypted message itself a message?
         if is_valid_msg_d(decr_msg):
