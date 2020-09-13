@@ -134,10 +134,9 @@ class Crypt(Logger):
         v_b=self.package_val(v)
         self.log(f'''
 Crypt.set(
-    
-    key = {k_b}
+    {k_b}
         
-    val = {v_b}
+    {v_b}
 )')
         ''')
         # store
