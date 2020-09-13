@@ -183,7 +183,7 @@ class TheOperator(Operator):
         
         # generate shared secret
         shared_secret = b64enc(get_random_binary_id())
-        self.log(f'{self}: Generated shared secret between {name} and me:\n\n{make_key_discreet_str(shared_secret)}')
+        self.log(f'{self}: Generated shared secret between {name} and me:\n\n{make_key_discreet(shared_secret)}')
 
         # ok then set what we need
         uri_id = b64enc(pubkey)
