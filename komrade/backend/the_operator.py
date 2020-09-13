@@ -122,7 +122,7 @@ cv = {cv_b64}
         
         res = {
             'success':success,
-            'pubkey':b64de(cv_b64),
+            'pubkey':b64dec(cv_b64),
             'name':name,
         }
         if not success:
