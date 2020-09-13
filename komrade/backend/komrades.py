@@ -6,13 +6,13 @@ from komrade.backend.keymaker import *
 class Komrade(Caller):
 
     def __init__(self, name=None, passphrase=DEBUG_DEFAULT_PASSPHRASE):
-        # super().__init__(name=name,passphrase=passphrase)
+        super().__init__(name=name,passphrase=passphrase)
         # if SHOW_STATUS:
         #     from komrade.cli import CLI
         #     self.cli = CLI(name=name, komrade=self)
         # self.boot(create=False)
-        self.name=name
-        pass
+        # self.name=name
+        # pass
 
     def boot(self,create=False,ping=False):
         # Do I already have my keys?
