@@ -54,6 +54,7 @@ class TheTelephone(Operator):
         self.log('unpickled:',resp_msg_d)
 
         # unseal
+        from komrade.backend.messages import Message
         resp_msg_obj = Message(resp_msg) #self.unseal_msg(resp_msg_b)
         # res =  resp_msg_b_unsealed
         self.log('unsealed resp_msg_obj',resp_msg_obj)
