@@ -3,10 +3,12 @@ from komrade import *
 from komrade.backend import *
 import art
 import textwrap as tw
-HELPSTR = """
-      /login [name]     -->  log back in
-      /register [name]  -->  new komrade
-      /help             -->  seek help
+INDENT = 14
+ndnt = ' '*INDENT
+HELPSTR = f"""
+{ndnt}/login [name]     -->  log back in
+{ndnt}/register [name]  -->  new komrade
+{ndnt}/help             -->  seek help
 """
 
 class CLI(Logger):
