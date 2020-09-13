@@ -121,7 +121,7 @@ cv = {cv_b64}
         # check input back from crypt
         # if success and b64decode(cv)!=pubkey: success=False
         # if success and name!=self.crypt_keys.key2hash(name): success=False
-        
+        from komrade.utils import b64dec
         res = {
             'success':success,
             'pubkey':b64dec(cv_b64),
