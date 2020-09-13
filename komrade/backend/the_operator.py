@@ -214,7 +214,7 @@ class TheOperator(Operator):
             }
         
         # generate shared secret
-        shared_secret = b64enc(get_random_binary_id())
+        shared_secret = get_random_binary_id()
         self.log(f'{self}: Generated shared secret between {name} and me:\n\n{make_key_discreet(shared_secret)}')
 
         # ok then set what we need
