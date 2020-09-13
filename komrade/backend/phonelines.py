@@ -12,41 +12,26 @@ def create_phonelines():
     # Operator
     op_keypair = KomradeAsymmetricKey()
     op_pubkey,op_privkey = op_keypair.pubkey_obj,op_keypair.privkey_obj
-    op_privkey_decr = KomradeSymmetricKeyWithPassphrase()
-    op_privkey_encr_b = op_privkey_decr.encrypt(op_privkey.data)
-    op_privkey_encr = KomradeEncryptedAsymmetricPrivateKey(op_privkey_encr_b)
-
-    # save pub and priv
-    op_uri = op_pubkey.data_b64
+    op_uri = op_pubkey.data_b64_s
     keycrypt.set(OPERATOR_NAME,op_pubkey.data,prefix='/pubkey/')
-    keycrypt.set(op_pubkey.data_b64_s,OPERATOR_NAME,prefix='/name/')
-    
-    keycrypt.set(op_uri,op_privkey_encr.data,prefix='/privkey_encr/')
+    keycrypt.set(op_uri,OPERATOR_NAME,prefix='/name/')
+    keycrypt.set(op_uri,op_privkey.data,prefix='/privkey/')
     
 
     ## Telephone
     phone_keypair = KomradeAsymmetricKey()
     phone_pubkey,phone_privkey = phone_keypair.pubkey_obj,phone_keypair.privkey_obj
-    phone_privkey_decr = KomradeSymmetricKeyWithoutPassphrase()
-    phone_privkey_encr_b = phone_privkey_decr.encrypt(phone_privkey.data)
-    phone_privkey_encr = KomradeEncryptedAsymmetricPrivateKey(phone_privkey_encr_b)
-
-    # save pub and priv
+    phone_uri = phone_pubkey.data_b64_s
     keycrypt.set(TELEPHONE_NAME,phone_pubkey.data,prefix='/pubkey/')
-    keycrypt.set(phone_pubkey.data_b64_s,TELEPHONE_NAME,prefix='/name/')
+    keycrypt.set(phone_uri,TELEPHONE_NAME,prefix='/name/')
 
     ## world
     world_keypair = KomradeAsymmetricKey()
     world_pubkey,world_privkey = world_keypair.pubkey_obj,world_keypair.privkey_obj
-    world_privkey_decr = KomradeSymmetricKeyWithPassphrase()
-    world_privkey_encr_b = world_privkey_decr.encrypt(world_privkey.data)
-    world_privkey_encr = KomradeEncryptedAsymmetricPrivateKey(world_privkey_encr_b)
-
-    # save pub and priv
-    world_uri = world_pubkey.data_b64
+    world_uri = world_pubkey.data_b64_s
     keycrypt.set(WORLD_NAME,world_pubkey.data,prefix='/pubkey/')
-    keycrypt.set(world_pubkey.data_b64_s,WORLD_NAME,prefix='/name/')
-    keycrypt.set(world_uri,world_privkey_encr.data,prefix='/privkey_encr/')
+    keycrypt.set(world_uri,WORLD_NAME,prefix='/name/')
+    keycrypt.set(world_uri,world_privkey.data,prefix='/privkey/')
 
 
 
