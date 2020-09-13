@@ -68,7 +68,9 @@ class CLI(Logger):
         self.status(None,)
     
     def register(self,name=None):
-        self._komrade = Komrade(name if name else self.name)
+        if not name: name=input('name: ')
+        if not name: return
+        self._komrade = Komrade(name)
         res=self._komrade.register()
         if res and type(res)==dict and 'success' in res and res['success']:
             self._name=self._komrade.name
@@ -81,11 +83,12 @@ class CLI(Logger):
             print('@Operator: '+res.get('status','?'))
 
     def login(self,name):
-        name=self.name if not name else name
         if not name: name=input('name: ')
         if not name: return
-        self._komrade=Komrade(name if name else self.name)
+        self._komrade=Komrade(name)
+        
         res = self._komrade.login()
+
         if res and type(res)==dict and 'success' in res and res['success']:
             self._name=self._komrade.name
             self._loggedin=True

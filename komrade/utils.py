@@ -64,7 +64,7 @@ def dict_format(d, tab=0):
 import inspect,time
 from komrade.constants import *
 class Logger(object):
-    def log(self,*x,pause=PAUSE_LOGGER,clear=PAUSE_LOGGER):
+    def log(self,*x,pause=PAUSE_LOGGER,clear=CLEAR_LOGGER):
         if not SHOW_LOG: return
         curframe = inspect.currentframe()
         calframe = inspect.getouterframes(curframe, 2)
