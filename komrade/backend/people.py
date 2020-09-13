@@ -69,14 +69,15 @@ class Persona(Caller):
         else:
             print(passphrase,'????')
             if not passphrase: passphrase = DEBUG_DEFAULT_PASSPHRASE
-            while not passphrase:
-                passphrase=getpass('Enter a memorable password to encrypt your private key with: ')
+            # while not passphrase:
+                # passphrase=getpass('Enter a memorable password to encrypt your private key with: ')
+            print('ok')
         self.passphrase=passphrase
-
+        print(passphrase,self.passphrase,'!')
         ## 4) Get hashed password
         passhash = hasher(passphrase)
         # self.log(f'''Keymaker has created a symmetric encryption cell using the disguised password:\n\n\t(2A) [Symmetric Encryption Key]\n\t({make_key_discreet_str(passhash)})''')
-
+        print(passhash,'!')
         ## 5) Encrypt private key
         privkey_decr = KomradeSymmetricKeyWithPassphrase(passphrase)
         privkey_encr = privkey_decr.encrypt(privkey.data)
