@@ -12,25 +12,39 @@ class Komrade(Caller):
             self.cli = CLI(name=name, komrade=self)
         self.boot(create=False)
 
-    def boot(self,create=False):
+    def boot(self,create=False,ping=False):
         # Do I already have my keys?
         # yes? -- login
 
         keys = self.keychain()
         if keys.get('pubkey') and keys.get('privkey'):
-            self.log('booted!')
+            self.log('already booted! @'+self.name)
             return True
         
-        # If not, forge them -- only once!
-        if not have_keys and create:
-            self.get_new_keys()
+        if self.exists_locally_as_account():
+            self.log(f'this account (@{self.name}) can be logged into')
+            return self.login()
+            
+
+        elif self.exists_locally_as_contact():
+            self.log(f'this account (@{self.name}) is a contact')
+            return #pass #???
+
+        elif ping and self.exists_on_server():
+            self.log(f'this account exists on server. introduce?')
+            return
+
+        elif create:
+            self.log('account is free: register?')
+            return self.register()
+
 
 
     def exists_locally_as_contact(self):
         return self.pubkey and not self.privkey
 
-    def exists_locally_as_Komrade(self):
-        return self.pubkey and self.privkey
+    def exists_locally_as_account(self):
+        return self.pubkey and self.privkey_encr
 
     def exists_on_server(self):
         answer = self.phone.ring_ring({
