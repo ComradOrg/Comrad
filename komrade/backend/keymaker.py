@@ -388,7 +388,7 @@ class Keymaker(Logger):
     def uri_id(self):
         if not self._uri_id:
             pubkey = self.pubkey #find_pubkey()
-            self._uri_id = b64encode(pubkey)
+            self._uri_id = pubkey.data_b64
         return self._uri_id
 
 
@@ -567,6 +567,7 @@ Keymaker ({self}) is forging new keys for {name}
         
         self._uri_id = uri_id
         self.log(f'''Saved URI(=pubkey_b64) as a QR code: {ofnfn} {self.qr}''')
+        return ofnfn
 
     def save_keychain(self,name,keychain,keys_to_save=None,uri_id=None):
         if not keys_to_save: keys_to_save = list(keychain.keys())
