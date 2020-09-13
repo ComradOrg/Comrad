@@ -134,7 +134,7 @@ class KomradeAsymmetricPrivateKey(KomradeAsymmetricKey):
     def key(self): return self.privkey
     def __repr__(self): return f'''[Asymmetric Private Key]\n    ({self.discreet})'''
 
-def make_key_discreet(data,chance_unredacted=0.333):
+def make_key_discreet(data,chance_unredacted=0.15):
     import random
 
     if not data: return '?'
