@@ -59,7 +59,7 @@ class Komrade(Caller):
         elif not name:
             name = input('@Keymaker: What is the name for this new account?\n@?: ')
 
-        self.log(f'Hello, this is @{name}.\n\nI would like to sign up for the socialist network revolution.')
+        self.log(f'Hello, this is Komrade @{name}.\n\nI would like to sign up for the socialist network revolution.')
         self.log(f'Komrade @Keymaker: You must first cut your encryption keys.')
 
         ## 2) Make pub public/private keys
