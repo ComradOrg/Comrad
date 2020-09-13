@@ -205,7 +205,7 @@ class TheOperator(Operator):
         res = {
             'success':success,
             'pubkey':pubkey,
-            'secret_login':shared_secret
+            'secret_login':shared_secret,
             'name':name,
         }
         # res_safe = {
