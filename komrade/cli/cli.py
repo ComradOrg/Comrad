@@ -4,9 +4,9 @@ from komrade.backend import *
 import art
 import textwrap as tw
 HELPSTR = """
-    /login [name]           log back in
-    /register [name]        new komrade
-    /help                   seek help
+      /login [name]       log back in
+      /register [name]    new komrade
+      /help               seek help
 """
 
 class CLI(Logger):
