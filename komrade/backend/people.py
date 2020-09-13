@@ -7,6 +7,7 @@ class Persona(Caller):
 
     def __init__(self, name=None, passphrase=DEBUG_DEFAULT_PASSPHRASE):
         super().__init__(name=name,passphrase=passphrase)
+        self.passphrase=passphprase if passphrase else None
         if SHOW_STATUS:
             from komrade.cli import CLI
             self.cli = CLI(name=name, persona=self)
@@ -140,9 +141,9 @@ def test_register():
     import random
     num = random.choice(list(range(0,1000)))
     botname=f'marx{str(num).zfill(3)}'
-    marxbot = Persona(botname)
+    marxbot = Persona(botname,passphrase=DEBUG_DEFAULT_PASSPHRASE)
     # marxbot=Persona()
-    marxbot.register(passphrase=DEBUG_DEFAULT_PASSPHRASE)
+    marxbot.register()
 
 if __name__=='__main__':
     test_register()
