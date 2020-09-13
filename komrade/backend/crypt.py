@@ -125,7 +125,7 @@ class Crypt(Logger):
 
 
     def set(self,k,v,prefix='',override=False):
-        if self.has(k,prefix=prefix) and not override:
+        if self.has(k,prefix=prefix): # and not override:
             self.log("I'm afraid I can't let you do that, overwrite someone's data!")
             return False #(False,None,None)
         
