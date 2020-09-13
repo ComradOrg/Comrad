@@ -222,6 +222,25 @@ class Komrade(Caller):
 
 
 
+    ## MEETING PEOPLE
+
+    def find(self,someone):
+        if type(someone)==str:
+            return Komrade(name=someone)
+        if type(someone)==bytes:
+            return Komrade(pubkey=someone)
+        self.log('what is type of someoen here?',type(someone))
+        return someone
+
+    def meet(self,someone):
+        # get person obj
+        someone = self.find(someone)
+        self.log('got someone =',someone,type(someone))
+
+
+
+
+
 
 
     def ring_ring(self,msg,route=None,**y):

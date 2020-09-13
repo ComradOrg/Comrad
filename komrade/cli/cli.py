@@ -6,6 +6,7 @@ import textwrap as tw
 HELPSTR = """
     /login [name]     -->  log back in
     /register [name]  -->  new komrade
+    /meet [name]      -->  exchange info
     /help             -->  seek help
 """
 
@@ -13,7 +14,8 @@ class CLI(Logger):
     ROUTES = {
         'help':'seek help',
         'register':'join the komrades',
-        'login':'log back in'
+        'login':'log back in', 
+        'meet':'meet a komrade'
     }
 
     def __init__(self,name='',cmd='',persona=None):
@@ -108,6 +110,19 @@ class CLI(Logger):
                 return None
         return self._name
 
+    @property
+    def logged_in(self):
+        return (self._loggedin and self._komrade and self._name)
+
+    def meet(self,name):
+        if not self.logged_in:
+            print('@Operator: You must be logged in first.\n')
+        if not name:
+            name=input(f'@Operator: To whom would you like to introduce yourself?\n\n@{self.name}: ')
+        if not name: return
+
+        # meet?
+        self.komrade.meet(name)
 
 
 

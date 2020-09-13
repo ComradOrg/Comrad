@@ -7,6 +7,11 @@ from komrade import *
 # from komrade.backend.switchboard import *
 from komrade.backend import *
         
+def locate_an_operator_somehow(str_or_byte_or_obj):
+    if issubclass(type(str_or_byte_or_obj),Operator): return str_or_byte_or_obj
+    if type(str_or_byte_or_obj)==bytes: return locate_an_operator(name=str_or_byte_or_obj)
+    if type(str_or_byte_or_obj)==bytes: return locate_an_operator(pubkey=str_or_byte_or_obj)
+    raise KomradeException(type(str_or_byte_or_obj),'???')
 
 def locate_an_operator(name=None,pubkey=None):
     global OPERATOR,TELEPHONE
