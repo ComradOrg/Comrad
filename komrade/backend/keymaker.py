@@ -335,7 +335,7 @@ class Keymaker(Logger):
             # get from cache
             for keyname in look_for:
                 # print(self.name,'looking for key:',keyname)
-                if keyname in keys and keys[keyname]: continue
+                # if keyname in keys and keys[keyname]: continue
                 key = self.crypt_keys.get(uri,prefix=f'/{keyname}/')
                 # print('found in crypt:',key,'for',keyname)
                 if key: keys[keyname]=get_key_obj(keyname,key)

@@ -7,7 +7,7 @@ class Komrade(Caller):
 
     def __init__(self, name=None, passphrase=DEBUG_DEFAULT_PASSPHRASE):
         super().__init__(name=name,passphrase=passphrase)
-        self.log(f'booted komrade with {name} and {passphrase} and\n\n{dict_format(self._keychain)}')
+        self.log(f'booted komrade with {name} and {passphrase} and\n\n{dict_format(self.keychain())}')
         # if SHOW_STATUS:
         #     from komrade.cli import CLI
         #     self.cli = CLI(name=name, komrade=self)
