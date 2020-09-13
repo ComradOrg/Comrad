@@ -119,8 +119,14 @@ class TheOperator(Operator):
         return bool(pubkey)
 
     def has_user(self,name=None,pubkey=None):
-        pk=self.crypt_keys.get(name,prefix='/pubkey/')
-        nm=self.crypt_keys.get(b64enc_s(pubkey),prefix='/name/')
+        pk=self.crypt_keys.get(
+            name,
+            prefix='/pubkey/'
+        )
+        nm=self.crypt_keys.get(
+            b64enc(pubkey),
+            prefix='/name/'
+        )
         self.log('pks:',pubkey,pk)
         self.log('nms:',name,nm)
         return pk or nm
@@ -130,7 +136,7 @@ class TheOperator(Operator):
         
         # check name?
         if name != self.crypt_keys.get(
-            b64enc_s(pubkey),
+            b64enc(pubkey),
             prefix='/name/'
         ): 
             success = False
@@ -144,7 +150,7 @@ class TheOperator(Operator):
 
         # check secret login
         elif b64enc(secret_login) != b64enc(self.crypt_keys.get(
-            b64enc_s(pubkey),
+            b64enc(pubkey),
             prefix='/secret_login/'
         )):
             success = False
@@ -176,16 +182,16 @@ class TheOperator(Operator):
             }
         
         # generate shared secret
-        shared_secret_str = b64enc_s(get_random_binary_id())
-        self.log(f'{self}: Generated shared secret between {name} and me:\n\n{make_key_discreet_str(shared_secret_str)}')
+        shared_secret = b64enc(get_random_binary_id())
+        self.log(f'{self}: Generated shared secret between {name} and me:\n\n{make_key_discreet_str(shared_secret)}')
 
         # ok then set what we need
-        uri_id = b64enc_s(pubkey)
+        uri_id = b64enc(pubkey)
         pubkey_b = b64dec(pubkey)
         r1=self.crypt_keys.set(name,pubkey_b,prefix='/pubkey/')
         r2=self.crypt_keys.set(uri_id,name,prefix='/name/')
         # hide secret as key
-        r3=self.crypt_keys.set(shared_secret_str,uri_id,prefix='/secret_login/')
+        r3=self.crypt_keys.set(shared_secret,uri_id,prefix='/secret_login/')
 
         # success?
         success = r1 and r2 and r3
@@ -199,7 +205,7 @@ class TheOperator(Operator):
         res = {
             'success':success,
             'pubkey':pubkey,
-            'secret_login':shared_secret_str.encode(),
+            'secret_login':shared_secret
             'name':name,
         }
         # res_safe = {
