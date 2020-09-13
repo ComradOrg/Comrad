@@ -149,7 +149,7 @@ class Komrade(Caller):
 
         
         # done!
-        self.log(f'Congratulations. Welcome, Komrade {self}.')}')
+        self.log(f'Congratulations. Welcome, Komrade {self}.')
 
 
     def ring_ring(self,msg,route=None,**y):
