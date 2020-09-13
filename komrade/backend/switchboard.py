@@ -16,15 +16,12 @@ class TheSwitchboard(FlaskView, Logger):
     @property
     def op(self):
         global OP_PASS
-        
         from komrade.backend.the_operator import TheOperator
         if type(self)==TheOperator: return self
         if hasattr(self,'_op'): return self._op
         global OPERATOR,OPERATOR_KEYCHAIN
         if OPERATOR: return OPERATOR
         self._op=OPERATOR=TheOperator()
-        
-        self.log(f'@Operator waiting for incoming calls on {OPERATOR_API_URL}...',pause=False)
         return OPERATOR
 
     
@@ -62,4 +59,3 @@ def run_forever(port='8080'):
     app = Flask(__name__)
     TheSwitchboard.register(app, route_base='/op/', route_prefix=None)
     app.run(debug=False, port=port, host='0.0.0.0')
-    clear_screen()
