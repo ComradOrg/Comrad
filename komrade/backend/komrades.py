@@ -146,7 +146,7 @@ class Komrade(Caller):
         uri_id = b64enc(pubkey_b)
         qr_str=self.qr_str(uri_id)
         fnfn=self.save_uri_as_qrcode(uri_id)
-        self.log(f'saved public key as QR code to:\n {fnfn}\n\n{qr_str}')
+        # self.log(f'saved public key as QR code to:\n {fnfn}\n\n{qr_str}')
 
         
         # done!

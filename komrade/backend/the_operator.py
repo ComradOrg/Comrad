@@ -116,37 +116,46 @@ class TheOperator(Operator):
         self.log(f'looking for {name}, found {pubkey} as pubkey')
         return bool(pubkey)
 
+    def has_user(self,name=None,pubkey=None):
+        return (
+            (self.crypt_keys.get(name,prefix='/pubkey/'))
+            or
+            (self.crypt_keys.get(b64enc_s(pubkey),prefix='/name/'))
+        )
+
     def register_new_user(self,name,pubkey,**data):
         # self.log('setting pubkey under name')
-        success,ck,cv_b64 = self.crypt_keys.set(name,pubkey,prefix='/pubkey/')
-        if not isBase64(pubkey): pubkey=b64encode(pubkey)
+
+        # is user already there?
+        if self.has_user(name=name,pubkey=pubkey):
+            return {
+                'success':False,
+                'status': f"{OPERATOR_INTRO}I'm sorry, but I can't register the name of {name}."
+            }
         
-#         self.log(f'''
-# got result from crypt:
-# success = {success}
-# ck = {ck}
-# cv = {cv_b64}
-# ''')
-        success,ck,cv_b64 = self.crypt_keys.set(pubkey,name,prefix='/name/')
-        # self.log(f'''
-        # got result from crypt:
-        # success = {success}
-        # ck = {ck}
-        # cv = {cv_b64}
-        # ''')
-        # check input back from crypt
-        # if success and b64decode(cv)!=pubkey: success=False
-        # if success and name!=self.crypt_keys.key2hash(name): success=False
-        from komrade.utils import b64dec
+        # generate shared secret
+        shared_secret_str = b64enc_s(get_random_binary_id())
+        self.log(f'{self}: Generated shared secret between {name} and me:\n\n{make_key_discreet_str(shared_secret_str)')
+
+        # ok then set what we need
+        uri_id = b64enc_s(pubkey)
+        pubkey_b = b64dec(pubkey)
+        self.crypt_keys.set(name,pubkey_b,prefix='/pubkey/')
+        self.crypt_keys.set(uri_id,name,prefix='/name/')
+
+        # hide secret as key
+        self.crypt_keys.set(shared_secret_str,uri_id,prefix='/secret_login/')
+
+        # compose result
         res = {
             'success':success,
             'pubkey':pubkey,
+            'secret_login':shared_secret_str.encode(),
             'name':name,
         }
-        if not success:
-            res['status']=self.status(f"{OPERATOR_INTRO}I'm sorry, but I can't register the name of {name}.")
-            return res
-        self.log('Operator returning result:',dict_format(res,tab=2))
+
+        # return
+        self.log('Operator returning result:',dict_format(res,tab=4))
         return res
         
         # give back decryptor
