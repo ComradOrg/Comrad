@@ -206,9 +206,9 @@ class Komrade(Caller):
             return
 
         # check password
-        # while not passphrase:
-            # from getpass import getpass
-            # passphrase = getpass('@Keymaker: Enter password for {self} in order to decrypt the encrypted private key:\n\n')
+        while not passphrase:
+            from getpass import getpass
+            passphrase = getpass('@Keymaker: Enter password for {self} in order to decrypt the encrypted private key:\n\n')
         
         # assemble privkey?
         privkey = self.keychain(passphrase=passphrase).get('privkey')
@@ -265,12 +265,17 @@ class Komrade(Caller):
     
     
     def send_msg_to(self,msg,to_whom):
-        msg_e2e = self.compose_msg_to(msg,to_whom)
-        msg.encrypt()
+        to_whom = self.find(to_whom)
+        self.log(f'found {to_whom}')
+        msg_obj = self.compose_msg_to(
+            msg,
+            to_whom
+        )
+        self.log('composed msg:',msg_obj)
+        msg_obj.encrypt()
+        self.log('going to send msg_d?',msg_obj.msg_d)
         
-        {'_route':'deliver_msg_to', 'msg':msg}
-        
-        return self.ring_ring(msg)
+        return self.ring_ring(msg_obj.msg_d)
 
     
 
@@ -282,8 +287,15 @@ def test_register():
     # marxbot=Komrade()
     marxbot.register(passphrase='spectre')
 
+
+def test_msg():
+    z = Komrade('zuck')
+    z.login()
+    s = Komrade('sergey')
+    z.send_msg_to('you ssssssuck',s)
+
 if __name__=='__main__':
-    test_register()
+    test_msg()
     # marx = Komrade('marx')
     # elon = Komrade('elon')
 

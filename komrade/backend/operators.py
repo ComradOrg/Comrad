@@ -52,7 +52,7 @@ class Operator(Keymaker):
             assert type(pubkey)==bytes
             pubkey = b64dec(pubkey)
             if keychain.get('pubkey'):
-                kcpubk=keychain.get('pubkey').data
+                kcpubk=keychain.get('pubkey').data if type(keychain.get('pubkey'))!=bytes else keychain.get('pubkey') 
             else:
                 keychain['pubkey']=pubkey #KomradeAsymmetricPublicKey(pubkey)
         
