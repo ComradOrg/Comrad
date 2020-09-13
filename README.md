@@ -127,11 +127,10 @@ cd Komrade
 . script/bootstrap
 ```
 
-~~Then run the client:  (this is broken temporarily)~~
-```
-cd client
-./run.sh
-```
+~~Then run the client:~~ (this is broken temporarily)
+~~cd client~~
+~~./run.sh~~
+
 
 Run the terminal client:
 
