@@ -50,12 +50,9 @@ class Operator(Keymaker):
         if pubkey:
             # print(pubkey,'pubkey !?')
             assert type(pubkey)==bytes
-            if isBase64(pubkey): pubkey = b64decode(pubkey)
-            # print(pubkey,keychain,'??',name)
+            pubkey = b64dec(pubkey)
             if keychain.get('pubkey'):
                 kcpubk=keychain.get('pubkey').data
-                # kcpubk = b64decode(kcpubk) if isBase64(kcpubk) else kcpubk
-                # assert kcpubk == pubkey
             else:
                 keychain['pubkey']=pubkey #KomradeAsymmetricPublicKey(pubkey)
         
@@ -63,7 +60,7 @@ class Operator(Keymaker):
                          path_crypt_keys=path_crypt_keys, path_crypt_data=path_crypt_data)
         
         self.find_pubkey_and_name(name,pubkey)
-        # print('booted with operator with:',self.name,self.pubkey,self.find_pubkey(name),'??')
+        print('booted with operator with:',self.name,self.pubkey,self.find_pubkey(name),'??')
         
     # def boot(self):
     #     ## get both name and pubkey somehow
