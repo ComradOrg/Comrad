@@ -49,7 +49,7 @@ class Message(Logger):
         if hasattr(self.to_pubkey,'data'): self.to_pubkey=self.to_pubkey.data
         if hasattr(self.from_pubkey,'data'): self.from_pubkey=self.from_pubkey.data
 
-        self.log('loaded message: to pub',self.to_pubkey,'from pub',self.from_pubkey)
+        # self.log('loaded message: to pub',self.to_pubkey,'from pub',self.from_pubkey)
 
     def __repr__(self):
         # self.log('my type??',type(self.msg),self.msg)
