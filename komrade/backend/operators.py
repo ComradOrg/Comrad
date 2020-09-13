@@ -173,12 +173,14 @@ class Operator(Keymaker):
             # route it!
             func = getattr(self,route)
             new_data = func(**data)
-            msg_obj.msg = msg_obj.msg_d['msg'] = new_data
+            return new_data
+            # msg_obj.msg = msg_obj.msg_d['msg'] = new_data
 
         # try passing it on?
         if msg_obj.has_embedded_msg:
             new_data = self.route_msg(msg_obj.msg)
-            msg_obj.msg = msg_obj.msg_d['msg'] = new_data
+            return new_data
+            # msg_obj.msg = msg_obj.msg_d['msg'] = new_data
 
         if not new_data:
             # end of the line?
@@ -186,7 +188,7 @@ class Operator(Keymaker):
 
         # time to turn around and encrypt
         # @unsure?
-        self.log('time to flip msg around and return to sender. v1:',msg_obj)
+        self.log('time to flip msg around and return to sender. v1:',msg_obj,new_data)
         new_msg_obj = msg_obj.to_whom.compose_msg_to(
             msg=new_data,
             another=msg_obj.from_whom
