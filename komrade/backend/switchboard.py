@@ -18,7 +18,8 @@ class TheSwitchboard(FlaskView, Logger):
         if hasattr(self,'_op'): return self._op
         global OPERATOR,OPERATOR_KEYCHAIN
         if OPERATOR: return OPERATOR
-        self._op=OPERATOR=TheOperator()        
+        from getpass import getpass
+        self._op=OPERATOR=TheOperator(passphrase=getpass('Op pass? '))        
         return OPERATOR
 
     
