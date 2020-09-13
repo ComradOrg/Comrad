@@ -42,7 +42,8 @@ def locate_an_operator(name=None,pubkey=None):
     if pubkey and pubkey == TELEPHONE.pubkey:
         return TELEPHONE
     
-    PHONEBOOK[name] = PHONEBOOK[pubkey] = caller = Caller(name=name,pubkey=pubkey)
+
+    PHONEBOOK[name] = PHONEBOOK[pubkey] = caller = Komrade(name=name)
     return caller
 
 from komrade.constants import OPERATOR_ROUTES
