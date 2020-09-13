@@ -152,6 +152,7 @@ class Operator(Keymaker):
         # msg_d = pickle.loads(msg_b)
         # get message obj
         # print('unsealed msg:',msg_d)
+        self.log('received msg to unseal:',msg_b,'from whom',from_whom,'to whom',to_whom,self)
         msg_d = {
             'from':from_whom.pubkey.data,
             'to':to_whom.pubkey.data,
