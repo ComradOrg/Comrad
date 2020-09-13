@@ -86,9 +86,11 @@ class TheOperator(Operator):
 
         # carry out message instructions
         resp_msg_obj = self.pronto_pronto(msg_obj) #,route=msg_obj.route)
-        # self.log('route_result <-',resp_msg_obj)
+        self.log('route_result <-',resp_msg_obj)
 
         # send back down encrypted
+        self.log('route msgd',resp_msg_obj.msg_d)
+        self.log('route msg',resp_msg_obj.msg)
         
         msg_sealed = pickle.dumps(resp_msg_obj.msg_d)
 
