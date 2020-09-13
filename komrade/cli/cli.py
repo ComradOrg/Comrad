@@ -8,9 +8,9 @@ import textwrap as tw
 
 class CLI(Logger):
     ROUTES = {
-        'help':'see help messages',
-        'register':'register new user',
-        'login':'log back in'
+        'help':'seek help',
+        'register [name]':'join the komrades',
+        'login [name]':'log back in'
     }
 
     def __init__(self,name='',cmd='',persona=None):
