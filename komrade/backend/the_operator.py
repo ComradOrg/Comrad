@@ -67,6 +67,7 @@ class TheOperator(Operator):
         self.log(f'''Hello, this is the Operator.{ART_OLDPHONE4}I heard you say:\n\n {b64enc_s(data_b)}''')
 
         # unseal
+        self.log('got:',data_b)
         msg_d = pickle.loads(data_b)
         self.log('msg_d',msg_d)
         msg_obj = Message(msg_d,from_whom=self.op,to_whom=self)
