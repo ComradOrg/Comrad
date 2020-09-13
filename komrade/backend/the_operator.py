@@ -98,16 +98,24 @@ class TheOperator(Operator):
         self.log(f'looking for {name}, found {pubkey} as pubkey')
         return bool(pubkey)
 
-    def register_new_user(self,name,passphrase,pubkey,**data):
+    def register_new_user(self,name,pubkey,**data):
         # self.log('setting pubkey under name')
         success,ck,cv_b64 = self.crypt_keys.set(name,pubkey,prefix='/pubkey/')
+        if not isBase64(pubkey): pubkey=b64encode(pubkey)
+        
         self.log(f'''
 got result from crypt:
 success = {success}
 ck = {ck}
 cv = {cv_b64}
 ''')
-        
+        success,ck,cv_b64 = self.crypt_keys.set(pubkey,name,prefix='/name/')
+                self.log(f'''
+        got result from crypt:
+        success = {success}
+        ck = {ck}
+        cv = {cv_b64}
+        ''')
         # check input back from crypt
         # if success and b64decode(cv)!=pubkey: success=False
         # if success and name!=self.crypt_keys.key2hash(name): success=False
@@ -122,48 +130,6 @@ cv = {cv_b64}
             self.log('Operator returning result:',dict_format(res,tab=2))
             return res
         
-        # generate these admin keys?
-        admin_keys = self.forge_new_keys(
-            name=name,
-            passphrase=passphrase,
-            keys_to_gen = [
-                'adminkey',
-                'adminkey_encr',
-                'adminkey_decr'
-            ],
-            keys_to_save=[],
-            keys_to_return = [
-                'adminkey',
-                'adminkey_encr',
-                'adminkey_decr',
-            ],
-            key_types = {
-                'adminkey':KomradeSymmetricKeyWithoutPassphrase(),
-                'adminkey_encr':KomradeEncryptedKey(),
-                'adminkey_decr':KomradeSymmetricKeyWithPassphrase(passphrase=passphrase)
-            }
-        )
-        self.log('generated admin keys:',admin_keys)
-        if not admin_keys:
-            res['res']=False 
-            res['status']=self.status(f"{OPERATOR_INTRO}I'm sorry, but I couldn't register {name} right now.")
-            return res
-        
-        # get settings
-        settings = DEFAULT_USER_SETTINGS
-        settings_b = pickle.dumps(settings)
-        
-        # use admin key to encrypt
-        adminkey=admin_keys['adminkey']
-        settings_b_encr = adminkey.encrypt(settings_b)
-        
-        # set in crypt
-        key_to_be_hashed = cv_b64 + passphrase
-        self.crypt_keys.set(key_to_be_hashed, settings_b_encr, prefix='/settings/')
-        self.crypt_keys.set(key_to_be_hashed, settings_b_encr, prefix='/adminkey_encr/')
-
-        
-
         # give back decryptor
 
         ## success msg
