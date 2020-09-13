@@ -18,6 +18,7 @@ class TheTelephone(Operator):
 
 
     def send_and_receive(self,msg_d,**y):
+        self.log('send and receive got incoming msg:',msg_d)
         msg_b=msg_d["msg"]
         msg_b64 = b64encode(msg_b)
         msg_b64_str = msg_b64.decode()
