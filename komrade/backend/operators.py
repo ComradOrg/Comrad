@@ -105,7 +105,7 @@ class Operator(Keymaker):
         return OPERATOR
 
 
-    def compose_msg_to(self,msg,another,incl_from_name=False,incl_to_name=False):
+    def compose_msg_to(self,msg,another,incl_from_name=1,incl_to_name=1):
         if not self.privkey or not self.pubkey:
             raise KomradeException('why do I have no pub/privkey pair!?',self,self.name,self.pubkey,self.privkey,self.keychain())
         if not another.name or not another.pubkey:
