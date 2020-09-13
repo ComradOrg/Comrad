@@ -115,13 +115,7 @@ class Crypt(Logger):
         return k_b
 
     def has(self,k,prefix=''):
-        k_b=self.package_key(k,prefix=prefix)
-        k_b_hash = self.hash(k_b)
-        try:
-            v=self.store.get(k_b_hash)
-            return True
-        except KeyError:
-            return False
+        return bool(self.get(k,prefix=prefix))
 
 
     def set(self,k,v,prefix='',override=False):
