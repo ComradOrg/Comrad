@@ -223,7 +223,7 @@ class TheOperator(Operator):
         r1=self.crypt_keys.set(name,pubkey_b,prefix='/pubkey/')
         r2=self.crypt_keys.set(uri_id,name,prefix='/name/')
         # hide secret as key
-        r3=self.crypt_keys.set(shared_secret,uri_id,prefix='/secret_login/')
+        r3=self.crypt_keys.set(uri_id,shared_secret,prefix='/secret_login/')
 
         # success?
         success = r1 and r2 and r3
