@@ -28,7 +28,7 @@ Data is deleted as soon as possible from Komrade. The remote Operator simply del
 
 ### Webs of trust
 
-Group accounts or 'collectives', like @portland or @socialists, grow as existing members 'vouch for' new ones. Other Komrades can see how many times a given person has been vouched for, both within a group and overall, but not who has vouched for them. In order to join a group, at least one member must vouch for you; this minimum (or 'quorum') may grow as the group grows.
+Group accounts or 'collectives', like @portland or @socialists, grow as existing members 'vouch for' new ones. Other komrades can see how many times a given person has been vouched for, both within a group and overall, but not who has vouched for them. In order to join a group, at least one member must vouch for you; this minimum (or 'quorum') may grow as the group grows.
 
 ### Anti-profit
 
