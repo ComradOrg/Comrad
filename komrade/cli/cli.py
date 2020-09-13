@@ -4,7 +4,7 @@ from komrade.backend import *
 import art
 import textwrap as tw
 INDENT = 14
-ndnt = ' '*INDENT
+ndnt = ' '*(INDENT//2)
 HELPSTR = f"""
 {ndnt}/login [name]     -->  log back in
 {ndnt}/register [name]  -->  new komrade
