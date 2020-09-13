@@ -51,6 +51,7 @@ class Persona(Caller):
         if name and not self.name: self.name=name
         if not name and self.name: name=self.name
         if not name and not self.name: name=''
+
         
         ## 1) Have name?
         if SHOW_STATUS and show_intro:
@@ -67,17 +68,13 @@ class Persona(Caller):
         if SHOW_STATUS and not passphrase:
             passphrase = self.cli.status_keymaker_part2(name,passphrase,pubkey,privkey,hasher,self)
         else:
-            print(passphrase,'????')
             if not passphrase: passphrase = DEBUG_DEFAULT_PASSPHRASE
-            # while not passphrase:
-                # passphrase=getpass('Enter a memorable password to encrypt your private key with: ')
-            print('ok')
+            while not passphrase:
+                passphrase=getpass('Enter a memorable password to encrypt your private key with: ')
         self.passphrase=passphrase
-        print(passphrase,self.passphrase,'!')
         ## 4) Get hashed password
         passhash = hasher(passphrase)
         # self.log(f'''Keymaker has created a symmetric encryption cell using the disguised password:\n\n\t(2A) [Symmetric Encryption Key]\n\t({make_key_discreet_str(passhash)})''')
-        print(passhash,'!')
         ## 5) Encrypt private key
         privkey_decr = KomradeSymmetricKeyWithPassphrase(passphrase)
         privkey_encr = privkey_decr.encrypt(privkey.data)
@@ -142,9 +139,9 @@ def test_register():
     import random
     num = random.choice(list(range(0,1000)))
     botname=f'marx{str(num).zfill(3)}'
-    marxbot = Persona(botname,passphrase=DEBUG_DEFAULT_PASSPHRASE)
+    marxbot = Persona(botname)
     # marxbot=Persona()
-    marxbot.register()
+    marxbot.register(passphrase='spectre')
 
 if __name__=='__main__':
     test_register()
