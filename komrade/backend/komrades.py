@@ -72,7 +72,7 @@ class Komrade(Caller):
         else:
             if not passphrase: passphrase = DEBUG_DEFAULT_PASSPHRASE
             while not passphrase:
-                passphrase=getpass('Enter a memorable password to encrypt your private key with: ')
+                passphrase=getpass('@Keymaker: Enter a memorable password to encrypt your private key with: ')
         self.passphrase=passphrase
         ## 4) Get hashed password
         passhash = hasher(passphrase)
@@ -81,7 +81,7 @@ class Komrade(Caller):
         privkey_decr = KomradeSymmetricKeyWithPassphrase(passphrase)
         privkey_encr = privkey_decr.encrypt(privkey.data)
         privkey_encr_obj = KomradeEncryptedAsymmetricPrivateKey(privkey_encr)
-        self.log(f"For my private key, I will store it only on my device as it was encrypted by my password-generated key:\n\n[Encrypted Private Key]\n({make_key_discreet_str(privkey_encr_obj.data_b64)})")
+        self.log(f"@Keymaker: Store your private key on your device hardware ONLY\nand only as it was encrypted by your password-generated key:\n\n[Encrypted Private Key]\n({make_key_discreet_str(privkey_encr_obj.data_b64)})")
 
         ## 6) Test keychain works
         privkey_decr2 = KomradeSymmetricKeyWithPassphrase(passphrase)

@@ -141,7 +141,9 @@ def make_key_discreet(data,chance_unredacted=0.333):
     if not isBase64(data): data=b64encode(data)
     key=data.decode()
 
-    return ''.join((k if random.random()<chance_unredacted else '-') for k in key)
+    # return ''.join((k if random.random()<chance_unredacted else '-') for k in key)
+    return ''.join((k if i%2 else '-') for k in key)
+
 
 def make_key_discreet_str(string,chance_unredacted=0.5):
     import random
