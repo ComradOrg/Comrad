@@ -131,6 +131,7 @@ cv = {cv_b64}
             res['status']=self.status(f"{OPERATOR_INTRO}I'm sorry, but I can't register the name of {name}.")
             return res
         self.log('Operator returning result:',dict_format(res,tab=2))
+        return res
         
         # give back decryptor
 
