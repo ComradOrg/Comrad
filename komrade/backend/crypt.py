@@ -132,7 +132,7 @@ class Crypt(Logger):
         # stop
         self.store.put(k_b_hash,v_b)
         #return (True,k_b_hash,v_b)
-        self.log('now keys are:',list(self.store.iter_keys()))
+        # self.log('now keys are:',list(self.store.iter_keys()))
         return True
 
     def exists(self,k,prefix=''):
