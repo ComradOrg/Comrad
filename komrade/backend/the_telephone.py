@@ -26,6 +26,10 @@ class TheTelephone(Operator):
             raise KomradeException('Komrades must communicate securely with Operator first.')
         # opp = Operator(pubkey=msg_d['to'])
         # self.log('got opp:',opp.pubkey.data == msg_d['to'], self.op.pubkey.data == msg_d['to'])
+
+        self.log('got msg_d:',msg_d)
+
+        self.log('but going to send just msg?',msg_b)
         
         msg_b=msg_d["msg"]
         msg_b64 = b64encode(msg_b)
