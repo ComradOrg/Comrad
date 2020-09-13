@@ -164,7 +164,7 @@ class Message(Logger):
 
         # otherwise lets do it
         self.msg_encr = self.msg
-        self.log(f'Attempting to decrypt {self}')
+        self.log(f'Attempting to decrypt:\n{self}')
 
         # decrypt msg
         # self.log('attempting to decrypt',self.msg,'from',self.from_pubkey,'to',self.to_whom,self.to_whom.keychain(),self.to_whom.assemble(self.to_whom.keychain()))
