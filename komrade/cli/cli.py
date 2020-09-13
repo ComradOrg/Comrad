@@ -34,8 +34,8 @@ class CLI(Logger):
             try:
                 inp=input(f'@{self.name if self.name else "?"}: ')
                 # print(inp,'??')
-            except KeyboardInterrupt:
-                exit()
+            except (KeyboardInterrupt,EOFError) as e:
+                exit('\nGoodbye.')
             self.route(inp)
             #await asyncio.sleep(0.5)
 

@@ -229,11 +229,13 @@ class Komrade(Caller):
             msg[ROUTE_KEYNAME]=route
         return super().ring_ring(msg,caller=self,**y)
 
+    
+    
     def send_msg_to(self,msg,to_whom):
-        msg = self.compose_msg_to(msg,to_whom)
+        msg_e2e = self.compose_msg_to(msg,to_whom)
         msg.encrypt()
         
-        {'_route':'deliver_to', 'msg':msg}
+        {'_route':'deliver_msg_to', 'msg':msg}
         
         return self.ring_ring(msg)
 
