@@ -160,4 +160,8 @@ Code is in [komrade/backend](komrade/backend).
 
 We are using [Themis](https://github.com/cossacklabs/themis), a high-level cross-platform cryptography library, for all cryptographic functions, rather than handling any primitives ourselves.
 
-Code is primarily in: [komrade/backend/keymaker.py](komrade/backend/keymaker.py), [komrade/backend/komrades.py](komrade/backend/komrades.py), and [komrade/backend/phonelines.py](komrade/backend/phonelines.py).
+Code is primarily in:
+* [komrade/backend/keymaker.py](komrade/backend/keymaker.py)
+* [komrade/backend/komrades.py](komrade/backend/komrades.py)
+* [komrade/backend/phonelines.py](komrade/backend/phonelines.py)
+
