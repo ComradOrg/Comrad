@@ -1,11 +1,14 @@
+art==4.7
 as==0.1
 astroid==2.4.2
 certifi==2020.6.20
 cffi==1.14.2
 chardet==3.0.4
 click==7.1.2
+colorama==0.4.3
 cryptography==3.0
 docutils==0.16
+fire==0.3.1
 Flask==1.1.2
 Flask-Classful==0.14.2
 h11==0.8.1
@@ -29,6 +32,7 @@ pathtools==0.1.2
 Pillow==7.2.0
 plyer==1.4.3
 pycparser==2.20
+pyfiglet==0.8.post1
 Pygments==2.6.1
 pylint==2.6.0
 pypng==0.0.20
@@ -44,6 +48,8 @@ rpcudp==4.0.1
 simplekv==0.14.1
 six==1.15.0
 sqlitedict==1.6.0
+termcolor==1.1.0
+text2art==0.2.0
 toml==0.10.1
 torpy==1.1.3
 typed-ast==1.4.1

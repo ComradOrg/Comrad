@@ -84,7 +84,7 @@ class TheOperator(Operator):
         # msg_d = pickle.loads(data_b)
         # self.log('msg_d',msg_d)
         msg_obj = Message(msg_d)
-
+        woops
         self.log(f'Decoding the binary, I discovered an encrypted message from {self.phone}\n: {msg_obj}')
         
         # decrypt?
