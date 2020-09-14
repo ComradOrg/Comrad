@@ -50,7 +50,17 @@ then
         git pull
     else
         cd $path_komrade
-        git clone https://github.com/Komrade/Komrade.git
+        
+        echo "Use HTTPS or SSH for git?"
+        read -p "[HTPS/ssh] " git_method
+        
+        if [ git_method=="ssh" ]
+        then
+            echo "using ssh..."
+            git clone git@github.com:Komrade/Komrade.git
+        else
+            git clone https://github.com/Komrade/Komrade.git
+        fi
         mv Komrade code
     fi
 else
