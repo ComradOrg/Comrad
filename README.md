@@ -85,7 +85,7 @@ See [here](https://www.dropbox.com/s/8r8gqgfswojmtwd/komrade-terminal-preview--2
 
 ### Install
 
-One line:
+In one line (via [this auto-installer script](https://github.com/Komrade/Komrade/blob/master/script/install)):
 
 ```
 bash <(curl -s https://raw.githubusercontent.com/Komrade/Komrade/master/script/install)
