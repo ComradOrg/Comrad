@@ -85,7 +85,7 @@ class CLI(Logger):
 
 
     def login(self,name):
-        print(self,name,self.name,self.komrade,self.loggedin)
+        # print(self,name,self.name,self.komrade,self.loggedin)
         if not name: name=input('name: ')
         if not name: return
         self.komrade=Komrade(name)
@@ -99,7 +99,7 @@ class CLI(Logger):
             self.name=None
             self.loggedin=False
             self.komrade=None
-        if 'status' in res:
+        if res and 'status' in res:
             print('@Operator: '+res.get('status','?')+'\n')
 
     @property

@@ -8,7 +8,13 @@ from komrade.backend import *
 PHONEBOOK = {}
 
 # Factory constructor
-def Komrade(name,pubkey=None,*x,**y):
+def Komrade(name=None,pubkey=None,*x,**y):
+    if issubclass(type(name),Operator): return name
+    if name and not pubkey and type(name)==bytes:
+        pubkey=b64enc(name)
+        name=None
+    
+
     from komrade.backend.the_operator import TheOperator
     from komrade.backend.the_telephone import TheTelephone
     from komrade.backend.komrades import KomradeX
@@ -28,6 +34,7 @@ def Komrade(name,pubkey=None,*x,**y):
     if name==TELEPHONE_NAME:
         kommie = TheTelephone() #(*x,**y)
     else:
+        print('booting new kommie')
         kommie = KomradeX(name,*x,**y)
     
     # print('found!',name,PHONEBOOK[name],PHONEBOOK[name].keychain())
@@ -44,26 +51,31 @@ from komrade.constants import OPERATOR_ROUTES
 class Operator(Keymaker):
     ROUTES = OPERATOR_ROUTES
 
+    def __eq__(self,other):
+        return self.pubkey.data == other.pubkey.data
 
-    def __init__(self, name=None, passphrase=DEBUG_DEFAULT_PASSPHRASE, pubkey=None, keychain = {}, path_crypt_keys=PATH_CRYPT_CA_KEYS, path_crypt_data=PATH_CRYPT_CA_DATA):
-        global PHONEBOOK
-        # print('booting opertor with ...',name,pubkey,'??')
-
-        if pubkey:
-            # print(pubkey,'pubkey !?')
-            assert type(pubkey)==bytes
-            pubkey = b64dec(pubkey)
-            if keychain.get('pubkey'):
-                kcpubk=keychain.get('pubkey').data if type(keychain.get('pubkey'))!=bytes else keychain.get('pubkey') 
-            else:
-                keychain['pubkey']=pubkey #KomradeAsymmetricPublicKey(pubkey)
+    def __init__(self,
+            name=None,
+            pubkey=None,
+            keychain = {},
+            path_crypt_keys=PATH_CRYPT_CA_KEYS,
+            path_crypt_data=PATH_CRYPT_CA_DATA
+        ):
         
-        super().__init__(name=name,passphrase=passphrase, keychain=keychain,
-                         path_crypt_keys=path_crypt_keys, path_crypt_data=path_crypt_data)
+        global PHONEBOOK
+        
+        # call Keymaker's intro
+        super().__init__(
+            name=name,
+            keychain=keychain,
+            path_crypt_keys=path_crypt_keys,
+            path_crypt_data=path_crypt_data
+        )
 
         
         # add to phonebook
-        PHONEBOOK[name]=self
+        if name: PHONEBOOK[name]=self
+        if self.pubkey: PHONEBOOK[self.pubkey.data_b64]
         
 
     @property
@@ -95,7 +107,7 @@ class Operator(Keymaker):
         return OPERATOR
 
 
-    def compose_msg_to(self,msg,another,incl_from_name=1,incl_to_name=1):
+    def compose_msg_to(self,msg,another,incl_from_name=True,incl_to_name=True):
         if not self.privkey or not self.pubkey:
             raise KomradeException('why do I have no pub/privkey pair!?',self,self.name,self.pubkey,self.privkey,self.keychain())
         if not another.name or not another.pubkey:
@@ -164,7 +176,8 @@ class Operator(Keymaker):
             # route it!
             self.log(f'Routing msg to {self}.{route}():\n\n{dict_format(msg_obj.data,tab=4)}')
             func = getattr(self,route)
-            new_data = func(**data)
+            # new_data = func(**data)
+            new_data = func(msg_obj)
             self.log(f'New data was received back from {self}.{route}() route:\b\b{dict_format(new_data,tab=4)}')
             msg_obj.msg = msg_obj.msg_d['msg'] = new_data
 

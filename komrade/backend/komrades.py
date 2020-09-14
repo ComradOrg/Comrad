@@ -12,7 +12,7 @@ from komrade.backend.keymaker import *
 
 class KomradeX(Caller):
 
-    def __init__(self, name=None, passphrase=DEBUG_DEFAULT_PASSPHRASE):
+    def __init__(self, name=None, pubkey=None, passphrase=DEBUG_DEFAULT_PASSPHRASE):
         super().__init__(name=name,passphrase=passphrase)
         # self.log(f'booted komrade with {name} and {passphrase} and\n\n{dict_format(self.keychain())}')
         # if SHOW_STATUS:
@@ -27,6 +27,8 @@ class KomradeX(Caller):
         # yes? -- login
 
         keys = self.keychain()
+        self.log(f'booting {self}!',dict_format(keys))
+
         if keys.get('pubkey') and keys.get('privkey'):
             # self.log('already booted! @'+self.name)
             return True
@@ -203,29 +205,30 @@ class KomradeX(Caller):
         )
 
     def login(self,passphrase=None):
-        # check hardware
-        if not self.pubkey:
-            self.log('''Login impossible. I do not have this komrade's public key, much less private one.''')
-            return
-        if not self.privkey_encr:
-            self.log('''Login impossible. I do not have this komrade's private key on this hardware.''')
-            return
+        # what keys do I have?
+        keys = self.keychain()
+        # self.log('here are my keys:',dict_format(keys))
 
-        # check password
-        while not passphrase:
-            from getpass import getpass
-            passphrase = getpass('@Keymaker: Enter password for {self} in order to decrypt the encrypted private key:\n\n')
+
+        # check hardware
+        if not 'pubkey' in keys:
+            emsg='''Login impossible. I do not have this komrade's public key, much less private one.'''
+            # self.log()
+            return {'success':False, 'status':emsg}
+
+        if not 'privkey_encr' in keys:
+            emsg='''Login impossible. I do not have this komrade's private key on this hardware.'''
+            self.log(emsg)
+            return {'success':False, 'status':emsg}
         
-        # assemble privkey?
-        privkey = self.keychain(passphrase=passphrase).get('privkey')
-        if not privkey:
-            self.log('''Login impossible. I do not have this komrade's private key on this hardware.''')
-            return
-        
+        if not 'privkey' in keys:
+            emsg='''Login failed. Private key did not unlock from passphrase.'''
+            return {'success':False, 'status': emsg}
+
         # compose message
         msg = {
             'name':self.name,
-            'pubkey':self.pubkey.data,
+            'pubkey':keys['pubkey'].data,
             'secret_login':self.secret_login
         }
 
@@ -270,18 +273,41 @@ class KomradeX(Caller):
 
     
     
-    def send_msg_to(self,msg,to_whom):
-        to_whom = self.find(to_whom)
-        self.log(f'found {to_whom}')
+    def msg(self,someone,something):
+        # find or boot
+        someone = Komrade(someone)
+        self.log(f'found {someone}')
+        
+        # can we?
+        if not someone.pubkey:
+            self.log(f'''Don't know the public key of {someone}!''')
+
         msg_obj = self.compose_msg_to(
-            msg,
-            to_whom
+            something,
+            someone
         )
         self.log('composed msg:',msg_obj)
-        msg_obj.encrypt()
-        self.log('going to send msg_d?',msg_obj.msg_d)
         
-        return self.ring_ring(msg_obj.msg_d)
+        # encrypting
+        msg_obj.encrypt()
+
+        # attaching
+        direct_msg_data = msg_obj.msg
+        self.log('going to send only this to op:',direct_msg_data)
+
+        # enclosing
+        msg_to_op = {
+            'deliver_from':self.pubkey.data_b64,
+            'deliver_to':someone.pubkey.data_b64,
+            'deliver_msg':direct_msg_data,
+        }
+
+        self.log('going to send msg to op?',msg_to_op)
+        
+        return self.ring_ring(
+            msg_to_op,
+            route='deliver_msg'
+        )
 
     
 
@@ -304,17 +330,20 @@ def test_msg():
     z.send_msg_to('you ssssssuck')
 
 
+def test_loading():
+    # z1 = Komrade('zuck')
+    # print(z1.keychain())
+
+    z2 = Komrade(b'VUVDMgAAAC08BCMVA+0dMJXc66/W7hty669+3/3S61Q1yjmgJW8I0k3lqfDi')
+    print(z2)
+    print(z2.keychain())
+
+    pprint(PHONEBOOK)
+
+    return
+    
+    # z1.login()
+
+
 if __name__=='__main__':
-    test_msg()
-    # marx = Komrade('marx')
-    # elon = Komrade('elon')
-
-    # marx.register()
-    # # elon.register()
-    # # person.register()
-    # # print(person.pubkey)
-
-    # # elon.send_msg_to('youre dumb',marx)
-    # #Caller('elon').ring_ring({'_route':'say_hello','msg':'my dumb message to operator'})
-
-    # # print(marx.exists_on_server())
+    test_loading()

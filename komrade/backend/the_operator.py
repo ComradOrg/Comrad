@@ -109,20 +109,6 @@ class TheOperator(Operator):
         # return back to phone and back down to chain
         return msg_sealed
 
-
-
-
-    def send(self,encr_data_b):
-        self.log(type(encr_data_b),encr_data_b,'sending!')
-        return encr_data_b
-
-    ### ROUTES
-        
-    def does_username_exist(self,name,**data):
-        pubkey=self.crypt_keys.get(name,prefix='/pubkey/')
-        self.log(f'looking for {name}, found {pubkey} as pubkey')
-        return bool(pubkey)
-
     def has_user(self,name=None,pubkey=None):
         nm,pk = name,pubkey
         if pubkey: pk=self.crypt_keys.get(
@@ -138,7 +124,28 @@ class TheOperator(Operator):
         # self.log('nms:',name,nm)
         return (pubkey and pk) or (name and nm)
 
-    def login(self,name,pubkey,secret_login,**data):
+
+
+    def send(self,encr_data_b):
+        self.log(type(encr_data_b),encr_data_b,'sending!')
+        return encr_data_b
+
+    ### ROUTES
+        
+    def does_username_exist(self,msg_obj):
+        data=msg_obj.data
+        name=data.get('name')
+        pubkey=self.crypt_keys.get(name,prefix='/pubkey/')
+        self.log(f'looking for {name}, found {pubkey} as pubkey')
+        return bool(pubkey)
+
+
+    def login(self,msg_obj):
+        data=msg_obj.data
+        name=data.get('name')
+        pubkey=data.get('pubkey')
+        secret_login=data.get('secret_login')
+
         name=name.encode() if type(name)==str else name
         pubkey=pubkey.encode() if type(pubkey)==str else pubkey
         secret_login=secret_login.encode() if type(secret_login)==str else secret_login
@@ -200,8 +207,11 @@ class TheOperator(Operator):
                 'status':'Login failed.'
             }
 
-    def register_new_user(self,name,pubkey,**data):
+    def register_new_user(self,msg_obj):
         # self.log('setting pubkey under name')
+        data=msg_obj.data
+        name=data.get('name')
+        pubkey=data.get('pubkey')
 
         # is user already there?
         if self.has_user(name=name,pubkey=pubkey):
@@ -269,8 +279,19 @@ class TheOperator(Operator):
        
         # self.log('Operator returning result:',dict_format(res,tab=2))
 
-    def deliver_msg(self,msg,to_whom,**data):
-        pass
+    def deliver_msg(self,msg_to_op):
+        data = msg_to_op.data
+        deliver_to = data.get('deliver_to')
+        deliver_from = data.get('deliver_from')
+        deliver_msg = data.get('deliver_msg')
+
+        if not deliver_to or not deliver_from or not deliver_msg:
+            return {'success':'False', 'status':'Invalid input.'}
+
+        to_komrade = Komrade(pubkey=deliver_to)
+        from_komrade = Komrade(pubkey=deliver_from)
+
+
 
 
 
