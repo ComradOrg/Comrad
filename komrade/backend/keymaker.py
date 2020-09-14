@@ -373,6 +373,7 @@ class Keymaker(Logger):
 
 
     def load_qr(self,name):
+        if not name: return
         # try to load?
         contact_fnfn = os.path.join(PATH_QRCODES,name+'.png')
         if not os.path.exists(contact_fnfn): return ''

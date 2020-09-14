@@ -1,59 +1,17 @@
 # internal imports
 import os,sys; sys.path.append(os.path.abspath(os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__),'..')),'..')))
 from komrade import *
-# from komrade.backend.crypt import *
-# from komrade.backend.keymaker import *
-# from komrade.backend.mazes import *
-# from komrade.backend.switchboard import *
 from komrade.backend import *
         
-def locate_an_operator_somehow(str_or_byte_or_obj):
-    if issubclass(type(str_or_byte_or_obj),Operator): return str_or_byte_or_obj
-    if type(str_or_byte_or_obj)==str: return locate_an_operator(name=str_or_byte_or_obj)
-    if type(str_or_byte_or_obj)==bytes: return locate_an_operator(pubkey=str_or_byte_or_obj)
-    raise KomradeException(type(str_or_byte_or_obj),'???')
 
-def comlink(name_or_pubkey):
-    return locate_an_operator_somehow(name_or_pubkey)
 
-PHONEBOOK = {}
 
-def locate_an_operator(name=None,pubkey=None):
-    global OPERATOR,TELEPHONE,PHONEBOOK
-    if name in PHONEBOOK: return PHONEBOOK[name]
-    # if pubkey in PHONEBOOK: return PHONEBOOK[pubkey]
-
-    from komrade.backend.the_operator import TheOperator
-    from komrade.backend.the_telephone import TheTelephone
-    from komrade.backend.callers import Caller
-
-    if not OPERATOR: OPERATOR = TheOperator()
-    if not TELEPHONE: TELEPHONE = TheTelephone()
-
-    if pubkey:
-        assert type(pubkey)==bytes
-        if not isBase64(pubkey): pubkey=b64encode(pubkey)
-    
-    if name == OPERATOR_NAME:
-        return OPERATOR
-    if pubkey and pubkey == OPERATOR.pubkey:
-        return OPERATOR
-
-    if name==TELEPHONE_NAME:
-        return TELEPHONE
-    if pubkey and pubkey == TELEPHONE.pubkey:
-        return TELEPHONE
-    
-
-    print('name????',name)
-    from komrade.backend.komrades import Komrade
-    PHONEBOOK[name] = caller = Komrade(name=name)
-    return caller
 
 from komrade.constants import OPERATOR_ROUTES
 class Operator(Keymaker):
     ROUTES = OPERATOR_ROUTES
-    
+
+
     def __init__(self, name=None, passphrase=DEBUG_DEFAULT_PASSPHRASE, pubkey=None, keychain = {}, path_crypt_keys=PATH_CRYPT_CA_KEYS, path_crypt_data=PATH_CRYPT_CA_DATA):
         # print('booting opertor with ...',name,pubkey,'??')
 
@@ -69,25 +27,7 @@ class Operator(Keymaker):
         super().__init__(name=name,passphrase=passphrase, keychain=keychain,
                          path_crypt_keys=path_crypt_keys, path_crypt_data=path_crypt_data)
         
-        # self.find_pubkey_and_name(name,pubkey)
-        # self.log('booted with operator with:',self.name,self.pubkey,self.find_pubkey(name),'??')
-        
-    # def boot(self):
-    #     ## get both name and pubkey somehow
-    #     if not self.pubkey and self.name:
-    #         self._keychain['pubkey'] = self.find_pubkey()
-    #     elif self.pubkey and not self.name:
 
-
-    # def boot(self,create=False):
-    #      # Do I have my keys?
-    #     have_keys = self.exists()
-        
-    #     # If not, forge them -- only once!``
-    #     if not have_keys and create:
-    #         self.get_new_keys()
-        
-    
     @property
     def phone(self):
         from komrade.backend.the_telephone import TheTelephone
@@ -140,7 +80,7 @@ class Operator(Keymaker):
         # self.log(f'I am {self} packaging a message to {another}: {msg_d}')
         from komrade.backend.messages import Message
         
-        msg_obj = Message(msg_d,from_whom=self,to_whom=another)
+        msg_obj = Message(msg_d)
         
         # encrypt!
         # msg_obj.encrypt()
@@ -231,20 +171,7 @@ class Operator(Keymaker):
         # ring ring
         from komrade.cli.artcode import ART_PHONE_SM1
         import textwrap as tw
-        nxt=get_class_that_defined_method(get_resp_from).__name__
-        nxtfunc=get_resp_from.__name__
-#         if from_whom != self:
-#             self.status(f'''ring ring! 
-# @{self}: *picks up phone*
-# @{from_whom}: I have a message I need you to send for me.
-# @{self}: To whom?
-# @{from_whom}: To @{to_whom}. But not directly.
-# @{self}: Who should it I pass it through?
-# @{from_whom}: Pass it to {nxt}. Tell them to use "{nxtfunc}".
-# @{self}: Got it... So what's the message?
-# @{from_whom}: The message is:
-#     {dict_format(msg,tab=4)}
-# ''')
+        
         if caller!=self:
             from komrade.cli.artcode import ART_PHONE_SM1
             self.log(f'ring ring! I the {self} have received a message from {caller},\n which I will now encrypt and send along to {to_whom}.\n {ART_PHONE_SM1} ')

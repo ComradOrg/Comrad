@@ -3,11 +3,50 @@ from komrade import *
 from komrade.backend import *
 from komrade.backend.keymaker import *
 
-class Komrade(Caller):
+# BEGIN PHONE BOOK (in memory singleton mapping)
+PHONEBOOK = {}
+
+# Factory constructor
+def Komrade(name,pubkey=None,*x,**y):
+    from komrade.backend.the_operator import TheOperator
+    from komrade.backend.the_telephone import TheTelephone
+    from komrade.backend.komrades import KomradeX
+    global PHONEBOOK
+    # already have?
+
+    if not name and not pubkey: return KomradeX()
+
+    if name in PHONEBOOK: return PHONEBOOK[name]
+    pk64 = None if not pubkey else b64enc(pubkey)
+    if pk64 in PHONEBOOK: return PHONEBOOK[pk64]
+
+    print(f'finding Komrade {name} / {pubkey} for the first time!')
+    # operator?
+    if name==OPERATOR_NAME:
+        kommie = TheOperator() #(*x,**y)
+    if name==TELEPHONE_NAME:
+        kommie = TheTelephone() #(*x,**y)
+    else:
+        kommie = KomradeX(name,*x,**y)
+    
+    # print('found!',name,PHONEBOOK[name],PHONEBOOK[name].keychain())
+    PHONEBOOK[name] = kommie
+    if kommie.pubkey:
+        PHONEBOOK[kommie.pubkey.data_b64] = kommie
+
+    return kommie
+
+
+
+
+
+
+
+class KomradeX(Caller):
 
     def __init__(self, name=None, passphrase=DEBUG_DEFAULT_PASSPHRASE):
         super().__init__(name=name,passphrase=passphrase)
-        self.log(f'booted komrade with {name} and {passphrase} and\n\n{dict_format(self.keychain())}')
+        # self.log(f'booted komrade with {name} and {passphrase} and\n\n{dict_format(self.keychain())}')
         # if SHOW_STATUS:
         #     from komrade.cli import CLI
         #     self.cli = CLI(name=name, komrade=self)
@@ -65,6 +104,8 @@ class Komrade(Caller):
         # if keys.get('pubkey') and keys.get('privkey')
 
     def register(self, name = None, passphrase = None, is_group=None, show_intro=0,show_body=True):
+        # global PHONEBOOK
+        
         # print('got name:',name)
         ## Defaults
         if name and not self.name: self.name=name
@@ -140,6 +181,9 @@ class Komrade(Caller):
         self.crypt_keys.set(name, pubkey.data, prefix='/pubkey/')
         self.crypt_keys.set(pubkey.data_b64, name, prefix='/name/')
         self.crypt_keys.set(pubkey.data_b64, privkey_encr_obj.data, prefix='/privkey_encr/')
+
+        # storing myself in memory phonebook
+        # PHONEBOOK[name]=self
 
         ## 7) Save data to server
         data = {
@@ -289,7 +333,7 @@ def test_register():
     botname=f'marx{str(num).zfill(3)}'
     marxbot = Komrade(botname)
     # marxbot=Komrade()
-    marxbot.register()
+    marxbot.register(passphrase='boo')
 
 
 

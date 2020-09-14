@@ -15,41 +15,19 @@ def is_valid_msg_d(msg_d):
 
 
 class Message(Logger):
-    def __init__(self,msg_d,from_whom=None,to_whom=None,messenger=None,embedded_msg=None,is_encrypted=False):
+    def __init__(self,msg_d,from_whom=None,to_whom=None,embedded_msg=None,is_encrypted=False):
         # check input
         if not is_valid_msg_d(msg_d):
             raise KomradeException('This is not a valid msg_d:',msg_d)
-        # set fields
         self.msg_d=msg_d
         self.to_name=msg_d.get('to_name')
         self.to_pubkey=msg_d.get('to')
         self.from_name=msg_d.get('from_name')
         self.from_pubkey=msg_d.get('from')
         self.msg=msg_d.get('msg')
-        self.embedded_msg=embedded_msg  # only if this message has an embedded one
         self._route=msg_d.get(ROUTE_KEYNAME)
-        self._from_whom=from_whom
-        self._to_whom=to_whom
-        self.messenger=None
         self._is_encrypted=None
-        # get operators straight away?
-        if not self._from_whom or not self._to_whom:
-            self.get_whoms()
 
-        if not self.from_name:
-            self.from_name=self.from_whom.name
-        if not self.to_name:
-            self.to_name=self.to_whom.name
-        if not self.to_pubkey:
-            self.to_pubkey=self.to_whom.pubkey.data
-        if not self.from_pubkey:
-            self.from_pubkey=self.from_whom.pubkey.data
-        if isBase64(self.to_pubkey): self.to_pubkey = b64decode(self.to_pubkey)
-        if isBase64(self.from_pubkey): self.from_pubkey = b64decode(self.from_pubkey)
-        if hasattr(self.to_pubkey,'data'): self.to_pubkey=self.to_pubkey.data
-        if hasattr(self.from_pubkey,'data'): self.from_pubkey=self.from_pubkey.data
-
-        # self.log('loaded message: to pub',self.to_pubkey,'from pub',self.from_pubkey)
 
     def __repr__(self):
         # self.log('my type??',type(self.msg),self.msg)
@@ -87,18 +65,6 @@ class Message(Logger):
         del md[ROUTE_KEYNAME]
         return md
 
-    # def mark_return_to_sender1(self,new_msg=None):
-    #     self.log('making return to sender. v1:',self)
-    #     self._from_whom,self._to_whom = self._to_whom,self._from_whom
-
-    #     self.msg_d['from'],self.msg_d['to'] = self.msg_d['to'],self.msg_d['from'],
-        
-    #     if 'from_name' in self.msg_d and 'to_name' in self.msg_d:
-    #       self.msg_d['from_name'],self.msg_d['to_name'] = self.msg_d['to_name'],self.msg_d['from_name']
-        
-    #     if new_msg:
-    #         self.msg=self.msg_d['msg']=new_msg
-    #     self.log('making return to sender. v2:',self)
 
     def return_to_sender(self,new_msg=None):
         
@@ -111,71 +77,22 @@ class Message(Logger):
                 'from_name':self.msg_d.get('to_name'),
                 'to_name':self.msg_d.get('from_name'),
                 'msg':new_msg if new_msg else self.msg_d.get('msg')
-            },
-            from_whom = self.to_whom,
-            to_whom = self.from_whom
+            }
         )
 
         self.log('returning:',new_msg)
         return new_msg
 
-
-    def get_whom(self,name=None,pubkey=None):
-        from komrade.backend.operators import locate_an_operator
-        return locate_an_operator(name=None,pubkey=None)
-
     @property
     def from_whom(self):
-        if not self._from_whom:
-            self._from_whom,self._to_whom = self.get_whoms()
-        return self._from_whom
+        from komrade.backend.komrades import Komrade
+        return Komrade(self.from_name, pubkey=self.from_pubkey)
 
     @property
     def to_whom(self):
-        if not self._to_whom:
-            self._from_whom,self._to_whom = self.get_whoms()
-        return self._to_whom
+        from komrade.backend.komrades import Komrade
+        return Komrade(self.to_name, pubkey=self.to_pubkey)
     
-    def get_whoms(self):
-        if self._from_whom is None or self._to_whom is None:
-            self._from_whom = locate_an_operator(self.from_name,self.from_pubkey)
-            self._to_whom = locate_an_operator(self.to_name,self.to_pubkey)
-        return self._from_whom,self._to_whom
-        
-
-    ## loading messages
-    def get_whoms1(self):
-        if self._from_whom is not None and self._to_whom is not None:
-            return (self._from_whom,self._to_whom) 
-        alleged_from_whom = self.get_whom(self.from_name)
-        alleged_to_whom = self.get_whom(self.to_name)
-        if not self.whom_records_match(alleged_from_whom,alleged_to_whom):
-            raise KomradeException('Records of from_whoms on The Operator and the from_whom do not match. Something fishy going on?')
-        else:
-            self._from_whom = alleged_from_whom
-            self._to_whom = alleged_to_whom
-        return (self._from_whom,self._to_whom)
-
-    def whom_records_match(self,alleged_from_whom,alleged_to_whom):
-        alleged_from_whom_name = self.from_name
-        alleged_from_whom_pubkey = self.from_pubkey
-        alleged_to_whom_name = self.to_name
-        alleged_to_whom_pubkey = self.to_pubkey
-
-        # self.log('from_whom names:',alleged_from_whom.name, alleged_from_whom_name)
-        # self.log('from_whom pubs:',alleged_from_whom.pubkey, alleged_from_whom_pubkey)
-        # self.log('to_whom names:',alleged_to_whom.name, alleged_to_whom_name)
-        # self.log('to_whom pubs:',alleged_to_whom.pubkey, alleged_to_whom_pubkey)
-
-        if alleged_to_whom.name != alleged_to_whom_name:
-            return False
-        if alleged_from_whom.name != alleged_from_whom_name:
-            return False
-        if alleged_to_whom.pubkey != alleged_to_whom_pubkey:
-            return False
-        if alleged_from_whom.pubkey != alleged_from_whom_pubkey:
-            return False
-        return True
 
     def decrypt(self,recursive=False):
         # check if needs decryption
@@ -186,9 +103,9 @@ class Message(Logger):
         self.log(f'Attempting to decrypt:\n{self}')
 
         # decrypt msg
-        # self.log('attempting to decrypt',self.msg,'from',self.from_pubkey,'to',self.to_whom,self.to_whom.keychain(),self.to_whom.assemble(self.to_whom.keychain()))
+        self.log('attempting to decrypt',self.msg,'from',self.from_pubkey,'to',self.to_pubkey, self.to_whom,dict_format(self.to_whom.keychain()),self.to_whom.assemble(self.to_whom.keychain()))
         if not self.to_whom.privkey:
-            self.log(f'{self.to_whom} cannot decrypt this message! {dict_format(self.to_whom.keychain())}!')
+            self.log(f'{self.to_whom} cannot decrypt this message! {dict_format(self.to_whom.keychain())}!\n\n{self.to_whom.name} {self.to_whom.pubkey} {self.to_name} {self.to_pubkey} {Komrade(self.to_name).keychain()}')
             return
         
         self.msg = self.msg_d['msg'] = decr_msg_b = SMessage(

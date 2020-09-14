@@ -10,6 +10,10 @@ from komrade.backend import *
 
 # print(PATH_OPERATOR_WEB_KEYS_URL)
 
+# def TheOperator(*x,**y):
+#     from komrade.backend.operators import Komrade
+#     return Komrade(OPERATOR_NAME,*x,**y)
+
 
 class TheOperator(Operator):
     """
@@ -78,7 +82,7 @@ class TheOperator(Operator):
         }
         # msg_d = pickle.loads(data_b)
         # self.log('msg_d',msg_d)
-        msg_obj = Message(msg_d,from_whom=self.phone,to_whom=self)
+        msg_obj = Message(msg_d)
 
         self.log(f'Decoding the binary, I discovered an encrypted message from {self.phone}\n: {msg_obj}')
         

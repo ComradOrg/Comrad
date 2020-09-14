@@ -4,6 +4,10 @@ from komrade import *
 from komrade.backend import *
 from komrade.backend.phonelines import *
 
+
+# def TheTelephone(*x,**y):
+#     return Komrade(TELEPHONE_NAME,*x,**y)
+
 ### ACTUAL PHONE CONNECTIONS
 class TheTelephone(Operator):
     """
@@ -59,7 +63,7 @@ class TheTelephone(Operator):
 
         # unseal
         from komrade.backend.messages import Message
-        resp_msg_obj = Message(resp_msg_d,from_whom=self.op,to_whom=self) #self.unseal_msg(resp_msg_b)
+        resp_msg_obj = Message(resp_msg_d)
         # res =  resp_msg_b_unsealed
         self.log('Decoding binary, message discovered:\n',resp_msg_obj)
 
