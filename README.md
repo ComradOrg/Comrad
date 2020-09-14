@@ -85,17 +85,29 @@ See [here](https://www.dropbox.com/s/8r8gqgfswojmtwd/komrade-terminal-preview--2
 
 Design details are changing rapidly, but these are what we have so far.
 
-### Mobile app
+### Frontends
 
-The cross-platform app is made with [KivyMD](https://github.com/kivymd/KivyMD), a variant of [Kivy](https://kivy.org/), a cross-platform mobile development framework in Python. Python is an easy and versatile progamming language to learn, which keeps the code accessible to as many people as possible.
+#### Mobile app
 
-### Cryptography
+The mobile app is made with [KivyMD](https://github.com/kivymd/KivyMD), a variant of [Kivy](https://kivy.org/), a cross-platform mobile development framework in Python. Python is an easy and versatile progamming language to learn, which keeps the code accessible to as many people as possible.
+
+Code for the mobile app is in "[komrade/app](komrade/app)".
+
+### Terminal app
+
+Vanilla Python; eventually using the curses module.
+
+### Backend
+
+#### Ontology
+
+All plain object-oriented stuff in Python. The root entity is a "Keymaker": anyone from @Telephone, to @Operator, to users, to groups, who has a public/private key pair.
+
+The database is a simple key-value store written in Python ([simplekv](https://github.com/mbr/simplekv)).
+
+#### Cryptography
 
 We are using [Themis](https://github.com/cossacklabs/themis), a high-level cross-platform cryptography library, for all cryptographic functions, rather than handling any primitives ourselves.
-
-### API and databse
-
-All simple object-oriented stuff in Python. The database is a simple key-value store written in Python, "simplekv".
 
 ## Install
 
@@ -130,7 +142,7 @@ cd Komrade
 
 #### Terminal interface
 
-To run Komrade using the terminal interfae:
+To run Komrade using the terminal interfacee:
 
 ```
 cd [path to Komrade repo]
