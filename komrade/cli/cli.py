@@ -69,7 +69,7 @@ class CLI(Logger):
     def intro(self):
         self.status(None)
     
-    def who(self):
+    def who(self,whom):
         if self.with_required_login():
             contacts = self.komrade.contacts()
             print('  ' + '\n  '.join(contacts))
