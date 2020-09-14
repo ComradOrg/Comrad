@@ -109,6 +109,12 @@ For the mobile/desktop app, run:
 komrade-app
 ```
 
+Or to run the server or Operator (for development only):
+
+```
+komrade-op
+```
+
 
 ## Details
 
