@@ -339,7 +339,8 @@ deliver_msg = {deliver_msg}
 
 to_komrade = {to_komrade}
 from_komrade = {from_komrade}
-''')        
+''')    
+        return {'ummmm':'ok?'}
 
 
 
