@@ -108,17 +108,18 @@ class Komrade(Caller):
         self.log(f"@Keymaker: Store your private key on your device hardware ONLY\nas it was encrypted by your password-generated key:\n\n[Encrypted Private Key]\n({make_key_discreet_str(privkey_encr_obj.data_b64)})")
 
         ## 6) Test keychain works
-        privkey_decr2 = KomradeSymmetricKeyWithPassphrase(passphrase)
-        assert privkey_decr2.decrypt(privkey_encr) == privkey.data
+        #privkey_decr2 = KomradeSymmetricKeyWithPassphrase(passphrase)
+        #assert privkey_decr2.decrypt(privkey_encr) == privkey.data
         
         self._keychain['pubkey']=pubkey
         self._keychain['privkey_encr']=privkey_encr_obj
+        self._keychain['privkey']=privkey
         # self._keychain['privkey_decr']=privkey_decr
         # we should be able to reassemble privkey now?
         # self.log('this is my keychain now:')
-        assert 'privkey' in self.keychain()
+        #assert 'privkey' in self.keychain()
 
-        # self.log('My keychain now looks like:',dict_format(self.keychain()))
+        self.log('My keychain now looks like:',dict_format(self.keychain()))
 
         ## 6) More narration?
         if SHOW_STATUS:

@@ -70,7 +70,7 @@ class Operator(Keymaker):
                          path_crypt_keys=path_crypt_keys, path_crypt_data=path_crypt_data)
         
         # self.find_pubkey_and_name(name,pubkey)
-        self.log('booted with operator with:',self.name,self.pubkey,self.find_pubkey(name),'??')
+        # self.log('booted with operator with:',self.name,self.pubkey,self.find_pubkey(name),'??')
         
     # def boot(self):
     #     ## get both name and pubkey somehow
