@@ -7,6 +7,7 @@ HELPSTR = """
     /login [name]     -->  log back in
     /register [name]  -->  new komrade
     /meet [name]      -->  exchange info
+    /msg [name] [msg] -->  write to person or group
     /who [name]       -->  show contact info
     /help             -->  seek help
 """
@@ -17,7 +18,8 @@ class CLI(Logger):
         'register':'join the komrades',
         'login':'log back in', 
         'meet':'meet a komrade',
-        'who':'show contacts or info'
+        'who':'show contacts or info',
+        'msg':'write people'
     }
 
     def __init__(self,name='',cmd='',persona=None):
@@ -130,6 +132,16 @@ class CLI(Logger):
         # meet?
         self.komrade.meet(name)
 
+    def msg(self,dat):
+        name_or_pubkey,msg = dat.split(' ',1)
+        self.log(f'Composed msg to {name_or_pubkey}: {msg}')
+
+        msg_obj = self.komrade.msg(
+            name_or_pubkey,
+            msg
+        )
+        
+        self.log(f'Sent msg obj to {name_or_pubkey}: {msg_obj}')
 
 
 
@@ -452,12 +464,13 @@ class CLI(Logger):
 
 
 
-def run_cli():
+def run_cli(inp):
     cli = CLI()
-    cli.run() #'/register elon') #'/register',name='elon')
+    cli.run(inp) #'/register elon') #'/register',name='elon')
 
 if __name__=='__main__':
-    run_cli()
+    inp = ' '.join(sys.argv[1:])
+    run_cli(inp)
     # asyncio.run(test_async())
 
 

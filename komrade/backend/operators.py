@@ -75,7 +75,7 @@ class Operator(Keymaker):
         
         # add to phonebook
         if name: PHONEBOOK[name]=self
-        if self.pubkey: PHONEBOOK[self.pubkey.data_b64]
+        if self.pubkey: PHONEBOOK[self.pubkey.data_b64]=self
         
 
     @property

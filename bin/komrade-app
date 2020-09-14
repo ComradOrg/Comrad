@@ -12,7 +12,7 @@ path=`realpath "$SCRIPTPATH/../komrade/app/main.py"`
 pathvenv=`realpath "$SCRIPTPATH/../venv/bin/activate"`
 source $pathvenv
 
-python "$path"
+python "$path" $*
 
 
 if command -v deactivate &> /dev/null

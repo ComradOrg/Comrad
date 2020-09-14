@@ -10,7 +10,7 @@ pathvenv=`realpath "$SCRIPTPATH/../venv/bin/activate"`
 
 source $pathvenv
 
-cmd="python $path 8080"
+cmd="python $path 8080 $*"
 
 # do forever
 while true; do $cmd && break; done
