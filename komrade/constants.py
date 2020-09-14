@@ -10,6 +10,7 @@ OPERATOR_API_URL = f'http://{KOMRADE_URL}/op/'
 
 # paths
 import os
+PATH_USER_HOME = os.path.join(os.path.expanduser('~'))
 PATH_KOMRADE = os.path.abspath(os.path.join(os.path.expanduser('~'),'komrade'))
 PATH_KOMRADE_KEYS = os.path.join(PATH_KOMRADE,'.keys')
 PATH_KOMRADE_DATA = os.path.join(PATH_KOMRADE,'.data')
@@ -22,8 +23,10 @@ PATH_CRYPT_CA_KEYS = PATH_CRYPT_OP_KEYS
 PATH_CRYPT_CA_DATA = PATH_CRYPT_OP_DATA
 PATH_QRCODES = os.path.join(PATH_KOMRADE,'contacts')
 PATH_SECRETS = os.path.join(PATH_KOMRADE,'.secrets')
+PATH_SUPER_SECRETS = os.path.join(PATH_USER_HOME,'.secrets')
+PATH_SUPER_SECRET_OP_KEY = os.path.join(PATH_SUPER_SECRETS,'.komrade.op.key')
 
-for x in [PATH_KOMRADE,PATH_KOMRADE_DATA,PATH_KOMRADE_KEYS,PATH_QRCODES,PATH_SECRETS]:
+for x in [PATH_KOMRADE,PATH_KOMRADE_DATA,PATH_KOMRADE_KEYS,PATH_QRCODES,PATH_SECRETS,PATH_SUPER_SECRETS]:
     if not os.path.exists(x):
         os.makedirs(x)
 
