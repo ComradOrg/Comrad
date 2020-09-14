@@ -83,7 +83,7 @@ See [here](https://www.dropbox.com/s/8r8gqgfswojmtwd/komrade-terminal-preview--2
 
 ## Install
 
-### (1) Make sure pyenv is installed
+##### (1) Make sure pyenv is installed
 
 [Pyenv](https://github.com/pyenv) is a virtual environment manager that helps you keep track of Python versions. Komrade requires exactly 3.7, for idiosyncracies owing to Kivy.
 
@@ -98,7 +98,7 @@ echo 'export PATH="~/.pyenv/bin:$PATH"' >> ~/.bashrc
 bash
 ```
 
-### (2) Clone and bootstrap
+##### (2) Clone and bootstrap
 
 Now that pyenv is installed, just clone and bootstrap (thanks to Komrade [@mcataford](https://github.com/mcataford)):
 
