@@ -4,7 +4,7 @@
 # Run the mobile app
 ##
 
-deactivate
+
 
 SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
@@ -14,4 +14,8 @@ source $pathvenv
 
 python "$path"
 
-deactivate
+
+if command -v deactivate &> /dev/null
+then
+    deactivate
+fi

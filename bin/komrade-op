@@ -2,7 +2,6 @@
 # Run THE OPERATOR
 ##
 
-deactivate
 
 SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
@@ -16,4 +15,8 @@ cmd="python $path 8080"
 # do forever
 while true; do $cmd && break; done
 
-deactivate
+
+if command -v deactivate &> /dev/null
+then
+    deactivate
+fi
