@@ -355,20 +355,17 @@ from_komrade = {from_komrade}
             'from':self.pubkey.data_b64,
             'msg':enclosed_msg
         }
+        msg_from_op_b = pickle.dumps(msg_from_op)
 
-        from komrade.backend.messages import Message
-        out_msg = Message(msg_from_op)
-
-        # encrypt!
-        out_msg.encrypt()
-
-        # data to save
-        out_msg_encr_d = out_msg.msg
+        msg_from_op_b_encr = SMessage(
+            self.privkey.data,
+            b64dec(deliver_to)
+        ).wrap(msg_from_op_b)
 
         # save in inbox
         inbox_old = self.crypt_keys.get(deliver_to,prefix='/inbox/')
         self.log('old inbox!',inbox_old)
-        inbox_new = (out_msg_encr_d if out_msg_encr_d else b'') + BSEP + (inbox_old if inbox_old else b'')
+        inbox_new = (msg_from_op_b_encr if msg_from_op_b_encr else b'') + BSEP + (inbox_old if inbox_old else b'')
         self.log('new inbox!',inbox_new)
 
         self.crypt_keys.set(deliver_to,inbox_new,prefix='/inbox/')
