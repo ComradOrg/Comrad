@@ -129,7 +129,7 @@ python komrade/cli/cli.py
 
 ### Mobile interface
 
-~~To run Komrade using the mobile interfae~~ (this is broken at the moment):
+~~To run Komrade using the mobile interface~~ (this is broken at the moment):
 
 ```
 cd [path to Komrade repo]
