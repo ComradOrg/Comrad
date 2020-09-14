@@ -9,14 +9,18 @@ path=`realpath "$SCRIPTPATH/../komrade/backend/switchboard.py"`
 pathvenv=`realpath "$SCRIPTPATH/../venv/bin/activate"`
 
 source $pathvenv
+date=$(date '+%Y-%m-%d')
+pathlog=`realpath "$SCRIPTPATH/../log/$date.op.log"`
 
-cmd="python $path 8080 $*"
+echo $pathlog
+
+cmd="python $path 8080 $* >> $pathlog 2>&1"
 
 # do forever
 while true; do $cmd && break; done
 
 
-if command -v deactivate &> /dev/null
-then
-    deactivate
-fi
+#if command -v deactivate &> /dev/null
+#then
+#    deactivate
+#fi
