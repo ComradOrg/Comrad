@@ -134,9 +134,7 @@ python komrade/app/main.py
 
 ## Technical details
 
-Design details are changing rapidly, but these are what we have so far.
-
-### Frontends
+### Frontend
 
 #### Mobile app
 
@@ -144,7 +142,7 @@ The mobile app is made with [KivyMD](https://github.com/kivymd/KivyMD), a varian
 
 Code for the mobile app is in [komrade/app](komrade/app).
 
-### Terminal app
+#### Terminal app
 
 Vanilla Python; eventually using the curses module. Code is in [komrade/cli].
 
