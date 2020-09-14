@@ -40,6 +40,16 @@ class TheOperator(Operator):
         keychain = check_phonelines()[OPERATOR_NAME]
         self._keychain = {**self.load_keychain_from_bytes(keychain)}
 
+        if not keychain.get('pubkey'):
+            raise KormadeException('Operator cannot find its own public key? Shutting down.')
+
+        # check I match what's on op page
+        pub_web = komrade_request(PATH_OPERATOR_WEB_KEYS_URL)
+        if pub_web == keychain.get('pubkey').data_b64_s:
+            print('Pubs match')
+        else:
+            raise KomradeException('Public key for Operator on app and one at {PATH_OPERATOR_WEB_KEYS_URL} do not match. Shutting down.')
+
         privkey=None
         if os.path.exists(PATH_SUPER_SECRET_OP_KEY):
             with open(PATH_SUPER_SECRET_OP_KEY,'rb') as f:
