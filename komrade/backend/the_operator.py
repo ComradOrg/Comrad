@@ -289,6 +289,7 @@ class TheOperator(Operator):
 
         to_komrade = Komrade(pubkey=deliver_to)
         from_komrade = Komrade(pubkey=deliver_from)
+        
 
 
 

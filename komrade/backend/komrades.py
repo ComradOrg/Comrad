@@ -339,8 +339,9 @@ def test_msg():
 
 def test_loading():
     z1 = Komrade('zuck')
+    # z1.register()
     print(z1.keychain())
-    exit()
+    # exit()
 
     z2 = Komrade(b'VUVDMgAAAC08BCMVA+0dMJXc66/W7hty669+3/3S61Q1yjmgJW8I0k3lqfDi')
     print(z2)
