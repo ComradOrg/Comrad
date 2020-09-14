@@ -1,0 +1,10 @@
+#!/bin/bash
+#
+# Usage: curl http://komrade.app/install | bash
+#
+# For more info, visit: https://github.com/Komrade/Komrade#install
+##
+
+
+bash <(curl -s https://raw.githubusercontent.com/Komrade/Komrade/master/script/install)
+
