@@ -103,7 +103,7 @@ class Message(Logger):
         self.log(f'Attempting to decrypt:\n{self}')
 
         # decrypt msg
-        self.log('attempting to decrypt',self.msg,'from',self.from_pubkey,'to',self.to_pubkey, self.to_whom,dict_format(self.to_whom.keychain()),self.to_whom.assemble(self.to_whom.keychain()))
+        # self.log('attempting to decrypt',self.msg,'from',self.from_pubkey,'to',self.to_pubkey, self.to_whom,dict_format(self.to_whom.keychain()),self.to_whom.assemble(self.to_whom.keychain()))
         if not self.to_whom.privkey:
             self.log(f'{self.to_whom} cannot decrypt this message! {dict_format(self.to_whom.keychain())}!\n\n{self.to_whom.name} {self.to_whom.pubkey} {self.to_name} {self.to_pubkey} {self.to_whom.keychain()}')
             return

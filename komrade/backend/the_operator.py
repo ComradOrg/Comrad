@@ -293,9 +293,6 @@ class TheOperator(Operator):
 
 
 
-
-
-
 def test_op():
     from komrade.backend.the_telephone import TheTelephone
 

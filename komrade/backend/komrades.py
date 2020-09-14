@@ -12,8 +12,8 @@ from komrade.backend.keymaker import *
 
 class KomradeX(Caller):
 
-    def __init__(self, name=None, pubkey=None, passphrase=DEBUG_DEFAULT_PASSPHRASE):
-        super().__init__(name=name,passphrase=passphrase)
+    def __init__(self, name=None, pubkey=None):
+        super().__init__(name=name)
         # self.log(f'booted komrade with {name} and {passphrase} and\n\n{dict_format(self.keychain())}')
         # if SHOW_STATUS:
         #     from komrade.cli import CLI
@@ -184,8 +184,13 @@ class KomradeX(Caller):
         self.log(f'''Now saving name and public key on local device:''')
         self.crypt_keys.set(name, pubkey_b, prefix='/pubkey/')
         self.crypt_keys.set(uri_id, name, prefix='/name/')
-        self.crypt_keys.set(uri_id, privkey_encr_obj.data, prefix='/privkey_encr/')
         self.crypt_keys.set(uri_id,sec_login,prefix='/secret_login/')
+
+        # store privkey pieces
+        self.crypt_keys.set(uri_id, privkey_encr_obj.data, prefix='/privkey_encr/')
+        # just to show we used a passphrase -->
+        self.crypt_keys.set(uri_id, KomradeSymmetricKeyWithPassphrase.__name__, prefix='/privkey_decr/')
+
 
         # save qr too:
         self.save_uri_as_qrcode(uri_id)
@@ -331,8 +336,9 @@ def test_msg():
 
 
 def test_loading():
-    # z1 = Komrade('zuck')
-    # print(z1.keychain())
+    z1 = Komrade('zuck')
+    print(z1.keychain())
+    exit()
 
     z2 = Komrade(b'VUVDMgAAAC08BCMVA+0dMJXc66/W7hty669+3/3S61Q1yjmgJW8I0k3lqfDi')
     print(z2)
