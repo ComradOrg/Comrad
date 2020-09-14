@@ -144,10 +144,7 @@ class KomradeX(Caller):
         if SHOW_STATUS: self.cli.status_keymaker_part3(privkey,privkey_decr,privkey_encr,passphrase)
 
         # 6) Save for now on client -- will delete if fails on server
-        self.crypt_keys.set(name, pubkey.data, prefix='/pubkey/')
-        self.crypt_keys.set(pubkey.data_b64, name, prefix='/name/')
-        self.crypt_keys.set(pubkey.data_b64, privkey_encr_obj.data, prefix='/privkey_encr/')
-
+        
         # storing myself in memory phonebook
         # PHONEBOOK[name]=self
 
@@ -171,10 +168,6 @@ class KomradeX(Caller):
         )
         if not resp_msg_d.get('success'):
             self.log(f'Registration failed. Message from operator was:\n\n{dict_format(resp_msg_d)}')
-
-            self.crypt_keys.delete(name,prefix='/pubkey/')
-            self.crypt_keys.delete(pubkey.data_b64,prefix='/name/')
-            self.crypt_keys.delete(pubkey.data_b64,prefix='/privkey_encr/')
             return
     
         # otherwise, save things on our end
@@ -182,15 +175,14 @@ class KomradeX(Caller):
 
         self.name=resp_msg_d.get('name')
         pubkey_b = resp_msg_d.get('pubkey')
-        
         assert pubkey_b == pubkey.data
-        
+        uri_id = pubkey.data_b64
         sec_login = resp_msg_d.get('secret_login')
-
-        pubkey=self._keychain['pubkey']=KomradeAsymmetricPublicKey(pubkey_b)
-        uri_id = b64enc(pubkey_b)
         
         self.log(f'''Now saving name and public key on local device:''')
+        self.crypt_keys.set(name, pubkey_b, prefix='/pubkey/')
+        self.crypt_keys.set(uri_id, name, prefix='/name/')
+        self.crypt_keys.set(uri_id, privkey_encr_obj.data, prefix='/privkey_encr/')
         self.crypt_keys.set(uri_id,sec_login,prefix='/secret_login/')
 
         # save qr too:
