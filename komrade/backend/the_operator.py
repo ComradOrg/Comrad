@@ -330,6 +330,15 @@ class TheOperator(Operator):
 
         to_komrade = Komrade(pubkey=deliver_to)
         from_komrade = Komrade(pubkey=deliver_from)
+
+        self.log(f'''Got:
+data = {data}
+deliver_to = {deliver_to}
+deliver_from = {deliver_from}
+deliver_msg = {deliver_msg}
+
+to_komrade = {to_komrade}
+from_komrade = {from_komrade}
         
 
 
