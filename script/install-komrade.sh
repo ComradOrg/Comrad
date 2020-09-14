@@ -6,7 +6,7 @@
 #
 index_main() {
     set -e
-    curl -s -S -L https://github.com/Komrade/Komrade/blob/master/script/komrade-installer.py | bash
+    curl https://raw.githubusercontent.com/Komrade/Komrade/master/script/komrade-installer.py | python -
 }
 
 index_main

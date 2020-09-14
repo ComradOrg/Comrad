@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 
 URL_PYENV = 'https://raw.githubusercontent.com/pyenv/pyenv-installer/master/bin/pyenv-installer'
 
@@ -88,6 +87,4 @@ echo `which pyenv`
 ''')
 
 
-
-if __name__ == '__main__':
-    main()
+main()
