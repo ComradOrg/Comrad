@@ -150,7 +150,9 @@ Vanilla Python, but eventually using the curses module. Code is in [komrade/cli]
 
 #### Ontology
 
-All plain object-oriented stuff in Python. The root entity is a "Keymaker": anyone from @Telephone, to @Operator, to users, to groups, who has a public/private key pair. The database uses a simple key-value store, written in Python ([simplekv](https://github.com/mbr/simplekv)).
+All plain object-oriented stuff in Python. The root entity is a "Keymaker": anyone from @Telephone, to @Operator, to users, to groups, who has a public/private key pair.
+
+The database uses a simple file-based key-value store, written in Python ([simplekv](https://github.com/mbr/simplekv)).
 
 Code is in [komrade/backend](komrade/backend).
 
