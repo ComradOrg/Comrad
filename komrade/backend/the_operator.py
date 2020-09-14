@@ -385,18 +385,18 @@ from_komrade = {from_komrade}
                 self.privkey.data,
                 b64dec(deliver_to)
             ).unwrap(inbox_old_encr)
-            self.log('decrypted inbox old:',inbox_old_encr)
+            self.log('decrypted inbox old:',inbox_old)
         else:
             inbox_old = b''
 
         inbox_new = post_id + b'\n' + inbox_old
-        self.log('decrypted inbox new:',inbox_old_encr)
+        self.log('decrypted inbox new:',inbox_new)
 
         inbox_new_encr = SMessage(
             self.privkey.data,
             b64dec(deliver_to)
         ).wrap(inbox_new)
-        self.log('encrypted inbox new:',inbox_old_encr)
+        self.log('encrypted inbox new:',inbox_new_encr)
 
         self.crypt_keys.set(deliver_to,inbox_new_encr,prefix='/inbox/')
 
