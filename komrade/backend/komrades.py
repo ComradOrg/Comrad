@@ -346,8 +346,14 @@ class KomradeX(Caller):
         ).unwrap(res['data_encr'])
         self.log('inbox decrypted:',inbox)
 
-        for x in inbox.split(b'\n'):
+        unread = []
+        for post_id in inbox.split(b'\n'):
+            if not post_id: continue
             print('>>',x) 
+            already = self.crypt_keys.get(
+                post_id,
+                prefix='/post/',
+            )
 
 
         

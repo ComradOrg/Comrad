@@ -364,19 +364,8 @@ from_komrade = {from_komrade}
 
         # save new post
         post_id = get_random_binary_id()
-        self.crypt_keys.set(post_id,msg_from_op_b_encr)
+        self.crypt_keys.set(post_id,msg_from_op_b_encr,prefix='/post/')
 
-        # resave index
-
-        # post_id_encr = SMessage(
-        #     self.privkey.data,
-        #     b64dec(deliver_to)
-        # ).wrap(post_id)
-
-        # save in inbox
-        # inbox_old = self.crypt_keys.get(deliver_to,prefix='/inbox/')
-        
-        
         inbox_old_encr = self.crypt_keys.get(deliver_to,prefix='/inbox/')
         self.log('encrypted inbox old:',inbox_old_encr)
         
