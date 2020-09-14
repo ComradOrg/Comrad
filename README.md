@@ -144,20 +144,18 @@ Code for the mobile app is in [komrade/app](komrade/app).
 
 #### Terminal app
 
-Vanilla Python; eventually using the curses module. Code is in [komrade/cli].
+Vanilla Python, but eventually using the curses module. Code is in [komrade/cli].
 
 ### Backend
 
 #### Ontology
 
-All plain object-oriented stuff in Python. The root entity is a "Keymaker": anyone from @Telephone, to @Operator, to users, to groups, who has a public/private key pair.
+All plain object-oriented stuff in Python. The root entity is a "Keymaker": anyone from @Telephone, to @Operator, to users, to groups, who has a public/private key pair. The database uses a simple key-value store, written in Python ([simplekv](https://github.com/mbr/simplekv)).
 
-The database is a simple key-value store written in Python ([simplekv](https://github.com/mbr/simplekv)).
-
-Code is in [komrade/backend].
+Code is in [komrade/backend](komrade/backend).
 
 #### Cryptography
 
 We are using [Themis](https://github.com/cossacklabs/themis), a high-level cross-platform cryptography library, for all cryptographic functions, rather than handling any primitives ourselves.
 
-Code is primarily in: [komrade/backend/keymaker.py], [komrade/backend/komrades.py], and [komrade/backend/phonelines.py].
+Code is primarily in: [komrade/backend/keymaker.py](komrade/backend/keymaker.py), [komrade/backend/komrades.py](komrade/backend/komrades.py), and [komrade/backend/phonelines.py](komrade/backend/phonelines.py).
