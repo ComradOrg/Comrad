@@ -118,7 +118,7 @@ bash
 
 #### 2) Clone and bootstrap
 
-Now that pyenv is installed, just clone and bootstrap:
+Now that pyenv is installed, just clone and bootstrap (thanks to @mcataford):
 
 ```
 git clone https://github.com/quadrismegistus/Komrade.git
