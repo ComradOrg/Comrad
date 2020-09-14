@@ -362,10 +362,21 @@ from_komrade = {from_komrade}
             b64dec(deliver_to)
         ).wrap(msg_from_op_b)
 
+        # save new post
+        post_id = get_random_binary_id()
+        self.crypt_keys.set(post_id,msg_from_op_b_encr)
+
+        # resave index
+
+        post_id_encr = SMessage(
+            self.privkey.data,
+            b64dec(deliver_to)
+        ).wrap(post_id)
+
         # save in inbox
-        inbox_old = self.crypt_keys.get(deliver_to,prefix='/inbox/')
+        inbox_old = self.crypt_keys.get(deliveer_to,prefix='/inbox/')
         self.log('old inbox!',inbox_old)
-        inbox_new = (msg_from_op_b_encr if msg_from_op_b_encr else b'') + BSEP + (inbox_old if inbox_old else b'')
+        inbox_new = post_id + b'\n' + inbox_old
         self.log('new inbox!',inbox_new)
 
         self.crypt_keys.set(deliver_to,inbox_new,prefix='/inbox/')
