@@ -20,7 +20,7 @@ def Komrade(name,pubkey=None,*x,**y):
     pk64 = None if not pubkey else b64enc(pubkey)
     if pk64 in PHONEBOOK: return PHONEBOOK[pk64]
 
-    print(f'finding Komrade {name} / {pubkey} for the first time!')
+    # print(f'finding Komrade {name} / {pubkey} for the first time!')
     # operator?
     if name==OPERATOR_NAME:
         kommie = TheOperator() #(*x,**y)
@@ -60,7 +60,7 @@ class KomradeX(Caller):
 
         keys = self.keychain()
         if keys.get('pubkey') and keys.get('privkey'):
-            self.log('already booted! @'+self.name)
+            # self.log('already booted! @'+self.name)
             return True
         
         if self.exists_locally_as_account():
@@ -115,12 +115,10 @@ class KomradeX(Caller):
 
         # already have it?
         if self.exists_locally_as_account():
-            self.log('You have already created this account.')
-            return
+            return {'success':False, 'status':'You have already created this account.'}
         
         if self.exists_locally_as_contact():
-            self.log('This is already a contact of yours')
-            return
+            return {'success':False, 'status':'This is already a contact of yours'}
 
         
         ## 1) Have name?

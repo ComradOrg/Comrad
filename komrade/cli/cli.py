@@ -79,8 +79,10 @@ class CLI(Logger):
             self.name=None
             self.loggedin=False
             self.komrade=None
-        if 'status' in res:
-            print('@Operator: '+res.get('status','?'))
+        if res and 'status' in res:
+            # self.boot()
+            print('\n@Operator: '+res.get('status','?')+'\n')
+
 
     def login(self,name):
         print(self,name,self.name,self.komrade,self.loggedin)
