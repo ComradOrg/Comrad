@@ -70,8 +70,8 @@ class TheOperator(Operator):
         if privkey:
             self._keychain['privkey']=KomradeAsymmetricPrivateKey(b64dec(privkey))
 
-        pprint(self._keychain)
-        exit()
+        # pprint(self._keychain)
+        # exit()
         self._keychain = {**self.keychain()}
         # self.log('@Operator booted with keychain:',dict_format(self._keychain),'and passphrase',self.passphrase)
         clear_screen()
