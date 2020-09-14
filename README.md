@@ -83,9 +83,7 @@ See [here](https://www.dropbox.com/s/8r8gqgfswojmtwd/komrade-terminal-preview--2
 
 ## Install
 
-### As developer
-
-#### (1) Make sure pyenv is installed
+### (1) Make sure pyenv is installed
 
 [Pyenv](https://github.com/pyenv) is a virtual environment manager that helps you keep track of Python versions. Komrade requires exactly 3.7, for idiosyncracies owing to Kivy.
 
@@ -100,7 +98,7 @@ echo 'export PATH="~/.pyenv/bin:$PATH"' >> ~/.bashrc
 bash
 ```
 
-#### (2) Clone and bootstrap
+### (2) Clone and bootstrap
 
 Now that pyenv is installed, just clone and bootstrap (thanks to Komrade [@mcataford](https://github.com/mcataford)):
 
@@ -110,9 +108,9 @@ cd Komrade
 . script/bootstrap
 ```
 
-### Usage
+## Usage
 
-#### Terminal interface
+### Terminal interface
 
 To run Komrade using the terminal interface:
 
@@ -121,7 +119,7 @@ cd [path to Komrade repo]
 python komrade/cli/cli.py
 ```
 
-#### Mobile interface
+### Mobile interface
 
 ~~To run Komrade using the mobile interfae~~ (this is broken at the moment):
 
@@ -130,9 +128,7 @@ cd [path to Komrade repo]
 python komrade/app/main.py
 ```
 
-
-
-## Technical details
+## Details
 
 ### Frontend
 
