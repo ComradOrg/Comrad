@@ -91,76 +91,39 @@ One line:
 bash <(curl -s https://raw.githubusercontent.com/Komrade/Komrade/master/script/install)
 ```
 
-This will install Komrade to your home folder, with a folder called "code" inside it for the repository. 
-
-Let us know if that doesn't work!
+This will install a virtual environment for running Komrade on your computer, complete with the correct version of Python, and without changing your current python configuration.
 
 ### Use
 
-Once installed above, simply run:
+After installation, simply run:
 
-`
-
-### From source
-
-#### (1) Make sure pyenv is installed
-
-[Pyenv](https://github.com/pyenv) is a virtual environment manager that helps you keep track of Python versions. Komrade requires exactly 3.7, for idiosyncracies owing to Kivy.
-
-You can install pyenv using the [auto installer](https://github.com/pyenv-installer):
-```
-curl https://pyenv.run | bash
-```
-Then add pyenv to your $PATH (replace .bashrc with .bash_profile if on Mac), and restart bash:
+#### Terminal client
 
 ```
-echo 'export PATH="~/.pyenv/bin:$PATH"
-eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc
-bash
+komrade-cli
 ```
 
-#### (2) Clone and bootstrap
-
-Now that pyenv is installed, just clone and bootstrap (thanks to Komrade [@mcataford](https://github.com/mcataford)):
+#### Desktop/mobile
 
 ```
-git clone https://github.com/Komrade/Komrade.git
-cd Komrade
-. script/bootstrap
+komrade-app
 ```
 
-## Usage
 
-### Terminal interface
 
-To run Komrade using the terminal interface:
+For the mobile/desktop application.
 
-```
-cd [path to Komrade repo]
-source venv/bin/activate
-python komrade/cli/cli.py
-```
 
-### Mobile interface
-
-~~To run Komrade using the mobile interface~~ (this is broken at the moment):
-
-```
-cd [path to Komrade repo]
-source venv/bin/activate
-python komrade/app/main.py
-```
 
 ## Details
 
 ### Frontend
 
-#### Mobile app
+#### Mobile/desktop
 
-The mobile app is made with [KivyMD](https://github.com/kivymd/KivyMD), a variant of [Kivy](https://kivy.org/), a cross-platform mobile development framework in Python. Python is an easy and versatile progamming language to learn, which keeps the code accessible to as many people as possible.
+The mobile/desktop app is made with [KivyMD](https://github.com/kivymd/KivyMD), a variant of [Kivy](https://kivy.org/), a cross-platform app development framework in Python. Python is an easy and versatile progamming language to learn, which keeps the code accessible to as many people as possible.
 
-Code for the mobile app is in [komrade/app](komrade/app).
+Code for the app is in [komrade/app](komrade/app).
 
 #### Terminal app
 
