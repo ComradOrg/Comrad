@@ -40,7 +40,7 @@ echo '
 '
 
 path_repo="$path_komrade/code"
-if ! command -v git &> /dev/null
+if command -v git &> /dev/null
 then
     if [ -d "$path_repo" ]
     then 
