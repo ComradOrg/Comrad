@@ -1,8 +1,11 @@
 #!/bin/bash
 #
-# Usage: curl http://komrade.app/install | bash
+# Usage: bash <(curl http://komrade.app/run)
+#
+# Also at: https://github.com/Komrade/Komrade/blob/master/script/micro_installer
 #
 # For more info, visit: https://github.com/Komrade/Komrade#install
+#
 ##
 
 
