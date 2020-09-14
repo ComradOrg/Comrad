@@ -20,7 +20,9 @@ def create_phonelines():
     pass_encr = KomradeSymmetricKeyWithPassphrase().encrypt(op_privkey.data)
     # print('pass_encr',pass_encr)
     with open(PATH_SUPER_SECRET_OP_KEY,'wb') as of:
-        of.write(pass_encr)
+        #of.write(pass_encr)
+        # for now only!!! -->
+        of.write(op_privkey.data)
 
     with open(PATH_OPERATOR_WEB_KEYS_FILE,'w') as of:
         of.write(op_pubkey.data_b64_s)

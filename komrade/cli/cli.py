@@ -3,14 +3,7 @@ from komrade import *
 from komrade.backend import *
 import art
 import textwrap as tw
-HELPSTR = """
-    /login [name]     -->  log back in
-    /register [name]  -->  new komrade
-    /meet [name]      -->  exchange info
-    /msg [name] [msg] -->  write to person or group
-    /who [name]       -->  show contact info
-    /help             -->  seek help
-"""
+
 
 class CLI(Logger):
     ROUTES = {
@@ -66,6 +59,17 @@ class CLI(Logger):
     def help(self,*x,**y):
         clear_screen()
         self.boot()
+
+        HELPSTR = """
+    /login [name]     -->  log back in
+    /register [name]  -->  new komrade""" + (("""
+    /meet [name]      -->  exchange info
+    /msg [name] [msg] -->  write to person or group
+    /who [name]       -->  show contact info""") 
+    if self.with_required_login(quiet=True) else "") + """ 
+    /help             -->  seek help
+"""
+        
         print(HELPSTR)
 
     def intro(self):
@@ -117,9 +121,10 @@ class CLI(Logger):
         return (self.loggedin and self.komrade and self.name)
 
     
-    def with_required_login(self):
+    def with_required_login(self,quiet=False):
         if not self.logged_in:
-            print('@Operator: You must be logged in first.\n')
+            if not quiet:
+                print('@Operator: You must be logged in first.\n')
             return False
         return True
 
@@ -133,15 +138,14 @@ class CLI(Logger):
         self.komrade.meet(name)
 
     def msg(self,dat):
-        name_or_pubkey,msg = dat.split(' ',1)
-        self.log(f'Composed msg to {name_or_pubkey}: {msg}')
-
-        msg_obj = self.komrade.msg(
-            name_or_pubkey,
-            msg
-        )
-        
-        self.log(f'Sent msg obj to {name_or_pubkey}: {msg_obj}')
+        if self.with_required_login():
+            name_or_pubkey,msg = dat.split(' ',1)
+            self.log(f'Composed msg to {name_or_pubkey}: {msg}')
+            msg_obj = self.komrade.msg(
+                name_or_pubkey,
+                msg
+            )
+            self.log(f'Sent msg obj to {name_or_pubkey}: {msg_obj}')
 
 
 
