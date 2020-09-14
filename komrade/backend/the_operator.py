@@ -39,6 +39,21 @@ class TheOperator(Operator):
         from komrade.backend.phonelines import check_phonelines
         keychain = check_phonelines()[OPERATOR_NAME]
         self._keychain = {**self.load_keychain_from_bytes(keychain)}
+
+        privkey=None
+        if os.path.exists(PATH_SUPER_SECRET_OP_KEY):
+            with open(PATH_SUPER_SECRET_OP_KEY,'rb') as f:
+                pass_encr=f.read()
+                try:
+                    privkey=KomradeSymmetricKeyWithPassphrase().decrypt(pass_encr)
+                except ThemisError:
+                    exit('invalid password. operator shutting down.')
+
+        if privkey:
+            self._keychain['privkey']=KomradeAsymmetricPrivateKey(b64dec(privkey))
+
+        pprint(self._keychain)
+        exit()
         self._keychain = {**self.keychain()}
         # self.log('@Operator booted with keychain:',dict_format(self._keychain),'and passphrase',self.passphrase)
         clear_screen()

@@ -8,7 +8,7 @@ from komrade.backend import *
 def create_phonelines():
     # crypt
     keycrypt = Crypt(fn=PATH_CRYPT_OP_KEYS)
-    print(keycrypt.fn)
+    # print(keycrypt.fn)
 
     # Operator
     op_keypair = KomradeAsymmetricKey()
@@ -16,9 +16,11 @@ def create_phonelines():
     op_uri = op_pubkey.data_b64_s
     keycrypt.set(OPERATOR_NAME,op_pubkey.data,prefix='/pubkey/')
     keycrypt.set(op_uri,OPERATOR_NAME,prefix='/name/')
-    keycrypt.set(op_uri,op_privkey.data,prefix='/privkey/')
-
-
+    # keycrypt.set(op_uri,op_privkey.data,prefix='/privkey/')
+    pass_encr = KomradeSymmetricKeyWithPassphrase().encrypt(op_privkey.data)
+    # print('pass_encr',pass_encr)
+    with open(PATH_SUPER_SECRET_OP_KEY,'wb') as of:
+        of.write(pass_encr)
 
     ## Telephone
     phone_keypair = KomradeAsymmetricKey()
