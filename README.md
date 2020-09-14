@@ -124,6 +124,7 @@ To run Komrade using the terminal interface:
 
 ```
 cd [path to Komrade repo]
+source venv/bin/activate
 python komrade/cli/cli.py
 ```
 
@@ -133,6 +134,7 @@ python komrade/cli/cli.py
 
 ```
 cd [path to Komrade repo]
+source venv/bin/activate
 python komrade/app/main.py
 ```
 
