@@ -122,23 +122,17 @@ komrade-op
 
 #### Mobile/desktop
 
-The mobile/desktop app is made with [KivyMD](https://github.com/kivymd/KivyMD), a variant of [Kivy](https://kivy.org/), a cross-platform app development framework in Python. Python is an easy and versatile progamming language to learn, which keeps the code accessible to as many people as possible.
-
-Code for the app is in [komrade/app](komrade/app).
+The mobile/desktop app is made with [KivyMD](https://github.com/kivymd/KivyMD), a variant of [Kivy](https://kivy.org/), a cross-platform app development framework in Python. Python is an easy and versatile progamming language to learn, which keeps the code accessible to as many people as possible. Code for the app is in [komrade/app](komrade/app).
 
 #### Terminal app
 
-Vanilla Python, but eventually using the curses module. Code is in [komrade/cli](komrade/cli).
+Vanilla Python. Code is in [komrade/cli](komrade/cli).
 
 ### Backend
 
 #### Ontology
 
-All plain object-oriented stuff in Python. The root entity is a "Keymaker": anyone from @Telephone, to @Operator, to users, to groups, who has a public/private key pair.
-
-The database uses a simple file-based key-value store, written in Python ([simplekv](https://github.com/mbr/simplekv)).
-
-Code is in [komrade/backend](komrade/backend).
+All plain object-oriented stuff in Python. The root entity is a "Keymaker": anyone from @Telephone, to @Operator, to users, to groups, who has a public/private key pair. The database uses a simple file-based key-value store, written in Python ([simplekv](https://github.com/mbr/simplekv)). Code is in [komrade/backend](komrade/backend).
 
 #### Cryptography
 
