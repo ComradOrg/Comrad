@@ -24,7 +24,7 @@ path_komrade_default="`realpath ~/komrade`"
 read -p "[$path_komrade_default] " path_komrade
 if [ -z "$path_komrade" ]
 then
-    path_komrade=path_komrade_default
+    path_komrade=$path_komrade_default
 fi
 if [ ! -d "$path_komrade" ]
 then
