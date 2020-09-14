@@ -27,7 +27,7 @@ class KomradeX(Caller):
         # yes? -- login
 
         keys = self.keychain()
-        self.log(f'booting {self}!',dict_format(keys))
+        # self.log(f'booting {self}!',dict_format(keys))
 
         if keys.get('pubkey') and keys.get('privkey'):
             # self.log('already booted! @'+self.name)

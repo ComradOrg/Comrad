@@ -33,7 +33,6 @@ class TheOperator(Operator):
         """
         super().__init__(
             name,
-            passphrase,
             path_crypt_keys=PATH_CRYPT_OP_KEYS,
             path_crypt_data=PATH_CRYPT_OP_DATA
         )

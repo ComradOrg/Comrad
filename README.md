@@ -101,7 +101,23 @@ All simple object-oriented stuff in Python. The database is a simple key-value s
 
 ### As developer
 
-The usual installation:
+#### 1) Make sure pyenv is installed
+
+[Pyenv](https://github.com/pyenv) is a virtual environment manager that helps you keep track of Python versions. Komrade requires exactly 3.7, for idiosyncracies owing to Kivy.
+
+You can install pyenv using the [auto installer](https://github.com/pyenv-installer):
+```
+curl https://pyenv.run | bash
+```
+Then add pyenv to your $PATH (replace .bashrc with .bash_profile if on Mac):
+
+```
+echo 'export PATH="~/.pyenv/bin:$PATH"' >> ~/.bashrc
+```
+
+#### 2) Clone and bootstrap
+
+Now that pyenv is installed, just clone and bootstrap:
 
 ```
 git clone https://github.com/quadrismegistus/Komrade.git
@@ -109,18 +125,23 @@ cd Komrade
 . script/bootstrap
 ```
 
-~~Then run the client:~~ (this is broken temporarily)
-```
-cd client
-./run.sh
-```
+### Usage
 
-Run the terminal client:
+#### Terminal interface
+
+To run Komrade using the terminal interfae:
 
 ```
+cd [path to Komrade repo]
 python komrade/cli/cli.py
 ```
 
-### As user
+#### Mobile interface
 
-Coming soon. 
+~~To run Komrade using the mobile interfae~~ (this is broken at the moment):
+
+```
+cd [path to Komrade repo]
+python komrade/app/main.py
+```
+

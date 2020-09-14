@@ -31,15 +31,6 @@ class KomradeKey(ABC,Logger):
 
 
 class KomradeSymmetricKey(KomradeKey):
-    @property
-    def cell(self):
-        if not hasattr(self,'_cell'):
-            # if hasattr(self,'passphrase') and self.passphrase:
-            #     self._cell = SCellSeal(passphrase=hasher(self.passphrase))
-            # elif hasattr(self,'key') and self.key:
-            #     self._cell = SCellSeal(key=self.key)
-            self._cell = SCellSeal(key=self.key)
-        return self._cell
     def encrypt(self,msg,**kwargs):
         if hasattr(msg,'data'): msg=msg.data
         # print('??? dec',msg,kwargs)
@@ -104,6 +95,11 @@ class KomradeSymmetricKeyWithoutPassphrase(KomradeSymmetricKey):
     @property
     def data(self): return self.key
     def __repr__(self): return f'[Symmetric Key]\n    ({self.discreet})'
+    @property
+    def cell(self):
+        if not hasattr(self,'_cell'):
+            self._cell = SCellSeal(key=self.key)
+        return self._cell
 
 
 
@@ -299,50 +295,10 @@ class Keymaker(Logger):
             keychain[keyname] = get_key_obj(keyname,keyval)
         return keychain
 
-    def find_pubkey_and_name(self,name=None,pubkey=None):
-        if not pubkey: pubkey = self._keychain.get('pubkey')
-        if not name: name = self.name
-
-        if pubkey:
-            # print('??',pubkey)
-            if hasattr(pubkey,'data'):
-                pubkey=pubkey.data_b64
-            else:
-                pubkey=b64enc(pubkey)
-
-        # if name and pubkey:
-            # make sure they match
-            #assert self.find_pubkey(name) == self.find_name(pubkey)
-            # if self.find_pubkey(name) != self.find_name:
-                # pass
-                # self.log(f'! {name} and {pubkey} do not match?')
-        if name and not pubkey:
-            pubkey = self.find_pubkey(name)
-        elif pubkey and not name:
-            self.name = self.find_name(pubkey)
-        # else:
-            # self.log('error! Neither name nor pubkey! Who am I?')
-            # return (None,None)
-        
-        if pubkey:
-            # self.log('!?!?!?!?',type(pubkey),pubkey)
-            pubkey = b64dec(pubkey)
-            pubkey=KomradeAsymmetricPublicKey(pubkey)
-        
-        self._keychain['pubkey'] = pubkey
-        self.name = name
-
-        self.log('found for name and pubkey',name,pubkey)
-        
-        return (name,pubkey)
-
     def keychain(self,look_for=KEYMAKER_DEFAULT_ALL_KEY_NAMES):
         # load existing keychain
         keys = self._keychain
         
-        # make sure we have the pubkey
-        # name,pubkey = self.find_pubkey_and_name()
-
         # get uri
         pubkey = self.find_pubkey()
         if pubkey:
@@ -410,7 +366,6 @@ class Keymaker(Logger):
             self._uri_id = pubkey.data_b64
         return self._uri_id
 
-
     ### BASE STORAGE
     @property
     def crypt_keys(self):
@@ -419,146 +374,13 @@ class Keymaker(Logger):
         return self._crypt_keys
 
     @property
-    def crypt_keys_mem(self):
-        if not hasattr(self,'_crypt_keys_mem'):
-            self._crypt_keys_mem = CryptMemory()
-        return self._crypt_keys_mem
-        
-    @property
     def crypt_data(self):
         if not hasattr(self,'_crypt_data'):
             self._crypt_data = Crypt(fn=self.path_crypt_data)
         return self._crypt_data
 
-    def can_log_in(self):
-        if not self.pubkey: return False
-        if not (self.privkey or self.privkey_encr): return False
-        return True
-    
 
-    ### CREATING KEYS
-    
-    def get_new_keys(self):
-        raise KomradeException('Every keymaker must make their own get_new_keys() !')
-
-
-
-    def gen_keys_from_types(self,key_types=KEYMAKER_DEFAULT_KEY_TYPES,passphrase=DEBUG_DEFAULT_PASSPHRASE):
-        """
-        Get new asymmetric/symmetric keys, given a dictionary of constants describing their type
-        """
-        # print('bbbbb')
-
-        asymmetric_pubkey=None
-        asymmetric_privkey=None
-        keychain = {}
-
-        self.log('got key types:',dict_format(key_types))
-        
-        # gen keys requested
-        for key_name,key_class in key_types.items():
-            ## asymmetric?
-            if issubclass(key_class,KomradeAsymmetricKey):
-                if not asymmetric_privkey or asymmetric_pubkey:
-                    asymmetric_keys = KomradeAsymmetricKey()
-                    asymmetric_pubkey = asymmetric_keys.pubkey_obj
-                    asymmetric_privkey = asymmetric_keys.privkey_obj
-            
-            if key_class == KomradeAsymmetricPublicKey:
-                keychain[key_name]=asymmetric_pubkey
-            elif key_class == KomradeAsymmetricPrivateKey:
-                keychain[key_name]=asymmetric_privkey
-
-            elif key_class == KomradeSymmetricKeyWithPassphrase:
-                keychain[key_name] = KomradeSymmetricKeyWithPassphrase(passphrase)
-            else:
-                # print('??',key_name,key_class)
-                keychain[key_name] = key_class(None)
-            
-        self.log('keytypes -> keychain',dict_format(keychain))
-        return keychain
-
-
-
-    
-
-
-    def forge_new_keys(self,
-                        name=None,
-                        passphrase=DEBUG_DEFAULT_PASSPHRASE,
-                        keys_to_save = KEYMAKER_DEFAULT_KEYS_TO_SAVE_ON_SERVER,
-                        keys_to_return = KEYMAKER_DEFAULT_KEYS_TO_SAVE_ON_CLIENT,
-                        keys_to_gen = KEYMAKER_DEFAULT_KEYS_TO_GEN,
-                        key_types = KEYMAKER_DEFAULT_KEY_TYPES,
-                        save_keychain=True,
-                        return_keychain=True,
-                        return_all_keys=False):
-        # setup
-        keys_to_gen = set(keys_to_gen) | set(keys_to_save) | set(keys_to_return)
-        keys_to_gen = sorted(list(keys_to_gen),key=lambda x: x.count('_'))
-        key_types = dict([(k,key_types[k]) for k in keys_to_gen if k])
-        if not name: name=self.name
-
-
-
-        # show user what's happening
-        self.log(f'''
-Keymaker ({self}) is forging new keys for {name}
-''' + (f'''
-* I will save these keys in this crypt: {', '.join(keys_to_save)}
-''' if save_keychain else '') #+ #'''
-# * I will also save this user's pubkey (as b64 URI) to:
-        # {self.get_path_qrcode(name=name)}
-# ''' + (f'''
-+ (f'''
-* I will return these keys to you: {', '.join(keys_to_return)}
-''' if return_keychain else '')
-+ f'''
-* I will forge these keys for you: {', '.join(keys_to_gen)}
-
-* I will be using these key types to do so:
-    {dict_format(key_types,tab=4)}
-''')
-
-        
-
-        # gen decryptor keys!
-        keychain = self.gen_keys_from_types(key_types,passphrase=passphrase)
-        # gen encrypted keys!
-        self.log('I built this keychain v1!',dict_format(keychain,tab=2))
-        
-        keychain = self.disassemble(keychain,passphrase=passphrase)
-        self.log('I built this keychain!',dict_format(keychain,tab=2))
-        self.status('@Keymaker: I ended up building these keys:',keychain)
-        
-
-        # save keys!
-        if save_keychain:
-            # get URI id to save under (except for pubkeys, accessible by name)
-            uri_id,keys_saved_d,keychain = self.save_keychain(name,keychain,keys_to_save)
-            self.log(f'Trying to save these keys ({keys_to_save}), I saved this keychain:',dict_format(keys_saved_d,tab=2),'using the generated-from-pubkey URI ID',uri_id)
-
-        # return keys!
-        if return_all_keys:
-            return keychain
-
-        if return_keychain:
-            keys_returned = self.return_keychain(keychain,keys_to_return)
-            self.log('I am returning this keychain:',dict_format(keys_returned,tab=2))
-            # return (uri_id,keys_returned)
-            return keys_returned
-
-        raise KomradeException('What did you want me to do here?')
-        
-                
-    def return_keychain(self,keychain,keys_to_return=None):
-        keychain_toreturn = {}
-        if not keys_to_return: keys_to_return = list(keychain.keys())
-        for key in keys_to_return:
-            if key in keychain:
-                keychain_toreturn[key]=keychain[key]
-        return keychain_toreturn
-
+  
     def get_path_qrcode(self,name=None,dir=None,ext='.png'):
         if not name: name=self.name
         if not dir: dir = PATH_QRCODES
@@ -625,7 +447,7 @@ Keymaker ({self}) is forging new keys for {name}
 
         return (uri_id,keys_saved_d,keychain)
 
-    def assemble(self,keychain,passphrase=None,key_types=KEYMAKER_DEFAULT_KEY_TYPES,decrypt=True):
+    def assemble(self,keychain,key_types=KEYMAKER_DEFAULT_KEY_TYPES,decrypt=True):
         encr_keys = [k for k in keychain.keys() if k.endswith('_encr')]
         for encr_key_name in encr_keys:
             decr_key_name = encr_key_name[:-5] + '_decr'
@@ -634,11 +456,8 @@ Keymaker ({self}) is forging new keys for {name}
             if decrypt and unencr_key_name in keychain: continue
             if not decr_key_name in keychain:
                 self.log('! not in keychain: decr key name:',decr_key_name,keychain)
-                #keychain[decr_key_name] = KomradeSymmetricKeyWithPassphrase(passphrase=passphrase)
                 continue
             decr_key = keychain.get(decr_key_name)
-            # self.log('?',decr_key,decr_key_name,encr_key_name,keychain[encr_key_name])
-
             try:
                 if decrypt:
                     encr_key = keychain.get(encr_key_name)
@@ -660,9 +479,5 @@ Keymaker ({self}) is forging new keys for {name}
         return self.assemble(keychain,decrypt=False,**kwargs)
 
 
-
-if __name__ == '__main__':
-    keymaker = Keymaker('marx69')
-    keychain = keymaker.forge_new_keys()
-
+\
     print(keychain)
