@@ -10,9 +10,9 @@ pathvenv=`realpath "$SCRIPTPATH/../venv/bin/activate"`
 
 source $pathvenv
 date=$(date '+%Y-%m-%d')
-pathlog=`realpath "$SCRIPTPATH/../log/$date.op.log"`
+pathlog="$SCRIPTPATH/../log/$date.op.log"
 
-echo $pathlog
+#echo $pathlog
 
 cmd="python $path 8080 $* >> $pathlog 2>&1"
 
