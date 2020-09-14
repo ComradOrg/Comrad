@@ -22,6 +22,9 @@ def create_phonelines():
     with open(PATH_SUPER_SECRET_OP_KEY,'wb') as of:
         of.write(pass_encr)
 
+    with open(PATH_OPERATOR_WEB_KEYS_FILE,'w') as of:
+        of.write(op_pubkey.data_b64_s)
+
     ## Telephone
     phone_keypair = KomradeAsymmetricKey()
     phone_pubkey,phone_privkey = phone_keypair.pubkey_obj,phone_keypair.privkey_obj

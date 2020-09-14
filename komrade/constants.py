@@ -25,6 +25,7 @@ PATH_QRCODES = os.path.join(PATH_KOMRADE,'contacts')
 PATH_SECRETS = os.path.join(PATH_KOMRADE,'.secrets')
 PATH_SUPER_SECRETS = os.path.join(PATH_USER_HOME,'.secrets')
 PATH_SUPER_SECRET_OP_KEY = os.path.join(PATH_SUPER_SECRETS,'.komrade.op.key')
+PATH_SUPER_PUBLIC_OP_KEY = os.path.join
 
 for x in [PATH_KOMRADE,PATH_KOMRADE_DATA,PATH_KOMRADE_KEYS,PATH_QRCODES,PATH_SECRETS,PATH_SUPER_SECRETS]:
     if not os.path.exists(x):
@@ -123,11 +124,11 @@ TELEPHONE = None
 
 
 
-PATH_OPERATOR_WEB_KEYS_FILE = f'/home/ryan/www/website-komrade/.builtin.keys'
-PATH_OPERATOR_WEB_KEYS_URL = f'http://{KOMRADE_URL}/.builtin.keys'
-PATH_OPERATOR_WEB_CONTACTS_DIR = '/home/ryan/www/website-komrade/.contacts'
-PATH_OPERATOR_WEB_CONTACT_OP_URL = f'http://{KOMRADE_URL}/.contacts/TheOperator.png'
-PATH_OPERATOR_WEB_CONTACT_PH_URL = f'http://{KOMRADE_URL}/.contacts/TheTelephone.png'
+PATH_OPERATOR_WEB_KEYS_FILE = f'/home/ryan/www/website-komrade/pub'
+PATH_OPERATOR_WEB_KEYS_URL = f'http://{KOMRADE_URL}/pub'
+# PATH_OPERATOR_WEB_CONTACTS_DIR = '/home/ryan/www/website-komrade/.contacts'
+# PATH_OPERATOR_WEB_CONTACT_OP_URL = f'http://{KOMRADE_URL}/.contacts/TheOperator.png'
+# PATH_OPERATOR_WEB_CONTACT_PH_URL = f'http://{KOMRADE_URL}/.contacts/TheTelephone.png'
 
 
 # dangerous! leave on only if absolutely necessary for initial dev
