@@ -1,29 +1,66 @@
-# install pyenv?
+#!/usr/bin/env python3
 
-echo "
+URL_PYENV = 'https://raw.githubusercontent.com/pyenv/pyenv-installer/master/bin/pyenv-installer'
+
+import os,sys,urllib,shutil
+from urllib import request
+
+print('''
               #  #   ##   #  #  ###    ##   ###   #### 
               # #   #  #  ####  #  #  #  #  #  #  #    
               ##    #  #  ####  ###   #  #  #  #  ###  
               # #   #  #  #  #  # #   ####  #  #  #    
               #  #   ##   #  #  #  #  #  #  ###   #### 
-
+                                          
 
 installing...
-"                                          
+''')
+
+PATH_HOME = os.path.expanduser('~')
+PATH_KOMRADE = os.path.join(PATH_HOME,'komrade')
+path_pyenv = os.path.join(PATH_HOME,'.pyenv')
+path_repo = os.path.join(PATH_KOMRADE,'Komrade')
+def is_tool(name):
+    """Check whether `name` is on PATH and marked as executable."""
+    from shutil import which
+    return which(name) is not None
 
 
-if ! command -v pyenv2 &> /dev/null
-then
-    echo "pyenv not installed. install?"
-    read -p "[Y/n] " pyenv_yn
+def main():
 
-    echo "input was: $pyenv_yn"
+    # 1) get path
+    path_komrade = input('Path to save komrade to:\n['+PATH_KOMRADE+'] ').strip()
+    path_komrade = PATH_KOMRADE if not path_komrade else path_komrade
+    if not os.path.exists(path_komrade): os.makedirs(path_komrade)
+    os.chdir(path_komrade)
 
-    if [ pyenv_yn!="n" ]; then
-        echo "Not install pyenv."
-    else
-        echo "installing..."
-        #curl https://pyenv.run | bash
-    fi
+    # 2) install pyenv?
+    if not is_tool('pyenv') or not os.path.exists(path_pyenv):
+        pyenv_yn = input('\npyenv is not installed. Install?\n[Y/n] ').strip().lower()
+        if pyenv_yn != 'n':
+            print('installing pyenv...')
+            os.system('curl https://pyenv.run | bash')
 
-fi
+    # # 3) download komrade
+    if is_tool('git2'):
+        if os.path.exists(path_repo):
+            os.chdir(path_repo)
+            os.system('git pull')
+        else:
+            os.chdir(path_komrade)
+            os.system('git clone https://github.com/Komrade/Komrade.git')
+    else:
+        os.chdir(path_komrade)
+        os.system('curl -o komrade-github.zip -LJO https://github.com/Komrade/Komrade/archive/master.zip')
+        os.system('unzip komrade-github.zip')
+        os.rename('Komrade-master','code')
+        os.remove('komrade-github.zip')
+        
+    ## 4) install komrade
+    os.chdir(path_repo)
+    os.environ['PYENV_ROOT']=path_pyenv
+    os.environ['PATH'] = os.path.join(path_pyenv,'bin') + os.environ['PATH']
+    os.system('. script/bootstrap')
+
+if __name__ == '__main__':
+    main()
