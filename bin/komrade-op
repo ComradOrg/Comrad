@@ -11,5 +11,5 @@ source $pathvenv
 cmd="python $path 8080"
 
 # do forever
-while true; do python $cmd && break; done
+while true; do $cmd && break; done
 
