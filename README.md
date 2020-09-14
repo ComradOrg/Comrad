@@ -95,24 +95,19 @@ This will install a virtual environment for running Komrade on your computer, co
 
 ### Use
 
-After installation, simply run:
+Install as above.
 
-#### Terminal client
+For the terminal client, run:
 
 ```
 komrade-cli
 ```
 
-#### Desktop/mobile
+For the mobile/desktop app, run:
 
 ```
 komrade-app
 ```
-
-
-
-For the mobile/desktop application.
-
 
 
 ## Details
