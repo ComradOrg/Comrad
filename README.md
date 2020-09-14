@@ -144,7 +144,7 @@ Code for the mobile app is in [komrade/app](komrade/app).
 
 #### Terminal app
 
-Vanilla Python, but eventually using the curses module. Code is in [komrade/cli].
+Vanilla Python, but eventually using the curses module. Code is in [komrade/cli](komrade/cli).
 
 ### Backend
 
