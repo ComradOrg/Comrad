@@ -18,7 +18,6 @@ echo '
 1) setting up folder...
 
 '
-
 # install dir?
 echo "where should komrade live?"
 read -p "[~/komrade] " path_komrade
@@ -26,20 +25,13 @@ if [ -z "$path_komrade" ]
 then
     path_komrade="`realpath ~/komrade`"
 fi
-
-# echo "
-
-# $path_komrade
-
-# "
-
-# exit
-
 if [ ! -d "$path_komrade" ]
 then
     mkdir -p $path_komrade
     echo "created $path_komrade"
 fi
+
+
 
 echo '
 
@@ -67,8 +59,10 @@ else
     cp -r Komrade-master code
     rm -r Komrade-master
 fi
-
 cd $path_komrade
+
+
+
 echo '
 
 3) setting up python...
@@ -101,6 +95,8 @@ then
     fi
 fi
 
+
+
 cd $path_komrade
 echo '
 
@@ -131,9 +127,12 @@ fi
 
 export PATH="$path_repo/bin:$PATH"
 
+
+
+
 echo '
 
-5) adding bin folder to path
+5) adding komrade bin folder to path
 
 '
 
