@@ -104,7 +104,7 @@ class TheOperator(Operator):
         from komrade.backend.messages import Message
 
         self.log(f'''Hello, this is the Operator.{ART_OLDPHONE4}I heard you say:\n\n {b64enc_s(data_b)}''')
-        woops
+        #woops
         # unseal
         # self.log('got:',data_b)
         msg_d = {
