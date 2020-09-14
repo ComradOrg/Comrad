@@ -114,7 +114,7 @@ cd Komrade
 
 #### Terminal interface
 
-To run Komrade using the terminal interfacee:
+To run Komrade using the terminal interface:
 
 ```
 cd [path to Komrade repo]
