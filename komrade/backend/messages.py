@@ -110,7 +110,7 @@ class Message(Logger):
         
         self.msg = self.msg_d['msg'] = decr_msg_b = SMessage(
             self.to_whom.privkey.data,
-            self.from_pubkey
+            b64dec(self.from_pubkey)
         ).unwrap(self.msg)
         # self.log('Am I decrypted?',self)
 
@@ -156,7 +156,7 @@ class Message(Logger):
         # self.log('to pubkey:',self.to_pubkey)
         msg_encr = SMessage(
             self.from_whom.privkey.data,
-            self.to_pubkey
+            b64dec(self.to_pubkey)
         ).wrap(msg_b)
 
         self.msg_decr = self.msg

@@ -352,7 +352,7 @@ from_komrade = {from_komrade}
         }
         msg_from_op = {
             'to':deliver_to,
-            'from':self.pubkey_b64,
+            'from':self.pubkey.data_b64,
             'msg':enclosed_msg
         }
         out_msg = Message(msg_from_op)
