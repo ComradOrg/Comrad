@@ -87,19 +87,38 @@ class Message(Logger):
         del md[ROUTE_KEYNAME]
         return md
 
-    def mark_return_to_sender(self,new_msg=None):
-        self.log('making return to sender. v1:',self)
-        self._from_whom,self._to_whom = self._to_whom,self._from_whom
+    # def mark_return_to_sender1(self,new_msg=None):
+    #     self.log('making return to sender. v1:',self)
+    #     self._from_whom,self._to_whom = self._to_whom,self._from_whom
 
-        self.msg_d['from'],self.msg_d['to'] = self.msg_d['to'],self.msg_d['from'],
+    #     self.msg_d['from'],self.msg_d['to'] = self.msg_d['to'],self.msg_d['from'],
         
-        if 'from_name' in self.msg_d and 'to_name' in self.msg_d:
-          self.msg_d['from_name'],self.msg_d['to_name'] = self.msg_d['to_name'],self.msg_d['from_name']
+    #     if 'from_name' in self.msg_d and 'to_name' in self.msg_d:
+    #       self.msg_d['from_name'],self.msg_d['to_name'] = self.msg_d['to_name'],self.msg_d['from_name']
         
-        if new_msg:
-            self.msg=self.msg_d['msg']=new_msg
-        self.log('making return to sender. v2:',self)
+    #     if new_msg:
+    #         self.msg=self.msg_d['msg']=new_msg
+    #     self.log('making return to sender. v2:',self)
+
+    def return_to_sender(self,new_msg=None):
         
+        self.log('making return to sender. v1:',self)
+        
+        new_msg = Message(
+            {
+                'from':self.msg_d.get('to'),
+                'to':self.msg_d.get('from'),
+                'from_name':self.msg_d.get('to_name'),
+                'to_name':self.msg_d.get('from_name'),
+                'msg':new_msg if new_msg else self.msg_d.get('msg')
+            },
+            from_whom = self.to_whom,
+            to_whom = self.from_whom
+        )
+
+        self.log('returning:',new_msg)
+        return new_msg
+
 
     def get_whom(self,name=None,pubkey=None):
         from komrade.backend.operators import locate_an_operator

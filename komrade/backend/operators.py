@@ -206,15 +206,16 @@ class Operator(Keymaker):
         #     # if client, let the request rest
         #     return msg_obj
 
-        # if remote operator, keep going?
-        self.log('time to flip msg around and return to sender. v1:',msg_obj,dict_format(msg_obj.msg_d))#,new_data,reencrypt,msg_obj.route)
+        # # if remote operator, keep going?
+        # self.log('time to flip msg around and return to sender. v1:',msg_obj,dict_format(msg_obj.msg_d))#,new_data,reencrypt,msg_obj.route)
         
         
-        new_msg_obj = msg_obj.to_whom.compose_msg_to(
-            msg=new_data,
-            another=msg_obj.from_whom
-        ) #msg_obj.mark_return_to_sender()
-        self.log('returning to sender as:',new_msg_obj)
+        # new_msg_obj = msg_obj.to_whom.compose_msg_to(
+        #     msg=new_data,
+        #     another=msg_obj.from_whom
+        # ) #msg_obj.mark_return_to_sender()
+        # self.log('returning to sender as:',new_msg_obj)
+        new_msg_obj = msg_obj.return_to_sender(new_data)
 
         # encrypt
         if reencrypt:
