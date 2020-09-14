@@ -111,7 +111,7 @@ bash
 Now that pyenv is installed, just clone and bootstrap (thanks to Komrade [@mcataford](https://github.com/mcataford)):
 
 ```
-git clone https://github.com/quadrismegistus/Komrade.git
+git clone https://github.com/Komrade/Komrade.git
 cd Komrade
 . script/bootstrap
 ```
