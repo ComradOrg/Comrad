@@ -355,6 +355,8 @@ from_komrade = {from_komrade}
             'from':self.pubkey.data_b64,
             'msg':enclosed_msg
         }
+
+        from komrade.backend.messages import Message
         out_msg = Message(msg_from_op)
 
         # encrypt!
