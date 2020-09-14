@@ -261,6 +261,9 @@ class TheOperator(Operator):
        
         # self.log('Operator returning result:',dict_format(res,tab=2))
 
+    def deliver_msg(self,msg,to_whom,**data):
+        pass
+
 
 
 
