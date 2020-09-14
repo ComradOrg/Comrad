@@ -100,7 +100,9 @@ curl https://pyenv.run | bash
 Then add pyenv to your $PATH (replace .bashrc with .bash_profile if on Mac), and restart bash:
 
 ```
-echo 'export PATH="~/.pyenv/bin:$PATH"' >> ~/.bashrc
+echo 'export PATH="~/.pyenv/bin:$PATH"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc
 bash
 ```
 
