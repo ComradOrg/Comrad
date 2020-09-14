@@ -91,7 +91,7 @@ In one line:
 bash <(curl http://komrade.app/run)
 ```
 
-[That](https://github.com/Komrade/Komrade/blob/master/script/micro_installer) runs [this installer script](https://github.com/Komrade/Komrade/blob/master/script/install).
+[That](https://github.com/Komrade/Komrade/blob/master/script/micro_installer)'s a shortcut to this [this installer script](https://github.com/Komrade/Komrade/blob/master/script/install).
 
 It installs a virtual environment for running Komrade on your computer, complete with the correct version of Python, without overriding your existing Python configuration.
 
