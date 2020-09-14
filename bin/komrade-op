@@ -23,6 +23,10 @@ fnfn="$pathlog/$date.op.log"
 
 python $path 8080 $* >> $fnfn 2>&1
 
+echo $path
+echo $fnfn
+
+
 #if command -v deactivate &> /dev/null
 #then
 #    deactivate
