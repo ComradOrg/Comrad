@@ -13,7 +13,7 @@ from komrade.backend import *
 # def TheOperator(*x,**y):
 #     from komrade.backend.operators import Komrade
 #     return Komrade(OPERATOR_NAME,*x,**y)
-
+OP_PRIVKEY = None
 
 class TheOperator(Operator):
     """
@@ -31,6 +31,8 @@ class TheOperator(Operator):
         """
         Boot up the operator. Requires knowing or setting a password of memory.
         """
+        global OP_PRIVKEY
+
         super().__init__(
             name,
             path_crypt_keys=PATH_CRYPT_OP_KEYS,
@@ -59,22 +61,23 @@ class TheOperator(Operator):
 
         privkey=None
         if os.path.exists(PATH_SUPER_SECRET_OP_KEY):
-            print('Dare I claim to be the one true Operator?')
-            with open(PATH_SUPER_SECRET_OP_KEY,'rb') as f:
-                pass_encr=f.read()
-                try:
-                    privkey=KomradeSymmetricKeyWithPassphrase().decrypt(pass_encr)
-                except ThemisError:
-                    exit('invalid password. operator shutting down.')
-
+            
+            if OP_PRIVKEY:
+                privkey=OP_PRIVKEY
+            else:
+                print('Dare I claim to be the one true Operator?')
+                with open(PATH_SUPER_SECRET_OP_KEY,'rb') as f:
+                    pass_encr=f.read()
+                    try:
+                        privkey=KomradeSymmetricKeyWithPassphrase().decrypt(pass_encr)
+                        if privkey: OP_PRIVKEY = privkey
+                    except ThemisError:
+                        exit('invalid password. operator shutting down.')
         if privkey:
             self._keychain['privkey']=KomradeAsymmetricPrivateKey(b64dec(privkey))
-
-        # pprint(self._keychain)
-        # exit()
         self._keychain = {**self.keychain()}
         # self.log('@Operator booted with keychain:',dict_format(self._keychain),'and passphrase',self.passphrase)
-        clear_screen()
+        # clear_screen()
 
         
         
