@@ -91,7 +91,7 @@ One line:
 bash <(curl -s https://raw.githubusercontent.com/Komrade/Komrade/master/script/install)
 ```
 
-This will install a virtual environment for running Komrade on your computer, complete with the correct version of Python, and without changing your current python configuration.
+This will install a virtual environment for running Komrade on your computer, complete with the correct version of Python, and without overriding your existing Python configuration.
 
 ### Use
 
