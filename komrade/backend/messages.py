@@ -85,12 +85,12 @@ class Message(Logger):
 
     @property
     def from_whom(self):
-        from komrade.backend.komrades import Komrade
+        # from komrade.backend.komrades import Komrade
         return Komrade(self.from_name, pubkey=self.from_pubkey)
 
     @property
     def to_whom(self):
-        from komrade.backend.komrades import Komrade
+        # from komrade.backend.komrades import Komrade
         return Komrade(self.to_name, pubkey=self.to_pubkey)
     
 

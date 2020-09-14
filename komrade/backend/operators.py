@@ -2,7 +2,40 @@
 import os,sys; sys.path.append(os.path.abspath(os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__),'..')),'..')))
 from komrade import *
 from komrade.backend import *
-        
+
+
+# BEGIN PHONE BOOK (in memory singleton mapping)
+PHONEBOOK = {}
+
+# Factory constructor
+def Komrade(name,pubkey=None,*x,**y):
+    from komrade.backend.the_operator import TheOperator
+    from komrade.backend.the_telephone import TheTelephone
+    from komrade.backend.komrades import KomradeX
+    global PHONEBOOK
+    # already have?
+
+    if not name and not pubkey: return KomradeX()
+
+    if name in PHONEBOOK: return PHONEBOOK[name]
+    pk64 = None if not pubkey else b64enc(pubkey)
+    if pk64 in PHONEBOOK: return PHONEBOOK[pk64]
+
+    # print(f'finding Komrade {name} / {pubkey} for the first time!')
+    # operator?
+    if name==OPERATOR_NAME:
+        kommie = TheOperator() #(*x,**y)
+    if name==TELEPHONE_NAME:
+        kommie = TheTelephone() #(*x,**y)
+    else:
+        kommie = KomradeX(name,*x,**y)
+    
+    # print('found!',name,PHONEBOOK[name],PHONEBOOK[name].keychain())
+    PHONEBOOK[name] = kommie
+    if kommie.pubkey:
+        PHONEBOOK[kommie.pubkey.data_b64] = kommie
+
+    return kommie
 
 
 
@@ -13,6 +46,7 @@ class Operator(Keymaker):
 
 
     def __init__(self, name=None, passphrase=DEBUG_DEFAULT_PASSPHRASE, pubkey=None, keychain = {}, path_crypt_keys=PATH_CRYPT_CA_KEYS, path_crypt_data=PATH_CRYPT_CA_DATA):
+        global PHONEBOOK
         # print('booting opertor with ...',name,pubkey,'??')
 
         if pubkey:
@@ -26,6 +60,10 @@ class Operator(Keymaker):
         
         super().__init__(name=name,passphrase=passphrase, keychain=keychain,
                          path_crypt_keys=path_crypt_keys, path_crypt_data=path_crypt_data)
+
+        
+        # add to phonebook
+        PHONEBOOK[name]=self
         
 
     @property

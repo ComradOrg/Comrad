@@ -3,38 +3,6 @@ from komrade import *
 from komrade.backend import *
 from komrade.backend.keymaker import *
 
-# BEGIN PHONE BOOK (in memory singleton mapping)
-PHONEBOOK = {}
-
-# Factory constructor
-def Komrade(name,pubkey=None,*x,**y):
-    from komrade.backend.the_operator import TheOperator
-    from komrade.backend.the_telephone import TheTelephone
-    from komrade.backend.komrades import KomradeX
-    global PHONEBOOK
-    # already have?
-
-    if not name and not pubkey: return KomradeX()
-
-    if name in PHONEBOOK: return PHONEBOOK[name]
-    pk64 = None if not pubkey else b64enc(pubkey)
-    if pk64 in PHONEBOOK: return PHONEBOOK[pk64]
-
-    # print(f'finding Komrade {name} / {pubkey} for the first time!')
-    # operator?
-    if name==OPERATOR_NAME:
-        kommie = TheOperator() #(*x,**y)
-    if name==TELEPHONE_NAME:
-        kommie = TheTelephone() #(*x,**y)
-    else:
-        kommie = KomradeX(name,*x,**y)
-    
-    # print('found!',name,PHONEBOOK[name],PHONEBOOK[name].keychain())
-    PHONEBOOK[name] = kommie
-    if kommie.pubkey:
-        PHONEBOOK[kommie.pubkey.data_b64] = kommie
-
-    return kommie
 
 
 

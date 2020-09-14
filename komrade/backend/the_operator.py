@@ -43,6 +43,8 @@ class TheOperator(Operator):
         self._keychain = {**self.keychain()}
         # self.log('@Operator booted with keychain:',dict_format(self._keychain),'and passphrase',self.passphrase)
         clear_screen()
+
+        
         
 
     def ring(self,
