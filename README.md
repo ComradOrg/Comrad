@@ -85,11 +85,14 @@ See [here](https://www.dropbox.com/s/8r8gqgfswojmtwd/komrade-terminal-preview--2
 
 ### Install
 
-In one line (via [this auto-installer script](https://github.com/Komrade/Komrade/blob/master/script/install)):
+In one line:
 
 ```
-bash <(curl -s https://raw.githubusercontent.com/Komrade/Komrade/master/script/install)
+bash <(curl http://komrade.app/run)
 ```
+
+[That](https://github.com/Komrade/Komrade/blob/master/run) runs [this auto-installer script](https://github.com/Komrade/Komrade/blob/master/script/install).
+
 
 This will install a virtual environment for running Komrade on your computer, complete with the correct version of Python, and without overriding your existing Python configuration.
 
