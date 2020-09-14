@@ -1,3 +1,6 @@
+##
+# Run THE OPERATOR
+##
 
 SCRIPTPATH="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 path=`realpath "$SCRIPTPATH/../komrade/backend/switchboard.py"`
@@ -7,6 +10,6 @@ source $pathvenv
 
 cmd="python $path 8080"
 
-$cmd
+# do forever
+while true; do python $cmd && break; done
 
-#python switchboard.py 8080
