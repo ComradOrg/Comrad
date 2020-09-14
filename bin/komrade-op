@@ -10,11 +10,13 @@ pathvenv=`realpath "$SCRIPTPATH/../venv/bin/activate"`
 
 source $pathvenv
 date=$(date '+%Y-%m-%d')
-pathlog="$SCRIPTPATH/../log/$date.op.log"
+pathlog="$SCRIPTPATH/../../data/log"
+mkdir -p "$pathlog"
+fnfn="$pathlog/$date.op.log"
 
 #echo $pathlog
 
-cmd="python $path 8080 $* >> $pathlog 2>&1"
+cmd="python $path 8080 $* >> $fnfn 2>&1"
 
 # do forever
 while true; do $cmd && break; done
