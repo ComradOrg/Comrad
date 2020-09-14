@@ -11,8 +11,12 @@ echo "
 
 
 installing...
+
 "            
-echo '1) configuring folder...
+
+echo '
+1) setting up folder...
+
 '
 
 # install dir?
@@ -38,7 +42,9 @@ then
 fi
 
 echo '
-2) installing Komrade...
+
+2) downloading Komrade...
+
 '
 
 path_repo="$path_komrade/code"
@@ -63,10 +69,14 @@ else
 fi
 
 cd $path_komrade
-echo '3) installing python...'
+echo '
+
+3) setting up python...
+
+'
 
 # if ! command -v pyenv &> /dev/null
-if [! -d "$HOME/.pyenv"]
+if [ ! -d "$HOME/.pyenv"]
 then
     echo "pyenv not installed. install?"
     read -p "[Y/n] " pyenv_yn
@@ -91,7 +101,11 @@ then
 fi
 
 cd $path_komrade
-echo '4) creating virtual environment...'
+echo '
+
+4) creating virtual environment...
+
+'
 
 ## the pyenv way
 if command -v pyenv &> /dev/null
@@ -108,7 +122,11 @@ fi
 
 export PATH="$path_repo/bin:$PATH"
 
-echo '5) adding bin folder to path'
+echo '
+
+5) adding bin folder to path
+
+'
 
 echo "
 
