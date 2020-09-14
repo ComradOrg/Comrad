@@ -191,7 +191,7 @@ class Operator(Keymaker):
             return msg_obj
 
         # time to turn around and encrypt
-        # @unsure?
+        # @unsure?``
         # from komrade.backend.komrades import Komrade
         # if self != self.phone and type(self)!=Komrade:
         #     # if client, let the request rest

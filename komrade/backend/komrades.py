@@ -337,11 +337,21 @@ class KomradeX(Caller):
         self.log('got back response:',res)
 
         # # decrypt?
-        # SMessage(
-        #     self.privkey.data,
-        #     self.op.pubkey.data
-        # ).unwrap()
-        return res
+        if not res.get('data_encr'):
+            return {'success':False, 'status':'No data'} 
+        
+        inbox = SMessage(
+            self.privkey.data,
+            self.op.pubkey.data
+        ).unwrap(res['data_encr'])
+        self.log('inbox decrypted:',inbox)
+
+        for x in inbox.split('\n'):
+            print('>>',x) 
+
+
+        
+        return {'success':'?'}
 
     
 
