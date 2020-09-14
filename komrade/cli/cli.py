@@ -5,6 +5,8 @@ import art
 import textwrap as tw
 
 
+
+
 class CLI(Logger):
     ROUTES = {
         'help':'seek help',

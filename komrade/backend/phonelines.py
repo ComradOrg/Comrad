@@ -17,7 +17,7 @@ def create_phonelines():
     keycrypt.set(OPERATOR_NAME,op_pubkey.data,prefix='/pubkey/')
     keycrypt.set(op_uri,OPERATOR_NAME,prefix='/name/')
     # keycrypt.set(op_uri,op_privkey.data,prefix='/privkey/')
-    pass_encr = KomradeSymmetricKeyWithPassphrase().encrypt(op_privkey.data)
+    # pass_encr = KomradeSymmetricKeyWithPassphrase().encrypt(op_privkey.data)
     # print('pass_encr',pass_encr)
     with open(PATH_SUPER_SECRET_OP_KEY,'wb') as of:
         #of.write(pass_encr)

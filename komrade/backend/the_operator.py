@@ -50,8 +50,8 @@ class TheOperator(Operator):
         if pub_web.status_code!=200:
             raise KomradeException("Can't verify Komrade Operator. Shutting down.")
         
-        print('Public key on komrade.app/pub:   ',pub_web.text)
-        print('Public key hardcoded in client:  ',keychain.get('pubkey').data_b64_s)
+        # print('Public key on komrade.app/pub:   ',pub_web.text)
+        # print('Public key hardcoded in client:  ',keychain.get('pubkey').data_b64_s)
         
         if pub_web.text == keychain.get('pubkey').data_b64_s:
             # print('Pubs match')
@@ -76,7 +76,7 @@ class TheOperator(Operator):
                     #     exit('invalid password. operator shutting down.')
         if privkey:
             self._keychain['privkey']=KomradeAsymmetricPrivateKey(b64dec(privkey))
-            print(self._keychain['privkey'],'??')
+            # print(self._keychain['privkey'],'??')
         self._keychain = {**self.keychain()}
         # self.log('@Operator booted with keychain:',dict_format(self._keychain),'and passphrase',self.passphrase)
         # clear_screen()
