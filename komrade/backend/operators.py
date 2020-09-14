@@ -34,7 +34,7 @@ def Komrade(name=None,pubkey=None,*x,**y):
     if name==TELEPHONE_NAME:
         kommie = TheTelephone() #(*x,**y)
     else:
-        print('booting new kommie')
+        # print('booting new kommie')
         kommie = KomradeX(name,*x,**y)
     
     # print('found!',name,PHONEBOOK[name],PHONEBOOK[name].keychain())
