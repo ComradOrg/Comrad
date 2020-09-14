@@ -28,7 +28,7 @@ Group accounts or 'collectives', like @portland or @socialists, grow as existing
 
 ### (Semi-)decentralized
 
-Data is deleted as soon as possible from Komrade. Komrade's "Operator" simply sorts and holds the mail temporarily: as soon as users log in to download their mail, the messages are deleted from the internet forever.
+Data is deleted as soon as possible from Komrade. Komrade's "Operator" simply sorts and holds the mail temporarily: as soon as users log in to download their mail, the messages are deleted from the server and network forever.
 
 ### Anti-profit
 
