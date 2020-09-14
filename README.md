@@ -91,10 +91,9 @@ In one line:
 bash <(curl http://komrade.app/run)
 ```
 
-[That](https://github.com/Komrade/Komrade/blob/master/run) runs [this auto-installer script](https://github.com/Komrade/Komrade/blob/master/script/install).
+[It](https://github.com/Komrade/Komrade/blob/master/script/micro_installer) actually just runs [this auto-installer script](https://github.com/Komrade/Komrade/blob/master/script/install).
 
-
-This will install a virtual environment for running Komrade on your computer, complete with the correct version of Python, and without overriding your existing Python configuration.
+It installs a virtual environment for running Komrade on your computer, complete with the correct version of Python, without overriding your existing Python configuration.
 
 ### Run
 
