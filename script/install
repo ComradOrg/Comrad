@@ -42,7 +42,7 @@ echo '
 path_repo="$path_komrade/code"
 if ! command -v git &> /dev/null
 then
-    if [-d "$path_repo" ]
+    if [ -d "$path_repo" ]
     then 
         cd $path_repo
         git pull
@@ -56,7 +56,7 @@ else
     curl -LO https://github.com/Komrade/Komrade/archive/master.zip
     unzip master.zip
     rm master.zip
-    cp -r Komrade-master code
+    cp -rT Komrade-master code
     rm -r Komrade-master
 fi
 cd $path_komrade
