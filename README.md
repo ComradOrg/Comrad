@@ -93,7 +93,7 @@ bash <(curl -s https://raw.githubusercontent.com/Komrade/Komrade/master/script/i
 
 This will install a virtual environment for running Komrade on your computer, complete with the correct version of Python, and without overriding your existing Python configuration.
 
-### Use
+### Run
 
 Install as above.
 
