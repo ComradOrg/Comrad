@@ -1,0 +1,12 @@
+
+SCRIPTPATH="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+path=`realpath "$SCRIPTPATH/../komrade/backend/switchboard.py"`
+pathvenv=`realpath "$SCRIPTPATH/../venv/bin/activate"`
+
+source $pathvenv
+
+cmd="python $path 8080"
+
+$cmd
+
+#python switchboard.py 8080

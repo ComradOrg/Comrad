@@ -59,3 +59,8 @@ def run_forever(port='8080'):
     app = Flask(__name__)
     TheSwitchboard.register(app, route_base='/op/', route_prefix=None)
     app.run(debug=True, port=port, host='0.0.0.0')
+
+
+if __name__ == '__main__':
+    port = '8080' if len(sys.argv)<2 or not sys.argv[1].isdigit() else sys.argv[1]
+    run_forever(port = port)

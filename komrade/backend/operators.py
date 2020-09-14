@@ -12,7 +12,7 @@ def Komrade(name=None,pubkey=None,*x,**y):
     if issubclass(type(name),Operator): return name
     if name and not pubkey and type(name)==bytes:
         pubkey=b64enc(name)
-        name=None
+        name=None  
     
 
     from komrade.backend.the_operator import TheOperator
