@@ -479,5 +479,3 @@ class Keymaker(Logger):
         return self.assemble(keychain,decrypt=False,**kwargs)
 
 
-\
-    print(keychain)

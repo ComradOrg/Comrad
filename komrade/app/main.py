@@ -4,7 +4,7 @@
 from config import *
 import os,sys; sys.path.append(os.path.abspath(os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__),'..')),'..')))
 from komrade import *
-
+from komrade.api import Api
 
 
 # monkeypatching the things that asyncio needs

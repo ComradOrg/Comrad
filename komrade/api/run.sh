@@ -1,0 +1,1 @@
+python -c "import api; api.boot_lonely_selfless_node()"
