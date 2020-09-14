@@ -368,18 +368,34 @@ from_komrade = {from_komrade}
 
         # resave index
 
-        post_id_encr = SMessage(
-            self.privkey.data,
-            b64dec(deliver_to)
-        ).wrap(post_id)
+        # post_id_encr = SMessage(
+        #     self.privkey.data,
+        #     b64dec(deliver_to)
+        # ).wrap(post_id)
 
         # save in inbox
-        inbox_old = self.crypt_keys.get(deliveer_to,prefix='/inbox/')
-        self.log('old inbox!',inbox_old)
-        inbox_new = post_id + b'\n' + inbox_old
-        self.log('new inbox!',inbox_new)
+        # inbox_old = self.crypt_keys.get(deliver_to,prefix='/inbox/')
+        
+        
+        inbox_old_encr = self.crypt_keys.get(deliver_to,prefix='/inbox/')
+        self.log('encrypted inbox old:',inbox_old_encr)
+        
+        inbox_old = SMessage(
+            self.privkey.data,
+            b64dec(deliver_to)
+        ).unwrap(inbox_old_encr)
+        self.log('decrypted inbox old:',inbox_old_encr)
 
-        self.crypt_keys.set(deliver_to,inbox_new,prefix='/inbox/')
+        inbox_new = post_id + b'\n' + inbox_old
+        self.log('decrypted inbox new:',inbox_old_encr)
+
+        inbox_new_encr = SMessage(
+            self.privkey.data,
+            b64dec(deliver_to)
+        ).wrap(inbox_new)
+        self.log('encrypted inbox new:',inbox_old_encr)
+
+        self.crypt_keys.set(deliver_to,inbox_new_encr,prefix='/inbox/')
 
         return {'status':'Message delivered.', 'success':True}
 
