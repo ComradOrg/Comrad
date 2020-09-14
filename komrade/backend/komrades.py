@@ -346,7 +346,7 @@ class KomradeX(Caller):
         ).unwrap(res['data_encr'])
         self.log('inbox decrypted:',inbox)
 
-        for x in inbox.split('\n'):
+        for x in inbox.split(b'\n'):
             print('>>',x) 
 
 
