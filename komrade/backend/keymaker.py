@@ -64,7 +64,7 @@ class KomradeSymmetricKeyWithPassphrase(KomradeSymmetricKey):
     @property
     def passhash(self):
         if not self._passhash:
-            self._passhash = getpass(WHY_MSG)
+            self._passhash = hasher(getpass(WHY_MSG))
         return self._passhash
 
     def __init__(self,passphrase=None,passhash=None):
@@ -461,7 +461,7 @@ class Keymaker(Logger):
             try:
                 if decrypt:
                     encr_key = keychain.get(encr_key_name)
-                    # self.log(f'about to decrypt {encr_key} with {decr_key}')
+                    self.log(f'about to decrypt {encr_key} with {decr_key} and {decr_key.cell}')
                     unencr_key = decr_key.decrypt(encr_key.data)
                     keychain[unencr_key_name] = get_key_obj(unencr_key_name,unencr_key)
                 else:
@@ -470,7 +470,7 @@ class Keymaker(Logger):
                     encr_key = decr_key.encrypt(unencr_key.data)
                     keychain[encr_key_name] = get_key_obj(encr_key_name,encr_key)
             except ThemisError as e:
-                self.log('error!!',decrypt,decr_key,encr_key,decr_key_name,encr_key_name)
+                self.log('error!!',e,decrypt,decr_key,encr_key,decr_key_name,encr_key_name)
                 pass
 
         return keychain

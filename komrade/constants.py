@@ -11,7 +11,7 @@ OPERATOR_API_URL = f'http://{KOMRADE_URL}/op/'
 # paths
 import os
 PATH_USER_HOME = os.path.join(os.path.expanduser('~'))
-PATH_KOMRADE = os.path.abspath(os.path.join(os.path.expanduser('~'),'komrade'))
+PATH_KOMRADE = os.path.abspath(os.path.join(os.path.expanduser('~'),'komrade','data'))
 PATH_KOMRADE_KEYS = os.path.join(PATH_KOMRADE,'.keys')
 PATH_KOMRADE_DATA = os.path.join(PATH_KOMRADE,'.data')
 
