@@ -71,7 +71,7 @@ class TheOperator(Operator):
         from komrade.backend.messages import Message
 
         self.log(f'''Hello, this is the Operator.{ART_OLDPHONE4}I heard you say:\n\n {b64enc_s(data_b)}''')
-
+        woops
         # unseal
         # self.log('got:',data_b)
         msg_d = {
@@ -84,7 +84,7 @@ class TheOperator(Operator):
         # msg_d = pickle.loads(data_b)
         # self.log('msg_d',msg_d)
         msg_obj = Message(msg_d)
-        woops
+        
         self.log(f'Decoding the binary, I discovered an encrypted message from {self.phone}\n: {msg_obj}')
         
         # decrypt?
