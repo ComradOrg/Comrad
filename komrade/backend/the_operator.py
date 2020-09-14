@@ -124,17 +124,19 @@ class TheOperator(Operator):
         return bool(pubkey)
 
     def has_user(self,name=None,pubkey=None):
-        pk=self.crypt_keys.get(
+        nm,pk = name,pubkey
+        if pubkey: pk=self.crypt_keys.get(
             name,
             prefix='/pubkey/'
         )
-        nm=self.crypt_keys.get(
+        if name: nm=self.crypt_keys.get(
             b64enc(pubkey),
             prefix='/name/'
         )
+        self.log(f'checking whether I have user {name} and {pubkey},\n I discovered I had {nm} and {pk} on record')
         # self.log('pks:',pubkey,pk)
         # self.log('nms:',name,nm)
-        return pk or nm
+        return (pubkey and pk) or (name and nm)
 
     def login(self,name,pubkey,secret_login,**data):
         name=name.encode() if type(name)==str else name
@@ -205,7 +207,7 @@ class TheOperator(Operator):
         if self.has_user(name=name,pubkey=pubkey):
             return {
                 'success':False,
-                'status': f"{OPERATOR_INTRO}I'm sorry, but I can't register the name of {name}."
+                'status': f"{OPERATOR_INTRO}I'm sorry, but I can't register the name of {name}. This user already exists."
             }
         
         # generate shared secret
