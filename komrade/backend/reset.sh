@@ -9,9 +9,7 @@ p.create_phonelines()
 """
 
 
-# git add ../.builtin.keys
-
-# git commit -m 'new keys'
-
-# git push
+git add ../.builtin.keys
+git commit -m 'new keys'
+git push
 
