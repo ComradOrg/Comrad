@@ -1,91 +1,118 @@
-#!/usr/bin/env python3
+#!/bin/bash
 
-URL_PYENV = 'https://raw.githubusercontent.com/pyenv/pyenv-installer/master/bin/pyenv-installer'
+# install pyenv?
 
-import os,sys,urllib,shutil
-from urllib import request
-import distutils
-from distutils import dir_util
-
-
-
-print('''
+echo "
               #  #   ##   #  #  ###    ##   ###   #### 
               # #   #  #  ####  #  #  #  #  #  #  #    
               ##    #  #  ####  ###   #  #  #  #  ###  
               # #   #  #  #  #  # #   ####  #  #  #    
               #  #   ##   #  #  #  #  #  #  ###   #### 
-                                          
+
 
 installing...
-''')
+"            
+echo '1) configuring folder...
+'
 
-PATH_HOME = os.path.expanduser('~')
-PATH_KOMRADE = os.path.join(PATH_HOME,'komrade')
-path_pyenv = os.path.join(PATH_HOME,'.pyenv')
-path_repo = os.path.join(PATH_KOMRADE,'code')
-def is_tool(name):
-    """Check whether `name` is on PATH and marked as executable."""
-    from shutil import which
-    return which(name) is not None
+# install dir?
+echo "where should komrade live?"
+read -p "[~/komrade] " path_komrade
+if [ -z "$path_komrade" ]
+then
+    path_komrade="`realpath ~/komrade`"
+fi
 
+# echo "
 
-def main():
+# $path_komrade
 
-    # 1) get path
-    path_komrade = input('Path to save komrade to:\n['+PATH_KOMRADE+'] ').strip()
-    path_komrade = PATH_KOMRADE if not path_komrade else path_komrade
-    if not os.path.exists(path_komrade): os.makedirs(path_komrade)
-    os.chdir(path_komrade)
+# "
 
-    # 2) install pyenv?
-    if not os.path.exists(path_pyenv):
-        pyenv_yn = input('\npyenv is not installed. Install?\n[Y/n] ').strip().lower()
-        if pyenv_yn != 'n':
-            print('installing pyenv...')
-            os.system('curl https://pyenv.run | bash')
+# exit
 
-    # # 3) download komrade
-    print('\ndownloading Komrade...')
-    if is_tool('git'):
-        if os.path.exists(path_repo):
-            os.chdir(path_repo)
-            os.system('git pull')
-        else:
-            os.chdir(path_komrade)
-            os.system('git clone https://github.com/Komrade/Komrade.git')
-    else:
-        os.chdir(path_komrade)
-        request.urlretrieve(
-            'https://github.com/Komrade/Komrade/archive/master.zip',
-            'komrade-github.zip'
-        )
-        os.system('unzip -o komrade-github.zip')
-        distutils.dir_util.copy_tree("Komrade-master", "code")
-    
-        shutil.rmtree('Komrade-master')
-        os.remove('komrade-github.zip')
+if [ ! -d "$path_komrade" ]
+then
+    mkdir -p $path_komrade
+    echo "created $path_komrade"
+fi
 
-    ## 4) install komrade
-    os.chdir(path_repo)
-    os.environ['PYENV_ROOT']=path_pyenv
-    os.environ['PATH'] = os.path.join(path_pyenv,'bin') + os.environ['PATH']
-    # os.system('. script/bootstrap')
-    os.system('''
+echo '
+2) installing Komrade...
+'
 
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
+path_repo="$path_komrade/code"
+if ! command -v git &> /dev/null
+then
+    if [-d "$path_repo"]
+    then 
+        cd $path_repo
+        git pull
+    else
+        cd $path_komrade
+        git clone https://github.com/Komrade/Komrade.git
+        mv Komrade code
+    fi
+else
+    cd $path_komrade
+    curl -LO https://github.com/Komrade/Komrade/archive/master.zip
+    unzip master.zip
+    rm master.zip
+    cp -r Komrade-master code
+    rm -r Komrade-master
+fi
 
-echo `which pyenv`
+cd $path_komrade
+echo '3) installing python...'
 
-#if command -v pyenv 1>/dev/null 2>&1; then
-# eval "$(pyenv init -)"
-#fi  
-    
+# if ! command -v pyenv &> /dev/null
+if [! -d "$HOME/.pyenv"]
+then
+    echo "pyenv not installed. install?"
+    read -p "[Y/n] " pyenv_yn
 
-. script/bootstrap
+    if [ ! pyenv_yn=="n" ]; then
+        echo "Not install pyenv."
+    else
+        echo "installing..."
+        curl https://pyenv.run | bash
+        
+        echo "installing python 3.7.3..."
+        
+        export PYENV_ROOT="$HOME/.pyenv"
+        export PATH="$PYENV_ROOT/bin:$PATH"
+        #eval "$(pyenv init -)"
+        
+        pyenv install 3.7.3
+        pyenv local 3.7.3
 
-''')
+        echo `which python`
+    fi
+fi
 
+cd $path_komrade
+echo '4) creating virtual environment...'
 
-main()
+## the pyenv way
+if command -v pyenv &> /dev/null
+then
+    cd $path_repo
+    script/bootstrap
+else
+    cd $path_repo
+    python -m pip install virtualenv
+    python -m virtualenv venv
+    source venv/bin/activate
+    pip install -r requirements.txt
+fi
+
+export PATH="$path_repo/bin:$PATH"
+
+echo '5) adding bin folder to path'
+
+echo "
+
+# komrade
+export PATH=\"$path_repo/bin:\$PATH\"
+
+" >> ~/.bashrc
