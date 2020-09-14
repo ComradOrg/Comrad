@@ -14,7 +14,8 @@ class CLI(Logger):
         'login':'log back in', 
         'meet':'meet a komrade',
         'who':'show contacts or info',
-        'msg':'write people'
+        'msg':'write people',
+        'check':'check mail'
     }
 
     def __init__(self,name='',cmd='',persona=None):
@@ -67,7 +68,8 @@ class CLI(Logger):
     /register [name]  -->  new komrade""" + (("""
     /meet [name]      -->  exchange info
     /msg [name] [msg] -->  write to person or group
-    /who [name]       -->  show contact info""") 
+    /who [name]       -->  show contact info
+    /check            -->  check for new posts""") 
     if self.with_required_login(quiet=True) else "") + """ 
     /help             -->  seek help
 """
@@ -149,7 +151,9 @@ class CLI(Logger):
             )
             self.log(f'Sent msg obj to {name_or_pubkey}: {msg_obj}')
 
-
+    def check(self,dat):
+        if self.with_required_login():
+            
 
 
 

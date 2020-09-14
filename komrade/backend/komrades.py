@@ -316,6 +316,33 @@ class KomradeX(Caller):
             route='deliver_msg'
         )
 
+    def check_mail(self,inbox=None):
+        if not self.pubkey and self.privkey:
+            return {'success':False,'status':'Need to be logged in'}
+        
+        # checking my own mail I presume?
+        if not inbox:
+            inbox=self.pubkey.data_b64
+
+        # send info op needs
+        msg = {
+            'secret_login':self.secret_login,
+            'name':self.name,
+            'pubkey':self.pubkey.data_b64,
+            'inbox':inbox
+        }
+        self.log('sending msg to op:',msg)
+
+        res = self.ring_ring(msg,route='read_mail')
+        self.log('got back response:',res)
+
+        # # decrypt?
+        # SMessage(
+        #     self.privkey.data,
+        #     self.op.pubkey.data
+        # ).unwrap()
+        return res
+
     
 
 def test_register():

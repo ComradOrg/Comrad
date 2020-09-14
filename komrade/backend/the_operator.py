@@ -402,6 +402,28 @@ from_komrade = {from_komrade}
 
         return {'status':'Message delivered.', 'success':True}
 
+    def check_mail(self,
+            msg_to_op,
+            required_fields = [
+                'secret_login',
+                'name',
+                'pubkey',
+                'inbox',
+            ]):
+
+        # logged in?
+        login_res = self.login(msg_to_op)
+        if not login_res.get('success'):
+            return login_res
+        
+        # ok, then find the inbox?
+        inbox=msg_to_op.data.get('inbox')
+        if not inbox: inbox=msg_to_op.data.get('pubkey')
+        if not inbox: return {'success':False, 'status':'No inbox specified'}
+        inbox_encr = self.crypt_keys.get(b64enc(inbox),prefix='/inbox/')
+
+        # fine: here, try this on for size
+        return inbox_encr
 
 
 def test_op():
