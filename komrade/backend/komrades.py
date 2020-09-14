@@ -289,7 +289,7 @@ def test_register():
     botname=f'marx{str(num).zfill(3)}'
     marxbot = Komrade(botname)
     # marxbot=Komrade()
-    marxbot.register(passphrase='spectre')
+    marxbot.register()
 
 
 
