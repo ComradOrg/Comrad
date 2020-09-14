@@ -109,14 +109,10 @@ You can install pyenv using the [auto installer](https://github.com/pyenv-instal
 ```
 curl https://pyenv.run | bash
 ```
-Then add pyenv to your $PATH (replace .bashrc with .bash_profile if on Mac):
+Then add pyenv to your $PATH (replace .bashrc with .bash_profile if on Mac), and restart bash:
 
 ```
 echo 'export PATH="~/.pyenv/bin:$PATH"' >> ~/.bashrc
-```
-
-Restart bash:
-```
 bash
 ```
 
