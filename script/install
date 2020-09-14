@@ -98,7 +98,6 @@ then
         pyenv install 3.7.3
         pyenv local 3.7.3
 
-        echo `which python`
     fi
 fi
 
