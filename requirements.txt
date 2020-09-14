@@ -40,6 +40,7 @@ PyQRCode==1.2.1
 PySocks==1.7.1
 pythemis==0.13.0
 pyzbar==0.1.8
+qrcode==6.1
 redis==3.5.3
 requests==2.24.0
 requests-async==0.6.2
