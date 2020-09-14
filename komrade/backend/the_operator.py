@@ -326,7 +326,10 @@ class TheOperator(Operator):
         deliver_msg = data.get('deliver_msg')
 
         if not deliver_to or not deliver_from or not deliver_msg:
-            return {'success':'False', 'status':'Invalid input.'}
+            return {'success':False, 'status':'Invalid input.'}
+        
+        if b64enc(deliver_from) != b64enc(data['from']):
+            return {'success':False, 'status':'Sender to me is not the sender of the message I am to forward'}
 
         to_komrade = Komrade(pubkey=deliver_to)
         from_komrade = Komrade(pubkey=deliver_from)
@@ -340,7 +343,35 @@ deliver_msg = {deliver_msg}
 to_komrade = {to_komrade}
 from_komrade = {from_komrade}
 ''')    
-        return {'ummmm':'ok?'}
+
+        ## just deliver?
+        enclosed_msg = {
+            'to':deliver_to,
+            'from':deliver_from,
+            'msg':deliver_msg
+        }
+        msg_from_op = {
+            'to':deliver_to,
+            'from':self.pubkey_b64,
+            'msg':enclosed_msg
+        }
+        out_msg = Message(msg_from_op)
+
+        # encrypt!
+        out_msg.encrypt()
+
+        # data to save
+        out_msg_encr_d = out_msg.msg
+
+        # save in inbox
+        inbox_old = self.crypt_keys.get(deliver_to,prefix='/inbox/')
+        self.log('old inbox!',inbox_old)
+        inbox_new = (out_msg_encr_d if out_msg_encr_d else b'') + BSEP + (inbox_old if inbox_old else b'')
+        self.log('new inbox!',inbox_new)
+
+        self.crypt_keys.set(deliver_to,inbox_new,prefix='/inbox/')
+
+        return {'status':'Message delivered.', 'success':True}
 
 
 
