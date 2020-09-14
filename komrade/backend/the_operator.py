@@ -380,11 +380,14 @@ from_komrade = {from_komrade}
         inbox_old_encr = self.crypt_keys.get(deliver_to,prefix='/inbox/')
         self.log('encrypted inbox old:',inbox_old_encr)
         
-        inbox_old = SMessage(
-            self.privkey.data,
-            b64dec(deliver_to)
-        ).unwrap(inbox_old_encr)
-        self.log('decrypted inbox old:',inbox_old_encr)
+        if inbox_old_encr:
+            inbox_old = SMessage(
+                self.privkey.data,
+                b64dec(deliver_to)
+            ).unwrap(inbox_old_encr)
+            self.log('decrypted inbox old:',inbox_old_encr)
+        else:
+            inbox_old = b''
 
         inbox_new = post_id + b'\n' + inbox_old
         self.log('decrypted inbox new:',inbox_old_encr)
