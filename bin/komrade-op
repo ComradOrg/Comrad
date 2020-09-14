@@ -16,12 +16,12 @@ fnfn="$pathlog/$date.op.log"
 
 #echo $pathlog
 
-#cmd="python $path 8080 $* >> $fnfn 2>&1"
+cmd="python $path 8080 $*"
 
 # do forever
-#while true; do $cmd && break; done
+while true; do $cmd && break; done
 
-python $path 8080 $* >> $fnfn 2>&1
+#python $path 8080 $* >> $fnfn 2>&1
 
 echo $path
 echo $fnfn
