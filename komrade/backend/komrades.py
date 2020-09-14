@@ -316,7 +316,7 @@ class KomradeX(Caller):
             route='deliver_msg'
         )
 
-    def check_mail(self,inbox=None):
+    def check_msgs(self,inbox=None):
         if not self.pubkey and self.privkey:
             return {'success':False,'status':'Need to be logged in'}
         

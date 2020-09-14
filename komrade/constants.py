@@ -142,7 +142,9 @@ ROUTE_KEYNAME = 'request'
 OPERATOR_ROUTES = [
     'register_new_user',
     'login',
-    'deliver_msg'
+    'deliver_msg',
+    'check_msgs',
+    'read_msg'
 ]
 
 OPERATOR_INTRO = 'Hello, this is the Operator speaking. '

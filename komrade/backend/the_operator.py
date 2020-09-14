@@ -402,7 +402,7 @@ from_komrade = {from_komrade}
 
         return {'status':'Message delivered.', 'success':True}
 
-    def check_mail(self,
+    def check_msgs(self,
             msg_to_op,
             required_fields = [
                 'secret_login',

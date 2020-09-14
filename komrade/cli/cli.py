@@ -153,7 +153,7 @@ class CLI(Logger):
 
     def check(self,dat):
         if self.with_required_login():
-            res = self.komrade.check_mail()
+            res = self.komrade.check_msgs()
             print('@Operator:',res)
 
 
