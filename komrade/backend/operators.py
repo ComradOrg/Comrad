@@ -178,7 +178,7 @@ class Operator(Keymaker):
             func = getattr(self,route)
             # new_data = func(**data)
             new_data = func(msg_obj)
-            self.log(f'New data was received back from {self}.{route}() route:\b\b{dict_format(new_data,tab=4)}')
+            self.log(f'New data was received back from {self}.{route}() route:\b\b{new_data}')
             msg_obj.msg = msg_obj.msg_d['msg'] = new_data
 
         # try passing it on?
