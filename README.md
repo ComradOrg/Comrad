@@ -81,22 +81,25 @@ See [here](https://www.dropbox.com/s/8r8gqgfswojmtwd/komrade-terminal-preview--2
 
 
 
-## Install
+## Usage
 
-### With installer
+### Install
 
 One line:
 
 ```
-python3 -c "$(curl -s https://raw.githubusercontent.com/Komrade/Komrade/master/script/install)"
+bash <(curl -s https://raw.githubusercontent.com/Komrade/Komrade/master/script/install)
 ```
 
-If you don't have python3 installed, I recommend installing [miniconda]():
+This will install Komrade to your home folder, with a folder called "code" inside it for the repository. 
 
-```
-wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh
-bash ~/miniconda.sh -b -p $HOME/miniconda
-```
+Let us know if that doesn't work!
+
+### Use
+
+Once installed above, simply run:
+
+`
 
 ### From source
 

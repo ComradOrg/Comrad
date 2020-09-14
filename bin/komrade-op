@@ -2,7 +2,10 @@
 # Run THE OPERATOR
 ##
 
-SCRIPTPATH="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+deactivate
+
+SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
 path=`realpath "$SCRIPTPATH/../komrade/backend/switchboard.py"`
 pathvenv=`realpath "$SCRIPTPATH/../venv/bin/activate"`
 
@@ -13,3 +16,4 @@ cmd="python $path 8080"
 # do forever
 while true; do $cmd && break; done
 
+deactivate

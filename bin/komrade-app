@@ -1,12 +1,14 @@
+#!/bin/bash
+
 ##
-# Run the command line app
+# Run the mobile app
 ##
 
 deactivate
 
 SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-path=`realpath "$SCRIPTPATH/../komrade/cli/cli.py"`
+path=`realpath "$SCRIPTPATH/../komrade/app/main.py"`
 pathvenv=`realpath "$SCRIPTPATH/../venv/bin/activate"`
 source $pathvenv
 
