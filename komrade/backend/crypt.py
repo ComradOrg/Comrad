@@ -145,6 +145,13 @@ class Crypt(Logger):
             )
         )
 
+    def delete(self,k,prefix=''):
+        k_b=self.package_key(k,prefix=prefix)
+        k_b_hash = self.hash(k_b)
+        r=self.store.delete(k_b_hash)
+        return r
+        
+
     def get(self,k,prefix=''):
         k_b=self.package_key(k,prefix=prefix)
         k_b_hash = self.hash(k_b)

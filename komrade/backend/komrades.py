@@ -42,12 +42,14 @@ class Komrade(Caller):
             return self.register()
 
 
+    def exists_locally(self):
+        return bool(self.pubkey)
 
     def exists_locally_as_contact(self):
-        return self.pubkey and not self.privkey
+        return bool(self.pubkey) and not bool(self.privkey)
 
     def exists_locally_as_account(self):
-        return self.pubkey and self.privkey_encr
+        return bool(self.pubkey) and bool(self.privkey_encr)
 
     def exists_on_server(self):
         answer = self.phone.ring_ring({
@@ -69,6 +71,16 @@ class Komrade(Caller):
         if not name and self.name: name=self.name
         # if not name and not self.name: name=''
         # print('got name',name)
+
+        # already have it?
+        if self.exists_locally_as_account():
+            self.log('You have already created this account.')
+            return
+        
+        if self.exists_locally_as_contact():
+            self.log('This is already a contact of yours')
+            return
+
         
         ## 1) Have name?
         tolog=''
@@ -121,9 +133,13 @@ class Komrade(Caller):
 
         self.log('My keychain now looks like:',dict_format(self.keychain()))
 
-        ## 6) More narration?
-        if SHOW_STATUS:
-            self.cli.status_keymaker_part3(privkey,privkey_decr,privkey_encr,passphrase)
+        # More narration?
+        if SHOW_STATUS: self.cli.status_keymaker_part3(privkey,privkey_decr,privkey_encr,passphrase)
+
+        # 6) Save for now on client -- will delete if fails on server
+        self.crypt_keys.set(name, pubkey.data, prefix='/pubkey/')
+        self.crypt_keys.set(pubkey.data_b64, name, prefix='/name/')
+        self.crypt_keys.set(pubkey.data_b64, privkey_encr_obj.data, prefix='/privkey_encr/')
 
         ## 7) Save data to server
         data = {
@@ -145,6 +161,10 @@ class Komrade(Caller):
         )
         if not resp_msg_d.get('success'):
             self.log(f'Registration failed. Message from operator was:\n\n{dict_format(resp_msg_d)}')
+
+            self.crypt_keys.delete(name,prefix='/pubkey/')
+            self.crypt_keys.delete(pubkey.data_b64,prefix='/name/')
+            self.crypt_keys.delete(pubkey.data_b64,prefix='/privkey_encr/')
             return
     
         # otherwise, save things on our end
@@ -152,36 +172,19 @@ class Komrade(Caller):
 
         self.name=resp_msg_d.get('name')
         pubkey_b = resp_msg_d.get('pubkey')
+        
+        assert pubkey_b == pubkey.data
+        
         sec_login = resp_msg_d.get('secret_login')
 
         pubkey=self._keychain['pubkey']=KomradeAsymmetricPublicKey(pubkey_b)
         uri_id = b64enc(pubkey_b)
-
-        self.crypt_keys.set(
-            self.name,
-            pubkey_b,
-            prefix='/pubkey/')
-        self.crypt_keys.set(
-            uri_id,
-            self.name,
-            prefix='/name/')
-        self.crypt_keys.set(
-            uri_id,
-            sec_login,
-            prefix='/secret_login/'
-        )
-        self.crypt_keys.set(
-            uri_id,
-            privkey_encr_obj.data,
-            prefix='/privkey_encr/'
-        )
         
         self.log(f'''Now saving name and public key on local device:''')
+        self.crypt_keys.set(uri_id,sec_login,prefix='/secret_login/')
 
         # save qr too:
-        uri_id = b64enc(pubkey_b)
-        qr_str=self.qr_str(uri_id)
-        fnfn=self.save_uri_as_qrcode(uri_id)
+        self.save_uri_as_qrcode(uri_id)
         # self.log(f'saved public key as QR code to:\n {fnfn}\n\n{qr_str}')
 
         return resp_msg_d
