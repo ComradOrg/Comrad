@@ -41,17 +41,25 @@ class TheOperator(Operator):
         self._keychain = {**self.load_keychain_from_bytes(keychain)}
 
         if not keychain.get('pubkey'):
-            raise KormadeException('Operator cannot find its own public key? Shutting down.')
+            raise KomradeException('Operator cannot find its own public key? Shutting down.')
 
         # check I match what's on op page
         pub_web = komrade_request(PATH_OPERATOR_WEB_KEYS_URL)
-        if pub_web == keychain.get('pubkey').data_b64_s:
-            print('Pubs match')
+        if pub_web.status_code!=200:
+            raise KomradeException("Can't verify Komrade Operator. Shutting down.")
+        
+        print('Public key on komrade.app/pub:   ',pub_web.text)
+        print('Public key hardcoded in client:  ',keychain.get('pubkey').data_b64_s)
+        
+        if pub_web.text == keychain.get('pubkey').data_b64_s:
+            # print('Pubs match')
+            pass
         else:
             raise KomradeException('Public key for Operator on app and one at {PATH_OPERATOR_WEB_KEYS_URL} do not match. Shutting down.')
 
         privkey=None
         if os.path.exists(PATH_SUPER_SECRET_OP_KEY):
+            print('Dare I claim to be the one true Operator?')
             with open(PATH_SUPER_SECRET_OP_KEY,'rb') as f:
                 pass_encr=f.read()
                 try:
