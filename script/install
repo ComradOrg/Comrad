@@ -50,7 +50,7 @@ echo '
 path_repo="$path_komrade/code"
 if ! command -v git &> /dev/null
 then
-    if [-d "$path_repo"]
+    if [-d "$path_repo" ]
     then 
         cd $path_repo
         git pull
@@ -76,21 +76,23 @@ echo '
 '
 
 # if ! command -v pyenv &> /dev/null
-if [ ! -d "$HOME/.pyenv"]
+if [ ! -d "$HOME/.pyenv" ]
 then
     echo "pyenv not installed. install?"
     read -p "[Y/n] " pyenv_yn
 
     if [ ! pyenv_yn=="n" ]; then
-        echo "Not install pyenv."
+        echo "Not installing pyenv."
     else
+        export PYENV_ROOT="$HOME/.pyenv"
+        export PATH="$PYENV_ROOT/bin:$PATH"
+
         echo "installing..."
         curl https://pyenv.run | bash
         
         echo "installing python 3.7.3..."
         
-        export PYENV_ROOT="$HOME/.pyenv"
-        export PATH="$PYENV_ROOT/bin:$PATH"
+        
         #eval "$(pyenv init -)"
         
         pyenv install 3.7.3
@@ -111,7 +113,15 @@ echo '
 if command -v pyenv &> /dev/null
 then
     cd $path_repo
-    script/bootstrap
+    pyenv install --skip-existing
+    #VENV="${PWD##*/}.venv"
+    VENV="venv"
+    VENV=${VENV#-}
+    python -m venv $VENV
+    . $VENV/bin/activate
+    python -m pip install -U pip setuptools wheel
+    python -m pip install -r requirements.txt
+
 else
     cd $path_repo
     python -m pip install virtualenv
