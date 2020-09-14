@@ -1,0 +1,10 @@
+##
+# Run the command line app
+##
+
+SCRIPTPATH="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+path=`realpath "$SCRIPTPATH/../komrade/cli/cli.py"`
+pathvenv=`realpath "$SCRIPTPATH/../venv/bin/activate"`
+source $pathvenv
+
+python "$path"

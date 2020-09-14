@@ -1,0 +1,29 @@
+# install pyenv?
+
+echo "
+              #  #   ##   #  #  ###    ##   ###   #### 
+              # #   #  #  ####  #  #  #  #  #  #  #    
+              ##    #  #  ####  ###   #  #  #  #  ###  
+              # #   #  #  #  #  # #   ####  #  #  #    
+              #  #   ##   #  #  #  #  #  #  ###   #### 
+
+
+installing...
+"                                          
+
+
+if ! command -v pyenv2 &> /dev/null
+then
+    echo "pyenv not installed. install?"
+    read -p "[Y/n] " pyenv_yn
+
+    echo "input was: $pyenv_yn"
+
+    if [ pyenv_yn!="n" ]; then
+        echo "Not install pyenv."
+    else
+        echo "installing..."
+        #curl https://pyenv.run | bash
+    fi
+
+fi
