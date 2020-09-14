@@ -75,7 +75,8 @@ class TheOperator(Operator):
                     # except ThemisError:
                     #     exit('invalid password. operator shutting down.')
         if privkey:
-            self._keychain['privkey']=KomradeAsymmetricPrivateKey(b64dec(privkey))
+            self._keychain['privkey']=KomradeAsymmetricPrivateKey(privkey)
+            print(self._keychain['privkey'],'??')
         self._keychain = {**self.keychain()}
         # self.log('@Operator booted with keychain:',dict_format(self._keychain),'and passphrase',self.passphrase)
         # clear_screen()
