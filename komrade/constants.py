@@ -25,7 +25,6 @@ PATH_QRCODES = os.path.join(PATH_KOMRADE,'contacts')
 PATH_SECRETS = os.path.join(PATH_KOMRADE,'.secrets')
 PATH_SUPER_SECRETS = os.path.join(PATH_USER_HOME,'.secrets')
 PATH_SUPER_SECRET_OP_KEY = os.path.join(PATH_SUPER_SECRETS,'.komrade.op.key')
-PATH_SUPER_PUBLIC_OP_KEY = os.path.join
 
 for x in [PATH_KOMRADE,PATH_KOMRADE_DATA,PATH_KOMRADE_KEYS,PATH_QRCODES,PATH_SECRETS,PATH_SUPER_SECRETS]:
     if not os.path.exists(x):
