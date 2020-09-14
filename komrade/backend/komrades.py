@@ -333,7 +333,7 @@ class KomradeX(Caller):
         }
         self.log('sending msg to op:',msg)
 
-        res = self.ring_ring(msg,route='read_mail')
+        res = self.ring_ring(msg,route='check_msgs')
         self.log('got back response:',res)
 
         # # decrypt?
