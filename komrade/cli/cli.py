@@ -7,6 +7,7 @@ HELPSTR = """
     /login [name]     -->  log back in
     /register [name]  -->  new komrade
     /meet [name]      -->  exchange info
+    /who [name]       -->  show contact info
     /help             -->  seek help
 """
 
@@ -15,7 +16,8 @@ class CLI(Logger):
         'help':'seek help',
         'register':'join the komrades',
         'login':'log back in', 
-        'meet':'meet a komrade'
+        'meet':'meet a komrade',
+        'who':'show contacts or info'
     }
 
     def __init__(self,name='',cmd='',persona=None):
@@ -65,7 +67,13 @@ class CLI(Logger):
         print(HELPSTR)
 
     def intro(self):
-        self.status(None,)
+        self.status(None)
+    
+    def who(self):
+        if self.with_required_login():
+            contacts = self.komrade.contacts()
+            print('  ' + '\n  '.join(contacts))
+
     
     def register(self,name=None):
         if not name: name=input('name: ')
@@ -106,10 +114,15 @@ class CLI(Logger):
     def logged_in(self):
         return (self.loggedin and self.komrade and self.name)
 
-    def meet(self,name):
+    
+    def with_required_login(self):
         if not self.logged_in:
             print('@Operator: You must be logged in first.\n')
-            return
+            return False
+        return True
+
+    def meet(self,name):
+        
         if not name:
             name=input(f'@Operator: To whom would you like to introduce yourself?\n\n@{self.name}: ')
         if not name: return

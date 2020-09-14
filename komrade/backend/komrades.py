@@ -266,7 +266,9 @@ class KomradeX(Caller):
         self.log('got someone =',someone,type(someone))
 
 
-
+    def contacts(self):
+        # who do I know?
+        return sorted([fn.split('.png')[0] for fn in os.listdir(PATH_QRCODES)])
 
 
 
