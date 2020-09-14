@@ -423,7 +423,11 @@ from_komrade = {from_komrade}
         inbox_encr = self.crypt_keys.get(b64enc(inbox),prefix='/inbox/')
 
         # fine: here, try this on for size
-        return inbox_encr
+        return {
+            'status':'Succeeded in getting inbox.',
+            'success':True,
+            'data_encr':inbox_encr
+        }
 
 
 def test_op():
