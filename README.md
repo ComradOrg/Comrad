@@ -81,39 +81,11 @@ See [here](https://www.dropbox.com/s/8r8gqgfswojmtwd/komrade-terminal-preview--2
 
 
 
-## Technical details
-
-Design details are changing rapidly, but these are what we have so far.
-
-### Frontends
-
-#### Mobile app
-
-The mobile app is made with [KivyMD](https://github.com/kivymd/KivyMD), a variant of [Kivy](https://kivy.org/), a cross-platform mobile development framework in Python. Python is an easy and versatile progamming language to learn, which keeps the code accessible to as many people as possible.
-
-Code for the mobile app is in "[komrade/app](komrade/app)".
-
-### Terminal app
-
-Vanilla Python; eventually using the curses module.
-
-### Backend
-
-#### Ontology
-
-All plain object-oriented stuff in Python. The root entity is a "Keymaker": anyone from @Telephone, to @Operator, to users, to groups, who has a public/private key pair.
-
-The database is a simple key-value store written in Python ([simplekv](https://github.com/mbr/simplekv)).
-
-#### Cryptography
-
-We are using [Themis](https://github.com/cossacklabs/themis), a high-level cross-platform cryptography library, for all cryptographic functions, rather than handling any primitives ourselves.
-
 ## Install
 
 ### As developer
 
-#### 1) Make sure pyenv is installed
+#### (1) Make sure pyenv is installed
 
 [Pyenv](https://github.com/pyenv) is a virtual environment manager that helps you keep track of Python versions. Komrade requires exactly 3.7, for idiosyncracies owing to Kivy.
 
@@ -128,9 +100,9 @@ echo 'export PATH="~/.pyenv/bin:$PATH"' >> ~/.bashrc
 bash
 ```
 
-#### 2) Clone and bootstrap
+#### (2) Clone and bootstrap
 
-Now that pyenv is installed, just clone and bootstrap (thanks to Komrade [@mcataford](https://github.com/mcataford):
+Now that pyenv is installed, just clone and bootstrap (thanks to Komrade [@mcataford](https://github.com/mcataford)):
 
 ```
 git clone https://github.com/quadrismegistus/Komrade.git
@@ -158,3 +130,36 @@ cd [path to Komrade repo]
 python komrade/app/main.py
 ```
 
+
+
+## Technical details
+
+Design details are changing rapidly, but these are what we have so far.
+
+### Frontends
+
+#### Mobile app
+
+The mobile app is made with [KivyMD](https://github.com/kivymd/KivyMD), a variant of [Kivy](https://kivy.org/), a cross-platform mobile development framework in Python. Python is an easy and versatile progamming language to learn, which keeps the code accessible to as many people as possible.
+
+Code for the mobile app is in [komrade/app](komrade/app).
+
+### Terminal app
+
+Vanilla Python; eventually using the curses module. Code is in [komrade/cli].
+
+### Backend
+
+#### Ontology
+
+All plain object-oriented stuff in Python. The root entity is a "Keymaker": anyone from @Telephone, to @Operator, to users, to groups, who has a public/private key pair.
+
+The database is a simple key-value store written in Python ([simplekv](https://github.com/mbr/simplekv)).
+
+Code is in [komrade/backend].
+
+#### Cryptography
+
+We are using [Themis](https://github.com/cossacklabs/themis), a high-level cross-platform cryptography library, for all cryptographic functions, rather than handling any primitives ourselves.
+
+Code is primarily in: [komrade/backend/keymaker.py], [komrade/backend/komrades.py], and [komrade/backend/phonelines.py].
