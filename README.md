@@ -115,6 +115,11 @@ Then add pyenv to your $PATH (replace .bashrc with .bash_profile if on Mac):
 echo 'export PATH="~/.pyenv/bin:$PATH"' >> ~/.bashrc
 ```
 
+Restart bash:
+```
+bash
+```
+
 #### 2) Clone and bootstrap
 
 Now that pyenv is installed, just clone and bootstrap:
