@@ -121,6 +121,7 @@ class Operator(Keymaker):
         if not self.privkey or not self.pubkey:
             raise KomradeException('why do I have no pub/privkey pair!?',self,self.name,self.pubkey,self.privkey,self.keychain())
         if not another.name or not another.pubkey:
+            self.log(f'I {self} failed to compose a message to {another} ?')
             raise KomradeException('why do I not know whom I\'m writing to?')
 
         # otherwise create msg
