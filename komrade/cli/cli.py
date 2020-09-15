@@ -208,7 +208,7 @@ class CLI(Logger):
                 print('@Operator:',res['status'])
                 return
 
-            print('ummmmm msgs?')
+            # print('ummmmm msgs?')
             msgs=res.get('msgs')
             if not msgs:
                 print('@Operator: No messages.')
@@ -217,7 +217,7 @@ class CLI(Logger):
                 for i,msg in enumerate(msgs):
                     print(f'@Operator: Showing most recent messages first.\n\n\n  Message {i+1} of {len(msgs)}')
                     print(msg)
-                    print('DATA',msg.data)
+                    # print('DATA',msg.data)
                     if msg.data.get('prompt_id')=='addcontact':
                         self.prompt_adduser(msg)
                     else:

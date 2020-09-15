@@ -428,7 +428,7 @@ class KomradeX(Caller):
                 malformed = True
 
             if not malformed:
-                print('good msg:',msg)
+                # print('good msg:',msg)
                 msgs.append(msg)
             else:
                 post_ids_malformed.append(post_id)
@@ -481,11 +481,11 @@ class KomradeX(Caller):
     def read_msg(self,post_id):
         # get post
         post_encr = self.crypt_keys.get(post_id,prefix='/post/')
-        print(post_id,'????')
+        # print(post_id,'????')
         if not post_encr:
             self.download_msgs([post_id])
             post_encr = self.crypt_keys.get(post_id,prefix='/post/')
-            print(post_id,'????')
+            # print(post_id,'????')
             
             return {
                 'success':False,
@@ -551,7 +551,7 @@ class KomradeX(Caller):
             route='download_msgs'
         )
 
-        print('got back from op!',res)
+        # print('got back from op!',res)
         if not 'data_encr' or not res['data_encr'] or type(res['data_encr'])!=dict:
             return {'success':False, 'status':'No valid data returned.'}
 
