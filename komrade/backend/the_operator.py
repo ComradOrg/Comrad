@@ -533,6 +533,13 @@ from_komrade = {from_komrade}
         meet_uri = b64enc(meet_pubkey)
         meet_from_name = data.get('name')
         meet_from_uri = data.get('pubkey')
+        returning = data.get('returning')
+
+        if returning:
+            txt=f'''Komrade @{meet_name} has agreed to make your acquaintance. Their public key is {meet_uri.decode()}.'''
+        else:
+            txt=f'''Komrade @{meet_name} would like to make your acquaintance. Their public key is {meet_uri.decode()}.'''
+
         msg_from_op = Message(
             msg_d = {
                 'to':meet_uri,
@@ -551,7 +558,7 @@ from_komrade = {from_komrade}
 
                     
                     'msg':{
-                        'txt':f'''Komrade @{meet_name} would like to make your acquaintance. Their public key is {meet_uri.decode()}.''',
+                        'txt':txt,
                         'type':'prompt',
                         'prompt_id':'addcontact',
                         'meet_name':meet_from_name,

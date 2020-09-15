@@ -155,10 +155,10 @@ class CLI(Logger):
     #     # meet?
     #     self.komrade.meet(name)
 
-    def meet(self,dat):
+    def meet(self,dat,returning=False):
         if self.with_required_login():
             name_or_pubkey = dat.strip().split()[0]
-            res = self.komrade.meet(name_or_pubkey)
+            res = self.komrade.meet(name_or_pubkey,returning=returning)
             print('@Operator:',res)
 
 
@@ -202,7 +202,8 @@ class CLI(Logger):
             clear_screen()
             print(f'@Operator: The public key of @{meet_name} has been saved as a QRcode to {fnfn}:\n{qrstr}')
         if do_senduser:
-            print('working on it  ...')
+            print('returning the invitation ...')
+            self.meet(meet_name,returning=True)
 
     def prompt_msg(self,msg):
         do = input(f'\n\n@Operator: Type "r" to reply, "d" to delete, or just hit Enter to continue.\n{self.komrade}: ')

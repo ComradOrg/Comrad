@@ -583,7 +583,7 @@ class KomradeX(Caller):
 
 
     ### MEETING PEOLPE
-    def meet(self,name=None,pubkey=None):
+    def meet(self,name=None,pubkey=None,returning=False):
         if not name and not pubkey:
             return {'success':False,'status':'Meet whom?'}
 
@@ -593,7 +593,8 @@ class KomradeX(Caller):
             'pubkey':self.uri,
 
             'meet_name':name,
-            'meet_pubkey':pubkey
+            'meet_pubkey':pubkey,
+            'returning':returning
         }
         # print('msg_to_op',msg_to_op)
 
