@@ -551,18 +551,14 @@ class KomradeX(Caller):
         if not name and not pubkey:
             return {'success':False,'status':'Meet whom?'}
 
-        msg_to_op = Message(
-            msg={
-                'name':self.name,
-                'secret_login':self.secret_login,
-                'pubkey':self.uri,
+        msg_to_op = {
+            'name':self.name,
+            'secret_login':self.secret_login,
+            'pubkey':self.uri,
 
-                'meet_name':name,
-                'meet_pubkey':pubkey
-            },
-            to_whom=self.op,
-            from_whom=self
-        )
+            'meet_name':name,
+            'meet_pubkey':pubkey
+        }
         print('msg_to_op',msg_to_op)
 
         res = self.ring_ring(
