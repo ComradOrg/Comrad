@@ -53,10 +53,10 @@ class Message(Logger):
 
         return f"""    
     from: @{self.from_name if self.from_name else ''} 
-          #{b64enc_s(self.from_pubkey)}
+           {b64enc_s(self.from_pubkey)}
 
     to:   @{self.to_name if self.to_name else ''}
-          #{b64enc_s(self.to_pubkey)}
+           {b64enc_s(self.to_pubkey)}
 
     msg:  {msg}
 """
