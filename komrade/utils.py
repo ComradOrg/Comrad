@@ -204,12 +204,14 @@ def d2b64(d):
     return d2
 
 def b64enc(x):
+    if x is None: return b''
     if type(x) not in {str,bytes}: return x
     if type(x)==str: x=x.encode()
     if not isBase64(x): x=b64encode(x)
     return x
 
 def b64dec(x):
+    if x is None: return b''
     if type(x) not in {str,bytes}: return x
     if type(x)==str: x=x.encode()
     if isBase64(x): x=b64decode(x)
