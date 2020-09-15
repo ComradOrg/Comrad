@@ -41,6 +41,8 @@ class Message(Logger):
             if is_valid_msg_d(self.msg):
                 import textwrap
                 msg = textwrap.indent(repr(Message(self.msg)),' '*10)
+            elif 'txt' in self.msg:
+                msg=self.msg.get('txt')
             else:
                 msg=dict_format(self.msg,tab=6)
         elif type(self.msg)==bytes:
