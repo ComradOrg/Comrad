@@ -397,6 +397,7 @@ class KomradeX(Caller):
     def inbox(self,topn=100,only_unread=False,delete_malformed=False):
         # refreshing inbox
         res = self.refresh()
+        print('got from refresh',res)
         if not res['success']: return res
         
         boxname = 'inbox' if not only_unread else 'unread'
