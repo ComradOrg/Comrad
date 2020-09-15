@@ -414,7 +414,7 @@ class KomradeX(Caller):
 
             msg=res.get('msg')
             
-            if not msg.from_name or not msg.from_pubkey):
+            if not msg.from_name or not msg.from_pubkey:
                 print('!! Invalid sender info!')
                 malformed = True
 
