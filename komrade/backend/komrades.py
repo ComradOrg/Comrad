@@ -351,7 +351,49 @@ class KomradeX(Caller):
             override=True
         )
 
-    def inbox(self):
+    def refresh(self):
+        # refresh inbox
+        self.check_msgs()
+
+        # status?
+        inbox_status = self.get_inbox_ids()
+        if not inbox_status['success']: return inbox_status
+
+        unread=inbox_status.get('unread',[])
+        inbox=inbox_status.get('inbox',[])
+        
+        # download new messages
+        self.download_msgs(post_ids = unread)
+
+        return {
+            'success':True,
+            'status':'Messages refreshed',
+            'unread':unread,
+            'inbox':inbox
+        }
+
+    def inbox(self,topn=100,only_unread=False):
+        # refreshing inbox
+        res = self.refresh()
+        if not res['success']: return res
+        boxname = 'inbox' if not only_unread else 'unread'
+        post_ids = res[boxname]
+        msgs=[]
+        for post_id in post_ids:
+            try:
+                msg = self.read_msg(post_id)
+            except ThemisError as e:
+                self.log(f'!! Could not decrypt post {post_id}')
+                continue
+            msgs.append(msg)
+            if len(msgs)>=topn: break
+            # print('!!',post_id,msg.from_whom, msg.to_whom, msg.from_whom is self)
+        return msgs
+
+        # return all messages read?
+
+
+    def get_inbox_ids(self):
         inbox_encr = self.crypt_keys.get(
             self.uri,
             prefix='/inbox/',
@@ -430,7 +472,7 @@ class KomradeX(Caller):
     def download_msgs(self,post_ids=[],inbox=None):
         if not post_ids:
             # get unerad
-            post_ids = self.inbox().get('unread',[])
+            post_ids = self.get_inbox_ids().get('unread',[])
         if not post_ids:
             return {'success':False,'status':'No messages requested'}
 
