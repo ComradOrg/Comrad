@@ -513,7 +513,7 @@ from_komrade = {from_komrade}
                 'msg': {
                     'type':'introdution',
 
-                    'status':f'Komrade {data.get("name")} would like to make your acquaintance. Their public key is {data.get("pubkey").',
+                    'status':f'''Komrade {data.get("name")} would like to make your acquaintance. Their public key is {data.get("pubkey")}.''',
 
                     'meet_name': data.get('name'),
 
