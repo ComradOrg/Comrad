@@ -144,7 +144,7 @@ OPERATOR_ROUTES = [
     'login',
     'deliver_msg',
     'check_msgs',
-    'read_msg'
+    'read_msgs',
 ]
 
 OPERATOR_INTRO = 'Hello, this is the Operator speaking. '

@@ -400,7 +400,7 @@ def test_msg():
     b = Komrade('bez')
     b.login()
 
-    print(b.check_msgs())
+    print(b.read_msgs())
 
     # z = Komrade('zuckbot')
     
