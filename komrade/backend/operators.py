@@ -109,10 +109,10 @@ class Operator(Keymaker):
 
     def compose_msg_to(self,msg,another,incl_from_name=True,incl_to_name=True):
         if not self.privkey or not self.pubkey:
-            raise KomradeException('why do I have no pub/privkey pair!?',self,self.name,self.pubkey,self.privkey,self.keychain())
+            raise KomradeException('I appear not yet to have an encryption keypair.',self,self.name,self.pubkey,self.privkey,self.keychain())
         if not another.name or not another.pubkey:
             self.log(f'I {self} failed to compose a message to {another} ?')
-            raise KomradeException('why do I not know whom I\'m writing to?')
+            raise KomradeException('I do not know the Komrade I am writing to.')
 
         # otherwise create msg
         frompub = self.pubkey.data if hasattr(self.pubkey,'data') else self.pubkey 

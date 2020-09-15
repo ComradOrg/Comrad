@@ -1,7 +1,7 @@
 ##
 # Run the command line app
 ##
-
+export KOMRADE_SHOW_LOG=0
 
 SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
@@ -12,7 +12,7 @@ source $pathvenv
 python "$path" $*
 
 
-if command -v deactivate &> /dev/null
-then
-    deactivate
-fi
+#if command -v deactivate &> /dev/null
+#then
+#    deactivate
+#fi

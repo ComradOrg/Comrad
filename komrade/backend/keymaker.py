@@ -474,6 +474,7 @@ class Keymaker(Logger):
                     encr_key = decr_key.encrypt(unencr_key.data)
                     keychain[encr_key_name] = get_key_obj(encr_key_name,encr_key)
             except ThemisError as e:
+                exit('Incorrect password.')
                 self.log('error!!',e,decrypt,decr_key,encr_key,decr_key_name,encr_key_name)
                 pass
 

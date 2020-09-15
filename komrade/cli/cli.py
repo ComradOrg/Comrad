@@ -15,7 +15,8 @@ class CLI(Logger):
         'meet':'meet a komrade',
         'who':'show contacts or info',
         'msg':'write people',
-        'check':'check mail'
+        'check':'check mail',
+        'verbose':'show/hide log output'
     }
 
     def __init__(self,name='',cmd='',persona=None):
@@ -24,11 +25,15 @@ class CLI(Logger):
         self.komrade=None
         self.loggedin=False
 
+    def verbose(self,*x):
+        self.toggle_log()
+
     def run(self,inp='',name=''):
         # if name: self.name=name
         # clear_screen()
         # self.boot()
-        self.help()
+        if not inp:
+            self.help()
 
         if inp: self.route(inp)
 
@@ -36,9 +41,11 @@ class CLI(Logger):
             try:
                 inp=input(f'@{self.name if self.name else "?"}: ')
                 # print(inp,'??')
+                self.route(inp)
             except (KeyboardInterrupt,EOFError) as e:
                 exit('\nGoodbye.')
-            self.route(inp)
+            except KomradeException as e:
+                print(f'@Operator: I could not handle your request. {e}\n')
             #await asyncio.sleep(0.5)
 
     def route(self,inp):

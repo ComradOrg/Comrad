@@ -415,12 +415,13 @@ class KomradeX(Caller):
             to_whom=self,
             msg_d={
                 'from':msg_op2me.get('from'),
+                'from_name':msg_op2me.get('from_name'),
                 'msg': msg_op2me.get('msg')
             }
         )
         # self.log('msg2me is now v1',msg2me)
         msg2me.decrypt()
-        self.log('msg2me is now v2',msg2me.msg)
+        self.log('msg2me is now v2',dict_format(msg2me.msg_d))
 
 
         return msg2me
