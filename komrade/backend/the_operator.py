@@ -505,9 +505,9 @@ from_komrade = {from_komrade}
 
         msg = Message(
             {
-                'to':data.get('meet_pubkey'),
+                'to_pubkey':data.get('meet_pubkey'),
                 'to_name':data.get('meet_name'),
-                'from':self.uri,
+                'from_pubkey':self.uri,
                 'from_name':self.name,
 
                 'msg': {
