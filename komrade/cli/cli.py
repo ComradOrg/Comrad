@@ -36,7 +36,9 @@ class CLI(Logger):
         if not inp:
             self.help()
 
-        if inp: self.route(inp)
+        if inp:
+            for inpx in inp.split(';'):
+                self.route(inpx)
 
         while True:
             try:
