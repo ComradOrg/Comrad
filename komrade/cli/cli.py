@@ -191,8 +191,8 @@ class CLI(Logger):
         meet_name = msg.data.get('meet_name')
         meet_uri = msg.data.get('meet')    
         qrstr=self.komrade.qr_str(meet_uri)
-        do_adduser = input(f'''\n\nAdd @{meet_name}'s public key ({meet_uri.decode()}) to your address book?\n\nIt will allow you and @{meet_name} to read and write encrypted messages to one another.\n{self.komrade} [y/N]: ''')
-        do_senduser = input(f'''\n\nSend this user your public key as well?\n{self.komrade} [y/N]: ''')
+        do_adduser = input(f'''\n\n@Operator: Add @{meet_name}'s public key ({meet_uri.decode()}) to your address book?\n\nIt will allow you and @{meet_name} to read and write encrypted messages to one another.\n\n{self.komrade} [y/N]: ''')
+        do_senduser = input(f'''\nSend this user your public key as well?\n\n{self.komrade} [y/N]: ''')
 
         if do_adduser.strip().lower()=='y':
             fnfn = self.komrade.save_uri_as_qrcode(
@@ -235,7 +235,7 @@ class CLI(Logger):
                     if msg.data.get('prompt_id')=='addcontact':
                         self.prompt_adduser(msg)
                     
-                    self.prompt_msg()
+                    self.prompt_msg(msg)
                     clear_screen()
                 self.help()
 
