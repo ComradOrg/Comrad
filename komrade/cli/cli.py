@@ -186,9 +186,10 @@ class CLI(Logger):
     def prompt_adduser(self,msg):
         # print('prompt got:',msg)
         # print(msg.data)
+        clear_screen()
         meet_name = msg.data.get('meet_name')
         meet_uri = msg.data.get('meet')    
-        do_adduser = input(f'''\n\nAdd this @{meet_name}'s public key to your address book? [y/N]\n{self.komrade}: ''')
+        do_adduser = input(f'''\n\nAdd this @{meet_name}'s public key ({meet_uri}) to your address book? [y/N]\n{self.komrade}: ''')
         do_senduser = input(f'''\n\nSend this user your public key as well? [y/N]\n{self.komrade}: ''')
 
         if do_adduser.strip().lower()=='y':
@@ -199,6 +200,16 @@ class CLI(Logger):
         if do_senduser:
             print('working on it  ...')
 
+    def prompt_msg(self,msg):
+        do = input(f'\n\n@Operator: Type "r" to reply, "d" to delete, or just hit Enter to continue.\n{self.komrade}: ')
+
+        do=do.strip().lower()
+        if do=='d':
+            self.komrade.delete_msg(msg.post_id)
+        elif do=='r':
+            print('@todo: replying...')
+        else:
+            pass
 
     def read(self,dat):
         if self.with_required_login():

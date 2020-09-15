@@ -427,6 +427,8 @@ class KomradeX(Caller):
                 print('!! Invalid sender info!')
                 malformed = True
 
+            msg.post_id=post_id
+
             if not malformed:
                 # print('good msg:',msg)
                 msgs.append(msg)
