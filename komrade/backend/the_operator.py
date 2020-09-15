@@ -346,11 +346,11 @@ from_komrade = {from_komrade}
 
         ## just deliver?
         
+        from komrade.backend.messages import Message
         msg_from_op = Message(
-            {
+            from_whom=self,
+            msg_d = {
                 'to':deliver_to,
-                'from':self.uri,
-            
                 'msg':{
                     'to':deliver_to,
                     'from':deliver_from,
