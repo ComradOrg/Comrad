@@ -413,12 +413,12 @@ class KomradeX(Caller):
                 print(f'!! Could not decrypt post {post_id}')
                 malformed = True
 
-            print(res,'ressss')
+            #print(res,'ressss')
             if not res.get('success'):
                 return res
 
             msg=res.get('msg')
-            print(msg,'?!?!??!')
+            #print(msg,'?!?!??!')
             # stop
             
             if not msg.from_name or not msg.from_pubkey:
@@ -436,7 +436,7 @@ class KomradeX(Caller):
         if delete_malformed:
             self.delete_msgs(post_ids_malformed)
 
-        print(msgs,'msssgs')
+        #print(msgs,'msssgs')
         return {'success':True,
         'msgs':msgs}
 
