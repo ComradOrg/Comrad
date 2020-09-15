@@ -584,7 +584,7 @@ from_komrade = {from_komrade}
                 'to_name':meet_name,
 
                 'from':self.uri,
-                'from_name':self.name
+                'from_name':self.name,
                 
                 'msg':{
                     
@@ -592,7 +592,7 @@ from_komrade = {from_komrade}
                     'to_name':meet_name,
 
                     'from':self.uri,
-                    'from_name':self.name
+                    'from_name':self.name,
                     
                     'msg':f''''Komrade @{meet_name} would like to make your acquaintance. Their public key is {meet_uri}. Their QRcode is:\n{self.qr_str(meet_pubkey)}.''',
                 }
