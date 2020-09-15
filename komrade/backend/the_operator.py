@@ -502,17 +502,21 @@ from_komrade = {from_komrade}
             return login_res
         
         data=msg_to_op.data
+        self.log('Op sees data:',dict_format(data))
+
+
 
         meet_pubkey = self.crypt_keys.get(
             data.get('meet_name'),
             '/pubkey/'
         )
+        self.log('found in crypt:',meet_pubkey)
 
         msg = Message(
             {
-                'to_pubkey':meet_pubkey,
+                'to':meet_pubkey,
                 'to_name':data.get('meet_name'),
-                'from_pubkey':self.uri,
+                'from':self.uri,
                 'from_name':self.name,
 
                 'msg': {
