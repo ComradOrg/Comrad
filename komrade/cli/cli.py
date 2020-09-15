@@ -234,7 +234,7 @@ class CLI(Logger):
                     if msg.data.get('prompt_id')=='addcontact':
                         self.prompt_adduser(msg)
                     
-                    self.propmt_msg()
+                    self.prompt_msg()
                     clear_screen()
                 self.help()
 
