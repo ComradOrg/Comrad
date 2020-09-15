@@ -190,7 +190,8 @@ class CLI(Logger):
         clear_screen()
         meet_name = msg.data.get('meet_name')
         meet_uri = msg.data.get('meet')    
-        do_adduser = input(f'''\n\nAdd this @{meet_name}'s public key ({meet_uri}) to your address book? [y/N]\n{self.komrade}: ''')
+        qrstr=self.komrade.qr_str(meet_uri)
+        do_adduser = input(f'''\n\nAdd @{meet_name}'s public key ({meet_uri.decode()}) to your address book? It will be saved as a QRcode: {qrstr} With it, you and @{meet_name} can read and write to each other with end-to-end encryption. [y/N]\n{self.komrade}: ''')
         do_senduser = input(f'''\n\nSend this user your public key as well? [y/N]\n{self.komrade}: ''')
 
         if do_adduser.strip().lower()=='y':
@@ -198,7 +199,7 @@ class CLI(Logger):
                 meet_uri,
                 meet_name
             )
-            print(f'@Operator: The public key of @{meet_name} has been saved as a QRcode to {fnfn}. Text version: {self.komrade.qr_str(meet_uri)}')
+            print(f'@Operator: The public key of @{meet_name} has been saved as a QRcode to {fnfn}.')
         if do_senduser:
             print('working on it  ...')
 
