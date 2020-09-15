@@ -187,14 +187,16 @@ class TheOperator(Operator):
         secret_login=data.get('secret_login')
 
         name=name.encode() if type(name)==str else name
-        pubkey=pubkey.encode() if type(pubkey)==str else pubkey
-        secret_login=secret_login.encode() if type(secret_login)==str else secret_login
+        # pubkey=pubkey.encode() if type(pubkey)==str else pubkey
+        # secret_login=secret_login.encode() if type(secret_login)==str else secret_login
         # get my records
-        uri = b64enc(pubkey)
+        # uri = b64enc(pubkey)
+        uri = pubkey
         name_record = self.crypt_keys.get(
             uri,
             prefix='/name/'
         )
+        print(uri,name,name_record,'??')
         pubkey_record = b64enc(self.crypt_keys.get(
             name,
             prefix='/pubkey/'
