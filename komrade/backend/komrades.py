@@ -415,7 +415,7 @@ class KomradeX(Caller):
 
             msg=res.get('msg')
             print(msg,'?!?!??!')
-            stop
+            # stop
             
             if not msg.from_name or not msg.from_pubkey:
                 print('!! Invalid sender info!')
