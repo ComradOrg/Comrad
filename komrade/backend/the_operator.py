@@ -366,7 +366,7 @@ from_komrade = {from_komrade}
         # encrypt
         msg_from_op.encrypt()
         
-        msg_from_op_b_encr = msg_from_op.msg_b  # pickle of msg_d
+        msg_from_op_b_encr = msg_from_op.msg     #.msg_b  # pickle of msg_d
         self.log('got this:',msg_from_op_b_encr)
 
         # save new post

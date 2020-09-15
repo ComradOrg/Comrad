@@ -387,11 +387,12 @@ class KomradeX(Caller):
                 'status':'Post not found.'
             }
         self.log('found encrypted post store:',post_encr)
+        # self.log('unpickling?',pickle.loads(post_encr))
         
 
         # it should be twice decrypted
         msg_op2me = Message(
-            from_whom=self.op,
+            from_whom=Komrade('bez'),
             to_whom=self,
             msg=post_encr
         )
@@ -407,7 +408,7 @@ class KomradeX(Caller):
     def download_msgs(self,post_ids=[],inbox=None):
         if not post_ids:
             # get unerad
-            post_ids = self.check_msgs(inbox).get('unread',[])
+            post_ids = self.inbox().get('unread',[])
         if not post_ids:
             return {'success':False,'status':'No messages requested'}
 
@@ -427,6 +428,7 @@ class KomradeX(Caller):
             return {'success':False, 'status':'No valid data returned.'}
 
         # store -- encrypted!
+        posts_downloaded = []
         for post_id,post_encr in res['data_encr'].items():
             print('storing...',post_id)
             self.crypt_keys.set(
@@ -434,7 +436,12 @@ class KomradeX(Caller):
                 post_encr,
                 prefix='/post/'
             )
-        return msgs
+            posts_downloaded.append(post_id)
+        return {
+            'success':True,
+            'status':'Messages downloaded',
+            'downloaded':posts_downloaded,
+        }
 
 def test_register():
     import random
