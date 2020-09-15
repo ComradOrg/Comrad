@@ -358,7 +358,7 @@ from_komrade = {from_komrade}
                     'status':'Someone (marked "from") would like to send you (marked "to") this message (marked "msg").'
                 }
             }
-        })
+        )
 
         self.log(f'{self}: Prepared this msg for delivery:\n{msg_from_op}')
 
