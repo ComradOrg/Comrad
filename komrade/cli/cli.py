@@ -187,7 +187,7 @@ class CLI(Logger):
         # print('prompt got:',msg)
         # print(msg.data)
         do_pause()
-        clear_screen()
+        # clear_screen()
         meet_name = msg.data.get('meet_name')
         meet_uri = msg.data.get('meet')    
         qrstr=self.komrade.qr_str(meet_uri)
@@ -199,6 +199,7 @@ class CLI(Logger):
                 meet_uri,
                 meet_name
             )
+            clear_screen()
             print(f'@Operator: The public key of @{meet_name} has been saved as a QRcode to {fnfn}:\n{qrstr}')
         if do_senduser:
             print('working on it  ...')
