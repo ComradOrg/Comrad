@@ -186,6 +186,7 @@ class CLI(Logger):
     def prompt_adduser(self,msg):
         # print('prompt got:',msg)
         # print(msg.data)
+        do_pause()
         clear_screen()
         meet_name = msg.data.get('meet_name')
         meet_uri = msg.data.get('meet')    
