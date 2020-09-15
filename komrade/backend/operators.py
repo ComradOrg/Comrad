@@ -49,7 +49,15 @@ def Komrade(name=None,pubkey=None,*x,**y):
 
 from komrade.constants import OPERATOR_ROUTES
 class Operator(Keymaker):
-    ROUTES = OPERATOR_ROUTES
+    ROUTES = = [
+        'register_new_user',
+        'login',
+        'deliver_msg',
+        'check_msgs',
+        'download_msgs',
+        'introduce_komrades'
+    ]
+
 
     def __eq__(self,other):
         return self.pubkey.data == other.pubkey.data

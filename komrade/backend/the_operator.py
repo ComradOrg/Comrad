@@ -6,7 +6,7 @@ Running on node prime.
 import os,sys; sys.path.append(os.path.abspath(os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__),'..')),'..')))
 from komrade import *
 from komrade.backend import *
-
+from komrade.backend.messages import Message
 
 # print(PATH_OPERATOR_WEB_KEYS_URL)
 
@@ -106,7 +106,7 @@ class TheOperator(Operator):
     def answer_phone(self,data_b):
         # route incoming call from the switchboard
         from komrade.cli.artcode import ART_OLDPHONE4
-        from komrade.backend.messages import Message
+        
 
         self.log(f'''Hello, this is the Operator.{ART_OLDPHONE4}I heard you say:\n\n {b64enc_s(data_b)}''')
         #woops
@@ -371,9 +371,14 @@ from_komrade = {from_komrade}
 
         # encrypt
         msg_from_op.encrypt()
-        
+
+        return self.actually_deliver_msg(msg_from_op)
+
+    def actually_deliver_msg(self,msg_from_op)
         msg_from_op_b_encr = msg_from_op.msg     #.msg_b  # pickle of msg_d
         self.log('got this:',msg_from_op_b_encr)
+        deliver_to = msg_from_op.to_pubkey
+        deliver_to_b = b64dec(deliver_to)
 
         # save new post
         post_id = get_random_binary_id()
@@ -489,6 +494,37 @@ from_komrade = {from_komrade}
             'success':True,
             'data_encr':posts
         }
+
+    def introduce_komrades(self,msg_obj):
+        # logged in?
+        login_res = self.login(msg_to_op)
+        if not login_res.get('success'):
+            return login_res
+        
+        data=msg_obj.data
+
+        msg = Message(
+            {
+                'to':data.get('meet_pubkey'),
+                'to_name':data.get('meet_name'),
+                'from':self.uri,
+                'from_name':self.name,
+
+                'msg': {
+                    'type':'introdution',
+
+                    'status':f'Komrade {data.get("name")} would like to make your acquaintance. Their public key is {data.get("pubkey").',
+
+                    'meet_name': data.get('name'),
+
+                    'meet_pubkey': data.get('pubkey')
+                }
+            }
+        )
+        self.log('formed msg:',msg)
+
+        return self.actually_deliver_msg(msg)
+
 
 def test_op():
     from komrade.backend.the_telephone import TheTelephone

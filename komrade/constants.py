@@ -139,13 +139,6 @@ DEBUG_DEFAULT_PASSPHRASE = None # 'all your base are belong to us'
 
 ROUTE_KEYNAME = 'request'
 
-OPERATOR_ROUTES = [
-    'register_new_user',
-    'login',
-    'deliver_msg',
-    'check_msgs',
-    'download_msgs',
-]
 
 OPERATOR_INTRO = 'Hello, this is the Operator speaking. '
 
