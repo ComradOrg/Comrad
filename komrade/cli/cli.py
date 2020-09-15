@@ -183,6 +183,21 @@ class CLI(Logger):
                 inb = res.get('inbox',[])
                 print(f'@Operator: You have {len(unr)} unread messages, with {len(inb)} total in your inbox.\n')
 
+    def prompt_adduser(self,msg):
+        do_adduser = input(f'''\n\nAdd this user's public key to your addressbook? [Y/n]\n{self.komrade}: ''')
+        do_senduser = input(f'''\n\nSend this user your public key as well? [Y/n]\n{self.komrade}: ''')
+
+        if do_adduser:
+            meet_name = msg.data.get('meet_name')
+            meet_uri = msg.data.get('meet')
+            self.komrade.save_uri_as_qrcode(
+                meet_uri,
+                meet_name
+            )
+        if do_senduser:
+            print('working on it  ...')
+
+
     def read(self,dat):
         if self.with_required_login():
             res = self.komrade.inbox()
@@ -198,7 +213,11 @@ class CLI(Logger):
                 for i,msg in enumerate(msgs):
                     print(f'@Operator: Showing most recent messages first.\n\n\n  Message {i+1} of {len(msgs)}')
                     print(msg)
-                    do_pause()
+
+                    if msg.data.get('prompt_id')=='addcontact':
+                        self.prompt_adduser(msg)
+                    else:
+                        do_pause()
                     clear_screen()
                 self.help()
 

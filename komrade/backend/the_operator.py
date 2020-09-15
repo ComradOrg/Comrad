@@ -524,60 +524,15 @@ from_komrade = {from_komrade}
         
         data=msg_to_op.data
         self.log('Op sees data:',dict_format(data))
-
-
-
         meet_pubkey = self.crypt_keys.get(
             data.get('meet_name'),
             '/pubkey/'
         )
         self.log('found in crypt:',meet_pubkey)
-
-        # msg = Message(
-        #     {
-        #         'to':meet_pubkey,
-        #         'to_name':data.get('meet_name'),
-        #         'from':self.uri,
-        #         'from_name':self.name,
-
-        #         'msg': {
-        #             'type':'introdution',
-
-        #             'status':f'''Komrade {data.get("name")} would like to make your acquaintance. Their public key is {data.get("pubkey")}.''',
-
-        #             'meet_name': data.get('name'),
-
-        #             'meet_pubkey': data.get('pubkey')
-        #         }
-        #     }
-        # )
         meet_name = data.get('meet_name')
-        # enclosed_msg_from_op = Message(
-        #     {
-        #         'to':meet_pubkey,
-        #         'to_name':meet_name,
-        #         'from':self.uri,
-        #         'from_name':self.name,
-        #         'msg':f''''Komrade @{meet_name} would like to make your acquaintance. Their public key is {meet_pubkey}. Their QRcode is:\n{self.qr_str(meet_pubkey)}.''',
-        #         'msg_type':'prompt'
-        #     }
-        # )
-        # self.log('enclosed msg from op:',enclosed_msg_from_op)
-        
-        # ## 
-        # enclosed_msg_from_op.encrypt()
-
-        # ## meta msg from op
-        # msg_from_op=Message(
-        #     {
-        #         'to':meet_pubkey,
-        #         'to_name':meet_name,
-        #         'from':self.uri,
-        #         'from_name':self.name,
-        #         'msg':enclosed_msg_from_op.msg_b,
-        #     }
-        # )
         meet_uri = b64enc(meet_pubkey)
+        meet_from_name = data.get('name')
+        meet_from_uri = data.get('pubkey')
         msg_from_op = Message(
             msg_d = {
                 'to':meet_uri,
@@ -593,8 +548,13 @@ from_komrade = {from_komrade}
 
                     'from':self.uri,
                     'from_name':self.name,
+
+                    'meet_name':meet_from_name,
+                    'meet':meet_from_uri,
                     
                     'msg':f''''Komrade @{meet_name} would like to make your acquaintance. Their public key is {meet_uri}. Their QRcode is:\n{self.qr_str(meet_pubkey)}.''',
+                    'msg_type':'prompt',
+                    'prompt_id':'addcontact',
                 }
             }
         )
