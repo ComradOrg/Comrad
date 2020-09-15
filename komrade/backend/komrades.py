@@ -473,6 +473,7 @@ class KomradeX(Caller):
     def read_msg(self,post_id):
         # get post
         post_encr = self.crypt_keys.get(post_id,prefix='/post/')
+        print(post_id,'????')
         if not post_encr:
             return {
                 'success':False,
