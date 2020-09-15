@@ -534,7 +534,7 @@ from_komrade = {from_komrade}
             }
         )
         msg.encrypt()
-        # self.log('formed msg:',msg.msg_d)
+        self.log('formed msg:',msg)
 
         return self.actually_deliver_msg(msg)
 
