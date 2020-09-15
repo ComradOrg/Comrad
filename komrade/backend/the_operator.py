@@ -387,10 +387,14 @@ from_komrade = {from_komrade}
             msg_from_op_b_encr,
             prefix='/post/'
         )
-        self.log(f'put {msg_from_op} in {post_id}')
+        self.log(f'put {msg_from_op} (or {msg_from_op_b_encr}) in {post_id}')
 
         # get inbox
-        inbox_old_encr = self.crypt_keys.get(deliver_to,prefix='/inbox/')
+        inbox_old_encr = self.crypt_keys.get(
+            deliver_to,
+            prefix='/inbox/'
+        )
+        self.log(f'old inbox for {deliver_to}',inbox_old_encr)
         
         if inbox_old_encr:
             inbox_old = SMessage(
