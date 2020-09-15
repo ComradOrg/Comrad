@@ -207,6 +207,8 @@ class CLI(Logger):
             if not res.get('success'):
                 print('@Operator:',res['status'])
                 return
+
+            print('ummmmm msgs?')
             msgs=res.get('msgs')
             if not msgs:
                 print('@Operator: No messages.')
