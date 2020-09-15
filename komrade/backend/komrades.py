@@ -413,6 +413,7 @@ class KomradeX(Caller):
             if not res.get('success'): return res
 
             msg=res.get('msg')
+            print(msg,'?!?!??!')
             
             if not msg.from_name or not msg.from_pubkey:
                 print('!! Invalid sender info!')
