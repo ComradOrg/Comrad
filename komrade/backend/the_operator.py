@@ -455,7 +455,8 @@ from_komrade = {from_komrade}
                 'name',
                 'pubkey',
                 'post_ids',
-            ]):
+            ],
+            delete_afterward=True):
 
         # logged in?
         login_res = self.login(msg_to_op)
@@ -472,9 +473,19 @@ from_komrade = {from_komrade}
             if post:
                 posts[post_id] = post
         self.log(f'I {self} found {len(posts)} for {msg_to_op.from_name}')
+
+        # delete?
+        if delete_afterward:
+            # @hack: this a bit dangerous?
+            for post_id in posts:
+                self.crypt_keys.delete(
+                    post_id,
+                    prefix='/post/'
+                )
+                self.log('deleting post id',post_id,'...')
         
         return {
-            'status':'Succeeded in getting posts.',
+            'status':'Succeeded in downloading new messages.' + (' I\'ve already deleted these messages from the server.' if delete_afterward else ''),
             'success':True,
             'data_encr':posts
         }

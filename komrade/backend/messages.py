@@ -53,7 +53,7 @@ class Message(Logger):
         numchar = len(b64enc_s(self.to_pubkey))
         linestr = '-'*(numchar+2)
 
-        return f"""    -------{linestr}
+        return f"""  -------{linestr}
     
   from:  @{self.from_name if self.from_name else ''} 
          [{b64enc_s(self.from_pubkey)}]
@@ -61,9 +61,9 @@ class Message(Logger):
   to:    @{self.to_name if self.to_name else ''}
          [{b64enc_s(self.to_pubkey)}]
 
-    -------{linestr}
+  -------{linestr}
 
-    msg:  {msg}
+  msg:    {msg}
 """
 
 

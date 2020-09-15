@@ -335,7 +335,11 @@ class KomradeX(Caller):
         }
         self.log('sending msg to op:',msg)
 
-        res = self.ring_ring(msg,route='check_msgs')
+        # Ring operator
+        res = self.ring_ring(
+            msg,
+            route='check_msgs'
+        )
         self.log('got back response:',res)
 
         # decrypt?
@@ -372,7 +376,10 @@ class KomradeX(Caller):
             'inbox':inbox
         }
 
-    def inbox(self,topn=100,only_unread=False):
+    def delete_msg(self,post_id):
+        self.crypt_keys.delete(post_id,prefix='/post/')
+
+    def inbox(self,topn=100,only_unread=False,delete_malformed=True):
         # refreshing inbox
         res = self.refresh()
         if not res['success']: return res
@@ -380,15 +387,23 @@ class KomradeX(Caller):
         post_ids = res[boxname]
         msgs=[]
         for post_id in post_ids:
+            malformed = False
             try:
                 msg = self.read_msg(post_id)
             except ThemisError as e:
                 self.log(f'!! Could not decrypt post {post_id}')
-                continue
+                malformed = True
             
             if not msg.from_name or not msg.from_pubkey:
                 self.log('!! Invalid sender info!')
-                continue
+                malformed = True
+
+            if not malformed:
+                msgs.append(msg)
+
+            elif delete_malformed:
+
+
 
             msgs.append(msg)
             if len(msgs)>=topn: break

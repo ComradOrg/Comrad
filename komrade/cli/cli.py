@@ -15,7 +15,7 @@ class CLI(Logger):
         'meet':'meet a komrade',
         'who':'show contacts or info',
         'msg':'write people',
-        'check':'check mail',
+        'refresh':'refresh mail',
         'read':'read mail',
         'verbose':'show/hide log output'
     }
@@ -81,8 +81,8 @@ class CLI(Logger):
     /msg [name] [msg] -->  write to person or group
     /who [name]       -->  show contact info
     
-    /check [inbox]    -->  check for new posts
-    /read [inbox]     -->  read posts""") 
+    /refresh [inbox]  -->  refresh messages
+    /read [inbox]     -->  read messages""") 
     if self.with_required_login(quiet=True) else "") + """ 
     /help             -->  seek help
 """
@@ -165,7 +165,7 @@ class CLI(Logger):
             )
             self.log(f'Sent msg obj to {name_or_pubkey}: {msg_obj}')
 
-    def check(self,dat):
+    def refresh(self,dat):
         if self.with_required_login():
             res = self.komrade.refresh()
             if not res['success']:
@@ -187,6 +187,7 @@ class CLI(Logger):
                     print(msg)
                     do_pause()
                     clear_screen()
+                self.help()
 
 
 
