@@ -374,7 +374,7 @@ from_komrade = {from_komrade}
 
         return self.actually_deliver_msg(msg_from_op)
 
-    def actually_deliver_msg(self,msg_from_op)
+    def actually_deliver_msg(self,msg_from_op):
         msg_from_op_b_encr = msg_from_op.msg     #.msg_b  # pickle of msg_d
         self.log('got this:',msg_from_op_b_encr)
         deliver_to = msg_from_op.to_pubkey
