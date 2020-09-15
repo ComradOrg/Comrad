@@ -398,6 +398,7 @@ class KomradeX(Caller):
         # refreshing inbox
         res = self.refresh()
         if not res['success']: return res
+        
         boxname = 'inbox' if not only_unread else 'unread'
         post_ids = res[boxname]
         msgs=[]
@@ -411,7 +412,9 @@ class KomradeX(Caller):
                 print(f'!! Could not decrypt post {post_id}')
                 malformed = True
 
-            if not res.get('success'): return res
+            print(res,'ressss')
+            if not res.get('success'):
+                return res
 
             msg=res.get('msg')
             print(msg,'?!?!??!')
@@ -432,6 +435,7 @@ class KomradeX(Caller):
         if delete_malformed:
             self.delete_msgs(post_ids_malformed)
 
+        print(msgs,'msssgs')
         return {'success':True,
         'msgs':msgs}
 
