@@ -49,7 +49,7 @@ def Komrade(name=None,pubkey=None,*x,**y):
 
 from komrade.constants import OPERATOR_ROUTES
 class Operator(Keymaker):
-    ROUTES = = [
+    ROUTES = [
         'register_new_user',
         'login',
         'deliver_msg',
