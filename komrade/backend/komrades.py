@@ -583,13 +583,13 @@ class KomradeX(Caller):
             'meet_name':name,
             'meet_pubkey':pubkey
         }
-        print('msg_to_op',msg_to_op)
+        # print('msg_to_op',msg_to_op)
 
         res = self.ring_ring(
             msg_to_op,
             route='introduce_komrades'
         )
-        print('res from op',res)
+        # print('res from op',res)
 
         return res
 
