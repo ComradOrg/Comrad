@@ -376,8 +376,23 @@ class KomradeX(Caller):
             'inbox':inbox
         }
 
-    def delete_msg(self,post_id):
-        self.crypt_keys.delete(post_id,prefix='/post/')
+    def save_inbox(self,post_ids):
+        self.crypt_keys.set(
+            self.uri,
+            BSEP.join(post_ids),
+            '/inbox/'
+        )
+
+    def delete_msgs(self,post_ids):
+        inbox_ids = self.get_inbox_ids().get('inbox',[])
+        for post_id in post_ids:
+            self.log('deleting post:',post_id)
+            self.crypt_keys.delete(
+                post_id,
+                prefix='/post/'
+            )
+            inbox_ids.remove(post_id)
+        self.save_inbox(inbox_ids)
 
     def inbox(self,topn=100,only_unread=False,delete_malformed=True):
         # refreshing inbox
@@ -386,6 +401,7 @@ class KomradeX(Caller):
         boxname = 'inbox' if not only_unread else 'unread'
         post_ids = res[boxname]
         msgs=[]
+        post_ids_malformed=[]
         for post_id in post_ids:
             malformed = False
             try:
@@ -400,14 +416,14 @@ class KomradeX(Caller):
 
             if not malformed:
                 msgs.append(msg)
-
-            elif delete_malformed:
-
-
-
-            msgs.append(msg)
+            else:
+                post_ids_malformed.append(post_id)
+            
             if len(msgs)>=topn: break
             # print('!!',post_id,msg.from_whom, msg.to_whom, msg.from_whom is self)
+
+        if delete_malformed:
+            self.delete_msgs(post_ids_malformed)
 
         return msgs
 
