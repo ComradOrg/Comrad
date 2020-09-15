@@ -51,15 +51,15 @@ class Message(Logger):
         fpk=b64enc_s(self.from_pubkey)
         fpk1,fpk2 = fpk[:len(fpk)//2],fpk[len(fpk)//2:]
         numchar = len(b64enc_s(self.to_pubkey))
-        linestr = '-'*numchar
+        linestr = '-'*(numchar+2)
 
         return f"""    -------{linestr}
     
-    from:  @{self.from_name if self.from_name else ''} 
-           [{b64enc_s(self.from_pubkey)}]
+  from:  @{self.from_name if self.from_name else ''} 
+         [{b64enc_s(self.from_pubkey)}]
 
-    to:    @{self.to_name if self.to_name else ''}
-           [{b64enc_s(self.to_pubkey)}]
+  to:    @{self.to_name if self.to_name else ''}
+         [{b64enc_s(self.to_pubkey)}]
 
     -------{linestr}
 
