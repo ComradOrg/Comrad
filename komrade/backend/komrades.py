@@ -475,6 +475,10 @@ class KomradeX(Caller):
         post_encr = self.crypt_keys.get(post_id,prefix='/post/')
         print(post_id,'????')
         if not post_encr:
+            self.download_msgs([post_id])
+            post_encr = self.crypt_keys.get(post_id,prefix='/post/')
+            print(post_id,'????')
+            
             return {
                 'success':False,
                 'status':'Post not found.'
