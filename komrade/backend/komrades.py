@@ -439,6 +439,8 @@ def test_sign():
     verified_msg = smessage.sverify(b.pubkey.data, signed_msg)
     print(verified_msg)
 
+def test_send():
+    z = Komrade('zuckbot')
 
 if __name__=='__main__':
     test_msg()
