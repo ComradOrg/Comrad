@@ -380,8 +380,9 @@ class KomradeX(Caller):
                 'success':False,
                 'status':'Post not found.'
             }
-        self.log('found encrypted post store:',post_encr)
+        self.log('found encrypted post store:',pickle.loads(post_encr))
         
+
         # it should be twice decrypted
         msg_op2me = Message(
             from_whom=self.op,
