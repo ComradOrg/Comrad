@@ -520,12 +520,12 @@ from_komrade = {from_komrade}
         }
 
     def introduce_komrades(self,msg_to_op):
-        # logged in?
-        self.log('introduce got:',msg_to_op)
-        login_res = self.login(msg_to_op)
-        self.log('introduce got login-res:',login_res)
-        if not login_res.get('success'):
-            return login_res
+        # # logged in?
+        # self.log('introduce got:',msg_to_op)
+        # login_res = self.login(msg_to_op)
+        # self.log('introduce got login-res:',login_res)
+        # if not login_res.get('success'):
+        #     return login_res
         
         data=msg_to_op.data
         self.log('Op sees data:',dict_format(data))
