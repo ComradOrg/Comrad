@@ -365,9 +365,8 @@ from_komrade = {from_komrade}
         # encrypt
         msg_from_op.encrypt()
         
-        msg_from_op_b_encr = msg_from_op.msg_d
+        msg_from_op_b_encr = msg_from_op.msg_b  # pickle of msg_d
         self.log('got this:',msg_from_op_b_encr)
-        stop
 
         # save new post
         post_id = get_random_binary_id()
@@ -377,27 +376,38 @@ from_komrade = {from_komrade}
             prefix='/post/'
         )
 
+        # get inbox
         inbox_old_encr = self.crypt_keys.get(deliver_to,prefix='/inbox/')
-        self.log('encrypted inbox old:',inbox_old_encr)
         
         if inbox_old_encr:
-            inbox_old = SMessage(
-                self.privkey.data,
-                b64dec(deliver_to)
-            ).unwrap(inbox_old_encr)
-            self.log('decrypted inbox old:',inbox_old)
+            inbox_as_msg = Message(
+                from_whom=self,
+                msg_d = {
+                    'to':deliver_to,
+                    'msg':inbox_old_encr,
+                }
+            )
+            inbox_as_msg.decrypt()
+            inbox_list = inbox_as_msg.msg
         else:
-            inbox_old = b''
+            inbox_list = []
+        self.log('reloaded inbox:',inbox_list)
 
-        inbox_new = post_id + b'\n' + inbox_old
-        self.log('decrypted inbox new:',inbox_new)
-
-        inbox_new_encr = SMessage(
-            self.privkey.data,
-            b64dec(deliver_to)
-        ).wrap(inbox_new)
-        self.log('encrypted inbox new:',inbox_new_encr)
-
+        # add new inbox
+        inbox_list.append(post_id)
+        inbox_as_msg = Message(
+            from_whom=self,
+            msg_d = {
+                'to':deliver_to,
+                'msg': inbox_list
+            }
+        )
+        # encrypt
+        inbox_as_msg.encrypt()
+        self.log('new inbox as msg:',inbox_as_msg)
+        inbox_new_encr = inbox_as_msg.msg
+        self.log('new inbox encr:',inbox_new_encr)
+        # save back to crypt
         self.crypt_keys.set(
             deliver_to,
             inbox_new_encr,
@@ -405,7 +415,11 @@ from_komrade = {from_komrade}
             override=True
         )
 
-        return {'status':'Message delivered.', 'success':True}
+        return {
+            'status':'Message delivered.',
+            'success':True,
+            'post_id':post_id
+        }
 
     def check_msgs(self,
             msg_to_op,

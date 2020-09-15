@@ -171,13 +171,16 @@ class Message(Logger):
         self._is_encrypted = True
 
 
-
+    @property
+    def msg_b(self):
+        return pickle.dumps(self.msg_d)
     
 
     ## msg properties
     @property
     def has_embedded_msg(self):
         return type(self.msg) == Message
+
 
     @property
     def messages(self):
