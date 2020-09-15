@@ -388,6 +388,7 @@ class KomradeX(Caller):
             msgs.append(msg)
             if len(msgs)>=topn: break
             # print('!!',post_id,msg.from_whom, msg.to_whom, msg.from_whom is self)
+
         return msgs
 
         # return all messages read?
@@ -494,7 +495,7 @@ class KomradeX(Caller):
         # store -- encrypted!
         posts_downloaded = []
         for post_id,post_encr in res['data_encr'].items():
-            print('storing...',post_id)
+            # print('storing...',post_id)
             self.crypt_keys.set(
                 post_id,
                 post_encr,

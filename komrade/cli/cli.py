@@ -16,6 +16,7 @@ class CLI(Logger):
         'who':'show contacts or info',
         'msg':'write people',
         'check':'check mail',
+        'read':'read mail',
         'verbose':'show/hide log output'
     }
 
@@ -73,10 +74,13 @@ class CLI(Logger):
         HELPSTR = """
     /login [name]     -->  log back in
     /register [name]  -->  new komrade""" + (("""
+    
     /meet [name]      -->  exchange info
     /msg [name] [msg] -->  write to person or group
     /who [name]       -->  show contact info
-    /check            -->  check for new posts""") 
+    
+    /check [inbox]    -->  check for new posts
+    /read [inbox]     -->  read posts""") 
     if self.with_required_login(quiet=True) else "") + """ 
     /help             -->  seek help
 """
@@ -160,8 +164,27 @@ class CLI(Logger):
 
     def check(self,dat):
         if self.with_required_login():
-            res = self.komrade.check_msgs()
-            print('@Operator:',res)
+            res = self.komrade.refresh()
+            if not res['success']:
+                print(f"@Operator: {res['status']}\n")
+            else:
+                unr = res.get('unread',[])
+                inb = res.get('inbox',[])
+                print(f'@Operator: You have {len(unr)} unread messages, with {len(inb)} total in your inbox.\n')
+
+    def read(self,dat):
+        if self.with_required_login():
+            msgs = self.komrade.inbox()
+            if not msgs:
+                print('@Operator: No messages.')
+            else:
+                clear_screen()
+                for i,msg in enumerate(msgs):
+                    print(f'@Operator: Message {i+1} of {len(msgs)}:\n\n')
+                    print(msg)
+                    do_pause()
+                    clear_screen()
+
 
 
 

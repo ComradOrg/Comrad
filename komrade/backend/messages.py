@@ -47,12 +47,16 @@ class Message(Logger):
             msg=b64enc_s(self.msg)
         else:
             msg=self.msg
+
+        fpk=b64enc_s(self.from_pubkey)
+        fpk1,fpk2 = fpk[:len(fpk)//2],fpk[len(fpk)//2:]
+
         return f"""    
     from: @{self.from_name if self.from_name else ''} 
-          ({b64enc_s(self.from_pubkey)})
-    
+          #{b64enc_s(self.from_pubkey)}
+
     to:   @{self.to_name if self.to_name else ''}
-          ({b64enc_s(self.to_pubkey)})
+          #{b64enc_s(self.to_pubkey)}
 
     msg:  {msg}
 """
