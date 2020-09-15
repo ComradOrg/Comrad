@@ -562,7 +562,7 @@ class KomradeX(Caller):
         print('msg_to_op',msg_to_op)
 
         res = self.ring_ring(
-            msg_to_op.msg_d,
+            msg_to_op,
             route='introduce_komrades'
         )
         print('res from op',res)
