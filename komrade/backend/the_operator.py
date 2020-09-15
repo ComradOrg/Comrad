@@ -387,7 +387,12 @@ from_komrade = {from_komrade}
         ).wrap(inbox_new)
         self.log('encrypted inbox new:',inbox_new_encr)
 
-        self.crypt_keys.set(deliver_to,inbox_new_encr,prefix='/inbox/')
+        self.crypt_keys.set(
+            deliver_to,
+            inbox_new_encr,
+            prefix='/inbox/',
+            override=True
+        )
 
         return {'status':'Message delivered.', 'success':True}
 
@@ -417,7 +422,37 @@ from_komrade = {from_komrade}
             'success':True,
             'data_encr':inbox_encr
         }
+    
+    def read_msgs(self,
+            msg_to_op,
+            required_fields = [
+                'secret_login',
+                'name',
+                'pubkey',
+                'post_ids',
+            ]):
 
+        # logged in?
+        login_res = self.login(msg_to_op)
+        if not login_res.get('success'):
+            return login_res
+        
+        # ok, then find the posts?
+        post_ids=msg_to_op.data.get('post_ids',[])
+        if not post_ids: return {'success':False, 'status':'No post_ids specified'}
+        
+        posts = {}
+        for post_id in post_ids:
+            post = self.crypt_keys.get(b64enc(post_id),prefix='/post/')
+            if post:
+                posts[post_id] = post
+        self.log(f'I {self} found {len(posts)} for {msg_to_op.from_name}')
+        
+        return {
+            'status':'Succeeded in getting posts.',
+            'success':True,
+            'data_encr':posts
+        }
 
 def test_op():
     from komrade.backend.the_telephone import TheTelephone

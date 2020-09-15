@@ -347,19 +347,44 @@ class KomradeX(Caller):
         self.log('inbox decrypted:',inbox)
 
         unread = []
-        for post_id in inbox.split(b'\n'):
+        inbox = inbox.split(b'\n')
+        for post_id in inbox:
             if not post_id: continue
-            print('>>',x) 
-            already = self.crypt_keys.get(
-                post_id,
-                prefix='/post/',
-            )
+            print('>>',post_id)
+                 
+            if not self.crypt_keys.get(post_id,prefix='/post/'):
+                unread.append(post_id)
 
-
+        self.log(f'I {self} have {len(unread)} new messages')
+        # print('unread:',unread,len(unread))
         
-        return {'success':'?'}
+        return {
+            'success':True,
+            'status':'Inbox retrieved.',
+            'unread':unread,
+            'inbox':inbox
+        }
 
-    
+    def read_msgs(self,post_ids=[],inbox=None):
+        if not post_ids:
+            # get unerad
+            post_ids = self.check_msgs(inbox).get('unread',[])
+        if not post_ids:
+            return {'success':False,'status':'No messages requested'}
+
+        # ask Op for them
+        msgs = self.ring_ring(
+            {
+                'secret_login':self.secret_login,
+                'name':self.name,
+                'pubkey':self.pubkey.data_b64,
+                'post_ids':post_ids,
+            },
+            route='read_msgs'
+        )
+
+        self.log('got back from op!',msgs)
+        return msgs
 
 def test_register():
     import random
@@ -372,12 +397,14 @@ def test_register():
 
 
 def test_msg():
-    z = comlink('zuck')
-    z.login(passphrase='eee')
+    b = Komrade('bez')
+    b.login()
+
+    print(b.check_msgs())
+
+    # z = Komrade('zuckbot')
     
-    s = comlink('sergey')
-    
-    z.send_msg_to('you ssssssuck')
+    # b.msg(z,'you ssssssuck')
 
 
 def test_loading():
@@ -396,6 +423,22 @@ def test_loading():
     
     # z1.login()
 
+def test_sign():
+    from pythemis import smessage
+
+    b = Komrade('bez')
+    m = Komrade('marx')
+    z = Komrade('zuckbot')
+
+    msg = b'this is cool. --bez'
+
+    signed_msg = smessage.ssign(b.privkey.data, msg)
+
+    print(signed_msg)
+
+    verified_msg = smessage.sverify(b.pubkey.data, signed_msg)
+    print(verified_msg)
+
 
 if __name__=='__main__':
-    test_loading()
+    test_msg()
