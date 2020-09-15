@@ -190,7 +190,7 @@ class CLI(Logger):
             if not res.get('success'):
                 print('@Operator:',res['status'])
                 return
-            msgs=res.get('msg')
+            msgs=res.get('msgs')
             if not msgs:
                 print('@Operator: No messages.')
             else:
