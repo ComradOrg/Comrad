@@ -364,7 +364,11 @@ from_komrade = {from_komrade}
 
         # save new post
         post_id = get_random_binary_id()
-        self.crypt_keys.set(post_id,msg_from_op_b_encr,prefix='/post/')
+        self.crypt_keys.set(
+            post_id,
+            msg_from_op_b_encr,
+            prefix='/post/'
+        )
 
         inbox_old_encr = self.crypt_keys.get(deliver_to,prefix='/inbox/')
         self.log('encrypted inbox old:',inbox_old_encr)
