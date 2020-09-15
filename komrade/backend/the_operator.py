@@ -503,9 +503,14 @@ from_komrade = {from_komrade}
         
         data=msg_to_op.data
 
+        meet_pubkey = self.crypt_keys.get(
+            data.get('meet_name'),
+            '/pubkey/'
+        )
+
         msg = Message(
             {
-                'to_pubkey':data.get('meet_pubkey'),
+                'to_pubkey':meet_pubkey,
                 'to_name':data.get('meet_name'),
                 'from_pubkey':self.uri,
                 'from_name':self.name,
