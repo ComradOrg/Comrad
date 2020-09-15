@@ -377,17 +377,17 @@ class KomradeX(Caller):
             self.uri,
             prefix='/inbox/',
         )
-        if not inbox_encr:
-            return []
+        # if not inbox_encr:
+        #     return []
         
-        inbox = Message(
-            msg=inbox_encr,
-            from_whom=self.op,
-            to_whom=self
-        )
-        print(inbox)
-        inbox.decrypt()
-        print(inbox)
+        # inbox = Message(
+        #     msg=inbox_encr,
+        #     from_whom=self.op,
+        #     to_whom=self
+        # )
+        # print(inbox)
+        # inbox.decrypt()
+        # print(inbox)
     
     def read_msg(self,post_id):
         # get post

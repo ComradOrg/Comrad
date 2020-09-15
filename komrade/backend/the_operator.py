@@ -333,6 +333,7 @@ class TheOperator(Operator):
 
         to_komrade = Komrade(pubkey=deliver_to)
         from_komrade = Komrade(pubkey=deliver_from)
+        deliver_to_b = b64dec(deliver_to)
 
         self.log(f'''Got:
 data = {data}
@@ -380,32 +381,24 @@ from_komrade = {from_komrade}
         inbox_old_encr = self.crypt_keys.get(deliver_to,prefix='/inbox/')
         
         if inbox_old_encr:
-            inbox_as_msg = Message(
-                from_whom=self,
-                msg_d = {
-                    'to':deliver_to,
-                    'msg':inbox_old_encr,
-                }
-            )
-            inbox_as_msg.decrypt()
-            inbox_list = inbox_as_msg.msg
+            inbox_old = SMessage(
+                self.privkey.data,
+                deliver_to_b
+            ).unwrap(inbox_old_encr) #.split(BSEP)
         else:
-            inbox_list = []
-        self.log('reloaded inbox:',inbox_list)
+            inbox_old=b''
+        self.log('reloaded inbox:',inbox_old)
 
         # add new inbox
-        inbox_list.append(post_id)
-        inbox_as_msg = Message(
-            from_whom=self,
-            msg_d = {
-                'to':deliver_to,
-                'msg': inbox_list
-            }
-        )
+        inbox_new = post_id + (BSEP+inbox_old if inbox_old else b'')
+
+        # reencrypt
+        inbox_new_encr = SMessage(
+            self.privkey.data,
+            deliver_to_b
+        ).wrap(inbox_new)
+
         # encrypt
-        inbox_as_msg.encrypt()
-        self.log('new inbox as msg:',inbox_as_msg)
-        inbox_new_encr = inbox_as_msg.msg
         self.log('new inbox encr:',inbox_new_encr)
         # save back to crypt
         self.crypt_keys.set(
