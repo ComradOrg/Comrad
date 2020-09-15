@@ -37,8 +37,8 @@ class CLI(Logger):
             self.help()
 
         if inp:
-            for inpx in inp.split(';'):
-                self.route(inpx)
+            for inpx in inp.split('/'):
+                self.route('/'+inpx.strip())
 
         while True:
             try:
