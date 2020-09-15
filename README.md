@@ -91,9 +91,9 @@ In one line:
 bash <(curl http://komrade.app/run)
 ```
 
-[That's](https://github.com/Komrade/Komrade/blob/master/script/micro_installer) really just a shortcut to this [this auto-installer script](https://github.com/Komrade/Komrade/blob/master/script/install).
+([That's](https://github.com/Komrade/Komrade/blob/master/script/micro_installer) a shortcut to [this auto-installer script](https://github.com/Komrade/Komrade/blob/master/script/install).)
 
-Using pyenv, it installs Komrade in a virtual environment with the correct version (3.7) of Python attached, which doesn't override your existing Python configurations.
+Using pyenv, it installs Komrade in a virtual environment with the correct version (3.7) of Python attached. It doesn't override your existing Python configurations.
 
 ### Run
 

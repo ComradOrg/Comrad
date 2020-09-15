@@ -348,7 +348,13 @@ class KomradeX(Caller):
             prefix='/inbox/',
             override=True
         )
-        
+
+    def inbox(self):
+        inbox_encr = self.crypt_keys.get(
+            self.uri,
+            prefix='/inbox/',
+        )
+
         # decrypt inbox?
         inbox = SMessage(
             self.privkey.data,
@@ -358,7 +364,7 @@ class KomradeX(Caller):
 
         # find the unread ones
         unread = []
-        inbox = inbox.split(b'\n')
+        inbox = inbox.split(BSEP)
         for post_id in inbox:
             if not post_id: continue
             if not self.crypt_keys.get(post_id,prefix='/post/'):
@@ -371,23 +377,6 @@ class KomradeX(Caller):
             'unread':unread,
             'inbox':inbox
         }
-
-    def inbox(self):
-        inbox_encr = self.crypt_keys.get(
-            self.uri,
-            prefix='/inbox/',
-        )
-        # if not inbox_encr:
-        #     return []
-        
-        # inbox = Message(
-        #     msg=inbox_encr,
-        #     from_whom=self.op,
-        #     to_whom=self
-        # )
-        # print(inbox)
-        # inbox.decrypt()
-        # print(inbox)
     
     def read_msg(self,post_id):
         # get post
