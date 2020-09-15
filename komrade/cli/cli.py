@@ -183,7 +183,7 @@ class CLI(Logger):
             else:
                 clear_screen()
                 for i,msg in enumerate(msgs):
-                    print(f'@Operator: Showing most recent messages first.\n\n    Message {i+1} of {len(msgs)}')
+                    print(f'@Operator: Showing most recent messages first.\n\n\n    Message {i+1} of {len(msgs)}')
                     print(msg)
                     do_pause()
                     clear_screen()
