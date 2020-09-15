@@ -367,7 +367,7 @@ class KomradeX(Caller):
         inbox=inbox_status.get('inbox',[])
         
         # download new messages
-        self.download_msgs(post_ids = unread)
+        self.download_msgs(post_ids = inbox)
 
         return {
             'success':True,
