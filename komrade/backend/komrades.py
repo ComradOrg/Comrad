@@ -385,6 +385,11 @@ class KomradeX(Caller):
             except ThemisError as e:
                 self.log(f'!! Could not decrypt post {post_id}')
                 continue
+            
+            if not msg.from_name or not msg.from_pubkey:
+                self.log('!! Invalid sender info!')
+                continue
+
             msgs.append(msg)
             if len(msgs)>=topn: break
             # print('!!',post_id,msg.from_whom, msg.to_whom, msg.from_whom is self)
