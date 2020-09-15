@@ -184,6 +184,8 @@ class CLI(Logger):
                 print(f'@Operator: You have {len(unr)} unread messages, with {len(inb)} total in your inbox.\n')
 
     def prompt_adduser(self,msg):
+        print('prompt got:',msg)
+        print(msg.data)
         do_adduser = input(f'''\n\nAdd this user's public key to your addressbook? [Y/n]\n{self.komrade}: ''')
         do_senduser = input(f'''\n\nSend this user your public key as well? [Y/n]\n{self.komrade}: ''')
 
