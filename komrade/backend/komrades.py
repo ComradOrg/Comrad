@@ -397,7 +397,7 @@ class KomradeX(Caller):
     def inbox(self,topn=100,only_unread=False,delete_malformed=False):
         # refreshing inbox
         res = self.refresh()
-        print('got from refresh',res)
+        # print('got from refresh',res)
         if not res['success']: return res
         
         boxname = 'inbox' if not only_unread else 'unread'
@@ -408,7 +408,7 @@ class KomradeX(Caller):
             malformed = False
             try:
                 res = self.read_msg(post_id)
-                print('GOT FROM READ_MSG',res)
+                # print('GOT FROM READ_MSG',res)
             except ThemisError as e:
                 print(f'!! Could not decrypt post {post_id}')
                 malformed = True
@@ -426,6 +426,7 @@ class KomradeX(Caller):
                 malformed = True
 
             if not malformed:
+                print('good msg:',msg)
                 msgs.append(msg)
             else:
                 post_ids_malformed.append(post_id)
