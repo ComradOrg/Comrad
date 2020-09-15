@@ -394,7 +394,7 @@ class KomradeX(Caller):
             inbox_ids.remove(post_id)
         self.save_inbox(inbox_ids)
 
-    def inbox(self,topn=100,only_unread=False,delete_malformed=True):
+    def inbox(self,topn=100,only_unread=False,delete_malformed=False):
         # refreshing inbox
         res = self.refresh()
         if not res['success']: return res
@@ -407,11 +407,11 @@ class KomradeX(Caller):
             try:
                 msg = self.read_msg(post_id)
             except ThemisError as e:
-                self.log(f'!! Could not decrypt post {post_id}')
+                print(f'!! Could not decrypt post {post_id}')
                 malformed = True
             
             if not msg.from_name or not msg.from_pubkey:
-                self.log('!! Invalid sender info!')
+                print('!! Invalid sender info!')
                 malformed = True
 
             if not malformed:
