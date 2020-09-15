@@ -533,28 +533,53 @@ from_komrade = {from_komrade}
         )
         self.log('found in crypt:',meet_pubkey)
 
-        msg = Message(
+        # msg = Message(
+        #     {
+        #         'to':meet_pubkey,
+        #         'to_name':data.get('meet_name'),
+        #         'from':self.uri,
+        #         'from_name':self.name,
+
+        #         'msg': {
+        #             'type':'introdution',
+
+        #             'status':f'''Komrade {data.get("name")} would like to make your acquaintance. Their public key is {data.get("pubkey")}.''',
+
+        #             'meet_name': data.get('name'),
+
+        #             'meet_pubkey': data.get('pubkey')
+        #         }
+        #     }
+        # )
+        meet_name = data.get('meet_name')
+        enclosed_msg_from_op = Message(
             {
                 'to':meet_pubkey,
-                'to_name':data.get('meet_name'),
+                'to_name':meet_name,
                 'from':self.uri,
                 'from_name':self.name,
-
-                'msg': {
-                    'type':'introdution',
-
-                    'status':f'''Komrade {data.get("name")} would like to make your acquaintance. Their public key is {data.get("pubkey")}.''',
-
-                    'meet_name': data.get('name'),
-
-                    'meet_pubkey': data.get('pubkey')
-                }
+                'msg':f''''Komrade @{meet_name} would like to make your acquaintance. Their public key is {meet_pubkey}. Their QRcode is:\n{self.qr_str(meet_pubkey)}.''',
+                'msg_type':'prompt'
             }
         )
-        msg.encrypt()
-        self.log('formed msg:',msg)
+        self.log('enclosed msg from op:',enclosed_msg_from_op)
+        
+        ## 
+        enclosed_msg_from_op.encrypt()
 
-        return self.actually_deliver_msg(msg)
+        ## meta msg from op
+        msg_from_op=Message(
+            {
+                'to':meet_pubkey,
+                'to_name':meet_name,
+                'from':self.uri,
+                'from_name':self.name,
+                'msg':enclosed_msg_from_op.msg,
+            }
+        )
+        msg_from_op.encrypt()
+        self.log('formed msg:',msg_from_op)
+        return self.actually_deliver_msg(msg_from_op)
 
 
 def test_op():
