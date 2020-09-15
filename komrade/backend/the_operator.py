@@ -474,9 +474,11 @@ from_komrade = {from_komrade}
         
         posts = {}
         for post_id in post_ids:
+            
             post = self.crypt_keys.get(b64enc(post_id),prefix='/post/')
             if post:
                 posts[post_id] = post
+            self.log('looking for:',post_id,post)
         self.log(f'I {self} found {len(posts)} for {msg_to_op.from_name}')
 
         # delete?
