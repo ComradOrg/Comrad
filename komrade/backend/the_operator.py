@@ -579,15 +579,17 @@ from_komrade = {from_komrade}
         # )
         meet_uri = b64enc(meet_pubkey)
         msg_from_op = Message(
-            from_whom=self,
             msg_d = {
                 'to':meet_uri,
                 'to_name':meet_name,
+
+                'from':self.uri,
+                'from_name':self.name
                 
                 'msg':{
                     
                     'to':meet_uri,
-                    'to_name':meet_name,('deliver_to_name'),
+                    'to_name':meet_name,
 
                     'from':self.uri,
                     'from_name':self.name
