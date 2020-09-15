@@ -440,9 +440,10 @@ def test_register():
 
 def test_msg():
     b = Komrade('bez')
-    b.login()
+    b.read_msg(b'YWY3NDUxZjNjYjdhNDFmNmIyNDI2NzU3YTI4ZTA0OWM=')
+    #b.login()
 
-    print(b.download_msgs())
+    #print(b.download_msgs())
 
     # z = Komrade('zuckbot')
     
