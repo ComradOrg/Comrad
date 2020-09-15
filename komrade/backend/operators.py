@@ -47,7 +47,7 @@ def Komrade(name=None,pubkey=None,*x,**y):
 
 
 
-from komrade.constants import OPERATOR_ROUTES
+# from komrade.constants import OPERATOR_ROUTES
 class Operator(Keymaker):
     ROUTES = [
         'register_new_user',
