@@ -429,6 +429,8 @@ class KomradeX(Caller):
             if len(msgs)>=topn: break
             # print('!!',post_id,msg.from_whom, msg.to_whom, msg.from_whom is self)
 
+        print(msgs)
+        stop
         if delete_malformed:
             self.delete_msgs(post_ids_malformed)
 
