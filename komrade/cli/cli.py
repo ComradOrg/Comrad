@@ -183,7 +183,7 @@ class CLI(Logger):
             else:
                 clear_screen()
                 for i,msg in enumerate(msgs):
-                    print(f'@Operator: Message {i+1} of {len(msgs)}:\n\n')
+                    print(f'@Operator:\n    Message {i+1} of {len(msgs)}')
                     print(msg)
                     do_pause()
                     clear_screen()
