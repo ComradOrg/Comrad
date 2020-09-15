@@ -416,9 +416,10 @@ class KomradeX(Caller):
             #print(res,'ressss')
             if not res.get('success'):
                 # return res
-                pass
+                continue
 
             msg=res.get('msg')
+            if not msg: continue
             #print(msg,'?!?!??!')
             # stop
             
