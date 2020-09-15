@@ -415,7 +415,8 @@ class KomradeX(Caller):
 
             #print(res,'ressss')
             if not res.get('success'):
-                return res
+                # return res
+                pass
 
             msg=res.get('msg')
             #print(msg,'?!?!??!')
