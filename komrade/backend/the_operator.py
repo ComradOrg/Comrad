@@ -461,7 +461,7 @@ from_komrade = {from_komrade}
                 'pubkey',
                 'post_ids',
             ],
-            delete_afterward=True):
+            delete_afterward=False):
 
         # logged in?
         login_res = self.login(msg_to_op)
