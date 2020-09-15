@@ -387,6 +387,7 @@ from_komrade = {from_komrade}
             msg_from_op_b_encr,
             prefix='/post/'
         )
+        self.log(f'put {msg_from_op} in {post_id}')
 
         # get inbox
         inbox_old_encr = self.crypt_keys.get(deliver_to,prefix='/inbox/')
