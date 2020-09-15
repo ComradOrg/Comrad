@@ -394,7 +394,8 @@ class KomradeX(Caller):
                 post_id,
                 prefix='/post/'
             )
-            inbox_ids.remove(post_id)
+            if post_id in inbox_ids:
+                inbox_ids.remove(post_id)
         self.save_inbox(inbox_ids)
 
     def inbox(self,topn=100,only_unread=False,delete_malformed=False):
