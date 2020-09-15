@@ -204,14 +204,14 @@ class CLI(Logger):
         if do_senduser:
             print('returning the invitation ...')
             res = self.komrade.meet(meet_name,returning=True)
-            print('got from meeting:',res)
+            # print('got from meeting:',res)
 
     def prompt_msg(self,msg):
         do = input(f'\n\n@Operator: Type "r" to reply, "d" to delete, or just hit Enter to continue.\n{self.komrade}: ')
 
         do=do.strip().lower()
         if do=='d':
-            print('del',msg.post_id)
+            # print('del',msg.post_id)
             self.komrade.delete_msg(msg.post_id)
         elif do=='r':
             print('@todo: replying...')
