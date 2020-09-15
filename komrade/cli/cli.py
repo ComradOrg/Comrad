@@ -217,7 +217,7 @@ class CLI(Logger):
                 for i,msg in enumerate(msgs):
                     print(f'@Operator: Showing most recent messages first.\n\n\n  Message {i+1} of {len(msgs)}')
                     print(msg)
-                    print('DATA',msg.data)
+                    print('DATA',msg.msg_d)
                     if msg.data.get('prompt_id')=='addcontact':
                         self.prompt_adduser(msg)
                     else:
