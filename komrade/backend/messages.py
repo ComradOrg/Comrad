@@ -17,8 +17,6 @@ def is_valid_msg_d(msg_d):
 class Message(Logger):
     def __init__(self,msg_d={},from_whom=None,to_whom=None,msg=None):
         # check input
-        if not is_valid_msg_d(msg_d):
-            raise KomradeException('This is not a valid msg_d:',msg_d)
         self.msg_d=msg_d
         self.to_name=msg_d.get('to_name') if not to_whom else to_whom.name
         self.to_pubkey=msg_d.get('to') if not to_whom else to_whom.uri
@@ -28,6 +26,14 @@ class Message(Logger):
         self._route=msg_d.get(ROUTE_KEYNAME)
         self._is_encrypted=None
 
+        # reset msg_d
+        self.msg_d = {
+            'msg':self.msg,
+            'to':self.to_pubkey,
+            'to_name':self.to_name,
+            'from':self.from_pubkey,
+            'from_name':self.from_name
+        }
 
     def __repr__(self):
         # self.log('my type??',type(self.msg),self.msg)

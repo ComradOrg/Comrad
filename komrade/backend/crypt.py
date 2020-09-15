@@ -11,7 +11,7 @@ import zlib
 
 
 
-LOG_GET_SET = 1
+LOG_GET_SET = 0
 
 
 
@@ -120,14 +120,14 @@ class Crypt(Logger):
 
     def set(self,k,v,prefix='',override=False):
         if self.has(k,prefix=prefix) and not override:
-            self.log(f"I'm afraid I can't let you do that, overwrite someone's data!\n\nat {prefix}{k} = {v}")
+            #self.log(f"I'm afraid I can't let you do that, overwrite someone's data!\n\nat {prefix}{k} = {v}")
             return False #(False,None,None)
         
         k_b=self.package_key(k,prefix=prefix)
         k_b_hash = self.hash(k_b)
         v_b=self.package_val(v)
-        #if not override:
-        self.log(f'''Crypt.set(\n\t{k_b}\n\n\t{k_b_hash}\n\n\t{v_b}\n)''')
+        if not override:
+            self.log(f'''Crypt.set(\n\t{k_b}\n\n\t{k_b_hash}\n\n\t{v_b}\n)''')
         # store
         # stop
         self.store.put(k_b_hash,v_b)
