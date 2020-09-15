@@ -406,6 +406,7 @@ class KomradeX(Caller):
             malformed = False
             try:
                 res = self.read_msg(post_id)
+                print('GOT FROM READ_MSG',res)
             except ThemisError as e:
                 print(f'!! Could not decrypt post {post_id}')
                 malformed = True
