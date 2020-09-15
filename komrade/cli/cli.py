@@ -186,12 +186,13 @@ class CLI(Logger):
     def prompt_adduser(self,msg):
         # print('prompt got:',msg)
         # print(msg.data)
-        do_adduser = input(f'''\n\nAdd this user's public key to your addressbook? [y/N]\n{self.komrade}: ''')
+        meet_name = msg.data.get('meet_name')
+        meet_uri = msg.data.get('meet')    
+        user=msg.data.get()
+        do_adduser = input(f'''\n\nAdd this @{meet_name}'s public key to your address book? [y/N]\n{self.komrade}: ''')
         do_senduser = input(f'''\n\nSend this user your public key as well? [y/N]\n{self.komrade}: ''')
 
         if do_adduser.strip().lower()=='y':
-            meet_name = msg.data.get('meet_name')
-            meet_uri = msg.data.get('meet')
             self.komrade.save_uri_as_qrcode(
                 meet_uri,
                 meet_name
