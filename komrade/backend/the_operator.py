@@ -552,33 +552,53 @@ from_komrade = {from_komrade}
         #     }
         # )
         meet_name = data.get('meet_name')
-        enclosed_msg_from_op = Message(
-            {
-                'to':meet_pubkey,
-                'to_name':meet_name,
-                'from':self.uri,
-                'from_name':self.name,
-                'msg':f''''Komrade @{meet_name} would like to make your acquaintance. Their public key is {meet_pubkey}. Their QRcode is:\n{self.qr_str(meet_pubkey)}.''',
-                'msg_type':'prompt'
-            }
-        )
-        self.log('enclosed msg from op:',enclosed_msg_from_op)
+        # enclosed_msg_from_op = Message(
+        #     {
+        #         'to':meet_pubkey,
+        #         'to_name':meet_name,
+        #         'from':self.uri,
+        #         'from_name':self.name,
+        #         'msg':f''''Komrade @{meet_name} would like to make your acquaintance. Their public key is {meet_pubkey}. Their QRcode is:\n{self.qr_str(meet_pubkey)}.''',
+        #         'msg_type':'prompt'
+        #     }
+        # )
+        # self.log('enclosed msg from op:',enclosed_msg_from_op)
         
-        ## 
-        enclosed_msg_from_op.encrypt()
+        # ## 
+        # enclosed_msg_from_op.encrypt()
 
-        ## meta msg from op
-        msg_from_op=Message(
-            {
-                'to':meet_pubkey,
+        # ## meta msg from op
+        # msg_from_op=Message(
+        #     {
+        #         'to':meet_pubkey,
+        #         'to_name':meet_name,
+        #         'from':self.uri,
+        #         'from_name':self.name,
+        #         'msg':enclosed_msg_from_op.msg_b,
+        #     }
+        # )
+        meet_uri = b64enc(meet_pubkey)
+        msg_from_op = Message(
+            from_whom=self,
+            msg_d = {
+                'to':meet_uri,
                 'to_name':meet_name,
-                'from':self.uri,
-                'from_name':self.name,
-                'msg':enclosed_msg_from_op.msg,
+                
+                'msg':{
+                    
+                    'to':meet_uri,
+                    'to_name':meet_name,('deliver_to_name'),
+
+                    'from':self.uri,
+                    'from_name':self.name
+                    
+                    'msg':f''''Komrade @{meet_name} would like to make your acquaintance. Their public key is {meet_uri}. Their QRcode is:\n{self.qr_str(meet_pubkey)}.''',
+                }
             }
         )
-        msg_from_op.encrypt()
         self.log('formed msg:',msg_from_op)
+        msg_from_op.encrypt()
+        self.log('encrypted formed msg:',msg_from_op)
         return self.actually_deliver_msg(msg_from_op)
 
 
