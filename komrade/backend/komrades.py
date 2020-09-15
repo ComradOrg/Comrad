@@ -374,12 +374,13 @@ class KomradeX(Caller):
     
     def read_msg(self,post_id):
         # get post
-        post = self.crypt_keys.get(post_id,prefix='/post/')
-        if not post:
+        post_encr = self.crypt_keys.get(post_id,prefix='/post/')
+        if not post_encr:
             return {
                 'success':False,
                 'status':'Post not found.'
             }
+        self.log('found encrypted post store:',post_encr)
         
         # it should be twice decrypted
         msg_op2me = Message(
