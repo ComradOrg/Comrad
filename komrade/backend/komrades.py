@@ -405,10 +405,14 @@ class KomradeX(Caller):
         for post_id in post_ids:
             malformed = False
             try:
-                msg = self.read_msg(post_id)
+                res = self.read_msg(post_id)
             except ThemisError as e:
                 print(f'!! Could not decrypt post {post_id}')
                 malformed = True
+
+            if not res.get('success'): return res
+
+            msg=res.get('msg')
             
             if not msg.get('from_name') or not msg.get('from_pubkey'):
                 print('!! Invalid sender info!')
@@ -502,8 +506,11 @@ class KomradeX(Caller):
         msg2me.decrypt()
         self.log('msg2me is now v2',dict_format(msg2me.msg_d))
 
+        return {
+            'success':True,
+            'msg':msg2me
+        }
 
-        return msg2me
 
     
     def download_msgs(self,post_ids=[],inbox=None):
