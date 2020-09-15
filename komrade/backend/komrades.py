@@ -551,8 +551,8 @@ class KomradeX(Caller):
         if not name and not pubkey:
             return {'success':False,'status':'Meet whom?'}
 
-        msg_to_op = self.compose_msg(
-            {
+        msg_to_op = Message(
+            msg={
                 'name':self.name,
                 'secret_login':self.secret_login,
                 'pubkey':self.uri,
@@ -560,7 +560,8 @@ class KomradeX(Caller):
                 'meet_name':name,
                 'meet_pubkey':pubkey
             },
-            self.op
+            to_whom=self.op,
+            from_whom=self
         )
         print('msg_to_op',msg_to_op)
 
