@@ -521,7 +521,7 @@ from_komrade = {from_komrade}
                 }
             }
         )
-        self.log('formed msg:',msg)
+        self.log('formed msg:',msg.msg_d)
 
         return self.actually_deliver_msg(msg)
 
