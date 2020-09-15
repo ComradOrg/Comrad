@@ -392,7 +392,7 @@ class KomradeX(Caller):
             print('deleting post:',post_id)
             self.crypt_keys.delete(
                 post_id,
-                prefix='/post/'
+                prefix='/post/',
             )
             if post_id in inbox_ids:
                 inbox_ids.remove(post_id)

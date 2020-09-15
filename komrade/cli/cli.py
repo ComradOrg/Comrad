@@ -209,6 +209,7 @@ class CLI(Logger):
 
         do=do.strip().lower()
         if do=='d':
+            print('del',msg.post_id)
             self.komrade.delete_msg(msg.post_id)
         elif do=='r':
             print('@todo: replying...')
