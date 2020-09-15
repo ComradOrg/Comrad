@@ -495,13 +495,13 @@ from_komrade = {from_komrade}
             'data_encr':posts
         }
 
-    def introduce_komrades(self,msg_obj):
+    def introduce_komrades(self,msg_to_op):
         # logged in?
         login_res = self.login(msg_to_op)
         if not login_res.get('success'):
             return login_res
         
-        data=msg_obj.data
+        data=msg_to_op.data
 
         msg = Message(
             {
