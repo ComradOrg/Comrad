@@ -445,15 +445,18 @@ class KomradeX(Caller):
         )
 
         # decrypt inbox?
-        inbox = SMessage(
-            self.privkey.data,
-            self.op.pubkey.data
-        ).unwrap(inbox_encr)
-        self.log('inbox decrypted:',inbox)
+        if inbox_encr:
+            inbox = SMessage(
+                self.privkey.data,
+                self.op.pubkey.data
+            ).unwrap(inbox_encr)
+            self.log('inbox decrypted:',inbox)
+            inbox = inbox.split(BSEP)
+        else:
+            inbox=[]
 
         # find the unread ones
         unread = []
-        inbox = inbox.split(BSEP)
         for post_id in inbox:
             if not post_id: continue
             if not self.crypt_keys.get(post_id,prefix='/post/'):
