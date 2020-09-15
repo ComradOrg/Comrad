@@ -551,7 +551,7 @@ from_komrade = {from_komrade}
 
                     
                     'msg':{
-                        'txt':f''''Komrade @{meet_name} would like to make your acquaintance. Their public key is {meet_uri}. Their QRcode is:\n{self.qr_str(meet_pubkey)}.''',
+                        'txt':f'''Komrade @{meet_name} would like to make your acquaintance. Their public key is {meet_uri.decode()}.''',
                         'type':'prompt',
                         'prompt_id':'addcontact',
                         'meet_name':meet_from_name,

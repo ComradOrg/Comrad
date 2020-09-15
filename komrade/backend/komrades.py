@@ -383,6 +383,9 @@ class KomradeX(Caller):
             '/inbox/'
         )
 
+    def delete_msg(self,post_id):
+        return self.delete_msgs([post_id])
+
     def delete_msgs(self,post_ids):
         inbox_ids = self.get_inbox_ids().get('inbox',[])
         for post_id in post_ids:

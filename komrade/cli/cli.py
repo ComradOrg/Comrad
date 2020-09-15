@@ -194,10 +194,11 @@ class CLI(Logger):
         do_senduser = input(f'''\n\nSend this user your public key as well? [y/N]\n{self.komrade}: ''')
 
         if do_adduser.strip().lower()=='y':
-            self.komrade.save_uri_as_qrcode(
+            fnfn = self.komrade.save_uri_as_qrcode(
                 meet_uri,
                 meet_name
             )
+            print(f'@Operator: The public key of @{meet_name} has been saved as a QRcode to {fnfn}. Text version: {self.komrade.qr_str(meet_uri)}')
         if do_senduser:
             print('working on it  ...')
 
@@ -232,8 +233,8 @@ class CLI(Logger):
                     # print('DATA',msg.msg_d)
                     if msg.data.get('prompt_id')=='addcontact':
                         self.prompt_adduser(msg)
-                    else:
-                        do_pause()
+                    
+                    self.propmt_msg()
                     clear_screen()
                 self.help()
 
