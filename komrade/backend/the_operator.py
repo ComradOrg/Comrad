@@ -447,8 +447,12 @@ from_komrade = {from_komrade}
         
         # ok, then find the inbox?
         inbox=msg_to_op.data.get('inbox')
-        if not inbox: inbox=msg_to_op.data.get('pubkey')
-        if not inbox: return {'success':False, 'status':'No inbox specified'}
+        if not inbox:
+            inbox=msg_to_op.data.get('pubkey')
+        if not inbox: 
+            res = {'success':False, 'status':'No inbox specified'}
+            self.log('!!',res)
+            return res
         
         self.log(f'using {inbox} ({b64enc(inbox)}) to get inbox')
         
@@ -457,6 +461,7 @@ from_komrade = {from_komrade}
             b64enc(inbox),
             prefix='/inbox/'
         )
+        self.log('got back inbox encr',inbox_encr)
 
         # fine: here, try this on for size
         res = {
