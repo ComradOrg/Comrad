@@ -449,14 +449,23 @@ from_komrade = {from_komrade}
         inbox=msg_to_op.data.get('inbox')
         if not inbox: inbox=msg_to_op.data.get('pubkey')
         if not inbox: return {'success':False, 'status':'No inbox specified'}
-        inbox_encr = self.crypt_keys.get(b64enc(inbox),prefix='/inbox/')
+        
+        self.log(f'using {inbox} ({b64enc(inbox)}) to get inbox')
+        
+        
+        inbox_encr = self.crypt_keys.get(
+            b64enc(inbox),
+            prefix='/inbox/'
+        )
 
         # fine: here, try this on for size
-        return {
+        res = {
             'status':'Succeeded in getting inbox.',
             'success':True,
             'data_encr':inbox_encr
         }
+        self.log(f'returning from Op.check_msgs --> {res}')
+        return res
     
     def download_msgs(self,
             msg_to_op,
