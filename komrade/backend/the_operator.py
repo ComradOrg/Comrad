@@ -191,7 +191,8 @@ class TheOperator(Operator):
         # secret_login=secret_login.encode() if type(secret_login)==str else secret_login
         # get my records
         # uri = b64enc(pubkey)
-        uri = pubkey
+        uri = b64enc(pubkey)
+        secret_login = b64enc(secret_login)
         name_record = self.crypt_keys.get(
             uri,
             prefix='/name/'
