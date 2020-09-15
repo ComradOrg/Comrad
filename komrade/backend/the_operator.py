@@ -390,7 +390,7 @@ from_komrade = {from_komrade}
         self.log('reloaded inbox:',inbox_old)
 
         # add new inbox
-        inbox_new = post_id #+ (BSEP+inbox_old if inbox_old else b'')
+        inbox_new = post_id + (BSEP+inbox_old if inbox_old else b'')
         self.log('new inbox = ',inbox_new)
 
         # reencrypt
