@@ -185,7 +185,11 @@ class CLI(Logger):
 
     def read(self,dat):
         if self.with_required_login():
-            msgs = self.komrade.inbox()
+            res = self.komrade.inbox()
+            if not res.get('success'):
+                print('@Operator:',res['status'])
+                return
+            msgs=res.get('msg')
             if not msgs:
                 print('@Operator: No messages.')
             else:

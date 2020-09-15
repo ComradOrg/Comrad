@@ -432,7 +432,8 @@ class KomradeX(Caller):
         if delete_malformed:
             self.delete_msgs(post_ids_malformed)
 
-        return msgs
+        return {'success':True,
+        'msgs':msgs}
 
         # return all messages read?
 
