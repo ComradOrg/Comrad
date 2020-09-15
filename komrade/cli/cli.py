@@ -129,6 +129,7 @@ class CLI(Logger):
             self.loggedin=False
             self.komrade=None
         if res and 'status' in res:
+            self.help()
             print('@Operator: '+res.get('status','?')+'\n')
 
     @property

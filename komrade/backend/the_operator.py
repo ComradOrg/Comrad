@@ -239,7 +239,7 @@ class TheOperator(Operator):
         if success:
             return {
                 'success': True,
-                'status':'Login succeeded.'
+                'status':f'Welcome back, Komrade @{name}.'
             }
         else:
             return {
