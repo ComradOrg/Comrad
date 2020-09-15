@@ -388,7 +388,7 @@ from_komrade = {from_komrade}
                 }
             )
             inbox_as_msg.decrypt()
-            inbox_list = pickle.loads(inbox_as_msg.msg)
+            inbox_list = inbox_as_msg.msg
         else:
             inbox_list = []
         self.log('reloaded inbox:',inbox_list)
