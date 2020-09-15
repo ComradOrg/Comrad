@@ -203,7 +203,7 @@ class CLI(Logger):
             print(f'@Operator: The public key of @{meet_name} has been saved as a QRcode to {fnfn}:\n{qrstr}')
         if do_senduser:
             print('returning the invitation ...')
-            self.meet(meet_name,returning=True)
+            self.komrade.meet(meet_name,returning=True)
 
     def prompt_msg(self,msg):
         do = input(f'\n\n@Operator: Type "r" to reply, "d" to delete, or just hit Enter to continue.\n{self.komrade}: ')
