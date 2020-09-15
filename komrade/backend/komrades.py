@@ -380,7 +380,8 @@ class KomradeX(Caller):
         self.crypt_keys.set(
             self.uri,
             BSEP.join(post_ids),
-            '/inbox/'
+            '/inbox/',
+            override=True
         )
 
     def delete_msg(self,post_id):
