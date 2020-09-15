@@ -77,7 +77,7 @@ class Message(Logger):
             if type(msg_d)!=dict: msg_d=None
         if 'msg' in md and type(md['msg']) == dict:
             del md['msg']
-        if ROUTE_KEYNAME in data:
+        if ROUTE_KEYNAME in md:
             del md[ROUTE_KEYNAME]
         return md
 
