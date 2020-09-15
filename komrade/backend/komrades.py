@@ -543,7 +543,7 @@ class KomradeX(Caller):
             route='download_msgs'
         )
 
-        self.log('got back from op!',res)
+        print('got back from op!',res)
         if not 'data_encr' or not res['data_encr'] or type(res['data_encr'])!=dict:
             return {'success':False, 'status':'No valid data returned.'}
 
