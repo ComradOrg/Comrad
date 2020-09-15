@@ -351,13 +351,19 @@ from_komrade = {from_komrade}
         msg_from_op = Message(
             from_whom=self,
             msg_d = {
-                'to':deliver_to,
+                'to':data.get('deliver_to'),
+                'to_name':data.get('deliver_to_name'),
+                
                 'msg':{
-                    'to':deliver_to,
-                    'from':deliver_from,
-                    'msg':deliver_msg,
-                    'status':'Someone (marked "from") would like to send you (marked "to") this message (marked "msg").'
-                }
+                    
+                    'to':data.get('deliver_to'),
+                    'to_name':data.get('deliver_to_name'),
+                    'from':data.get('deliver_from'),
+                    'from_name':data.get('deliver_from_name'),
+                    'msg':data.get('deliver_msg'),
+                },
+
+                'note':'Someone (marked "from") would like to send you (marked "to") this message (marked "msg").'
             }
         )
 

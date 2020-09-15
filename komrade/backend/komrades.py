@@ -305,7 +305,9 @@ class KomradeX(Caller):
         # enclosing
         msg_to_op = {
             'deliver_from':self.pubkey.data_b64,
+            'deliver_from_name':self.name,
             'deliver_to':someone.pubkey.data_b64,
+            'deliver_to_name':someone.name,
             'deliver_msg':direct_msg_data,
         }
 
@@ -391,18 +393,37 @@ class KomradeX(Caller):
         
 
         # it should be twice decrypted
-        msg_op2me = Message(
-            from_whom=Komrade('bez'),
+        msg_op2me_obj = Message(
+            from_whom=self.op,
             to_whom=self,
             msg=post_encr
         )
-        self.log('assuming this is the message:',msg_op2me)
+        self.log('assuming this is the message:',msg_op2me_obj)
 
         # decrypt
-        msg_op2me.decrypt()
+        msg_op2me_obj.decrypt()
 
-        self.log('msg_op2me is now')
-        return msg_op2me
+        # dict to/from/msg
+        msg_op2me = msg_op2me_obj.msg.msg_d
+        self.log('msg_op2me is now',msg_op2me)
+
+        # this really to me?
+        assert msg_op2me.get('to') == self.uri
+
+        # now try to decrypt?
+        msg2me = Message(
+            to_whom=self,
+            msg_d={
+                'from':msg_op2me.get('from'),
+                'msg': msg_op2me.get('msg')
+            }
+        )
+        # self.log('msg2me is now v1',msg2me)
+        msg2me.decrypt()
+        self.log('msg2me is now v2',msg2me.msg)
+
+
+        return msg2me
 
     
     def download_msgs(self,post_ids=[],inbox=None):
