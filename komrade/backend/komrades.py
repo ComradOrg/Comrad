@@ -260,10 +260,10 @@ class KomradeX(Caller):
         self.log('what is type of someoen here?',type(someone))
         return someone
 
-    def meet(self,someone):
-        # get person obj
-        someone = self.find(someone)
-        self.log('got someone =',someone,type(someone))
+    # def meet(self,someone):
+    #     # get person obj
+    #     someone = self.find(someone)
+    #     self.log('got someone =',someone,type(someone))
 
 
     def contacts(self):
@@ -546,31 +546,31 @@ class KomradeX(Caller):
 
 
 
-        ### MEETING PEOLPE
-        def meet(self,name=None,pubkey=None):
-            if not name and not pubkey:
-                return {'success':False,'status':'Meet whom?'}
+    ### MEETING PEOLPE
+    def meet(self,name=None,pubkey=None):
+        if not name and not pubkey:
+            return {'success':False,'status':'Meet whom?'}
 
-            msg_to_op = self.compose_msg(
-                {
-                    'name':self.name,
-                    'secret_login':self.secret_login,
-                    'pubkey':self.uri,
+        msg_to_op = self.compose_msg(
+            {
+                'name':self.name,
+                'secret_login':self.secret_login,
+                'pubkey':self.uri,
 
-                    'meet_name':name,
-                    'meet_pubkey':pubkey
-                },
-                self.op
-            )
-            print('msg_to_op',msg_to_op)
+                'meet_name':name,
+                'meet_pubkey':pubkey
+            },
+            self.op
+        )
+        print('msg_to_op',msg_to_op)
 
-            res = self.ring_ring(
-                msg_to_op,
-                route='introduce_komrades'
-            )
-            print('res from op',res)
+        res = self.ring_ring(
+            msg_to_op,
+            route='introduce_komrades'
+        )
+        print('res from op',res)
 
-            return res
+        return res
 
 
 def test_register():

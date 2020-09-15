@@ -146,14 +146,14 @@ class CLI(Logger):
             return False
         return True
 
-    def meet(self,name):
+    # def meet(self,name):
         
-        if not name:
-            name=input(f'@Operator: To whom would you like to introduce yourself?\n\n@{self.name}: ')
-        if not name: return
+    #     if not name:
+    #         name=input(f'@Operator: To whom would you like to introduce yourself?\n\n@{self.name}: ')
+    #     if not name: return
 
-        # meet?
-        self.komrade.meet(name)
+    #     # meet?
+    #     self.komrade.meet(name)
 
     def meet(self,dat):
         if self.with_required_login():
