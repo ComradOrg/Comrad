@@ -345,22 +345,29 @@ from_komrade = {from_komrade}
 ''')    
 
         ## just deliver?
-        enclosed_msg = {
-            'to':deliver_to,
-            'from':deliver_from,
-            'msg':deliver_msg
-        }
-        msg_from_op = {
-            'to':deliver_to,
-            'from':self.pubkey.data_b64,
-            'msg':enclosed_msg
-        }
-        msg_from_op_b = pickle.dumps(msg_from_op)
+        
+        msg_from_op = Message(
+            {
+                'to':deliver_to,
+                'from':self.uri,
+            
+                'msg':{
+                    'to':deliver_to,
+                    'from':deliver_from,
+                    'msg':deliver_msg,
+                    'status':'Someone (marked "from") would like to send you (marked "to") this message (marked "msg").'
+                }
+            }
+        })
 
-        msg_from_op_b_encr = SMessage(
-            self.privkey.data,
-            b64dec(deliver_to)
-        ).wrap(msg_from_op_b)
+        self.log(f'{self}: Prepared this msg for delivery:\n{msg_from_op}')
+
+        # encrypt
+        msg_from_op.encrypt()
+        
+        msg_from_op_b_encr = msg_from_op.msg_d
+        self.log('got this:',msg_from_op_b_encr)
+        stop
 
         # save new post
         post_id = get_random_binary_id()

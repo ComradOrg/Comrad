@@ -21,7 +21,7 @@ class Message(Logger):
         self.to_name=msg_d.get('to_name') if not to_whom else to_whom.name
         self.to_pubkey=msg_d.get('to') if not to_whom else to_whom.uri
         self.from_name=msg_d.get('from_name') if not from_whom else from_whom.name
-        self.from_pubkey=msg_d.get('from') if not to_whom else to_whom.uri
+        self.from_pubkey=msg_d.get('from') if not from_whom else from_whom.uri
         self.msg=msg_d.get('msg') if not msg else msg
         self._route=msg_d.get(ROUTE_KEYNAME)
         self._is_encrypted=None
@@ -118,7 +118,6 @@ class Message(Logger):
             self.to_whom.privkey.data,
             b64dec(self.from_pubkey)
         ).unwrap(self.msg)
-        # self.log('Am I decrypted?',self)
 
         # unpickle        
         self.msg = self.msg_d['msg'] = decr_msg = pickle.loads(decr_msg_b)

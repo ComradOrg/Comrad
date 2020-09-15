@@ -371,6 +371,23 @@ class KomradeX(Caller):
             'unread':unread,
             'inbox':inbox
         }
+
+    def inbox(self):
+        inbox_encr = self.crypt_keys.get(
+            self.uri,
+            prefix='/inbox/',
+        )
+        if not inbox_encr:
+            return []
+        
+        inbox = Message(
+            msg=inbox_encr,
+            from_whom=self.op,
+            to_whom=self
+        )
+        print(inbox)
+        inbox.decrypt()
+        print(inbox)
     
     def read_msg(self,post_id):
         # get post
@@ -380,7 +397,7 @@ class KomradeX(Caller):
                 'success':False,
                 'status':'Post not found.'
             }
-        self.log('found encrypted post store:',pickle.loads(post_encr))
+        self.log('found encrypted post store:',post_encr)
         
 
         # it should be twice decrypted
@@ -442,7 +459,8 @@ def test_register():
 
 def test_msg():
     b = Komrade('bez')
-    b.read_msg(b'YWY3NDUxZjNjYjdhNDFmNmIyNDI2NzU3YTI4ZTA0OWM=')
+    b.inbox()
+    # b.read_msg(b'YWY3NDUxZjNjYjdhNDFmNmIyNDI2NzU3YTI4ZTA0OWM=')
     #b.login()
 
     #print(b.download_msgs())
