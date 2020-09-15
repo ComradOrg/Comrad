@@ -395,6 +395,7 @@ class KomradeX(Caller):
                 prefix='/post/',
             )
             print(post_id),inbox_ids,post_id in inbox_ids
+            stop
             if post_id in inbox_ids:
                 inbox_ids.remove(post_id)
         self.save_inbox(inbox_ids)
