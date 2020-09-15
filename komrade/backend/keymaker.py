@@ -366,6 +366,10 @@ class Keymaker(Logger):
             self._uri_id = pubkey.data_b64
         return self._uri_id
 
+    @property
+    def uri(self):
+        return self.uri_id
+
     ### BASE STORAGE
     @property
     def crypt_keys(self):

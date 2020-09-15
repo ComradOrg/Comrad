@@ -423,7 +423,7 @@ from_komrade = {from_komrade}
             'data_encr':inbox_encr
         }
     
-    def read_msgs(self,
+    def download_msgs(self,
             msg_to_op,
             required_fields = [
                 'secret_login',

@@ -15,16 +15,16 @@ def is_valid_msg_d(msg_d):
 
 
 class Message(Logger):
-    def __init__(self,msg_d,from_whom=None,to_whom=None,embedded_msg=None,is_encrypted=False):
+    def __init__(self,msg_d={},from_whom=None,to_whom=None,msg=None):
         # check input
         if not is_valid_msg_d(msg_d):
             raise KomradeException('This is not a valid msg_d:',msg_d)
         self.msg_d=msg_d
-        self.to_name=msg_d.get('to_name')
-        self.to_pubkey=msg_d.get('to')
-        self.from_name=msg_d.get('from_name')
-        self.from_pubkey=msg_d.get('from')
-        self.msg=msg_d.get('msg')
+        self.to_name=msg_d.get('to_name') if not to_whom else to_whom.name
+        self.to_pubkey=msg_d.get('to') if not to_whom else to_whom.uri
+        self.from_name=msg_d.get('from_name') if not from_whom else from_whom.name
+        self.from_pubkey=msg_d.get('from') if not to_whom else to_whom.uri
+        self.msg=msg_d.get('msg') if not msg else msg
         self._route=msg_d.get(ROUTE_KEYNAME)
         self._is_encrypted=None
 

@@ -328,7 +328,7 @@ class KomradeX(Caller):
         msg = {
             'secret_login':self.secret_login,
             'name':self.name,
-            'pubkey':self.pubkey.data_b64,
+            'pubkey':self.uri,
             'inbox':inbox
         }
         self.log('sending msg to op:',msg)
@@ -336,36 +336,67 @@ class KomradeX(Caller):
         res = self.ring_ring(msg,route='check_msgs')
         self.log('got back response:',res)
 
-        # # decrypt?
+        # decrypt?
         if not res.get('data_encr'):
             return {'success':False, 'status':'No data'} 
+        inbox_encr = res['data_encr']
+
+        # overwrite my local inbox with encrypted one from op?
+        self.crypt_keys.set(
+            self.uri,
+            inbox_encr,
+            prefix='/inbox/',
+            override=True
+        )
         
+        # decrypt inbox?
         inbox = SMessage(
             self.privkey.data,
             self.op.pubkey.data
-        ).unwrap(res['data_encr'])
+        ).unwrap(inbox_encr)
         self.log('inbox decrypted:',inbox)
 
+        # find the unread ones
         unread = []
         inbox = inbox.split(b'\n')
         for post_id in inbox:
             if not post_id: continue
-            print('>>',post_id)
-                 
             if not self.crypt_keys.get(post_id,prefix='/post/'):
                 unread.append(post_id)
 
-        self.log(f'I {self} have {len(unread)} new messages')
-        # print('unread:',unread,len(unread))
-        
+        self.log(f'I {self} have {len(unread)} new messages')        
         return {
             'success':True,
             'status':'Inbox retrieved.',
             'unread':unread,
             'inbox':inbox
         }
+    
+    def read_msg(self,post_id):
+        # get post
+        post = self.crypt_keys.get(post_id,prefix='/post/')
+        if not post:
+            return {
+                'success':False,
+                'status':'Post not found.'
+            }
+        
+        # it should be twice decrypted
+        msg_op2me = Message(
+            from_whom=self.op,
+            to_whom=self,
+            msg=post_encr
+        )
+        self.log('assuming this is the message:',msg_op2me)
 
-    def read_msgs(self,post_ids=[],inbox=None):
+        # decrypt
+        msg_op2me.decrypt()
+
+        self.log('msg_op2me is now')
+        return msg_op2me
+
+    
+    def download_msgs(self,post_ids=[],inbox=None):
         if not post_ids:
             # get unerad
             post_ids = self.check_msgs(inbox).get('unread',[])
@@ -373,17 +404,28 @@ class KomradeX(Caller):
             return {'success':False,'status':'No messages requested'}
 
         # ask Op for them
-        msgs = self.ring_ring(
+        res = self.ring_ring(
             {
                 'secret_login':self.secret_login,
                 'name':self.name,
-                'pubkey':self.pubkey.data_b64,
+                'pubkey':self.uri,
                 'post_ids':post_ids,
             },
-            route='read_msgs'
+            route='download_msgs'
         )
 
-        self.log('got back from op!',msgs)
+        self.log('got back from op!',res)
+        if not 'data_encr' or not res['data_encr'] or type(res['data_encr'])!=dict:
+            return {'success':False, 'status':'No valid data returned.'}
+
+        # store -- encrypted!
+        for post_id,post_encr in res['data_encr'].items():
+            print('storing...',post_id)
+            self.crypt_keys.set(
+                post_id,
+                post_encr,
+                prefix='/post/'
+            )
         return msgs
 
 def test_register():
@@ -400,7 +442,7 @@ def test_msg():
     b = Komrade('bez')
     b.login()
 
-    print(b.read_msgs())
+    print(b.download_msgs())
 
     # z = Komrade('zuckbot')
     
