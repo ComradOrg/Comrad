@@ -386,7 +386,7 @@ class KomradeX(Caller):
     def delete_msgs(self,post_ids):
         inbox_ids = self.get_inbox_ids().get('inbox',[])
         for post_id in post_ids:
-            self.log('deleting post:',post_id)
+            print('deleting post:',post_id)
             self.crypt_keys.delete(
                 post_id,
                 prefix='/post/'
@@ -543,6 +543,35 @@ class KomradeX(Caller):
             'status':'Messages downloaded',
             'downloaded':posts_downloaded,
         }
+
+
+
+        ### MEETING PEOLPE
+        def meet(self,name=None,pubkey=None):
+            if not name and not pubkey:
+                return {'success':False,'status':'Meet whom?'}
+
+            msg_to_op = self.compose_msg(
+                {
+                    'name':self.name,
+                    'secret_login':self.secret_login,
+                    'pubkey':self.uri,
+
+                    'meet_name':name,
+                    'meet_pubkey':pubkey
+                },
+                self.op
+            )
+            print('msg_to_op',msg_to_op)
+
+            res = self.ring_ring(
+                msg_to_op,
+                route='introduce_komrades'
+            )
+            print('res from op',res)
+
+            return res
+
 
 def test_register():
     import random

@@ -155,6 +155,13 @@ class CLI(Logger):
         # meet?
         self.komrade.meet(name)
 
+    def meet(self,dat):
+        if self.with_required_login():
+            name_or_pubkey = dat.strip().split()[0]
+            res = self.komrade.meet(name_or_pubkey)
+            print('@Operator:',res)
+
+
     def msg(self,dat):
         if self.with_required_login():
             name_or_pubkey,msg = dat.split(' ',1)
@@ -164,6 +171,7 @@ class CLI(Logger):
                 msg
             )
             self.log(f'Sent msg obj to {name_or_pubkey}: {msg_obj}')
+            print(f'@Operator: Message successfully sent to @{name_or_pubkey}.\n')
 
     def refresh(self,dat):
         if self.with_required_login():
