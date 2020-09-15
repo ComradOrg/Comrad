@@ -203,7 +203,8 @@ class CLI(Logger):
             print(f'@Operator: The public key of @{meet_name} has been saved as a QRcode to {fnfn}:\n{qrstr}')
         if do_senduser:
             print('returning the invitation ...')
-            self.komrade.meet(meet_name,returning=True)
+            res = self.komrade.meet(meet_name,returning=True)
+            print('got from meeting:',res)
 
     def prompt_msg(self,msg):
         do = input(f'\n\n@Operator: Type "r" to reply, "d" to delete, or just hit Enter to continue.\n{self.komrade}: ')
@@ -220,7 +221,7 @@ class CLI(Logger):
     def read(self,dat):
         if self.with_required_login():
             res = self.komrade.inbox()
-            print('got from read res:',res)
+            # print('got from read res:',res)
             if not res.get('success'):
                 print('@Operator:',res['status'])
                 return
