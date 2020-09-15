@@ -119,8 +119,8 @@ class Crypt(Logger):
 
 
     def set(self,k,v,prefix='',override=False):
-        if self.has(k,prefix=prefix): # and not override:
-            # self.log(f"I'm afraid I can't let you do that, overwrite someone's data!\n\nat {prefix}{k} = {v}")
+        if self.has(k,prefix=prefix) and (not override or self.name!=OPERATOR_NAME):
+            self.log(f"I'm afraid I can't let you do that, overwrite someone's data!\n\nat {prefix}{k} = {v}")
             return False #(False,None,None)
         
         k_b=self.package_key(k,prefix=prefix)
