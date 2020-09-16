@@ -112,7 +112,7 @@ class KomradeX(Caller):
 
         ### PUBLIC KEY
         qr_str=self.qr_str(pubkey.data_b64)
-        logfunc('(1) You may store your public key both on your device hardware, as well as share it with anyone you wish.\n\nIt will even be stored as a QR code on your device:\n{qr_str}',pause=True)
+        logfunc(f'(1) You may store your public key both on your device hardware, as well as share it with anyone you wish. As a binary string, it is:\n\n{pubkey.data_b64_s}\n\nIt will also be stored as a QR code on your device:\n{qr_str}',pause=True)
         log('You must also register it with Komrade @Operator on the remote server. Shall Komrade @Telephone send it over?',pause=True,clear=False)#),dict_format(data,tab=2),pause=True)
         ok_to_send = input(f'Komrade @{name}: [Y/n]')
         if ok_to_send.strip().lower()=='n':
