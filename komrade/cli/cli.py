@@ -66,15 +66,17 @@ class CLI(Logger):
             except KomradeException as e:
                 self.stat('Message not sent.',e,'\n')
 
-    def stat(self,*msgs,use_prefix=True,prefix=None,komrade_name=None,pause=False,clear=False,**kwargs):
+    def stat(self,*msgs,use_prefix=True,prefix=None,komrade_name=None,pause=False,clear=False,min_prefix_len=19,**kwargs):
         if not prefix:
             if not komrade_name: komrade_name='Operator'
             prefix='Komrade @'+komrade_name+': '
-        blank=' '*len(prefix)
+        blank=' '*(len(prefix) if len(prefix)>min_prefix_len else min_prefix_len)
         total_msg=[]
         for i,msg in enumerate(msgs):
             msg=msg.replace('\r\n','\n').replace('\r','\n')
             for ii,ln in enumerate(msg.split('\n')):
+                if not ln:
+                    total_msg+=['']
                 ln_wrap=tw.wrap(ln,CLI_WIDTH-len(prefix))
                 for iii,lnw in enumerate(ln_wrap):
                     prfx=prefix if (not i and not ii and not iii and use_prefix) else blank
