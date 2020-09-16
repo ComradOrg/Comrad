@@ -485,7 +485,7 @@ from_komrade = {from_komrade}
                 'pubkey',
                 'post_ids',
             ],
-            delete_afterward=False):
+            delete_afterward=True):
 
         # logged in?
         login_res = self.login(msg_to_op)
@@ -506,20 +506,67 @@ from_komrade = {from_komrade}
         self.log(f'I {self} found {len(posts)} for {msg_to_op.from_name}')
 
         # delete?
-        if delete_afterward:
-            # @hack: this a bit dangerous?
-            for post_id in posts:
-                self.crypt_keys.delete(
-                    post_id,
-                    prefix='/post/'
-                )
-                self.log('deleting post id',post_id,'...')
-        
-        return {
+        res = {
             'status':'Succeeded in downloading new messages.' + (' I\'ve already deleted these messages from the server.' if delete_afterward else ''),
             'success':True,
             'data_encr':posts
         }
+
+        # delete?
+        if delete_afterward:
+            res['res_delete_msgs'] = self.delete_msgs(
+                post_ids,
+                inbox_uri = b64enc(
+                    msg_to_op.data.get('pubkey')
+                )
+            )
+        
+        # show res
+        self.log('->',res)
+        return res
+        
+        
+
+    def delete_msgs(self,post_ids,inbox_uri=None):
+        # @hack: this a bit dangerous?
+        for post_id in post_ids:
+            self.crypt_keys.delete(
+                post_id,
+                prefix='/post/'
+            )
+            self.log('deleting post id',post_id,'...')
+
+        # if inbox, remove these posts from it
+        if inbox_uri:
+            # unwrap
+            inbox_encr = self.crypt_keys.get(
+                inbox_uri,
+                prefix='/inbox/'
+            )
+            inbox = SMessage(
+                self.privkey.data,
+                b64dec(inbox_uri)
+            ).unwrap(inbox_encr)
+            self.log('unwrapped inbox_encr:',inbox)
+            inbox_l = inbox.split(BSEP)
+            self.log('length v1:',len(inbox_l))
+
+            # alter
+            inbox_l = [pid for pid in inbox_l if pid not in post_ids]
+            self.log('length v2:',len(inbox_l))
+            
+            # rewrap
+            inbox = inbox_l.split(BSEP)
+            inbox_encr = SMessage(
+                self.privkey.data,
+                b64dec(inbox_uri)
+            ).wrap(inbox)
+
+        return {
+            'success':True,
+            'deleted':post_ids,
+        }
+
 
     def introduce_komrades(self,msg_to_op):
         # # logged in?

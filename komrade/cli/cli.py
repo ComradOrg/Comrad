@@ -337,15 +337,18 @@ class CLI(Logger):
             else:
                 clear_screen()
                 for i,msg in enumerate(msgs):
-                    self.stat(f'Showing message {i+1} of {len(msgs)}.')
-                    print()
-                    print(msg)
-                    # self.print('DATA',msg.msg_d)
-                    if msg.data.get('prompt_id')=='addcontact':
-                        self.prompt_adduser(msg)
-                    
-                    self.prompt_msg(msg)
-                    clear_screen()
+                    try:
+                        self.stat(f'Showing message {i+1} of {len(msgs)}, from newest to oldest. Hit Ctrl+D to exit.')
+                        print()
+                        print(msg)
+                        # self.print('DATA',msg.msg_d)
+                        if msg.data.get('prompt_id')=='addcontact':
+                            self.prompt_adduser(msg)
+                        
+                        self.prompt_msg(msg)
+                        clear_screen()
+                    except EOFError:
+                        break
                 self.help()
 
 

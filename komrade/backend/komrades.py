@@ -390,19 +390,32 @@ class KomradeX(Caller):
         self.log('->',res)
         return res
 
-    def save_inbox(self,post_ids):
-        self.crypt_keys.set(
-            self.uri,
-            BSEP.join(post_ids),
-            '/inbox/',
+    def save_inbox(self,
+            post_ids,
+            uri=None,
+            encrypted=False):
+        self.log('<-',post_ids)
+        newval = BSEP.join(post_ids)
+        
+        res = self.crypt_keys.set(
+            self.uri if not uri else uri,
+            newval,
+            prefix='/inbox/',
             override=True
         )
+        assert newval == self.crypt_keys.get(
+            self.uri,
+            prefix='/inbox/'
+        )
+        self.log('->',res)
+        return res
 
     def delete_msg(self,post_id):
         return self.delete_msgs([post_id])
 
     def delete_msgs(self,post_ids):
-        #inbox_ids = self.get_inbox_ids().get('inbox',[])
+        inbox_ids = self.get_inbox_ids().get('inbox',[])
+        #print(inbox_ids,'v1',len(inbox_ids))
         deleted=[]
         for post_id in post_ids:
             #print('deleting post:',post_id)
@@ -411,16 +424,22 @@ class KomradeX(Caller):
                 prefix='/post/',
             )
             deleted+=[post_id]
-        return {
+        
+            #print(post_id,inbox_ids,post_id in inbox_ids,'???')
+            # stop
+            if post_id in inbox_ids:
+                print('removing from inbox...')
+                inbox_ids.remove(post_id)
+        self.save_inbox(inbox_ids)
+        #print(inbox_ids,'v2',len(inbox_ids))
+
+        res= {
             'success':not bool(set(post_ids) - set(deleted)),
             'status':f'Deleted {len(deleted)} messages.',
             'deleted':deleted
         }
-            # print(post_id,inbox_ids,post_id in inbox_ids,'???')
-            # stop
-            #if post_id in inbox_ids:
-            #    inbox_ids.remove(post_id)
-        #self.save_inbox(inbox_ids)
+        self.log('delete_msgs ->',res)
+        return res
 
     def inbox(self,topn=100,only_unread=False,delete_malformed=False):
         # refreshing inbox
@@ -606,6 +625,18 @@ class KomradeX(Caller):
         if not name and not pubkey:
             return {'success':False,'status':'Meet whom?'}
 
+
+        keystr=self.name+'->'+name
+
+        if self.crypt_keys.get(
+            keystr,
+            prefix='/met/'
+        ):
+            return {
+                'success':False,
+                'status':f'You have already sent an introduction to @{name}. It would be rude to send another.'
+            }
+
         msg_to_op = {
             'name':self.name,
             'secret_login':self.secret_login,
@@ -622,6 +653,13 @@ class KomradeX(Caller):
             route='introduce_komrades'
         )
         # print('res from op',res)
+
+        # record that I've already tried this
+        self.crypt_keys.set(
+            keystr,
+            b'y',
+            prefix='/met/'
+        )
 
         return res
 
