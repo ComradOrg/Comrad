@@ -242,12 +242,13 @@ class TheOperator(Operator):
         if success:
             return {
                 'success': True,
-                'status':f'Welcome back, Komrade @{name.decode()}.'
+                'status':f'Welcome back, Komrade @{name.decode()}.',
+                'res_check_msgs':self.check_msgs(msg_obj)
             }
         else:
             return {
                 'success': False,
-                'status':'Login failed.'
+                'status':'Login failed.',
             }
 
     def register_new_user(self,msg_obj):
