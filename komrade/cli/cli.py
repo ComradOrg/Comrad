@@ -158,8 +158,8 @@ class CLI(Logger):
         self.komrade = Komrade(name)
         was_off=self.off
         # if was_off: self.show_log()
-        def logfunc(*x,**y):
-            self.stat(*x,prefix='Komrade @Keymaker: ')
+        def logfunc(*x,komrade_name='Keymaker',**y):
+            self.stat(*x,komrade_name=komrade_name,**y)
         
         res=self.komrade.register(logfunc=logfunc)
         # if was_off: self.toggle_log()

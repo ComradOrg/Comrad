@@ -94,10 +94,10 @@ class KomradeX(Caller):
             self.name = name = self.cli.status_keymaker_part1(name)
         elif not name:
             self.name = name = input('\nHello, this is Komrade @')
-            print('\nI would like to sign up for the socialist network revolution.',flush=True)
+            logfunc('I would like to sign up for the socialist network revolution.',flush=True,komrade_name=name,pause=True)
             # do_pause()
         else:
-            print(f'Hello, this is Komrade @{name}.\n\nI would like to sign up for the socialist network revolution.')
+            logfunc(f'Hello, this is Komrade @{name}.\n\nI would like to sign up for the socialist network revolution.',pause=True,komrade_name=True)
             # do_pause()
         
         # clear_screen()
