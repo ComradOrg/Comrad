@@ -299,16 +299,21 @@ class CLI(Logger):
         # self.print(msg.data)
         do_pause()
         # clear_screen()
+        # print(dict_format(msg.data))
+        # do_pause()
         meet_name = msg.data.get('meet_name')
         meet_uri = msg.data.get('meet')    
         qrstr=self.komrade.qr_str(meet_uri)
         self.stat(f"Add @{meet_name}'s public key to your address book?",f'It will allow you and @{meet_name} to read and write encrypted messages to one another.')
         do_adduser = input(f'''\n{self.komrade} [y/N]: ''')
         if do_adduser.strip().lower()=='y':
-            fnfn = self.komrade.save_uri_as_qrcode(
-                meet_uri,
-                meet_name
-            )
+            
+            import pyqrcode
+            print('meet_uri',meet_uri,'???')
+            qr = pyqrcode.create(meet_uri)
+            fnfn = os.path.join(PATH_QRCODES,meet_name+'.png') # self.get_path_qrcode(name=name)
+            qr.png(fnfn,scale=5)
+
             clear_screen()
             self.stat(f'The public key of @{meet_name} has been saved as a QRcode to {fnfn}')
             print(qrstr)
