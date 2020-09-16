@@ -94,12 +94,12 @@ class KomradeX(Caller):
         elif not name:
             self.name = name = input('\nHello, this is Komrade @')
             print('\nI would like to sign up for the socialist network revolution.',flush=True)
-            do_pause()
+            # do_pause()
         else:
             print(f'Hello, this is Komrade @{name}.\n\nI would like to sign up for the socialist network revolution.')
-            do_pause()
+            # do_pause()
         
-        clear_screen()
+        # clear_screen()
         self.log(f'@Keymaker: Excellent. But to communicate with komrades securely,\nyou must first cut your public & private encryption keys. ')
         # do_pause()
         ## 2) Make pub public/private keys
