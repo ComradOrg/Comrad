@@ -102,7 +102,7 @@ class KomradeX(Caller):
             # do_pause()
         
         # clear_screen()
-        logfunc(f'Excellent. But to communicate with komrades securely, you must first cut your public & private encryption keys. ')
+        logfunc(f'Excellent. But to communicate with komrades securely, you must first cut your public & private encryption keys.',pause=True)
         # do_pause()
         ## 2) Make pub public/private keys
         keypair = KomradeAsymmetricKey()
