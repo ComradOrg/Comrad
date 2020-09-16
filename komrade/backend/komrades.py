@@ -89,6 +89,7 @@ class KomradeX(Caller):
 
         
         ## 1) Have name?
+        clear_screen()
         tolog=''
         if SHOW_STATUS and show_intro:
             self.name = name = self.cli.status_keymaker_part1(name)
