@@ -557,11 +557,20 @@ from_komrade = {from_komrade}
             
             # rewrap
             inbox = BSEP.join(inbox_l)
-            print('inboxxx',inbox)
-            inbox_encr = SMessage(
-                self.privkey.data,
-                b64dec(inbox_uri)
-            ).wrap(inbox)
+            if inbox:
+            #print('inboxxx',inbox)
+                inbox = SMessage(
+                    self.privkey.data,
+                    b64dec(inbox_uri)
+                ).wrap(inbox)
+
+            # overwrite!
+            self.crypt_keys.set(
+                inbox_uri,
+                inbox,
+                prefix='/inbox/',
+                override=True
+            )
 
         return {
             'success':True,
