@@ -5,7 +5,7 @@ import art
 import textwrap as tw
 import readline
 readline.set_completer_delims('\t')
-from tab_completer import tabCompleter
+# from tab_completer import tabCompleter
 tabber=tabCompleter()
 if 'libedit' in readline.__doc__:
     readline.parse_and_bind("bind ^I rl_complete")
