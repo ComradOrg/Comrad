@@ -68,7 +68,7 @@ class Message(Logger):
 #   msg:    {msg}
 # """
         import textwrap as tw
-        msg_s = '\n'.join(tw.wrap(msg,CLI_WIDTH))
+        msg_s = '\n'.join(tw.wrap(str(msg),CLI_WIDTH))
         hdr='#'*CLI_WIDTH
         return f"""
 {hdr}
