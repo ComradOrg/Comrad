@@ -602,7 +602,7 @@ class KomradeX(Caller):
             msg_to_op,
             route='introduce_komrades'
         )
-        # print('res from op',res)
+        print('res from op',res)
 
         return res
 

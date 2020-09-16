@@ -431,7 +431,8 @@ from_komrade = {from_komrade}
         return {
             'status':'Message delivered.',
             'success':True,
-            'post_id':post_id
+            'post_id':post_id,
+            'msg':msg_from_op
         }
 
     def check_msgs(self,

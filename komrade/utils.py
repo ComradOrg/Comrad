@@ -354,7 +354,7 @@ def capture_stdout(func):
 
 
 
-def scan_print(xstr,min_pause=0,max_pause=.01,speed=1):
+def scan_print(xstr,min_pause=0,max_pause=.01,speed=2):
     import random,time
     for c in xstr:
         print(c,end='',flush=True)
@@ -383,3 +383,23 @@ def date_today():
     import datetime
     dt = datetime.datetime.today()
     return f'{dt.year}-{str(dt.month).zfill(2)}-{dt.day}'
+
+def multiline_input(msg=None):
+    # if msg:
+        # print(msg,end=' ')
+    
+    contents = []
+    i=-1
+    while True:
+        i+=1
+        try:
+            line = input(msg if msg and not i else "") #.decode('utf-8',errors='ignore')
+            contents.append(line)
+        except EOFError:
+            break
+        except KeyboardInterrupt:
+            contents=''
+            break
+
+    txt="\n".join(contents) if contents else contents
+    return txt

@@ -10,12 +10,12 @@ import textwrap as tw
 class CLI(Logger):
     ROUTES = {
         'help':'seek help',
-        'register':'join the komrades',
+        'signup':'join the komrades',
         'login':'log back in', 
         'meet':'meet a komrade',
         'who':'show contacts or info',
         'msg':'write people',
-        'refresh':'refresh mail',
+        'check':'check mail',
         'read':'read mail',
         'verbose':'show/hide log output'
     }
@@ -43,51 +43,87 @@ class CLI(Logger):
         while True:
             try:
                 inp=input(f'@{self.name if self.name else "?"}: ')
-                # print(inp,'??')
+                # self.print(inp,'??')
                 self.route(inp)
             except (KeyboardInterrupt,EOFError) as e:
-                exit('\nGoodbye.')
+                exit('\n\n@Operator: Goodbye.\n')
             except KomradeException as e:
-                print(f'@Operator: I could not handle your request. {e}\n')
+                self.print(f'@Operator: I could not handle your request. {e}\n')
             #await asyncio.sleep(0.5)
 
     def route(self,inp):
         inp=inp.strip()
-        # print('route got:',[inp])
+        # self.print('route got:',[inp])
         if not inp.startswith('/'): return
         cmd=inp.split()[0]
         dat=inp[len(cmd):].strip()
         cmd=cmd[1:]
-        # print([cmd,dat])
+        # self.print([cmd,dat])
         if cmd in self.ROUTES and hasattr(self,cmd):
             f=getattr(self,cmd)
-            return f(dat)
+            try:
+                res=f(dat)
+            except KomradeException as e:
+                self.print('@Operator: Message not sent.',e,'\n')
 
-    def boot(self,indent=13):
-        logo=art.text2art(CLI_TITLE,font=CLI_FONT)
+    def stat(self,*msgs):
+        prefix='@Operator: '
+        blank=' '*len(prefix)
+        msg = '\n'.join([
+            (f'{prefix}{x}' if not i else f'{blank}{x}')
+            for i,x in enumerate(msgs)
+        ])+'\n'
+        self.print(msg)
+
+    def print(self,*x):
+        x=' '.join(str(xx) for xx in x)
+        x=str(x).replace('\r\n','\n').replace('\r','\n')
+        for ln in x.split('\n'):
+            #scan_print(ln+'\n\n')
+            print(ln)
+
+    def boot(self,indent=None):
+        if indent is None:
+            indent=int(round(CLI_WIDTH*.18333333))
+        logo=art.text2art(CLI_TITLE,font=CLI_FONT).replace('\r\n','\n')
+        border = '-' * CLI_WIDTH # (len(logo.strip().split('\n')[0]))
         # logo=make_key_discreet_str(logo,chance_redacted=0.1) #.decode()
         logo=tw.indent(logo, ' '*indent)
-        scan_print(logo,max_pause=0.005)
+        border=tw.indent(border, ' '*2)
+        print('\n'+logo)#),max_pause=0.005)
 
     def help(self,*x,**y):
         clear_screen()
         self.boot()
 
-        HELPSTR = """
-    /login [name]     -->  log back in
-    /register [name]  -->  new komrade""" + (("""
-    
-    /meet [name]      -->  exchange info
-    /msg [name] [msg] -->  write to person or group
-    /who [name]       -->  show contact info
-    
-    /refresh [inbox]  -->  refresh messages
-    /read [inbox]     -->  read messages""") 
-    if self.with_required_login(quiet=True) else "") + """ 
-    /help             -->  seek help
+        border = '-'*(40)
+        if not self.logged_in:
+            HELPSTR=f"""
+/login [name]    -->   log back in
+/signup [name]   -->   new komrade
 """
-        
-        print(HELPSTR)
+        else:
+            HELPSTR=f"""
+/check [inbox]   -->   check messages
+/read [inbox]    -->   read messages
+/msg [name]      -->   send messages
+
+/meet [name]     -->   exchange info
+/who [name]      -->   show contacts
+"""
+
+        HELPSTR+=f"""
+/help            -->  seek help
+"""
+        helpstr = tw.indent(HELPSTR.strip()+'\n\n',' '*13)
+        self.print(helpstr)
+        # self.print(border+helpstr+'\n'+self.border)
+
+    @property
+    def border(self):
+        border = '-' * CLI_WIDTH # (len(logo.strip().split('\n')[0]))
+        border=tw.indent(border, ' '*2)
+        return border
 
     def intro(self):
         self.status(None)
@@ -95,10 +131,10 @@ class CLI(Logger):
     def who(self,whom):
         if self.with_required_login():
             contacts = self.komrade.contacts()
-            print('  ' + '\n  '.join(contacts))
+            self.print('  ' + '\n  '.join(contacts))
 
     
-    def register(self,name=None):
+    def signup(self,name=None):
         if not name: name=input('name: ')
         if not name: return
         self.komrade = Komrade(name)
@@ -106,17 +142,18 @@ class CLI(Logger):
         if res and type(res)==dict and 'success' in res and res['success']:
             self.name=self.komrade.name
             self.loggedin=True
+            self.stat(f'Welcome, Komrade @{self.name}.')
         else:
             self.name=None
             self.loggedin=False
             self.komrade=None
         if res and 'status' in res:
             # self.boot()
-            print('\n@Operator: '+res.get('status','?')+'\n')
+            self.stat(res.get('status','?'))
 
 
     def login(self,name):
-        # print(self,name,self.name,self.komrade,self.loggedin)
+        # self.print(self,name,self.name,self.komrade,self.loggedin)
         if not name: name=input('name: ')
         if not name: return
         self.komrade=Komrade(name)
@@ -132,7 +169,7 @@ class CLI(Logger):
             self.komrade=None
         if res and 'status' in res:
             self.help()
-            print('@Operator: '+res.get('status','?')+'\n')
+            self.stat(res.get('status','?'))
 
     @property
     def logged_in(self):
@@ -142,7 +179,7 @@ class CLI(Logger):
     def with_required_login(self,quiet=False):
         if not self.logged_in:
             if not quiet:
-                print('@Operator: You must be logged in first.\n')
+                self.stat('You must be logged in first.')
             return False
         return True
 
@@ -159,33 +196,51 @@ class CLI(Logger):
         if self.with_required_login():
             name_or_pubkey = dat.strip().split()[0]
             res = self.komrade.meet(name_or_pubkey,returning=returning)
-            print('@Operator:',res)
+            status=res.get('status')
+            msg = status if not res.get('success') else status+str(res)
+            self.stat(status)
 
 
     def msg(self,dat):
         if self.with_required_login():
-            name_or_pubkey,msg = dat.split(' ',1)
-            self.log(f'Composed msg to {name_or_pubkey}: {msg}')
+            dat=dat.strip()
+            if not dat:
+                self.status('Message whom? Usage: /msg [name]')
+                return
+
+            datl=dat.split(' ',1)
+            name_or_pubkey = datl[0]
+            if len(datl)==1:
+                self.stat(f'Compose your message to @{name_or_pubkey} below.', 'Press Ctrl+D to complete, or Ctrl+C to cancel.')
+                msg_s = multiline_input().strip()
+                if not msg_s:
+                    print('\n')
+                    self.stat('Not sending. No message found.')
+                    return
+            else:
+                msg_s = datl[1]
+
+            self.log(f'Composed msg to {name_or_pubkey}: {msg_s}')
             msg_obj = self.komrade.msg(
                 name_or_pubkey,
-                msg
+                msg_s
             )
             self.log(f'Sent msg obj to {name_or_pubkey}: {msg_obj}')
-            print(f'@Operator: Message successfully sent to @{name_or_pubkey}.\n')
+            self.stat(f'Message successfully sent to @{name_or_pubkey}.\n{msg_obj}')
 
-    def refresh(self,dat):
+    def check(self,dat):
         if self.with_required_login():
             res = self.komrade.refresh()
             if not res['success']:
-                print(f"@Operator: {res['status']}\n")
+                self.stat(res['status'])
             else:
                 unr = res.get('unread',[])
                 inb = res.get('inbox',[])
-                print(f'@Operator: You have {len(unr)} unread messages, with {len(inb)} total in your inbox.\n')
+                self.stat(f'You have {len(unr)} unread messages, with {len(inb)} total in your inbox.')
 
     def prompt_adduser(self,msg):
-        # print('prompt got:',msg)
-        # print(msg.data)
+        # self.print('prompt got:',msg)
+        # self.print(msg.data)
         do_pause()
         # clear_screen()
         meet_name = msg.data.get('meet_name')
@@ -200,42 +255,42 @@ class CLI(Logger):
                 meet_name
             )
             clear_screen()
-            print(f'@Operator: The public key of @{meet_name} has been saved as a QRcode to {fnfn}:\n{qrstr}')
+            self.stat(f'The public key of @{meet_name} has been saved as a QRcode to {fnfn}:\n{qrstr}')
         if do_senduser.strip().lower()=='y':
-            print('returning the invitation ...')
+            self.print('returning the invitation ...')
             res = self.komrade.meet(meet_name,returning=True)
-            # print('got from meeting:',res)
+            # self.print('got from meeting:',res)
 
     def prompt_msg(self,msg):
         do = input(f'\n\n@Operator: Type "r" to reply, "d" to delete, or hit Enter to continue.\n{self.komrade}: ')
 
         do=do.strip().lower()
         if do=='d':
-            # print('del',msg.post_id)
+            # self.print('del',msg.post_id)
             self.komrade.delete_msg(msg.post_id)
         elif do=='r':
-            print('@todo: replying...')
+            self.print('@todo: replying...')
         else:
             pass
 
     def read(self,dat):
         if self.with_required_login():
             res = self.komrade.inbox()
-            # print('got from read res:',res)
+            # self.print('got from read res:',res)
             if not res.get('success'):
-                print('@Operator:',res['status'])
+                self.print('@Operator:',res['status'])
                 return
 
-            # print('ummmmm msgs?')
+            # self.print('ummmmm msgs?')
             msgs=res.get('msgs')
             if not msgs:
-                print('@Operator: No messages.')
+                self.print('@Operator: No messages.')
             else:
                 clear_screen()
                 for i,msg in enumerate(msgs):
-                    print(f'@Operator: Showing most recent messages first.\n\n\n  Message {i+1} of {len(msgs)}')
-                    print(msg)
-                    # print('DATA',msg.msg_d)
+                    self.stat(f'Showing most recent messages first.\n\n\n  Message {i+1} of {len(msgs)}')
+                    self.print(msg)
+                    # self.print('DATA',msg.msg_d)
                     if msg.data.get('prompt_id')=='addcontact':
                         self.prompt_adduser(msg)
                     
@@ -277,7 +332,7 @@ class CLI(Logger):
 
         while not name:
             name=self.status(('name','@TheTelephone: Of course, Komrade...?\n@')).get('vals').get('name').strip()
-            print()
+            self.print()
         
         self.status(
             f'@TheTelephone: Of course, Komrade @{name}. A fine name.',
@@ -564,7 +619,7 @@ class CLI(Logger):
 
 def run_cli(inp):
     cli = CLI()
-    cli.run(inp) #'/register elon') #'/register',name='elon')
+    cli.run(inp) #'/signup elon') #'/signup',name='elon')
 
 if __name__=='__main__':
     inp = ' '.join(sys.argv[1:])
