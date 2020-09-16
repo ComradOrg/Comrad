@@ -17,12 +17,19 @@ def logger():
 
 LOG = None
 
-def log(*x):
+def log(*x,off=False):
     global LOG
     #if not LOG: LOG=logger().debug
     if not LOG: LOG=print
     tolog=' '.join(str(_) for _ in x)
-    LOG(tolog)
+    
+    if not off:
+        LOG(tolog)
+
+    if SAVE_LOGS:
+        path_log = os.path.join(PATH_LOG_OUTPUT,date_today()+'.log')
+        with open(path_log,'a') as of:
+            of.write('\n'+tolog+'\n')
 
 def clear_screen():
     import os
@@ -80,12 +87,15 @@ class Logger(object):
         self.show_log() if self.off else self.hide_log()
 
     def log(self,*x,pause=PAUSE_LOGGER,clear=CLEAR_LOGGER):
-        if self.off: return
         curframe = inspect.currentframe()
         calframe = inspect.getouterframes(curframe, 2)
         mytype = type(self).__name__
         caller = calframe[1][3]
-        log(f'[{mytype}.{caller}()]'.center(CLI_WIDTH) + '\n\n',*x)
+        log(
+            f'[{mytype}.{caller}()]'.center(CLI_WIDTH) + '\n\n',
+            *x,
+            off=self.off    
+        )
 
         # try:
         if pause: do_pause()
@@ -367,3 +377,9 @@ def get_qr_str(data):
 def indent_str(x,n):
     import textwrap as tw
     return  tw.indent(x,' '*n)
+
+
+def date_today():
+    import datetime
+    dt = datetime.datetime.today()
+    return f'{dt.year}-{str(dt.month).zfill(2)}-{dt.day}'
