@@ -172,7 +172,9 @@ class KomradeX(Caller):
             route='register_new_user'
         )
         if not resp_msg_d.get('success'):
-            logfunc(f'Registration failed. Message from operator was:\n\n{dict_format(resp_msg_d)}',pause=True)
+            # logfunc(f'Registration failed. Message from operator was:\n\n{dict_format(resp_msg_d)}',pause=True)
+            logfunc(f'Registration failed')
+            logfunc(resp_msg_d.get('status'),komrade_name='Operator')
             return
     
         # otherwise, save things on our end
