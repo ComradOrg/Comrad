@@ -137,7 +137,7 @@ class CLI(Logger):
 """
 
         HELPSTR+=f"""
-/help             -->  seek help
+/help             -->   seek help
 """
         helpstr = tw.indent(HELPSTR.strip()+'\n\n',' '*13)
         self.print(helpstr)
@@ -277,7 +277,7 @@ class CLI(Logger):
                 msg_s
             )
             self.log(f'Sent msg obj to {name_or_pubkey}: {msg_obj}')
-            self.stat(f'Message successfully sent to @{name_or_pubkey}.')
+            self.stat(f'Message successfully sent to @{name_or_pubkey}.',komrade_name='Operator',pause=True)
 
     def check(self,dat=None,res=None,statd={}):
         self.log(f'<-- dat={dat}, res={res}')
@@ -346,7 +346,8 @@ class CLI(Logger):
                 self.stat('Could not delete message.')
             do_pause()
         elif do=='r':
-            self.print('@todo: replying...')
+            # self.print('@todo: replying...')
+            return self.msg(msg.from_name)
         else:
             pass
 

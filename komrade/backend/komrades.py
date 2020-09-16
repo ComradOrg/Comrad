@@ -453,7 +453,7 @@ class KomradeX(Caller):
             #print(post_id,inbox_ids,post_id in inbox_ids,'???')
             # stop
             if post_id in inbox_ids:
-                print('removing from inbox...')
+                # print('removing from inbox...')
                 inbox_ids.remove(post_id)
         self.save_inbox(inbox_ids)
         #print(inbox_ids,'v2',len(inbox_ids))
@@ -466,9 +466,9 @@ class KomradeX(Caller):
         self.log('delete_msgs ->',res)
         return res
 
-    def inbox(self,topn=100,only_unread=False,delete_malformed=False):
+    def inbox(self,topn=100,only_unread=False,delete_malformed=False,check_msgs=False):
         # refreshing inbox
-        res = self.refresh()
+        res = self.refresh(check_msgs=check_msgs)
         print('got from refresh',res)
         if not res['success']: return res
         
