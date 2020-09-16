@@ -216,13 +216,13 @@ class CLI(Logger):
             self.komrade=None
         if res and 'status' in res:
             self.help()
-            self.stat(res.get('status','?'))
+            self.stat(res.get('status','?'),komrade_name='Operator')
 
         # also see if we got a msg update
         if 'res_refresh' in res:
             self.check(
                 res=res['res_refresh'],
-                statd={'use_prefix':True}
+                statd={'use_prefix':False}
             )
 
     @property
@@ -300,12 +300,13 @@ class CLI(Logger):
             if self.with_required_login():
                 res = self.komrade.refresh()
                 if not res['success']:
-                    self.stat(res['status'])
+                    self.stat(res['status'],komrade_name='Operator')
                     return
     
         unr = res.get('unread',[])
         inb = res.get('inbox',[])
-        self.stat(f'You have {len(unr)} unread messages, with {len(inb)} total in your inbox.',**statd)
+        print()
+        self.stat(f'You have {len(unr)} unread messages, with {len(inb)} total in your inbox.',komrade_name='Operator',**statd)
         self.log(f'--> unr={unr}, inb={inb}')
         # stop
 
