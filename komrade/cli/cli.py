@@ -71,15 +71,16 @@ class CLI(Logger):
         blank=' '*len(prefix)
         total_msg=[]
         for i,msg in enumerate(msgs):
-            msg_wrapped = tw.wrap(msg,CLI_WIDTH-len(prefix))
-            for ii,lnn in enumerate(msg_wrapped):
-                prfx=prefix if (not i and not ii and use_prefix) else blank
-                x=prfx+lnn
-                # print([prfx,lnn])
-                total_msg+=[x]
+            msg=msg.replace('\r\n','\n').replace('\r','\n')
+            for ii,ln in msg.split('\n'):
+                ln_wrap=tw.wrap(ln,CLI_WIDTH-len(prefix))
+                for iii,lnw in enumerate(ln_wrap):
+                    prfx=prefix if (not i and not ii and not iii and use_prefix) else blank
+                    x=prfx+lnn
+                    total_msg+=[x]
             total_msg+=['']
         # print()
-        print([total_msg])
+        # print([total_msg])
         
         print('\n'.join(total_msg))
 
