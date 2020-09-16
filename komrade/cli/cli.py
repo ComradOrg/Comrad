@@ -336,16 +336,20 @@ class CLI(Logger):
             do_pause()
             clear_screen()
         
-        self.stat('Send this komrade your public key as well?')
-        do_senduser = input(f'''\n{self.komrade} [y/N]: ''')
+        # print(msg.data)
+        # if not msg.data.get('returning'):
+        # bit hacky way to tell if this has been returned or not!
+        if 'has agreed' not in msg.data.get('txt',''):
+            self.stat('Send this komrade your public key as well?')
+            do_senduser = input(f'''\n{self.komrade} [y/N]: ''')
 
-        if do_senduser.strip().lower()=='y':
-            res = self.komrade.meet(meet_name,returning=True)
-            if res.get('success'):
-                self.stat('Returning the invitation:',f'"{res.get("msg_sent")}"',use_prefix=True)
-                do_pause()
-            else:
-                self.stat(msg.get('status'))
+            if do_senduser.strip().lower()=='y':
+                res = self.komrade.meet(meet_name,returning=True)
+                if res.get('success'):
+                    self.stat('Returning the invitation:',f'"{res.get("msg_sent")}"',use_prefix=True)
+                    do_pause()
+                else:
+                    self.stat(msg.get('status'))
 
     def prompt_msg(self,msg):
         clear_screen()
@@ -370,15 +374,15 @@ class CLI(Logger):
     def read(self,dat):
         if self.with_required_login():
             res = self.komrade.inbox()
-            print('got from read res:',res)
+            # print('got from read res:',res)
             if not res.get('success'):
-                self.print('@Operator:',res['status'])
+                self.stat(res['status'],komrade_name='Operator')
                 return
 
             # self.print('ummmmm msgs?')
             msgs=res.get('msgs')
             if not msgs:
-                self.print('@Operator: No messages.')
+                self.stat('No messages.')
             else:
                 clear_screen()
                 for i,msg in enumerate(msgs):

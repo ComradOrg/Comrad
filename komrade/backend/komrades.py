@@ -469,7 +469,7 @@ class KomradeX(Caller):
     def inbox(self,topn=100,only_unread=False,delete_malformed=False,check_msgs=False):
         # refreshing inbox
         res = self.refresh(check_msgs=check_msgs)
-        print('got from refresh',res)
+        # print('got from refresh',res)
         if not res['success']: return res
         
         boxname = 'inbox' if not only_unread else 'unread'
