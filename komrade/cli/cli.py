@@ -215,7 +215,11 @@ class CLI(Logger):
 
     def meet(self,dat,returning=False):
         if self.with_required_login():
-            name_or_pubkey = dat.strip().split()[0]
+            datl=dat.strip().split()
+            if not datl:
+                self.stat('Meet whom?')
+                return
+            name_or_pubkey = datl[0]
             res = self.komrade.meet(name_or_pubkey,returning=returning)
             status=res.get('status')
             #msg = status if not res.get('success') else status+str(res)
