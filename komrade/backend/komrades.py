@@ -107,7 +107,7 @@ class KomradeX(Caller):
         ## 2) Make pub public/private keys
         keypair = KomradeAsymmetricKey()
         pubkey,privkey = keypair.pubkey_obj,keypair.privkey_obj
-        logfunc(f'I have cut for you a private and public asymmetric key pair.\n\nI used the iron-clad Elliptic Curve algorithm, as implemented by Themis cryptography library.\n\nHere are the keys (private is redacted):\n\n(1) {pubkey}\n\n(2) {privkey}{ART_KEY_PAIR}',clear=False,pause=True)
+        logfunc(f'Using the iron-clad Elliptic curve algorithm (as impl. by Themis), I have cut for you a private and public asymmetric key pair:\n\n(1) {pubkey}\n\n(2) {privkey}{ART_KEY_PAIR}',clear=False,pause=True)
 
         ## 3) Have passphrase?
         if SHOW_STATUS and not passphrase:
