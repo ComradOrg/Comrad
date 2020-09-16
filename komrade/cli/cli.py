@@ -69,7 +69,7 @@ class CLI(Logger):
     def stat(self,*msgs,use_prefix=True,prefix=None,komrade_name=None,pause=False,clear=False,min_prefix_len=19,**kwargs):
         if not prefix:
             if not komrade_name: komrade_name='Operator'
-            prefix='Komrade @'+komrade_name+': '
+            prefix='Comrade @'+komrade_name+': '
         blank=' '*(len(prefix) if len(prefix)>min_prefix_len else min_prefix_len)
         total_msg=[]
         for i,msg in enumerate(msgs):
