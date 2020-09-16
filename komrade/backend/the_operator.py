@@ -243,7 +243,7 @@ class TheOperator(Operator):
             return {
                 'success': True,
                 'status':f'Welcome back, Komrade @{name.decode()}.',
-                'res_check_msgs':self.check_msgs(msg_obj)
+                'res_check_msgs':self.check_msgs(msg_obj,do_login=False)
             }
         else:
             return {
@@ -442,13 +442,14 @@ from_komrade = {from_komrade}
                 'name',
                 'pubkey',
                 'inbox',
-            ]):
+            ],do_login=True):
 
         # logged in?
-        login_res = self.login(msg_to_op)
-        if not login_res.get('success'):
-            return login_res
-        
+        if do_login:
+            login_res = self.login(msg_to_op)
+            if not login_res.get('success'):
+                return login_res
+            
         # ok, then find the inbox?
         inbox=msg_to_op.data.get('inbox')
         if not inbox:
