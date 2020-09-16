@@ -82,7 +82,7 @@ As of the 23rd of August.
 
 #### "Meeting" (exchaing public keys)
 
-<img src="komrade/app/assets/komrade-terminal-preview--2020-09-16--meet.gif" height="500" alt="GIF animation" />
+<img src="komrade/app/assets/komrade-terminal-preview--2020-09-16--meet.gif" alt="GIF animation" />
 
 #### Messaging
 
