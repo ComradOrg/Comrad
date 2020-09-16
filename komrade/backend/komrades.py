@@ -117,10 +117,14 @@ class KomradeX(Caller):
         qr_str=self.qr_str(pubkey.data_b64)
         logfunc(f'(1) You may store your public key both on your device hardware, as well as share it with anyone you wish:\n\n{pubkey.data_b64_s}\n\nIt will also be stored as a QR code on your device:\n{qr_str}',pause=True,clear=True)
         logfunc('You must also register your username and public key with Komrade @Operator on the remote server.\n\nShall Komrade @Telephone send them over?',pause=False,clear=False)#),dict_format(data,tab=2),pause=True)
-        ok_to_send = input(f'Komrade @{name}: [Y/n] ')
+        ok_to_send = input(f'\n@{name}: [Y/n] ')
         if ok_to_send.strip().lower()=='n':
             logfunc('Cancelling registration.')
             return
+        else:
+            print()
+            logfunc('Connecting you to the @Operator...',komrade_name='Telephone')
+            time.sleep(1)
 
         ## CALL OP WITH PUBKEY
         resp_msg_d = self.ring_ring(
@@ -140,8 +144,8 @@ class KomradeX(Caller):
         # clear_screen()
         logfunc('Great. Komrade @Operator knows who you are now, because they have your name and public key on file (and nothing else!).',pause=True,clear=True)
 
-        logfunc(f"(2) Your PRIVATE key, on the other hand, will be stored only on your device hardware.",pause=True)
-        logfunc('''But your private key is so sensitive we'll even encrypt it before storing it.''',pause=True,use_prefix=False)
+        logfunc(f"(2) Your PRIVATE key, on the other hand, must be stored only on your device hardware.",pause=True)
+        logfunc('''Your private key is so sensitive we'll even encrypt it before storing it.''',pause=True,use_prefix=False)
 
         
 
@@ -153,20 +157,25 @@ class KomradeX(Caller):
             while not passphrase:
                 # logfunc('Please type a password:',use_prefix=False)
                 logfunc('''Please enter a memorable password to generate a (symmetric AES) encryption key with:''',use_prefix=True)
-                passphrase=getpass(f'\nKomrade @{self.name}: ')
-                clear_screen()
+                passphrase=getpass(f'\n@{self.name}: ')
+                # clear_screen()
         ## 4) Get hashed password
         
         passhash = hasher(passphrase)
         privkey_decr = KomradeSymmetricKeyWithPassphrase(passhash=passhash)
-        logfunc(f'''Let's beef up your password by running it through a SHA-256 hashing algorithm:\n\n{make_key_discreet_str(passhash)}''',pause=True,clear=False)
+        print()
+        logfunc(f'''Great. Let's even beef up your password by running it through a SHA-256 hashing algorithm, inflating it to:\n\n{make_key_discreet_str(passhash)}''',pause=True,clear=False)
 
         privkey_encr = privkey_decr.encrypt(privkey.data)
         privkey_encr_obj = KomradeEncryptedAsymmetricPrivateKey(privkey_encr)
         self._keychain['privkey_encr']=privkey_encr_obj
         self.log('My keychain now looks like v2:',dict_format(self.keychain()))
+
+        logfunc('With this inflated password we can encrypt your super-sensitive private key.',pause=True,clear=True)
+
+        logfunc(f"Your original private key looks like this (heavily redacted):\n\n{privkey_encr_obj}",pause=True,clear=False)
         
-        logfunc(f"With that password we then encrypt your asymmetric private key:\n\n[Encrypted Private Key]\n({make_key_discreet_str(privkey_encr_obj.data_b64)})",pause=True,clear=False)
+        logfunc(f"After we encrypt it with your passworded key, it looks like this (redacted):\n\n[Encrypted Private Key]\n({make_key_discreet_str(privkey.data_b64)})",pause=True,clear=False)
 
         logfunc('Only this encrypted version is stored.',pause=True,clear=True)
 

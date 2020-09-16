@@ -42,13 +42,14 @@ class CLI(Logger):
 
         while True:
             try:
-                inp=input(f'Komrade @{self.name if self.name else "?"}: ')
+                inp=input(f'@{self.name if self.name else "?"}: ')
                 # self.print(inp,'??')
                 self.route(inp)
             except (KeyboardInterrupt,EOFError) as e:
-                exit('\n\nKomrade @Operator: Goodbye.\n')
+                self.stat('Goodbye.')
+                exit()
             except KomradeException as e:
-                self.print(f'Komrade @Operator: I could not handle your request. {e}\n')
+                self.stat(f'I could not handle your request. {e}\n')
             #await asyncio.sleep(0.5)
 
     def route(self,inp):
@@ -66,10 +67,11 @@ class CLI(Logger):
             except KomradeException as e:
                 self.stat('Message not sent.',str(e),'\n')
 
-    def stat(self,*msgs,use_prefix=True,prefix=None,komrade_name=None,pause=False,clear=False,min_prefix_len=19,**kwargs):
+    def stat(self,*msgs,use_prefix=True,prefix=None,komrade_name=None,pause=False,clear=False,min_prefix_len=12,**kwargs):
         if not prefix:
-            if not komrade_name: komrade_name='Operator'
-            prefix='Komrade @'+komrade_name+': '
+            if not komrade_name: komrade_name='Telephone'
+            # prefix='Komrade @'+komrade_name+': '
+            prefix='@'+komrade_name+': '
         blank=' '*(len(prefix) if len(prefix)>min_prefix_len else min_prefix_len)
         total_msg=[]
         for i,msg in enumerate(msgs):
@@ -80,10 +82,11 @@ class CLI(Logger):
                     total_msg+=['']
                 ln_wrap=tw.wrap(ln,CLI_WIDTH-len(prefix))
                 for iii,lnw in enumerate(ln_wrap):
+                    # prfx=prefix + (' '*(len(blank)-len(prefix))) if (not i and not ii and not iii and use_prefix) else blank
                     prfx=prefix + (' '*(len(blank)-len(prefix))) if (not i and not ii and not iii and use_prefix) else blank
                     x=prfx+lnw
                     total_msg+=[x]
-            total_msg+=['']
+            # total_msg+=['']
         # print()
         # print([total_msg])
         
