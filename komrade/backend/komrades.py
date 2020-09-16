@@ -69,7 +69,7 @@ class KomradeX(Caller):
         return answer
 
 
-    def register(self, name = None, passphrase = None, is_group=None, show_intro=0,show_body=True):
+    def register(self, name = None, passphrase = None, is_group=None, show_intro=0,show_body=True,logfunc=None):
         # global PHONEBOOK
         
         # print('got name:',name)
@@ -78,6 +78,7 @@ class KomradeX(Caller):
         if not name and self.name: name=self.name
         # if not name and not self.name: name=''
         # print('got name',name)
+        if not logfunc: logfunc=self.log
 
         # already have it?
         if self.exists_locally_as_account():
@@ -100,12 +101,12 @@ class KomradeX(Caller):
             # do_pause()
         
         # clear_screen()
-        self.log(f'@Keymaker: Excellent. But to communicate with komrades securely,\nyou must first cut your public & private encryption keys. ')
+        logger(f'@Keymaker: Excellent. But to communicate with komrades securely,\nyou must first cut your public & private encryption keys. ')
         # do_pause()
         ## 2) Make pub public/private keys
         keypair = KomradeAsymmetricKey()
         pubkey,privkey = keypair.pubkey_obj,keypair.privkey_obj
-        self.log(f'@Keymaker: I have cut for you a private and public asymmetric key pair\nusing the Elliptic Curve algorithm from Themis cryptography library:\n\n(1) {pubkey}\n\n(2) {privkey}{ART_KEY_PAIR}',clear=False,pause=True)
+        logfunc(f'@Keymaker: I have cut for you a private and public asymmetric key pair\nusing the Elliptic Curve algorithm from Themis cryptography library:\n\n(1) {pubkey}\n\n(2) {privkey}{ART_KEY_PAIR}',clear=False,pause=True)
 
         ## 3) Have passphrase?
         if SHOW_STATUS and not passphrase:
@@ -117,12 +118,12 @@ class KomradeX(Caller):
                 clear_screen()
         ## 4) Get hashed password
         passhash = hasher(passphrase)
-        self.log(f'''@Keymaker: I have replaced your password with a disguised, hashed version\nusing a salted SHA-256 algorithm from python's hashlib:\n\n\t{make_key_discreet_str(passhash)}''')
+        logfunc(f'''@Keymaker: I have replaced your password with a disguised, hashed version\nusing a salted SHA-256 algorithm from python's hashlib:\n\n\t{make_key_discreet_str(passhash)}''')
         ## 5) Encrypt private key
         privkey_decr = KomradeSymmetricKeyWithPassphrase(passphrase)
         privkey_encr = privkey_decr.encrypt(privkey.data)
         privkey_encr_obj = KomradeEncryptedAsymmetricPrivateKey(privkey_encr)
-        self.log(f"@Keymaker: Store your private key on your device hardware ONLY\nas it was encrypted by your password-generated key:\n\n[Encrypted Private Key]\n({make_key_discreet_str(privkey_encr_obj.data_b64)})")
+        logfunc(f"@Keymaker: Store your private key on your device hardware ONLY\nas it was encrypted by your password-generated key:\n\n[Encrypted Private Key]\n({make_key_discreet_str(privkey_encr_obj.data_b64)})")
 
         ## 6) Test keychain works
         #privkey_decr2 = KomradeSymmetricKeyWithPassphrase(passphrase)
@@ -151,7 +152,7 @@ class KomradeX(Caller):
             'name':name, 
             'pubkey': pubkey.data,
         }
-        self.log('@Keymaker: Store your public key both on your device hardware\nas well as register it with Komrade @Operator on the remote server:\n\n',dict_format(data,tab=2))
+        logfunc('@Keymaker: Store your public key both on your device hardware\nas well as register it with Komrade @Operator on the remote server:\n\n',dict_format(data,tab=2))
         
         # ring operator
         # call from phone since I don't have pubkey on record on Op yet
@@ -165,11 +166,11 @@ class KomradeX(Caller):
             route='register_new_user'
         )
         if not resp_msg_d.get('success'):
-            self.log(f'Registration failed. Message from operator was:\n\n{dict_format(resp_msg_d)}')
+            logfunc(f'Registration failed. Message from operator was:\n\n{dict_format(resp_msg_d)}')
             return
     
         # otherwise, save things on our end
-        self.log(f'Registration successful. Message from operator was:\n\n{dict_format(resp_msg_d)}')
+        logfunc(f'Registration successful. Message from operator was:\n\n{dict_format(resp_msg_d)}')
 
         self.name=resp_msg_d.get('name')
         pubkey_b = resp_msg_d.get('pubkey')
@@ -177,7 +178,7 @@ class KomradeX(Caller):
         uri_id = pubkey.data_b64
         sec_login = resp_msg_d.get('secret_login')
         
-        self.log(f'''Now saving name and public key on local device:''')
+        logfunc(f'''Now saving name and public key on local device:''')
         self.crypt_keys.set(name, pubkey_b, prefix='/pubkey/')
         self.crypt_keys.set(uri_id, name, prefix='/name/')
         self.crypt_keys.set(uri_id,sec_login,prefix='/secret_login/')
@@ -196,7 +197,7 @@ class KomradeX(Caller):
 
         
         # done!
-        self.log(f'Congratulations. Welcome, Komrade {self}.')
+        logfunc(f'Congratulations. Welcome, Komrade {self}.')
 
     @property
     def secret_login(self):

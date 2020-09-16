@@ -148,7 +148,7 @@ class CLI(Logger):
         if not name: name=input('name: ')
         if not name: return
         self.komrade = Komrade(name)
-        res=self.komrade.register()
+        res=self.komrade.register(logfunc=self.stat)
         if res and type(res)==dict and 'success' in res and res['success']:
             self.name=self.komrade.name
             self.loggedin=True
