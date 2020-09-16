@@ -116,16 +116,16 @@ class KomradeX(Caller):
             if not passphrase: passphrase = DEBUG_DEFAULT_PASSPHRASE
             while not passphrase:
                 logfunc('Enter a memorable password to encrypt your private key with:')
-                passphrase=getpass(f'\n@{self.name}: ')
+                passphrase=getpass(f'\nKomrade @{self.name}: ')
                 clear_screen()
         ## 4) Get hashed password
         passhash = hasher(passphrase)
-        logfunc(f'''I have replaced your password with a disguised, hashed version\nusing a salted SHA-256 algorithm from python's hashlib:\n\n\t{make_key_discreet_str(passhash)}''')
+        logfunc(f'''I have replaced your password with a disguised, hashed version\nusing a salted SHA-256 algorithm from python's hashlib:\n\n\t{make_key_discreet_str(passhash)}''',pause=True)
         ## 5) Encrypt private key
         privkey_decr = KomradeSymmetricKeyWithPassphrase(passphrase)
         privkey_encr = privkey_decr.encrypt(privkey.data)
         privkey_encr_obj = KomradeEncryptedAsymmetricPrivateKey(privkey_encr)
-        logfunc(f"Store your private key on your device hardware ONLY\nas it was encrypted by your password-generated key:\n\n[Encrypted Private Key]\n({make_key_discreet_str(privkey_encr_obj.data_b64)})")
+        logfunc(f"Store your private key on your device hardware ONLY\nas it was encrypted by your password-generated key:\n\n[Encrypted Private Key]\n({make_key_discreet_str(privkey_encr_obj.data_b64)})",pause=True)
 
         ## 6) Test keychain works
         #privkey_decr2 = KomradeSymmetricKeyWithPassphrase(passphrase)
@@ -154,7 +154,7 @@ class KomradeX(Caller):
             'name':name, 
             'pubkey': pubkey.data,
         }
-        logfunc('Store your public key both on your device hardware\nas well as register it with Komrade @Operator on the remote server:\n\n',dict_format(data,tab=2))
+        logfunc('Store your public key both on your device hardware\nas well as register it with Komrade @Operator on the remote server:\n\n',dict_format(data,tab=2),pause=True)
         
         # ring operator
         # call from phone since I don't have pubkey on record on Op yet
@@ -168,11 +168,11 @@ class KomradeX(Caller):
             route='register_new_user'
         )
         if not resp_msg_d.get('success'):
-            logfunc(f'Registration failed. Message from operator was:\n\n{dict_format(resp_msg_d)}')
+            logfunc(f'Registration failed. Message from operator was:\n\n{dict_format(resp_msg_d)}',pause=True)
             return
     
         # otherwise, save things on our end
-        logfunc(f'Registration successful. Message from operator was:\n\n{dict_format(resp_msg_d)}')
+        logfunc(f'Registration successful. Message from operator was:\n\n{dict_format(resp_msg_d)}',pause=True)
 
         self.name=resp_msg_d.get('name')
         pubkey_b = resp_msg_d.get('pubkey')
@@ -199,7 +199,8 @@ class KomradeX(Caller):
 
         
         # done!
-        logfunc(f'Congratulations. Welcome, Komrade {self}.')
+        logfunc(f'Congratulations. Welcome, Komrade {self}.',pause=True,clear=True)
+        self.help()
 
     @property
     def secret_login(self):
