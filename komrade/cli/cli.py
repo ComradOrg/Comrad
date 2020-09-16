@@ -114,9 +114,9 @@ class CLI(Logger):
 """
         else:
             HELPSTR=f"""
-/check [inbox]   -->   check messages
-/read [inbox]    -->   read messages
-/msg [name]      -->   send messages
+/check           -->   check messages
+/read            -->   read messages
+/msg [name]      -->   send message
 
 /meet [name]     -->   exchange info
 /who [name]      -->   show contacts
