@@ -115,7 +115,7 @@ class KomradeX(Caller):
         else:
             if not passphrase: passphrase = DEBUG_DEFAULT_PASSPHRASE
             while not passphrase:
-                logfunc('Enter a memorable password to encrypt your private key with:')
+                logfunc('Now please enter a memorable password to encrypt your private key with:')
                 passphrase=getpass(f'\nKomrade @{self.name}: ')
                 clear_screen()
         ## 4) Get hashed password
