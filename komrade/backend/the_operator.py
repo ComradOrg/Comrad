@@ -557,6 +557,7 @@ from_komrade = {from_komrade}
             
             # rewrap
             inbox = BSEP.join(inbox_l)
+            print('inboxxx',inbox)
             inbox_encr = SMessage(
                 self.privkey.data,
                 b64dec(inbox_uri)
