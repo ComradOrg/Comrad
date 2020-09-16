@@ -290,6 +290,7 @@ class TheOperator(Operator):
             'pubkey':pubkey_b,
             'secret_login':shared_secret,
             'name':name,
+            'status':f'Name @{name} was successfully registered with the public key {uri_id}.'
         }
         # res_safe = {
         #     **res, 

@@ -10,7 +10,7 @@ import textwrap as tw
 class CLI(Logger):
     ROUTES = {
         'help':'seek help',
-        'signup':'join the komrades',
+        'register':'join the komrades',
         'login':'log back in', 
         'meet':'meet a komrade',
         'who':'show contacts or info',
@@ -64,7 +64,7 @@ class CLI(Logger):
             try:
                 res=f(dat)
             except KomradeException as e:
-                self.stat('Message not sent.',e,'\n')
+                self.stat('Message not sent.',str(e),'\n')
 
     def stat(self,*msgs,use_prefix=True,prefix=None,komrade_name=None,pause=False,clear=False,min_prefix_len=19,**kwargs):
         if not prefix:
@@ -73,6 +73,7 @@ class CLI(Logger):
         blank=' '*(len(prefix) if len(prefix)>min_prefix_len else min_prefix_len)
         total_msg=[]
         for i,msg in enumerate(msgs):
+            if not msg: msg=''
             msg=msg.replace('\r\n','\n').replace('\r','\n')
             for ii,ln in enumerate(msg.split('\n')):
                 if not ln:
@@ -119,21 +120,21 @@ class CLI(Logger):
         border = '-'*(40)
         if not self.logged_in:
             HELPSTR=f"""
-/login [name]    -->   log back in
-/signup [name]   -->   new komrade
+/login [name]     -->   log back in
+/register [name]  -->   new komrade
 """
         else:
             HELPSTR=f"""
-/check           -->   check messages
-/read            -->   read messages
-/msg [name]      -->   send message
+/check            -->   check messages
+/read             -->   read messages
+/msg [name]       -->   send message
 
-/meet [name]     -->   exchange info
-/who [name]      -->   show contacts
+/meet [name]      -->   exchange info
+/who [name]       -->   show contacts
 """
 
         HELPSTR+=f"""
-/help            -->  seek help
+/help             -->  seek help
 """
         helpstr = tw.indent(HELPSTR.strip()+'\n\n',' '*13)
         self.print(helpstr)
@@ -154,7 +155,7 @@ class CLI(Logger):
             self.print('  ' + '\n  '.join(contacts))
 
     
-    def signup(self,name=None):
+    def register(self,name=None):
         if not name: name=input('name: ')
         if not name: return
         self.komrade = Komrade(name)
@@ -174,6 +175,7 @@ class CLI(Logger):
             self.name=None
             self.loggedin=False
             self.komrade=None
+            self.help()
         if res and 'status' in res:
             # self.boot()
             self.stat(res.get('status','?'))
@@ -688,7 +690,7 @@ class CLI(Logger):
 
 def run_cli(inp):
     cli = CLI()
-    cli.run(inp) #'/signup elon') #'/signup',name='elon')
+    cli.run(inp) #'/register elon') #'/register',name='elon')
 
 if __name__=='__main__':
     inp = ' '.join(sys.argv[1:])

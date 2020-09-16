@@ -60,6 +60,7 @@ class Operator(Keymaker):
 
 
     def __eq__(self,other):
+        if not self.pubkey or not other.pubkey: return False
         return self.pubkey.data == other.pubkey.data
 
     def __init__(self,

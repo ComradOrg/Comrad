@@ -108,13 +108,16 @@ class KomradeX(Caller):
         keypair = KomradeAsymmetricKey()
         pubkey,privkey = keypair.pubkey_obj,keypair.privkey_obj
         logfunc(f'I have cut for you a private and public asymmetric key pair, using the iron-clad Elliptic curve algorithm:\n\n(1) {pubkey}\n\n(2) {privkey}{ART_KEY_PAIR}',clear=True,pause=True)
+        self._keychain['pubkey']=pubkey
+        self._keychain['privkey']=privkey
+        self.log('My keychain now looks like:',dict_format(self.keychain()))
 
 
         ### PUBLIC KEY
         qr_str=self.qr_str(pubkey.data_b64)
         logfunc(f'(1) You may store your public key both on your device hardware, as well as share it with anyone you wish:\n\n{pubkey.data_b64_s}\n\nIt will also be stored as a QR code on your device:\n{qr_str}',pause=True,clear=True)
-        logfunc('You must also register your username and public key with Komrade @Operator on the remote server. Shall Komrade @Telephone send them over?',pause=True,clear=False)#),dict_format(data,tab=2),pause=True)
-        ok_to_send = input(f'Komrade @{name}: [Y/n]')
+        logfunc('You must also register your username and public key with Komrade @Operator on the remote server.\n\nShall Komrade @Telephone send them over?',pause=False,clear=False)#),dict_format(data,tab=2),pause=True)
+        ok_to_send = input(f'Komrade @{name}: [Y/n] ')
         if ok_to_send.strip().lower()=='n':
             logfunc('Cancelling registration.')
             return
@@ -127,9 +130,11 @@ class KomradeX(Caller):
             },
             route='register_new_user'
         )
-        logfunc(resp_msg_d.get('status'),komrade_name='Operator')
+        print()
+        logfunc(resp_msg_d.get('status'),komrade_name='Operator',pause=True)
 
         if not resp_msg_d.get('success'):
+            logfunc('Cancelling registration.',pause=True,clear=True)
             return
 
         clear_screen()
@@ -154,16 +159,15 @@ class KomradeX(Caller):
 
         privkey_encr = privkey_decr.encrypt(privkey.data)
         privkey_encr_obj = KomradeEncryptedAsymmetricPrivateKey(privkey_encr)
+        self._keychain['privkey_encr']=privkey_encr_obj
+        self.log('My keychain now looks like v2:',dict_format(self.keychain()))
         
         logfunc(f"With that password we then encrypt your asymmetric private key:\n\n[Encrypted Private Key]\n({make_key_discreet_str(privkey_encr_obj.data_b64)})",pause=True,clear=False)
 
         logfunc('Only this encrypted version is stored.',pause=True,clear=True)
 
 
-        self._keychain['pubkey']=pubkey
-        self._keychain['privkey_encr']=privkey_encr_obj
-        self._keychain['privkey']=privkey
-        self.log('My keychain now looks like:',dict_format(self.keychain()))
+        
 
         # More narration?
         if SHOW_STATUS: self.cli.status_keymaker_part3(privkey,privkey_decr,privkey_encr,passphrase)
