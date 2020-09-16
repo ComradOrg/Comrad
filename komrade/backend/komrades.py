@@ -97,7 +97,7 @@ class KomradeX(Caller):
             logfunc('I would like to sign up for the socialist network revolution.',flush=True,komrade_name=name,pause=True)
             # do_pause()
         else:
-            logfunc(f'Hello, this is Komrade @{name}.\n\nI would like to sign up for the socialist network revolution.',pause=True,komrade_name=True)
+            logfunc(f'Hello, this is Komrade @{name}.\n\nI would like to sign up for the socialist network revolution.',pause=True,komrade_name=name)
             # do_pause()
         
         # clear_screen()
