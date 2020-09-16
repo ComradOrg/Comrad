@@ -72,7 +72,7 @@ class CLI(Logger):
         total_msg=[]
         for i,msg in enumerate(msgs):
             msg=msg.replace('\r\n','\n').replace('\r','\n')
-            for ii,ln in msg.split('\n'):
+            for ii,ln in enumerate(msg.split('\n')):
                 ln_wrap=tw.wrap(ln,CLI_WIDTH-len(prefix))
                 for iii,lnw in enumerate(ln_wrap):
                     prfx=prefix if (not i and not ii and not iii and use_prefix) else blank
