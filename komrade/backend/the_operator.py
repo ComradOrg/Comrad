@@ -556,7 +556,7 @@ from_komrade = {from_komrade}
             self.log('length v2:',len(inbox_l))
             
             # rewrap
-            inbox = inbox_l.split(BSEP)
+            inbox = BSEP.join(inbox_l)
             inbox_encr = SMessage(
                 self.privkey.data,
                 b64dec(inbox_uri)
