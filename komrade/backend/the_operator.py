@@ -539,14 +539,15 @@ from_komrade = {from_komrade}
         # if inbox, remove these posts from it
         if inbox_uri:
             # unwrap
-            inbox_encr = self.crypt_keys.get(
+            inbox = self.crypt_keys.get(
                 inbox_uri,
                 prefix='/inbox/'
             )
-            inbox = SMessage(
-                self.privkey.data,
-                b64dec(inbox_uri)
-            ).unwrap(inbox_encr)
+            if inbox:
+                inbox = SMessage(
+                    self.privkey.data,
+                    b64dec(inbox_uri)
+                ).unwrap(inbox_encr)
             self.log('unwrapped inbox_encr:',inbox)
             inbox_l = inbox.split(BSEP)
             self.log('length v1:',len(inbox_l))
