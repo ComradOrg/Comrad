@@ -199,7 +199,7 @@ class CLI(Logger):
             status=res.get('status')
             #msg = status if not res.get('success') else status+str(res)
             if res.get('success'):
-                self.stat(f'I sent the following message to @{meet_name}:','',f'{res.get("msg_sent")}')
+                self.stat(f'I sent the following message to @{name_or_pubkey}:\n\n"{res.get("msg_sent")}"')
             else:
                 self.stat(status)
 
@@ -265,7 +265,7 @@ class CLI(Logger):
             self.print('@Operator: Returning the invitation ...')
             res = self.komrade.meet(meet_name,returning=True)
             if res.get('success'):
-                self.stat(f'I sent the following message to @{meet_name}:','',f'{res.get("msg_sent")}')
+                self.stat(f'I sent the following message to @{meet_name}:\n\n"{res.get("msg_sent")}"')
             else:
                 self.stat(msg.get('status'))
 
