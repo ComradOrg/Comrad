@@ -82,15 +82,16 @@ class CLI(Logger):
         self.print('\n'.join(total_msg))
 
     def print(self,*x):
-        x=' '.join(str(xx) for xx in x)
-        x=str(x).replace('\r\n','\n').replace('\r','\n')
-        for ln in x.split('\n'):
-        #     #scan_print(ln+'\n\n')
-            if not ln: print()
-            for ln2 in tw.wrap(ln,CLI_WIDTH):
-                print(ln2)
-        # x='\n'.join(tw.wrap(x,CLI_WIDTH))
-        # print(x)
+        print(*x)
+        # x=' '.join(str(xx) for xx in x)
+        # x=str(x).replace('\r\n','\n').replace('\r','\n')
+        # for ln in x.split('\n'):
+        # #     #scan_print(ln+'\n\n')
+        #     if not ln: print()
+        #     for ln2 in tw.wrap(ln,CLI_WIDTH):
+        #         print(ln2)
+        # # x='\n'.join(tw.wrap(x,CLI_WIDTH))
+        # # print(x)
 
     def boot(self,indent=None):
         if indent is None:
