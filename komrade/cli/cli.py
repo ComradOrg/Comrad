@@ -79,7 +79,9 @@ class CLI(Logger):
                 total_msg+=[x]
             total_msg+=['']
         # print()
-        self.print('\n'.join(total_msg))
+        print([total_msg])
+        
+        print('\n'.join(total_msg))
 
     def print(self,*x):
         print(*x)
