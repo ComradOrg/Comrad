@@ -237,7 +237,7 @@ class KomradeX(Caller):
             route='login'
         )
 
-        print('got resp_msg_d:',resp_msg_d)
+        # print('got resp_msg_d:',resp_msg_d)
 
         # get result
         self.log('Got resp_msg_d back from operator:',resp_msg_d)

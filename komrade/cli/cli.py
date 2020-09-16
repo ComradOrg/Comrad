@@ -254,7 +254,7 @@ class CLI(Logger):
                 msg_s
             )
             self.log(f'Sent msg obj to {name_or_pubkey}: {msg_obj}')
-            self.stat(f'Message successfully sent to @{name_or_pubkey}.\n{msg_obj}')
+            self.stat(f'Message successfully sent to @{name_or_pubkey}.')
 
     def check(self,dat=None,res=None,statd={}):
         self.log(f'<-- dat={dat}, res={res}')
@@ -275,7 +275,7 @@ class CLI(Logger):
         # self.print('prompt got:',msg)
         # self.print(msg.data)
         do_pause()
-        clear_screen()
+        # clear_screen()
         meet_name = msg.data.get('meet_name')
         meet_uri = msg.data.get('meet')    
         qrstr=self.komrade.qr_str(meet_uri)
@@ -299,10 +299,13 @@ class CLI(Logger):
             res = self.komrade.meet(meet_name,returning=True)
             if res.get('success'):
                 self.stat('Returning the invitation:',f'"{res.get("msg_sent")}"',use_prefix=True)
+                do_pause()
             else:
                 self.stat(msg.get('status'))
 
     def prompt_msg(self,msg):
+        clear_screen()
+        print(msg)
         self.stat('Type "r" to reply to this message, "d" to delete it, or hit Enter to continue.')
         do = input(f'\n{self.komrade}: ')
         do=do.strip().lower()
@@ -336,7 +339,7 @@ class CLI(Logger):
                 for i,msg in enumerate(msgs):
                     self.stat(f'Showing message {i+1} of {len(msgs)}.')
                     print()
-                    self.print(msg)
+                    print(msg)
                     # self.print('DATA',msg.msg_d)
                     if msg.data.get('prompt_id')=='addcontact':
                         self.prompt_adduser(msg)
