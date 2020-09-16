@@ -98,11 +98,11 @@ class KomradeX(Caller):
             logfunc('I would like to sign up for the socialist network revolution.',flush=True,komrade_name=name,pause=True)
             # do_pause()
         else:
-            logfunc(f'Hello, this is Komrade @{name}.\n\nI would like to sign up for the socialist network revolution.',pause=True,komrade_name=name)
+            logfunc(f'Hello, this is Komrade @{name}.\n\nI would like to sign up for the socialist network revolution.',pause=True,komrade_name=name,clear=True)
             # do_pause()
         
         # clear_screen()
-        logfunc(f'Excellent. But to communicate with komrades securely, you must first cut your public & private encryption keys.',pause=True,clear=True)
+        logfunc(f'Excellent. But to communicate with komrades securely, you must first cut your public & private encryption keys.',pause=True)
         # do_pause()
         ## 2) Make pub public/private keys
         keypair = KomradeAsymmetricKey()
