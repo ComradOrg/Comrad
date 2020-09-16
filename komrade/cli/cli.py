@@ -66,7 +66,7 @@ class CLI(Logger):
             except KomradeException as e:
                 self.stat('Message not sent.',e,'\n')
 
-    def stat(self,*msgs,use_prefix=True):
+    def stat(self,*msgs,use_prefix=True,**kwargs):
         prefix='Komrade @Operator: '
         blank=' '*len(prefix)
         total_msg=[]
