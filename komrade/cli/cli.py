@@ -76,7 +76,7 @@ class CLI(Logger):
                 ln_wrap=tw.wrap(ln,CLI_WIDTH-len(prefix))
                 for iii,lnw in enumerate(ln_wrap):
                     prfx=prefix if (not i and not ii and not iii and use_prefix) else blank
-                    x=prfx+lnn
+                    x=prfx+lnw
                     total_msg+=[x]
             total_msg+=['']
         # print()
