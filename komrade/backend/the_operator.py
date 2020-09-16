@@ -261,7 +261,7 @@ class TheOperator(Operator):
         if self.has_user(name=name,pubkey=pubkey):
             return {
                 'success':False,
-                'status': f"{OPERATOR_INTRO}I'm sorry, but I can't register the name of {name}. This user already exists."
+                'status': f"{OPERATOR_INTRO}I'm sorry, but I can't register the name of {name}. This komrade already exists."
             }
         
         # generate shared secret
@@ -290,7 +290,7 @@ class TheOperator(Operator):
             'pubkey':pubkey_b,
             'secret_login':shared_secret,
             'name':name,
-            'status':f'Name @{name} was successfully registered with the public key {uri_id}.'
+            'status':f'Name @{name} was successfully registered with the public key {uri_id.decode()}.'
         }
         # res_safe = {
         #     **res, 

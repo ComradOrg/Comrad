@@ -137,10 +137,13 @@ class KomradeX(Caller):
             logfunc('Cancelling registration.',pause=True,clear=True)
             return
 
-        clear_screen()
+        # clear_screen()
+        logfunc('Great. Komrade @Operator knows who you are now, because they have your name and public key on file (and nothing else!).',pause=True,clear=True)
 
-        logfunc(f"(2) Your PRIVATE key will be stored only on your device hardware.\n\nAnd only after we encrypt it with a memorable password:")
+        logfunc(f"(2) Your PRIVATE key, on the other hand, will be stored only on your device hardware.",pause=True)
+        logfunc('''But your private key is so sensitive we'll even encrypt it before storing it.''',pause=True,use_prefix=False)
 
+        
 
         ## 3) Have passphrase?
         if SHOW_STATUS and not passphrase:
@@ -148,7 +151,8 @@ class KomradeX(Caller):
         else:
             if not passphrase: passphrase = DEBUG_DEFAULT_PASSPHRASE
             while not passphrase:
-                logfunc('Now please enter a memorable password to encrypt your private key with:')
+                # logfunc('Please type a password:',use_prefix=False)
+                logfunc('''Please enter a memorable password to generate a (symmetric AES) encryption key with:''',use_prefix=True)
                 passphrase=getpass(f'\nKomrade @{self.name}: ')
                 clear_screen()
         ## 4) Get hashed password

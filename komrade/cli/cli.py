@@ -310,7 +310,7 @@ class CLI(Logger):
             do_pause()
             clear_screen()
         
-        self.stat('Send this user your public key as well?')
+        self.stat('Send this komrade your public key as well?')
         do_senduser = input(f'''\n{self.komrade} [y/N]: ''')
 
         if do_senduser.strip().lower()=='y':
