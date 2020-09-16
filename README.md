@@ -78,17 +78,17 @@ As of the 23rd of August.
 
 #### Register/Login
 
-<img src="komrade/app/assets/komrade-terminal-preview--2020-09-16--register.gif" height="500" alt="GIF animation" />
+<img src="komrade/app/assets/komrade-terminal-preview--2020-09-16--register.gif" height="500" alt="GIF animation of registering new user" />
 
 #### "Meeting" (exchanging public keys)
 
-<img src="komrade/app/assets/komrade-terminal-preview--2020-09-16--meet.gif" alt="GIF animation" />
+<img src="komrade/app/assets/komrade-terminal-preview--2020-09-16--meet.gif" alt="GIF animation of meeting process" />
 
 #### Messaging
 
-...
+<img src="komrade/app/assets/komrade-terminal-preview--2020-09-16--msg.gif" alt="GIF animation of messaging" />
 
-### Post
+### Post 
 
 ...
 
