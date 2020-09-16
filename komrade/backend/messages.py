@@ -53,19 +53,32 @@ class Message(Logger):
         fpk=b64enc_s(self.from_pubkey)
         fpk1,fpk2 = fpk[:len(fpk)//2],fpk[len(fpk)//2:]
         numchar = len(b64enc_s(self.to_pubkey))
-        linestr = '-'*(numchar+2)
+        linestr = '-'*CLI_WIDTH #(numchar+2)
 
-        return f"""  -------{linestr}
+#         return f"""  -------{linestr}
     
-  from:  @{self.from_name if self.from_name else ''} 
-         [{b64enc_s(self.from_pubkey)}]
+#   from:  @{self.from_name if self.from_name else ''} 
+#          [{b64enc_s(self.from_pubkey)}]
 
-  to:    @{self.to_name if self.to_name else ''}
-         [{b64enc_s(self.to_pubkey)}]
+#   to:    @{self.to_name if self.to_name else ''}
+#          [{b64enc_s(self.to_pubkey)}]
 
-  -------{linestr}
+#   -------{linestr}
 
-  msg:    {msg}
+#   msg:    {msg}
+# """
+        import textwrap as tw
+        msg_s = '\n'.join(tw.wrap(msg,CLI_WIDTH))
+        hdr='#'*CLI_WIDTH
+        return f"""
+{hdr}
+from:  @{self.from_name if self.from_name else ''} 
+to:    @{self.to_name if self.to_name else ''}
+{hdr}
+
+{msg_s}
+
+{hdr}
 """
 
 

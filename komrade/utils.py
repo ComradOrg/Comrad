@@ -91,9 +91,12 @@ class Logger(object):
         calframe = inspect.getouterframes(curframe, 2)
         mytype = type(self).__name__
         caller = calframe[1][3]
+        x=list(x)
+        x.insert(0,f'[{mytype}.{caller}()]')
         log(
-            f'[{mytype}.{caller}()]'.center(CLI_WIDTH) + '\n\n',
+            # .center(CLI_WIDTH) + '\n\n',
             *x,
+
             off=self.off    
         )
 

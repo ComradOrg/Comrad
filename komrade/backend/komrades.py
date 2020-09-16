@@ -69,10 +69,6 @@ class KomradeX(Caller):
         return answer
 
 
-    # login?
-    # def login(self):
-        # if keys.get('pubkey') and keys.get('privkey')
-
     def register(self, name = None, passphrase = None, is_group=None, show_intro=0,show_body=True):
         # global PHONEBOOK
         
@@ -212,8 +208,6 @@ class KomradeX(Caller):
     def login(self,passphrase=None):
         # what keys do I have?
         keys = self.keychain()
-        # self.log('here are my keys:',dict_format(keys))
-
 
         # check hardware
         if not 'pubkey' in keys:
@@ -238,17 +232,23 @@ class KomradeX(Caller):
         }
 
         # ask operator and get response
-        resp_msg = self.ring_ring(
+        resp_msg_d = self.ring_ring(
             msg,
             route='login'
         )
 
-        print('got resp_msg:',resp_msg)
+        print('got resp_msg_d:',resp_msg_d)
 
         # get result
-        self.log('Got result back from operator:',resp_msg)
+        self.log('Got resp_msg_d back from operator:',resp_msg_d)
 
-        return resp_msg
+        # check msgs?
+        if 'res_check_msgs' in resp_msg_d:
+            self.do_check_msgs(resp_msg_d['res_check_msgs'])
+            resp_msg_d['res_refresh'] = self.refresh(check_msgs=False) # already done in previous line
+
+        self.log('-->',resp_msg_d)
+        return resp_msg_d
 
 
 
@@ -344,22 +344,32 @@ class KomradeX(Caller):
         )
         self.log('got back response:',res)
 
+        return self.do_check_msgs(res)
+
+    def do_check_msgs(self,res):
         # decrypt?
         if not res.get('data_encr'):
             return {'success':False, 'status':'No data'} 
         inbox_encr = res['data_encr']
 
+        inbox = SMessage(
+            self.privkey.data,
+            self.op.pubkey.data
+        ).unwrap(inbox_encr)
+        self.log('inbox decrypted:',inbox)
+
         # overwrite my local inbox with encrypted one from op?
-        self.crypt_keys.set(
+        return self.crypt_keys.set(
             self.uri,
-            inbox_encr,
+            inbox,
             prefix='/inbox/',
             override=True
         )
 
-    def refresh(self):
+    def refresh(self,check_msgs=True):
         # refresh inbox
-        self.check_msgs()
+        if check_msgs:
+            self.check_msgs()
 
         # status?
         inbox_status = self.get_inbox_ids()
@@ -371,12 +381,14 @@ class KomradeX(Caller):
         # download new messages
         self.download_msgs(post_ids = inbox)
 
-        return {
+        res = {
             'success':True,
             'status':'Messages refreshed',
             'unread':unread,
             'inbox':inbox
         }
+        self.log('->',res)
+        return res
 
     def save_inbox(self,post_ids):
         self.crypt_keys.set(
@@ -390,18 +402,25 @@ class KomradeX(Caller):
         return self.delete_msgs([post_id])
 
     def delete_msgs(self,post_ids):
-        inbox_ids = self.get_inbox_ids().get('inbox',[])
+        #inbox_ids = self.get_inbox_ids().get('inbox',[])
+        deleted=[]
         for post_id in post_ids:
-            print('deleting post:',post_id)
+            #print('deleting post:',post_id)
             self.crypt_keys.delete(
                 post_id,
                 prefix='/post/',
             )
+            deleted+=[post_id]
+        return {
+            'success':not bool(set(post_ids) - set(deleted)),
+            'status':f'Deleted {len(deleted)} messages.',
+            'deleted':deleted
+        }
             # print(post_id,inbox_ids,post_id in inbox_ids,'???')
             # stop
-            if post_id in inbox_ids:
-                inbox_ids.remove(post_id)
-        self.save_inbox(inbox_ids)
+            #if post_id in inbox_ids:
+            #    inbox_ids.remove(post_id)
+        #self.save_inbox(inbox_ids)
 
     def inbox(self,topn=100,only_unread=False,delete_malformed=False):
         # refreshing inbox
@@ -458,19 +477,15 @@ class KomradeX(Caller):
 
 
     def get_inbox_ids(self):
-        inbox_encr = self.crypt_keys.get(
+        inbox = self.crypt_keys.get(
             self.uri,
             prefix='/inbox/',
         )
 
         # decrypt inbox?
-        if inbox_encr:
-            inbox = SMessage(
-                self.privkey.data,
-                self.op.pubkey.data
-            ).unwrap(inbox_encr)
-            self.log('inbox decrypted:',inbox)
+        if inbox:
             inbox = inbox.split(BSEP)
+            self.log('inbox_l',inbox)
         else:
             inbox=[]
 
@@ -482,12 +497,14 @@ class KomradeX(Caller):
                 unread.append(post_id)
 
         self.log(f'I {self} have {len(unread)} new messages')        
-        return {
+        res = {
             'success':True,
             'status':'Inbox retrieved.',
             'unread':unread,
             'inbox':inbox
         }
+        self.log('->',res)
+        return res
     
     def read_msg(self,post_id):
         # get post

@@ -541,11 +541,12 @@ from_komrade = {from_komrade}
         meet_from_name = data.get('name')
         meet_from_uri = data.get('pubkey')
         returning = data.get('returning')
+        qr_str = self.qr_str(meet_uri)
 
         if returning:
-            txt=f'''Komrade @{meet_name} has agreed to make your acquaintance. Their public key is {meet_uri.decode()}.'''
+            txt=f'''Komrade @{meet_name} has agreed to make your acquaintance.\n\nTheir public key is {meet_uri.decode()}.\n{qr_str}'''
         else:
-            txt=f'''Komrade @{meet_name} would like to make your acquaintance. Their public key is {meet_uri.decode()}.'''
+            txt=f'''Komrade @{meet_name} would like to make your acquaintance.\n\nTheir public key is:\n{meet_uri.decode()}.\n{qr_str}'''
 
         msg_from_op = Message(
             msg_d = {

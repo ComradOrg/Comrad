@@ -151,7 +151,7 @@ class Operator(Keymaker):
     def __repr__(self):
         clsname=(type(self)).__name__
         #name = clsname+' '+
-        name = '@'+ (self.name if self.name else '?') # if self.name!=clsname else clsname
+        name = 'Komrade @'+ (self.name if self.name else '?') # if self.name!=clsname else clsname
         # try:
         #     keystr= 'on device: ' + ('+'.join(self.top_keys) if self.pubkey else '')
         # except TypeError:
