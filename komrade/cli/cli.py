@@ -66,8 +66,10 @@ class CLI(Logger):
             except KomradeException as e:
                 self.stat('Message not sent.',e,'\n')
 
-    def stat(self,*msgs,use_prefix=True,prefix=None,**kwargs):
-        prefix='Komrade @Operator: ' if not prefix else prefix
+    def stat(self,*msgs,use_prefix=True,prefix=None,komrade_name=None,pause=False,clear=False,**kwargs):
+        if not prefix:
+            if not komrade_name: komrade_name='Operator'
+            prefix='Komrade @'+komrade_name
         blank=' '*len(prefix)
         total_msg=[]
         for i,msg in enumerate(msgs):
@@ -83,6 +85,8 @@ class CLI(Logger):
         # print([total_msg])
         
         print('\n'.join(total_msg))
+        if pause: do_pause()
+        if clear: clear_screen()
 
     def print(self,*x):
         print(*x)

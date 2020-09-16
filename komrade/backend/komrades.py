@@ -101,12 +101,12 @@ class KomradeX(Caller):
             # do_pause()
         
         # clear_screen()
-        logfunc(f'@Keymaker: Excellent. But to communicate with komrades securely,\nyou must first cut your public & private encryption keys. ')
+        logfunc(f'Excellent. But to communicate with komrades securely,\nyou must first cut your public & private encryption keys. ')
         # do_pause()
         ## 2) Make pub public/private keys
         keypair = KomradeAsymmetricKey()
         pubkey,privkey = keypair.pubkey_obj,keypair.privkey_obj
-        logfunc(f'@Keymaker: I have cut for you a private and public asymmetric key pair\nusing the Elliptic Curve algorithm from Themis cryptography library:\n\n(1) {pubkey}\n\n(2) {privkey}{ART_KEY_PAIR}',clear=False,pause=True)
+        logfunc(f'I have cut for you a private and public asymmetric key pair\nusing the Elliptic Curve algorithm from Themis cryptography library:\n\n(1) {pubkey}\n\n(2) {privkey}{ART_KEY_PAIR}',clear=False,pause=True)
 
         ## 3) Have passphrase?
         if SHOW_STATUS and not passphrase:
@@ -114,16 +114,17 @@ class KomradeX(Caller):
         else:
             if not passphrase: passphrase = DEBUG_DEFAULT_PASSPHRASE
             while not passphrase:
-                passphrase=getpass(f'@Keymaker: Enter a memorable password to encrypt your private key with: \n\n@{self.name}: ')
+                logfunc('Enter a memorable password to encrypt your private key with:')
+                passphrase=getpass(f'\n@{self.name}: ')
                 clear_screen()
         ## 4) Get hashed password
         passhash = hasher(passphrase)
-        logfunc(f'''@Keymaker: I have replaced your password with a disguised, hashed version\nusing a salted SHA-256 algorithm from python's hashlib:\n\n\t{make_key_discreet_str(passhash)}''')
+        logfunc(f'''I have replaced your password with a disguised, hashed version\nusing a salted SHA-256 algorithm from python's hashlib:\n\n\t{make_key_discreet_str(passhash)}''')
         ## 5) Encrypt private key
         privkey_decr = KomradeSymmetricKeyWithPassphrase(passphrase)
         privkey_encr = privkey_decr.encrypt(privkey.data)
         privkey_encr_obj = KomradeEncryptedAsymmetricPrivateKey(privkey_encr)
-        logfunc(f"@Keymaker: Store your private key on your device hardware ONLY\nas it was encrypted by your password-generated key:\n\n[Encrypted Private Key]\n({make_key_discreet_str(privkey_encr_obj.data_b64)})")
+        logfunc(f"Store your private key on your device hardware ONLY\nas it was encrypted by your password-generated key:\n\n[Encrypted Private Key]\n({make_key_discreet_str(privkey_encr_obj.data_b64)})")
 
         ## 6) Test keychain works
         #privkey_decr2 = KomradeSymmetricKeyWithPassphrase(passphrase)
@@ -152,7 +153,7 @@ class KomradeX(Caller):
             'name':name, 
             'pubkey': pubkey.data,
         }
-        logfunc('@Keymaker: Store your public key both on your device hardware\nas well as register it with Komrade @Operator on the remote server:\n\n',dict_format(data,tab=2))
+        logfunc('Store your public key both on your device hardware\nas well as register it with Komrade @Operator on the remote server:\n\n',dict_format(data,tab=2))
         
         # ring operator
         # call from phone since I don't have pubkey on record on Op yet
