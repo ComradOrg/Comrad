@@ -346,7 +346,7 @@ class CLI(Logger):
     def read(self,dat):
         if self.with_required_login():
             res = self.komrade.inbox()
-            # self.print('got from read res:',res)
+            print('got from read res:',res)
             if not res.get('success'):
                 self.print('@Operator:',res['status'])
                 return
