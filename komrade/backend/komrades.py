@@ -102,12 +102,12 @@ class KomradeX(Caller):
             # do_pause()
         
         # clear_screen()
-        logfunc(f'Excellent. But to communicate with komrades securely,\nyou must first cut your public & private encryption keys. ')
+        logfunc(f'Excellent. But to communicate with komrades securely, you must first cut your public & private encryption keys. ')
         # do_pause()
         ## 2) Make pub public/private keys
         keypair = KomradeAsymmetricKey()
         pubkey,privkey = keypair.pubkey_obj,keypair.privkey_obj
-        logfunc(f'I have cut for you a private and public asymmetric key pair\nusing the Elliptic Curve algorithm from Themis cryptography library:\n\n(1) {pubkey}\n\n(2) {privkey}{ART_KEY_PAIR}',clear=False,pause=True)
+        logfunc(f'I have cut for you a private and public asymmetric key pair using the Elliptic Curve algorithm from Themis cryptography library:\n\n(1) {pubkey}\n\n(2) {privkey}{ART_KEY_PAIR}',clear=False,pause=True)
 
         ## 3) Have passphrase?
         if SHOW_STATUS and not passphrase:

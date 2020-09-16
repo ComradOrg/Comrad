@@ -94,7 +94,7 @@ class KomradeSymmetricKeyWithoutPassphrase(KomradeSymmetricKey):
         self.key = GenerateSymmetricKey() if not key else key
     @property
     def data(self): return self.key
-    def __repr__(self): return f'[Symmetric Key]\n    ({self.discreet})'
+    def __repr__(self): return f'[Symmetric Key]\n({self.discreet})'
     @property
     def cell(self):
         if not hasattr(self,'_cell'):
@@ -136,7 +136,7 @@ class KomradeAsymmetricPublicKey(KomradeAsymmetricKey):
     @property
     def data(self): return self.pubkey 
     
-    def __repr__(self): return f'''[Asymmetric Public Key]\n    ({self.data_b64.decode()})'''
+    def __repr__(self): return f'''[Asymmetric Public Key]\n({self.data_b64.decode()})'''
 class KomradeAsymmetricPrivateKey(KomradeAsymmetricKey):
     def __init__(self,privkey,pubkey=None):
         self.pubkey=pubkey
@@ -145,7 +145,7 @@ class KomradeAsymmetricPrivateKey(KomradeAsymmetricKey):
     def data(self): return self.privkey 
     @property
     def key(self): return self.privkey
-    def __repr__(self): return f'''[Asymmetric Private Key]\n    ({self.discreet})'''
+    def __repr__(self): return f'''[Asymmetric Private Key]\n({self.discreet})'''
 
 def make_key_discreet(data,chance_unredacted=0.25):
     import random
@@ -177,18 +177,18 @@ class KomradeEncryptedKey(Logger):
     def __init__(self,data): self.data=data
     @property
     def data_b64(self): return b64encode(self.data).decode()
-    def __repr__(self): return f'[Encrypted Key]\n    ({self.discreet})'
+    def __repr__(self): return f'[Encrypted Key]\n({self.discreet})'
     @property
     def discreet(self): return make_key_discreet(self.data)
     def __str__(self):
         return repr(self)
 
 class KomradeEncryptedAsymmetricPrivateKey(KomradeEncryptedKey):
-    def __repr__(self): return f'[Encrypted Asymmetric Private Key]\n    ({self.discreet})'
+    def __repr__(self): return f'[Encrypted Asymmetric Private Key]\n({self.discreet})'
 class KomradeEncryptedAsymmetricPublicKey(KomradeEncryptedKey):
-    def __repr__(self): return f'[Encrypted Asymmetric Public Key]\n    ({self.discreet})'
+    def __repr__(self): return f'[Encrypted Asymmetric Public Key]\n({self.discreet})'
 class KomradeEncryptedSymmetricKey(KomradeEncryptedKey):
-    def __repr__(self): return f'[Encrypted Symmetric Key]\n    ({self.discreet})'
+    def __repr__(self): return f'[Encrypted Symmetric Key]\n({self.discreet})'
 
 
 
