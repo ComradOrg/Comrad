@@ -42,7 +42,7 @@ class CLI(Logger):
 
         while True:
             try:
-                inp=input(f'\nKomrade @{self.name if self.name else "?"}: ')
+                inp=input(f'Komrade @{self.name if self.name else "?"}: ')
                 # self.print(inp,'??')
                 self.route(inp)
             except (KeyboardInterrupt,EOFError) as e:
@@ -78,7 +78,7 @@ class CLI(Logger):
                 # print([prfx,lnn])
                 total_msg+=[x]
             total_msg+=['']
-        print()
+        # print()
         self.print('\n'.join(total_msg))
 
     def print(self,*x):
@@ -152,6 +152,7 @@ class CLI(Logger):
         if res and type(res)==dict and 'success' in res and res['success']:
             self.name=self.komrade.name
             self.loggedin=True
+            self.help()
             self.stat(f'Welcome, Komrade @{self.name}.')
         else:
             self.name=None
@@ -262,7 +263,7 @@ class CLI(Logger):
     
         unr = res.get('unread',[])
         inb = res.get('inbox',[])
-        self.stat(f'You have {len(unr)} unread messages,',f'with {len(inb)} total in your inbox.',**statd)
+        self.stat(f'You have {len(unr)} unread messages, with {len(inb)} total in your inbox.',**statd)
         self.log(f'--> unr={unr}, inb={inb}')
         # stop
 
