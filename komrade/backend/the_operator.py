@@ -431,8 +431,7 @@ from_komrade = {from_komrade}
         return {
             'status':'Message delivered.',
             'success':True,
-            'post_id':post_id,
-            'msg':msg_from_op
+            'post_id':post_id
         }
 
     def check_msgs(self,
@@ -576,8 +575,9 @@ from_komrade = {from_komrade}
         self.log('formed msg:',msg_from_op)
         msg_from_op.encrypt()
         self.log('encrypted formed msg:',msg_from_op)
-        return self.actually_deliver_msg(msg_from_op)
-
+        res = self.actually_deliver_msg(msg_from_op)
+        res['msg_sent']=txt
+        return res
 
 def test_op():
     from komrade.backend.the_telephone import TheTelephone
