@@ -3,8 +3,14 @@ from komrade import *
 from komrade.backend import *
 import art
 import textwrap as tw
-
-
+import readline
+readline.set_completer_delims('\t')
+from tab_completer import tabCompleter
+tabber=tabCompleter()
+if 'libedit' in readline.__doc__:
+    readline.parse_and_bind("bind ^I rl_complete")
+else:
+    readline.parse_and_bind("tab: complete")
 
 
 class CLI(Logger):
@@ -25,6 +31,12 @@ class CLI(Logger):
         self.cmd=cmd
         self.komrade=None
         self.loggedin=False
+        self.tabber=tabber
+
+        # Routes
+        rts=['/'+k for k in self.ROUTES]
+        tabber.createListCompleter(rts)
+        readline.set_completer(tabber.listCompleter)
 
     def verbose(self,*x):
         self.toggle_log()
@@ -279,6 +291,7 @@ class CLI(Logger):
                 msg_s
             )
             self.log(f'Sent msg obj to {name_or_pubkey}: {msg_obj}')
+            print()
             self.stat(f'Message successfully sent to @{name_or_pubkey}.',komrade_name='Operator',pause=True)
 
     def check(self,dat=None,res=None,statd={}):
@@ -349,7 +362,6 @@ class CLI(Logger):
             do_pause()
         elif do=='r':
             # self.print('@todo: replying...')
-            print()
             return self.msg(msg.from_name)
         else:
             pass

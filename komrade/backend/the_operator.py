@@ -594,13 +594,18 @@ from_komrade = {from_komrade}
             data.get('meet_name'),
             '/pubkey/'
         )
+        if not meet_pubkey:
+            return {
+                'success':False,
+                'status':'Are you sure this komrade exists? If you are, try contacting them by another secure channel and asking for their public key there.'
+            }
+        
         self.log('found in crypt:',meet_pubkey)
         meet_name = data.get('meet_name')
         meet_uri = b64enc(meet_pubkey)
         meet_from_name = data.get('name')
         meet_from_uri = data.get('pubkey')
         returning = data.get('returning')
-        qr_str = self.qr_str(meet_from_uri)
 
         if returning:
             txt=f'''Komrade @{meet_from_name} has agreed to make your acquaintance.\n\nTheir public key is:\n{meet_from_uri.decode()}.'''
