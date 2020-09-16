@@ -653,14 +653,14 @@ class KomradeX(Caller):
 
         keystr=self.name+'->'+name
 
-        if self.crypt_keys.get(
-            keystr,
-            prefix='/met/'
-        ):
-            return {
-                'success':False,
-                'status':f'You have already sent an introduction to @{name}. It would be rude to send another.'
-            }
+        # if self.crypt_keys.get(
+        #     keystr,
+        #     prefix='/met/'
+        # ):
+        #     return {
+        #         'success':False,
+        #         'status':f'You have already sent an introduction to @{name}. It would be rude to send another.'
+        #     }
 
         msg_to_op = {
             'name':self.name,

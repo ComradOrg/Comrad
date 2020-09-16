@@ -76,19 +76,15 @@ As of the 23rd of August.
 
 ### Animations from terminal app
 
-#### Register
+#### Register/Login
 
 <img src="komrade/app/assets/komrade-terminal-preview--2020-09-16--register.gif" height="500" alt="GIF animation" />
 
-#### Login
+#### "Meeting" (exchaing public keys)
 
-...
+<img src="komrade/app/assets/komrade-terminal-preview--2020-09-16--meet.gif" height="500" alt="GIF animation" />
 
-#### Meet
-
-...
-
-#### Message
+#### Messaging
 
 ...
 

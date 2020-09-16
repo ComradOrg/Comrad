@@ -259,6 +259,8 @@ class CLI(Logger):
 
             datl=dat.split(' ',1)
             name_or_pubkey = datl[0]
+            if name_or_pubkey.startswith('@'):
+                name_or_pubkey=name_or_pubkey[1:]
             if len(datl)==1:
                 self.stat(f'Compose your message to @{name_or_pubkey} below.', 'Press Ctrl+D to complete, or Ctrl+C to cancel.')
                 msg_s = multiline_input().strip()
