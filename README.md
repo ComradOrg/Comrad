@@ -80,7 +80,7 @@ As of the 23rd of August.
 
 <img src="komrade/app/assets/komrade-terminal-preview--2020-09-16--register.gif" height="500" alt="GIF animation" />
 
-#### "Meeting" (exchaing public keys)
+#### "Meeting" (exchanging public keys)
 
 <img src="komrade/app/assets/komrade-terminal-preview--2020-09-16--meet.gif" alt="GIF animation" />
 
