@@ -544,9 +544,9 @@ from_komrade = {from_komrade}
         qr_str = self.qr_str(meet_from_uri)
 
         if returning:
-            txt=f'''Komrade @{meet_from_name} has agreed to make your acquaintance.\n\nTheir public key is {meet_from_uri.decode()}.\n{qr_str}'''
+            txt=f'''Komrade {meet_name} @{meet_from_name} has agreed to make your acquaintance.\n\nTheir public key is {meet_uri.decode()}\n {meet_from_uri.decode()}.\n{qr_str}'''
         else:
-            txt=f'''Komrade @{meet_name} would like to make your acquaintance.\n\nTheir public key is:\n{meet_uri.decode()}.\n{qr_str}'''
+            txt=f'''Komrade {meet_name} @{meet_from_name} would like to make your acquaintance.\n\nTheir public key is:\n{meet_uri.decode()}\n{meet_from_uri.decode()}.\n{qr_str}'''
 
         msg_from_op = Message(
             msg_d = {
