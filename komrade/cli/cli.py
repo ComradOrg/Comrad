@@ -66,7 +66,7 @@ class CLI(Logger):
             except KomradeException as e:
                 self.stat('Message not sent.',e,'\n')
 
-    def stat(self,*msgs,use_prefix=True,**kwargs):
+    def stat(self,*msgs,use_prefix=True):
         prefix='Komrade @Operator: '
         blank=' '*len(prefix)
         total_msg=[]
@@ -148,7 +148,10 @@ class CLI(Logger):
         if not name: name=input('name: ')
         if not name: return
         self.komrade = Komrade(name)
-        res=self.komrade.register(logfunc=print)
+        was_off=self.off
+        if was_off: self.show_log()
+        res=self.komrade.register()
+        if was_off: self.hide_log()
         if res and type(res)==dict and 'success' in res and res['success']:
             self.name=self.komrade.name
             self.loggedin=True
