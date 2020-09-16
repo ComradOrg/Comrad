@@ -124,6 +124,7 @@ class KomradeX(Caller):
         else:
             print()
             logfunc('Connecting you to the @Operator...',komrade_name='Telephone')
+            # print()
             time.sleep(1)
 
         ## CALL OP WITH PUBKEY
@@ -134,15 +135,17 @@ class KomradeX(Caller):
             },
             route='register_new_user'
         )
+        # print()
+        clear_screen()
+        logfunc(resp_msg_d.get('status')+ART_OLDPHONE4,komrade_name='Operator',pause=True)
         print()
-        logfunc(resp_msg_d.get('status'),komrade_name='Operator',pause=True)
 
         if not resp_msg_d.get('success'):
-            logfunc('Cancelling registration.',pause=True,clear=True)
+            logfunc('''That's too bad. Cancelling registration for now.''',pause=True,clear=True)
             return
 
         # clear_screen()
-        logfunc('Great. Komrade @Operator knows who you are now, because they have your name and public key on file (and nothing else!).',pause=True,clear=True)
+        logfunc('Great. Komrade @Operator now has your name and public key on file (and nothing else!).',pause=True,clear=True)
 
         logfunc(f"(2) Your PRIVATE key, on the other hand, must be stored only on your device hardware.",pause=True)
         logfunc('''Your private key is so sensitive we'll even encrypt it before storing it.''',pause=True,use_prefix=False)
@@ -164,7 +167,7 @@ class KomradeX(Caller):
         passhash = hasher(passphrase)
         privkey_decr = KomradeSymmetricKeyWithPassphrase(passhash=passhash)
         print()
-        logfunc(f'''Great. Let's even beef up your password by running it through a SHA-256 hashing algorithm, inflating it to:\n\n{make_key_discreet_str(passhash)}''',pause=True,clear=False)
+        logfunc(f'''Let's immediately run whatever you typed through a 1-way hashing algorithm (SHA-256), inflating it to (redacted):\n\n{make_key_discreet_str(passhash)}''',pause=True,clear=False)
 
         privkey_encr = privkey_decr.encrypt(privkey.data)
         privkey_encr_obj = KomradeEncryptedAsymmetricPrivateKey(privkey_encr)
@@ -173,9 +176,9 @@ class KomradeX(Caller):
 
         logfunc('With this inflated password we can encrypt your super-sensitive private key.',pause=True,clear=True)
 
-        logfunc(f"Your original private key looks like this (heavily redacted):\n\n{privkey_encr_obj}",pause=True,clear=False)
+        logfunc(f"Your original private key looks like this (redacted):\n\n{privkey}",pause=True,clear=False)
         
-        logfunc(f"After we encrypt it with your passworded key, it looks like this (redacted):\n\n[Encrypted Private Key]\n({make_key_discreet_str(privkey.data_b64)})",pause=True,clear=False)
+        logfunc(f"After we encrypt it with your passworded key, it looks like this (redacted):\n\n{privkey_encr_obj}",pause=True,clear=False)
 
         logfunc('Only this encrypted version is stored.',pause=True,clear=True)
 
@@ -191,8 +194,13 @@ class KomradeX(Caller):
         assert pubkey_b == pubkey.data
         uri_id = pubkey.data_b64
         sec_login = resp_msg_d.get('secret_login')
+        # stop
         
-        logfunc(f'''Now saving name and public key on local device:''')
+        logfunc(f'''Saving keys to device:''',pause=True)
+        logfunc(f'''(1) {pubkey}''',pause=True,use_prefix=False)
+        logfunc(f'''(2) {privkey_encr_obj}''',pause=True,use_prefix=False)
+        logfunc(f'''(3) [Shared Login Secret with @Operator]\n({make_key_discreet(sec_login)})''',pause=True,use_prefix=False)
+        # print()
         self.crypt_keys.set(name, pubkey_b, prefix='/pubkey/')
         self.crypt_keys.set(uri_id, name, prefix='/name/')
         self.crypt_keys.set(uri_id,sec_login,prefix='/secret_login/')
@@ -204,15 +212,16 @@ class KomradeX(Caller):
 
 
         # save qr too:
-        self.save_uri_as_qrcode(uri_id)
-        # self.log(f'saved public key as QR code to:\n {fnfn}\n\n{qr_str}')
+        _fnfn=self.save_uri_as_qrcode(uri_id)
+        logfunc(f'Also saving public key as QR code to: {_fnfn}.',pause=True,clear=False,use_prefix=False)
+        
+        # done!
+        print()
+        logfunc(f'Congratulations. Welcome, {self}.',pause=True,clear=True)
+        # self.help()
 
         return resp_msg_d
 
-        
-        # done!
-        logfunc(f'Congratulations. Welcome, Komrade {self}.',pause=True,clear=True)
-        # self.help()
 
     @property
     def secret_login(self):

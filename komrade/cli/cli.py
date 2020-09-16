@@ -42,7 +42,7 @@ class CLI(Logger):
 
         while True:
             try:
-                inp=input(f'@{self.name if self.name else "?"}: ')
+                inp=input(f'\n@{self.name if self.name else "?"}: ')
                 # self.print(inp,'??')
                 self.route(inp)
             except (KeyboardInterrupt,EOFError) as e:
@@ -173,15 +173,15 @@ class CLI(Logger):
             self.name=self.komrade.name
             self.loggedin=True
             self.help()
-            self.stat(f'Welcome, Komrade @{self.name}.')
+            # self.stat(f'Welcome, Komrade @{self.name}.')
         else:
             self.name=None
             self.loggedin=False
             self.komrade=None
             self.help()
-        if res and 'status' in res:
-            # self.boot()
-            self.stat(res.get('status','?'))
+            if res and 'status' in res:
+                # self.boot()
+                self.stat(res.get('status','?'),komrade_name='Operator')
 
 
     def login(self,name):
