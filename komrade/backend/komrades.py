@@ -109,6 +109,34 @@ class KomradeX(Caller):
         pubkey,privkey = keypair.pubkey_obj,keypair.privkey_obj
         logfunc(f'Using the iron-clad Elliptic curve algorithm, I have cut for you a private and public asymmetric key pair:\n\n(1) {pubkey}\n\n(2) {privkey}{ART_KEY_PAIR}',clear=True,pause=True)
 
+
+        ### PUBLIC KEY
+        qr_str=self.qr_str(pubkey.data_b64)
+        logfunc('(1) You may store your public key both on your device hardware, as well as share it with anyone you wish.\n\nIt will even be stored as a QR code on your device:\n{qr_str}',pause=True)
+        log('You must also register it with Komrade @Operator on the remote server. Shall Komrade @Telephone send it over?',pause=True,clear=False)#),dict_format(data,tab=2),pause=True)
+        ok_to_send = input(f'Komrade @{name}: [Y/n]')
+        if ok_to_send.strip().lower()=='n':
+            logfunc('Cancelling registration.')
+            return
+
+        ## CALL OP WITH PUBKEY
+        resp_msg_d = self.ring_ring(
+            {
+                'name':name, 
+                'pubkey': pubkey.data,
+            },
+            route='register_new_user'
+        )
+        logfunc(resp_msg_d.get('status'),komrade_name='Operator')
+
+        if not resp_msg_d.get('success'):
+            return
+
+        clear_screen()
+
+        logfunc(f"(2) Your PRIVATE key will be stored only on your device hardware.\n\nAnd only after we encrypt it with a memorable password:")
+
+
         ## 3) Have passphrase?
         if SHOW_STATUS and not passphrase:
             passphrase = self.cli.status_keymaker_part2(name,passphrase,pubkey,privkey,hasher,self)
@@ -119,67 +147,27 @@ class KomradeX(Caller):
                 passphrase=getpass(f'\nKomrade @{self.name}: ')
                 clear_screen()
         ## 4) Get hashed password
+        
         passhash = hasher(passphrase)
-        logfunc(f'''Using a salted SHA-256 hashing algorithm, I have replaced your password with a disguised or hashed version of itself:\n\n{make_key_discreet_str(passhash)}''',pause=True,clear=True)
-        ## 5) Encrypt private key
-        privkey_decr = KomradeSymmetricKeyWithPassphrase(passphrase)
+        privkey_decr = KomradeSymmetricKeyWithPassphrase(passhash=passhash)
+        logfunc(f'''Let's beef up your password by running it through a SHA-256 hashing algorithm:\n\n{make_key_discreet_str(passhash)}''',pause=True,clear=False)
+
         privkey_encr = privkey_decr.encrypt(privkey.data)
         privkey_encr_obj = KomradeEncryptedAsymmetricPrivateKey(privkey_encr)
-        logfunc(f"Your asymmetric private key will be stored only on your device hardware, and only as it was encrypted by your password-generated key:\n\n[Encrypted Private Key]\n({make_key_discreet_str(privkey_encr_obj.data_b64)})",pause=True,clear=True)
-
-        ## 6) Test keychain works
-        #privkey_decr2 = KomradeSymmetricKeyWithPassphrase(passphrase)
-        #assert privkey_decr2.decrypt(privkey_encr) == privkey.data
         
+        logfunc(f"With that password we then encrypt your asymmetric private key:\n\n[Encrypted Private Key]\n({make_key_discreet_str(privkey_encr_obj.data_b64)})",pause=True,clear=False)
+
+        logfunc('Only this encrypted version is stored.',pause=True,clear=True)
+
+
         self._keychain['pubkey']=pubkey
         self._keychain['privkey_encr']=privkey_encr_obj
         self._keychain['privkey']=privkey
-        # self._keychain['privkey_decr']=privkey_decr
-        # we should be able to reassemble privkey now?
-        # self.log('this is my keychain now:')
-        #assert 'privkey' in self.keychain()
-
         self.log('My keychain now looks like:',dict_format(self.keychain()))
 
         # More narration?
         if SHOW_STATUS: self.cli.status_keymaker_part3(privkey,privkey_decr,privkey_encr,passphrase)
-
-        # 6) Save for now on client -- will delete if fails on server
         
-        # storing myself in memory phonebook
-        # PHONEBOOK[name]=self
-
-        ## 7) Save data to server
-        data = {
-            'name':name, 
-            'pubkey': pubkey.data,
-        }
-        logfunc('You may store your public key both on your device hardware, as well as share it with anyone you wish.\n\nYou must also register it with Komrade @Operator on the remote server. Shall Komrade @Telephone send it over?',pause=True,clear=False)#),dict_format(data,tab=2),pause=True)
-        ok_to_send = input(f'Komrade @{name}: [Y/n]')
-        if ok_to_send.strip().lower()=='n':
-            logfunc('Cancelling registration.')
-            return
-        
-        # ring operator
-        # call from phone since I don't have pubkey on record on Op yet
-        # self.log('my keychain:',self._keychain,pubkey,self.op._keychain)
-
-        resp_msg_d = self.ring_ring(
-            {
-                'name':name, 
-                'pubkey': pubkey.data,
-            },
-            route='register_new_user'
-        )
-        if not resp_msg_d.get('success'):
-            # logfunc(f'Registration failed. Message from operator was:\n\n{dict_format(resp_msg_d)}',pause=True)
-            # logfunc(f'Registration failed')
-            logfunc(resp_msg_d.get('status'),komrade_name='Operator')
-            return
-    
-        # otherwise, save things on our end
-        clear_screen()
-        logfunc(f'Registration successful. Message from operator was:\n\n{dict_format(resp_msg_d)}',pause=True)
 
         self.name=resp_msg_d.get('name')
         pubkey_b = resp_msg_d.get('pubkey')
