@@ -242,13 +242,11 @@ class CLI(Logger):
         # self.print('prompt got:',msg)
         # self.print(msg.data)
         do_pause()
-        # clear_screen()
+        clear_screen()
         meet_name = msg.data.get('meet_name')
         meet_uri = msg.data.get('meet')    
         qrstr=self.komrade.qr_str(meet_uri)
-        do_adduser = input(f'''\n\n@Operator: Add @{meet_name}'s public key to your address book? It will allow you and @{meet_name} to read and write encrypted messages to one another.\n\n{self.komrade} [y/N]: ''')
-        do_senduser = input(f'''\nSend this user your public key as well?\n\n{self.komrade} [y/N]: ''')
-
+        do_adduser = input(f'''@Operator: Add @{meet_name}'s public key to your address book? It will allow you and @{meet_name} to read and write encrypted messages to one another.\n\n{self.komrade} [y/N]: ''')
         if do_adduser.strip().lower()=='y':
             fnfn = self.komrade.save_uri_as_qrcode(
                 meet_uri,
@@ -256,10 +254,17 @@ class CLI(Logger):
             )
             clear_screen()
             self.stat(f'The public key of @{meet_name} has been saved as a QRcode to {fnfn}:\n{qrstr}')
+            do_pause()
+            clear_screen()
+        do_senduser = input(f'''\n@Operator: Send this user your public key as well?\n\n{self.komrade} [y/N]: ''')
+
         if do_senduser.strip().lower()=='y':
-            self.print('returning the invitation ...')
+            self.print('@Operator: Returning the invitation ...')
             res = self.komrade.meet(meet_name,returning=True)
-            # self.print('got from meeting:',res)
+            if res.get('success'):
+                self.stat(f'I sent this message to @{meet_name}: {res.get("msg_sent")}')
+            else:
+                self.stat(msg.get('status'))
 
     def prompt_msg(self,msg):
         do = input(f'\n\n@Operator: Type "r" to reply, "d" to delete, or hit Enter to continue.\n{self.komrade}: ')
