@@ -159,6 +159,8 @@ class CLI(Logger):
         self.komrade=Komrade(name)
         
         res = self.komrade.login()
+        print('got login res:',res)
+        stop
 
         if res and type(res)==dict and 'success' in res and res['success']:
             self.name=self.komrade.name
