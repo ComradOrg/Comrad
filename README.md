@@ -68,18 +68,39 @@ We present a simplified set of social media features drawn from everything that'
 
 ## Progress
 
-### Preview animation
+### Animations from mobile/desktop app
 
 As of the 23rd of August.
 
 <img src="komrade/app/assets/komrade-screen-preview-2020-08-23.gif" height="600" alt="GIF animation" />
 
-### Backend preview
+### Animations from terminal app
 
-See [here](https://www.dropbox.com/s/8r8gqgfswojmtwd/komrade-terminal-preview--2020-09-13.mkv?dl=0).
+#### Register
+
+<img src="komrade/app/assets/komrade-terminal-preview--2020-09-16--register.gif" height="500" alt="GIF animation" />
+
+#### Login
+
+...
+
+#### Meet
+
+...
+
+#### Message
+
+...
+
+### Post
+
+...
 
 
 
+
+
+### Animations from terminal app
 
 ## Usage
 
