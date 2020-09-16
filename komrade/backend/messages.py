@@ -72,8 +72,8 @@ class Message(Logger):
         hdr='#'*CLI_WIDTH
         return f"""
 {hdr}
-from:  @{self.from_name if self.from_name else ''} 
-to:    @{self.to_name if self.to_name else ''}
+from: Komrade @{self.from_name if self.from_name else ''} 
+to:   Komrade @{self.to_name if self.to_name else ''}
 {hdr}
 
 {msg_s}
