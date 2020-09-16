@@ -149,9 +149,9 @@ class CLI(Logger):
         if not name: return
         self.komrade = Komrade(name)
         was_off=self.off
-        if was_off: self.show_log()
-        res=self.komrade.register()
-        if was_off: self.hide_log()
+        # if was_off: self.show_log()
+        res=self.komrade.register(logfunc=self.stat)
+        # if was_off: self.toggle_log()
         if res and type(res)==dict and 'success' in res and res['success']:
             self.name=self.komrade.name
             self.loggedin=True
