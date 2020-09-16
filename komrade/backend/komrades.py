@@ -120,12 +120,12 @@ class KomradeX(Caller):
                 clear_screen()
         ## 4) Get hashed password
         passhash = hasher(passphrase)
-        logfunc(f'''I have replaced your password with a disguised, hashed version\nusing a salted SHA-256 algorithm from python's hashlib:\n\n\t{make_key_discreet_str(passhash)}''',pause=True)
+        logfunc(f'''Using a salted SHA-256 hashing algorithm, I have replaced your password with a disguised or hashed version of itself:\n\n{make_key_discreet_str(passhash)}''',pause=True)
         ## 5) Encrypt private key
         privkey_decr = KomradeSymmetricKeyWithPassphrase(passphrase)
         privkey_encr = privkey_decr.encrypt(privkey.data)
         privkey_encr_obj = KomradeEncryptedAsymmetricPrivateKey(privkey_encr)
-        logfunc(f"Store your private key on your device hardware ONLY\nas it was encrypted by your password-generated key:\n\n[Encrypted Private Key]\n({make_key_discreet_str(privkey_encr_obj.data_b64)})",pause=True)
+        logfunc(f"Store your private key on your device hardware ONLY as it was encrypted by your password-generated key:\n\n[Encrypted Private Key]\n({make_key_discreet_str(privkey_encr_obj.data_b64)})",pause=True)
 
         ## 6) Test keychain works
         #privkey_decr2 = KomradeSymmetricKeyWithPassphrase(passphrase)
@@ -154,7 +154,11 @@ class KomradeX(Caller):
             'name':name, 
             'pubkey': pubkey.data,
         }
-        logfunc('Store your public key both on your device hardware\nas well as register it with Komrade @Operator on the remote server:\n\n',dict_format(data,tab=2),pause=True)
+        logfunc('You may store your public key both on your device hardware, as well as share it with anyone you wish.\n\nYou must also register it with Komrade @Operator on the remote server. Shall Komrade @Telephone send it over?',pause=True,clear=True)#),dict_format(data,tab=2),pause=True)
+        ok_to_send = input(f'Komrade @{name}: [Y/n]')
+        if ok_to_send.strip().lower()=='n':
+            logfunc('Cancelling registration.')
+            return
         
         # ring operator
         # call from phone since I don't have pubkey on record on Op yet
