@@ -262,7 +262,9 @@ class CLI(Logger):
             if name_or_pubkey.startswith('@'):
                 name_or_pubkey=name_or_pubkey[1:]
             if len(datl)==1:
+                print()
                 self.stat(f'Compose your message to @{name_or_pubkey} below.', 'Press Ctrl+D to complete, or Ctrl+C to cancel.')
+                print()
                 msg_s = multiline_input().strip()
                 if not msg_s:
                     print('\n')
@@ -347,6 +349,7 @@ class CLI(Logger):
             do_pause()
         elif do=='r':
             # self.print('@todo: replying...')
+            print()
             return self.msg(msg.from_name)
         else:
             pass
