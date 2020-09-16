@@ -200,7 +200,7 @@ class KomradeX(Caller):
         
         # done!
         logfunc(f'Congratulations. Welcome, Komrade {self}.',pause=True,clear=True)
-        self.help()
+        # self.help()
 
     @property
     def secret_login(self):
