@@ -25,6 +25,7 @@ class CLI(Logger):
         'read':'read mail',
         'verbose':'show/hide log output',
         'post':'post to world',
+        'feed':'fetch posts'
     }
 
     def __init__(self,name='',cmd='',persona=None):

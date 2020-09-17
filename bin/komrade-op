@@ -1,31 +1,19 @@
 ##
 # Run THE OPERATOR
 ##
+
+# settings
 export KOMRADE_SHOW_LOG=1
 
+# get virtualenv going
 SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-
 path=`realpath "$SCRIPTPATH/../komrade/backend/switchboard.py"`
 pathvenv=`realpath "$SCRIPTPATH/../venv/bin/activate"`
-
 source $pathvenv
-date=$(date '+%Y-%m-%d')
-pathlog="$SCRIPTPATH/../../data/log"
-mkdir -p "$pathlog"
-fnfn="$pathlog/$date.op.log"
 
-#echo $pathlog
-
+# run op forever
 cmd="python $path 8080 $*"
-
-# do forever
 while true; do $cmd && break; done
-
-#python $path 8080 $* >> $fnfn 2>&1
-
-echo $path
-echo $fnfn
-
 
 #if command -v deactivate &> /dev/null
 #then
