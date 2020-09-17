@@ -308,14 +308,13 @@ class KomradeX(Caller):
 
     
     def post(self,something,to_name=WORLD_NAME):
-        self.log('<-',something,to_name_list)
+        self.log('<-',something,to_name)
         # encryption chain:
             # me -> world
                 # me -> op
                 # op <- me
             # op -> others
 
-        posts=[]
         self.log(to_name,Komrade(to_name))
         # make post data
         post_d = {
@@ -330,12 +329,8 @@ class KomradeX(Caller):
         # make post into Message
         post = Message(post_d)
         post.encrypt()
-        # self.log('post as Message')
-        # attach encrypted version
-        # self.log('post as message .msg_d =',post.msg_d)
-        # self.log('post as message .msg =',post.msg)
-        
-        # get total binary package
+
+        # enclose as message to operator
         self.ring_ring(
             post_d,
             route='post'
