@@ -334,11 +334,13 @@ class TheOperator(Operator):
         # get posts by personating world
         world = Komrade(WORLD_NAME)
         world_inbox_res = world.inbox()
+        self.log('world_inbox_res',world_inbox_res)
         if not world_inbox_res.get('success'):
             return world_inbox_res
         world_msgs = world_inbox_res.get('msgs')
+        self.log('world_msgs',world_msgs)
 
-        # encrypt to sender from  world
+        # encrypt to sender from world
         world_msgs_b = BSEP.join([msg.msg_b for msg in world_msgs])
         world_msg_to_sender = Message(
             from_whom=world,
