@@ -50,6 +50,8 @@ class Message(Logger):
         else:
             msg=self.msg
 
+        return str(msg)
+
         fpk=b64enc_s(self.from_pubkey)
         fpk1,fpk2 = fpk[:len(fpk)//2],fpk[len(fpk)//2:]
         numchar = len(b64enc_s(self.to_pubkey))

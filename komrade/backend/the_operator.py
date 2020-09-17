@@ -329,6 +329,7 @@ class TheOperator(Operator):
 
 
     def fetch_posts(self,msg_to_op):
+        self.log('<-',msg_to_op)
 
         # get posts by personating world
         world = Komrade(WORLD_NAME)

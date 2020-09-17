@@ -332,12 +332,12 @@ class KomradeX(Caller):
         self.log('res_b <-',res_b)
 
         # msg from world?
-        msg_from_world = Message(
-            from_whom=Komrade(WORLD_NAME),
-            to_whom=self,
-            msg=res_b
-        )
-        self.log('converted to msg:',msg_from_world)
+        # decrypt?
+        
+
+
+
+        self.log('converted to msg:',msg_from_world.msg_d)
         msg_from_world.decrypt()
         self.log('decrypted msg:',msg_from_world)
 
