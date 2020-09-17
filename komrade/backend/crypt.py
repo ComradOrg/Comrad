@@ -200,6 +200,7 @@ values = {self.values}
     def append(self,x_l,insert=None):
         if type(x_l)!=list: x_l=[x_l]
         val_l = self.values
+        self.log('val_l =',val_l)
         x_l = [x for x in x_l if not x in set(val_l)]
         # print('val_l =',val_l)
         for x in x_l:

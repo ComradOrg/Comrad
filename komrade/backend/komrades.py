@@ -447,7 +447,7 @@ class KomradeX(Caller):
             post_prefix='/post/'):
         
         # update inbox
-        new_inbox = id2post.keys()
+        new_inbox = list(id2post.keys())
         inbox = self.get_inbox_crypt(
             prefix=inbox_prefix
         )
