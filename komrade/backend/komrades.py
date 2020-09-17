@@ -309,12 +309,14 @@ class KomradeX(Caller):
 
     def fetch_posts(self,n=100,only_from=[],not_from=[]):
         # already seen?
-        seen_post_ids = pickle.loads(
-            self.crypt_keys.get(
-                'seen_post_ids',
-                prefix='/cache/'
-            )
+        seen_post_ids_b = self.crypt_keys.get(
+            'seen_post_ids',
+            prefix='/cache/'
         )
+        if seen_post_ids_b:
+            seen_post_ids=pickle.loads(seen_post_ids_b)
+        else:
+            seen_post_ids=[]
 
         # ring operator
         res = self.ring_ring(
