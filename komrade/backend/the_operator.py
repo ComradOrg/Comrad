@@ -493,11 +493,14 @@ class TheOperator(Operator):
         # logged in?
         if do_login:
             login_res = self.login(msg_to_op)
-            if not login_res.get('success'):
-                return login_res
-            return {'success':True,'status':'Logged in.'}
+            return login_res
         else:
-            return {'success':True,'status':'Login not required.'}
+            return {
+                'success':True,
+                'status':'Login not required.',
+                'name':msg_to_op.from_name,
+                'pubkey':msg_to_op.from_pubkey
+            }
 
 
     # (0) get updates
