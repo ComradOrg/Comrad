@@ -625,14 +625,14 @@ class TheOperator(Operator):
                 reencrypt_to_name=msg_to_op.from_name
             )
             self.log('res_posts',res_posts)
-            if not res_posts.get('success'):
-                return {
-                    'success':False,
-                    'res_login':res_login,
-                    'res_msgs':res_msgs,
-                    'res_posts':res_posts
-                }
-            posts=res_posts.get('posts',{})
+            # if not res_posts.get('success'):
+            #     return {
+            #         'success':False,
+            #         'res_login':res_login,
+            #         'res_msgs':res_msgs,
+            #         'res_posts':res_posts
+            #     }
+            # posts=res_posts.get('posts',{})
 
         # return
         res={
