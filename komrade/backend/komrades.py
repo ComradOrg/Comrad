@@ -499,11 +499,11 @@ class KomradeX(Caller):
         if not res.get('success'): return res
 
         # (2) save msgs
-        id2msg=res.get('res_msgs').get('posts',[])
+        id2msg=res.get('res_msgs').get('posts',{})
         self.save_msgs(id2msg)
         
         # (3) save posts
-        id2post=res.get('res_posts').get('posts',[])
+        id2post=res.get('res_posts').get('posts',{})
         self.save_posts(id2post)
 
         return res
