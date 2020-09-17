@@ -529,17 +529,41 @@ class KomradeX(Caller):
         return res
     
     
-    def messages(self,show_read=True,show_unread=True):
+    def posts(self,**y):
+        return self.messages(
+            inbox_prefix='/feed/'
+        )
+
+    def messages(self,
+            show_read=True,
+            show_unread=True,
+            inbox_prefix='/inbox/'):
         # meta inbox
-        inbox = self.inbox_db.values
+        self.log('<--',inbox_prefix,'???')
+
+        inbox_db=self.get_inbox_crypt(prefix=inbox_prefix)
+        read_db=self.get_inbox_crypt(prefix=inbox_prefix+'read/')
+        unread_db=self.get_inbox_crypt(prefix=inbox_prefix+'unread/')
+
+        inbox = inbox_db.values
+        read = read_db.values
+        unread = unread_db.values
         self.log('<- inbox',inbox)
+        self.log('<- read',read)
+        self.log('<- unread',unread)
+
+        # filter out posts!?!?! @hack
+        if inbox_prefix=='/inbox/':
+            bad_prefix = '/feed/' if inbox_prefix=='/inbox/' else '/inbox/'
+            bad_db=self.get_inbox_crypt(prefix=inbox_prefix)
+            bad = bad_db.values
+            self.log('bad',bad_prefix,'for me',inbox_prefix,'=',bad)
+            inbox = [x for x in inbox if x not in set(bad)]
+            self.log('<- inbox 2',inbox)        
 
         # filter?
-        if not show_read:
-            inbox = [x for x in inbox if not x in set(self.inbox_read_db.values)]
-        if not show_unread:
-            inbox = [x for x in inbox if not x in set(self.inbox_unread_db.values)]
-        self.log('<- inbox 2',inbox)
+        if not show_read: inbox = [x for x in inbox if not x in set(read)]
+        if not show_unread: inbox = [x for x in inbox if not x in set(unread)]
         
         # decrypt and read all posts
         msgs=[]

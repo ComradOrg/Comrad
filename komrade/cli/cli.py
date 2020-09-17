@@ -22,7 +22,8 @@ class CLI(Logger):
         'who':'show contacts or info',
         'msg':'write people',
         'update':'check mail',
-        'read':'read mail',
+        'dms':'read DMs',
+        'feed':'read posts',
         'verbose':'show/hide log output',
         'post':'post to world',
         'feed':'fetch posts'
@@ -359,29 +360,35 @@ class CLI(Logger):
             pass
 
 
-
-
-    def read(self,dat='',inbox_res=None):
+    def dms(self,dat=''):
         if self.with_required_login():
             msgs=self.komrade.messages()
-            if not msgs:
-                self.stat('No messages.')
-            else:
-                clear_screen()
-                for i,msg in enumerate(msgs):
-                    try:
-                        self.stat(f'Showing message {i+1} of {len(msgs)}, from newest to oldest. Hit Ctrl+D to exit.')
-                        print()
-                        print(msg)
-                        # self.print('DATA',msg.msg_d)
-                        if msg.data.get('prompt_id')=='addcontact':
-                            self.prompt_adduser(msg)
-                        
-                        self.prompt_msg(msg)
-                        clear_screen()
-                    except EOFError:
-                        break
-                self.help()
+            return self.read(msgs)
+
+    def feed(self,dat=''):
+        if self.with_required_login():
+            posts=self.komrade.posts()
+            return self.read(posts)
+
+    def read(self,msgs):
+        if not msgs:
+            self.stat('No messages.')
+        else:
+            clear_screen()
+            for i,msg in enumerate(msgs):
+                try:
+                    self.stat(f'Showing message {i+1} of {len(msgs)}, from newest to oldest. Hit Ctrl+D to exit.')
+                    print()
+                    print(msg)
+                    # self.print('DATA',msg.msg_d)
+                    if msg.data.get('prompt_id')=='addcontact':
+                        self.prompt_adduser(msg)
+                    
+                    self.prompt_msg(msg)
+                    clear_screen()
+                except EOFError:
+                    break
+            self.help()
 
 
     def post(self,msg_s):
@@ -390,12 +397,6 @@ class CLI(Logger):
                 name_or_pubkey=WORLD_NAME,
                 msg_s=msg_s
             )
-
-    def feed(self,dat=''):
-        if self.with_required_login():
-            inbox_res = self.komrade.fetch_posts()
-            return self.read(inbox_res=inbox_res)
-
 
 
 
