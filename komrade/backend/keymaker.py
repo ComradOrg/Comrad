@@ -383,8 +383,7 @@ class Keymaker(Logger):
         if not hasattr(self,'_crypt_keys'):
             self._crypt_keys = Crypt(
                 fn=self.path_crypt_keys,
-                encryptor_func=self.encrypt,
-                decryptor_func=self.decrypt,
+                encrypt_values=True
             )
         return self._crypt_keys
 
@@ -399,17 +398,18 @@ class Keymaker(Logger):
         return self._crypt_data
 
     def encrypt(self,x):
-        if 'privkey_decr' in self._keychain:
-            self.log('! encrypting')
-            return self.privkey_decr.encrypt(x)
-        self.log('! not encrypting')
-        return x
+        return self.privkey_decr.encrypt(x)
+        # if 'privkey_decr' in self._keychain:
+        #     self.log('! encrypting')
+            
+        # self.log('! not encrypting')
+        # return x
     def decrypt(self,x):
-        if 'privkey_decr' in self._keychain:
-            self.log('! decrypting')
-            return self.privkey_decr.decrypt(x)
-        self.log('! not decrypting')
-        return x
+        # if 'privkey_decr' in self._keychain:
+            # self.log('! decrypting')
+        return self.privkey_decr.decrypt(x)
+        # self.log('! not decrypting')
+        # return x
 
 
 

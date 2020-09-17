@@ -25,13 +25,14 @@ class Crypt(Logger):
             use_secret=CRYPT_USE_SECRET,
             path_secret=PATH_CRYPT_SECRET,
             encrypt_values=False,
-            encryptor_func=lambda x: x,
-            decryptor_func=lambda x: x):
+            encryptor_func=None,
+            decryptor_func=None):
         
         # defaults
         if not name and fn: name=os.path.basename(fn).replace('.','_')
         self.name,self.fn=name,fn
 
+        
         # use secret? for salting
         if use_secret and path_secret:
             if not os.path.exists(path_secret):
@@ -45,8 +46,13 @@ class Crypt(Logger):
                     self.secret = f.read()
         else:
             self.secret = b''
-
         self.encrypt_values = encrypt_values
+        if self.secret and encrypt_values and (not encryptor_func or not decryptor_func):
+            self.key = KomradeSymmetricKeyWithPassphrase(
+                passphrase=self.secret
+            )
+            encryptor_func = self.key.encrypt
+            decryptor_func = self.key.decrypt
         self.encryptor_func=encryptor_func
         self.decryptor_func=decryptor_func
         self.store = FilesystemStore(self.fn)

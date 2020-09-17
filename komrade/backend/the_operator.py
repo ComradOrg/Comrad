@@ -451,8 +451,7 @@ class TheOperator(Operator):
 
         # get inbox
         inbox_crypt = self.get_inbox_crypt(
-            uri=deliver_to,
-            pubkey_b=deliver_to_b,
+            uri=deliver_to
         )
         self.log('inbox_crypt',inbox_crypt)
         self.log('inbox_crypt.values',inbox_crypt.values)
