@@ -594,6 +594,7 @@ class KomradeX(Caller):
         # first from op to me?
         try:
             msg_from_op_b_encr = post_encr
+            self.log('!?!?',self.name,self.uri,self.keychain())
             msg_from_op_b = SMessage(
                 self.privkey.data,
                 self.op.pubkey.data
