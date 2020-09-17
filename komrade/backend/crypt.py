@@ -8,6 +8,7 @@ from simplekv.memory.redisstore import RedisStore
 import redis
 import hashlib,os
 import zlib
+from pythemis.exception import ThemisError
 
 
 
@@ -70,29 +71,37 @@ class Crypt(Logger):
         k_b2 = self.force_binary(prefix) + k_b
         return k_b2
 
-    def package_val(self,k):
+    def package_val(self,k,encrypt=None):
+        if encrypt is None: encrypt=self.encrypt_values
         k_b = self.force_binary(k)
-        if self.encrypt_values:
-            k_b = self.encryptor_func(k_b)
+        if encrypt:
+            try:
+                k_b = self.encryptor_func(k_b)
+            except ThemisError as e:
+                self.log('!! ENCRYPTION ERROR:',e)
         return k_b
 
-    def unpackage_val(self,k_b):
+    def unpackage_val(self,k_b,encrypt=None):
+        if encrypt is None: encrypt=self.encrypt_values
         if self.encrypt_values:
-            k_b = self.decryptor_func(k_b)
+            try:
+                k_b = self.decryptor_func(k_b)
+            except TemisError as e:
+                self.log('!! DECRYPTION ERROR:',e)
         return k_b
 
     def has(self,k,prefix=''):
         return bool(self.get(k,prefix=prefix))
 
 
-    def set(self,k,v,prefix='',override=False):
+    def set(self,k,v,prefix='',override=False,encrypt=True):
         if self.has(k,prefix=prefix) and not override:
             self.log(f"I'm afraid I can't let you do that, overwrite someone's data!\n\nat {prefix}{k} = {v}")
             return False #(False,None,None)
         
         k_b=self.package_key(k,prefix=prefix)
         k_b_hash = self.hash(k_b)
-        v_b=self.package_val(v)
+        v_b=self.package_val(v,encrypt = (self.encrypt_values and encrypt))
         if not override:
             self.log(f'''Crypt.set(\n\t{k_b}\n\n\t{k_b_hash}\n\n\t{v_b}\n)''')
         self.store.put(k_b_hash,v_b)
