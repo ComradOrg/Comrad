@@ -607,7 +607,7 @@ class TheOperator(Operator):
 
         # (2) get msgs
         res_msgs = self.get_msgs(inbox)
-        self.log('res_msgs =',res_msgs)
+        # self.log('res_msgs =',res_msgs)
         if not res_msgs.get('success'):
             return {
                 'success':False,
