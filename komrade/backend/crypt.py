@@ -210,7 +210,7 @@ class CryptList(Crypt):  # like inbox
 
         try:
             val_b=self.val_b
-        except ThemisError:
+        except ThemisError as e:
             self.log(f'!! DECRYPTION FAILURE: {e}')
             return []
         if not val_b: return []
