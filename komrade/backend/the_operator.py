@@ -401,9 +401,19 @@ class TheOperator(Operator):
             return False
         return True
 
+
     def deliver_msg(self,msg_to_op):
+        self.log('<-',msg_to_op)
+
         data = msg_to_op.data
+        self.log('<- data',msg_to_op.data)
+
         deliver_msg_d = data.get('deliver_msg')
+        self.log('<- deliver_msg_d',deliver_msg_d)
+        return self.deliver_msg_d(deliver_msg_d)
+
+    def deliver_msg_d(self,deliver_msg_d):
+        self.log('<- deliver_msg_d',deliver_msg_d)
 
         # is valid?
         if not self.validate_msg(deliver_msg_d):
@@ -413,47 +423,27 @@ class TheOperator(Operator):
             }
             self.log('-->',res)
 
-        # add type
-        deliver_msg_d['type']='DM'
-
-        # package
-        from komrade.backend.messages import Message
-        msg_from_op = Message(
-            from_whom=self,
-            msg_d = {
-                'to':deliver_msg_d.get('to'),
-                'to_name':deliver_msg_d.get('to_name'),
-                'msg':deliver_msg_d
-            }
-        )
-        self.log(f'{self}: Prepared this msg for delivery:\n{msg_from_op}\n\n{dict_format(msg_from_op.msg_d)}')
+        # encode
+        deliver_msg_b = pickle.dumps(deliver_msg_d)
+        self.log('<-- deliver_msg_b',deliver_msg_b)
 
         # encrypt
-        msg_from_op.encrypt()
-        self.log("Here's what it looks like before I actually_deliver it",msg_from_op)
-
-        # deliver
-        return self.actually_deliver_msg(msg_from_op)
-
-    def actually_deliver_msg(self,msg_from_op):
-        self.log('msg_from_op <-',msg_from_op)
-        self.log('msg_from_op.msg_d <-',msg_from_op.msg_d)
-        self.log('msg_from_op.msg_b <-',msg_from_op.msg_b)
-        self.log('msg_from_op.msg <-',msg_from_op.msg)
-        
-        msg_from_op_b_encr = msg_from_op.msg     #.msg_b  # pickle of msg_d
-        self.log('msg_from_op_b_encr <-',msg_from_op_b_encr)
-        deliver_to = b64enc(msg_from_op.to_pubkey)
+        deliver_to = b64enc(deliver_msg_d['to'])
         deliver_to_b = b64dec(deliver_to)
+        deliver_msg_b_encr = SMessage(
+            self.privkey.data,
+            deliver_to_b
+        ).wrap(deliver_msg_b)
+        self.log('<-- deliver_msg_b_encr',deliver_msg_b_encr)
 
-        # save new post
+        # actually deliver
         post_id = get_random_binary_id()
         self.crypt_data.set(
             post_id,
-            msg_from_op_b_encr,
+            deliver_msg_b_encr,
             prefix='/post/'
         )
-        self.log(f'put {msg_from_op} (or {msg_from_op_b_encr}) in {post_id}')
+        self.log(f'put {deliver_msg_b_encr} in {post_id}')
 
         # get inbox
         inbox_crypt = self.get_inbox_crypt(
@@ -471,6 +461,84 @@ class TheOperator(Operator):
         }
         self.log('->',res)
         return res
+
+
+
+
+
+
+
+
+
+
+
+    # def deliver_msg(self,msg_to_op):
+    #     data = msg_to_op.data
+    #     deliver_msg_d = data.get('deliver_msg')
+
+    #     # is valid?
+    #     if not self.validate_msg(deliver_msg_d):
+    #         res = {
+    #             'status':'Message was not valid. Records between Komrade and Operator do not match.',
+    #             'success':False
+    #         }
+    #         self.log('-->',res)
+
+    #     # package
+    #     from komrade.backend.messages import Message
+    #     msg_from_op = Message(
+    #         from_whom=self,
+    #         msg_d = {
+    #             'to':deliver_msg_d.get('to'),
+    #             'to_name':deliver_msg_d.get('to_name'),
+    #             'msg':deliver_msg_d
+    #         }
+    #     )
+    #     self.log(f'{self}: Prepared this msg for delivery:\n{msg_from_op}\n\n{dict_format(msg_from_op.msg_d)}')
+
+    #     # encrypt
+    #     msg_from_op.encrypt()
+    #     self.log("Here's what it looks like before I actually_deliver it",dict_format(msg_from_op.msg_d))
+
+    #     # deliver
+    #     return self.actually_deliver_msg(msg_from_op)
+
+    # def actually_deliver_msg(self,msg_from_op):
+    #     self.log('msg_from_op <-',msg_from_op)
+    #     self.log('msg_from_op.msg_d <-',msg_from_op.msg_d)
+    #     self.log('msg_from_op.msg_b <-',msg_from_op.msg_b)
+    #     self.log('msg_from_op.msg <-',msg_from_op.msg)
+        
+    #     msg_from_op_b_encr = msg_from_op.msg     #.msg_b  # pickle of msg_d
+    #     self.log('msg_from_op_b_encr <-',msg_from_op_b_encr)
+    #     deliver_to = b64enc(msg_from_op.to_pubkey)
+    #     deliver_to_b = b64dec(deliver_to)
+
+    #     # save new post
+    #     post_id = get_random_binary_id()
+    #     self.crypt_data.set(
+    #         post_id,
+    #         msg_from_op_b_encr,
+    #         prefix='/post/'
+    #     )
+    #     self.log(f'put {msg_from_op} (or {msg_from_op_b_encr}) in {post_id}')
+
+    #     # get inbox
+    #     inbox_crypt = self.get_inbox_crypt(
+    #         uri=deliver_to
+    #     )
+    #     self.log('inbox_crypt',inbox_crypt)
+    #     self.log('inbox_crypt.values',inbox_crypt.values)
+    #     res_inbox = inbox_crypt.prepend(post_id)
+    #     self.log('inbox_crypt.values v2',inbox_crypt.values)
+    #     res = {
+    #         'status':'Message delivered.',
+    #         'success':True,
+    #         'post_id':post_id,
+    #         'res_inbox':res_inbox 
+    #     }
+    #     self.log('->',res)
+    #     return res
 
 
 
