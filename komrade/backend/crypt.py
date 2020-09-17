@@ -83,7 +83,7 @@ class Crypt(Logger):
 
     def unpackage_val(self,k_b,encrypt=None):
         if encrypt is None: encrypt=self.encrypt_values
-        if self.encrypt_values:
+        if encrypt:
             try:
                 k_b = self.decryptor_func(k_b)
             except ThemisError as e:
