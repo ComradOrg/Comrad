@@ -549,7 +549,7 @@ class KomradeX(Caller):
         msg_from_op_b_encr = post_encr
         msg_from_op_b = SMessage(
             self.privkey.data,
-            self.op.pubkey
+            self.op.pubkey.data
         ).unwrap(post_encr)
         self.log('decrypted??',msg_from_op_b)
 
