@@ -558,7 +558,7 @@ class KomradeX(Caller):
                 self.op.pubkey.data
             ).unwrap(msg_from_op_b_encr)
             self.log('decrypted??',msg_from_op_b)
-        except ThemisError as e:
+        except (ThemisError,TypeError) as e:
             self.log(f'!!!!! {e} !!!!!')
             return {
                 'success':False,
