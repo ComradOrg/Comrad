@@ -281,6 +281,7 @@ class Keymaker(Logger):
 
     def find_name(self,pubkey_b64):
         res = self.crypt_keys.get(b64enc(pubkey_b64), prefix='/name/')
+        if res: res=res.decode()
         return res
 
     @property

@@ -449,9 +449,9 @@ class TheOperator(Operator):
             real_from_pub
         ) = (
             self.find_name(alleged_to_pub),
-            self.find_pubkey(alleged_to_name),
+            self.find_pubkey(alleged_to_name).data_b64,
             self.find_name(alleged_from_pub),
-            self.find_pubkey(alleged_from_name)
+            self.find_pubkey(alleged_from_name).data_b64
         )
 
         self.log(f'''
