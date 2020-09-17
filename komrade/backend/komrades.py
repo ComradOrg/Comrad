@@ -307,7 +307,7 @@ class KomradeX(Caller):
         return super().ring_ring(msg,caller=self,**y)
 
     
-    def post(self,something,to_name_list=[WORLD_NAME]):
+    def post(self,something,to_name=WORLD_NAME):
         self.log('<-',something,to_name_list)
         # encryption chain:
             # me -> world
@@ -316,32 +316,28 @@ class KomradeX(Caller):
             # op -> others
 
         posts=[]
-        self.log('to_name_list',to_name_list)
-        for to_name in to_name_list:
-            self.log(to_name,Komrade(to_name))
-            # make post data
-            post_d = {
-                'from':self.uri,
-                'from_name':self.name,
-                'to_name':to_name,
-                'to':Komrade(to_name).uri,
-                'msg':something
-            }
-            self.log('post_d =',post_d)
+        self.log(to_name,Komrade(to_name))
+        # make post data
+        post_d = {
+            'from':self.uri,
+            'from_name':self.name,
+            'to_name':to_name,
+            'to':Komrade(to_name).uri,
+            'msg':something
+        }
+        self.log('post_d =',post_d)
 
-            # make post into Message
-            post = Message(post_d)
-            post.encrypt()
-            # self.log('post as Message')
-            # attach encrypted version
-            # self.log('post as message .msg_d =',post.msg_d)
-            # self.log('post as message .msg =',post.msg)
-            posts.append(post.msg_b)  #encrypted msg_d 
+        # make post into Message
+        post = Message(post_d)
+        post.encrypt()
+        # self.log('post as Message')
+        # attach encrypted version
+        # self.log('post as message .msg_d =',post.msg_d)
+        # self.log('post as message .msg =',post.msg)
         
         # get total binary package
-        posts_b = BSEP.join(posts)
         self.ring_ring(
-            {'posts_b':posts_b},
+            post_d,
             route='post'
         )
         
