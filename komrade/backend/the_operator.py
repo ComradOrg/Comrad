@@ -367,7 +367,7 @@ class TheOperator(Operator):
                         'msg':{
                             'txt':data.get('deliver_msg'),
                             'type':'post',
-                            'note':f'Komrade @{data.get('deliver_from_name')} has posted the following message to the group @{data.get('deliver_to_name')}.'
+                            'note':f'''Komrade @{data.get('deliver_from_name')} has posted the following message to the group @{data.get('deliver_to_name')}.'''
                         }
                     }                    
                 }
