@@ -448,7 +448,7 @@ class KomradeX(Caller):
         
         # update inbox
         new_inbox = list(id2post.keys())
-        self.log('new_inbox ->',new_inbox)
+        self.log('new_inbox ->',new_inbox,inbox_prefix,post_prefix)
         inbox = self.get_inbox_crypt(
             prefix=inbox_prefix
         )
@@ -618,60 +618,6 @@ class KomradeX(Caller):
             'success':True,
             'msg':msg2me
         }
-
-    # def read_msg0(self,post_id=None,post_encr=None):
-    #     # get post
-    #     if not post_encr:
-    #         post_encr = self.crypt_data.get(post_id,prefix='/post/')
-    #     self.log('found encrypted post store:',post_encr)
-    
-    #     # it should be twice decrypted
-    #     msg_op2me_obj = Message(
-    #         from_whom=self.op,
-    #         to_whom=self,
-    #         msg=post_encr
-    #     )
-    #     msg_op2me_obj.post_id=post_id
-    #     self.log('assuming this is the message:',msg_op2me_obj)
-
-    #     # decrypt
-    #     msg_op2me_obj.decrypt()
-    #     # decode?
-    #     # msg_dat = pickle.loads(msg_op2me_obj.msg)
-    #     # self.log('decoded???',msg_dat)
-
-    #     # dict to/from/msg
-    #     self.log(msg_op2me_obj,'!?!?')
-    #     msg_op2me = msg_op2me_obj.msg.msg_d
-    #     self.log('msg_op2me is now',msg_op2me)
-
-    #     # this really to me?
-    #     assert msg_op2me.get('to') == self.uri
-
-    #     # now try to decrypt?
-    #     msg2me = Message(
-    #         to_whom=self,
-    #         msg_d={
-    #             'from':msg_op2me.get('from'),
-    #             'from_name':msg_op2me.get('from_name'),
-    #             'msg': msg_op2me.get('msg')
-    #         }
-    #     )
-    #     # self.log('msg2me is now v1',msg2me)
-    #     try:
-    #         msg2me.decrypt()
-    #         self.log('msg2me is now v2',dict_format(msg2me.msg_d))
-    #     except ThemisError as e:
-    #         return {
-    #             'success':False,
-    #             'status':f'De/encryption failure: {e}'
-    #         }
-
-    #     return {
-    #         'success':True,
-    #         'msg':msg2me
-    #     }
-
 
 
 
