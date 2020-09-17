@@ -336,6 +336,8 @@ class Operator(Keymaker):
             )
         
         self.log('-->',res)
+        res['success']=True
+        res['status']=f'Deleted {len(post_ids)} posts.'
         return res
 
 
