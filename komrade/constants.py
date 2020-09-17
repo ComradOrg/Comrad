@@ -44,7 +44,7 @@ BSEP3=b'##########'
 
 OPERATOR_NAME = 'Operator'
 TELEPHONE_NAME = 'Telephone'
-WORLD_NAME = 'komrades'
+WORLD_NAME = 'world'
 PATH_APP = os.path.abspath(os.path.dirname(__file__))
 # PATH_BUILTIN_KEYCHAINS_ENCR = os.path.join(PATH_APP,'.builtin.keychains.encr')
 PATH_BUILTIN_KEYCHAIN = os.path.join(PATH_APP,'.builtin.keys')
