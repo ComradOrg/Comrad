@@ -38,9 +38,17 @@ def create_phonelines():
     world_keypair = KomradeAsymmetricKey()
     world_pubkey,world_privkey = world_keypair.pubkey_obj,world_keypair.privkey_obj
     world_uri = world_pubkey.data_b64
+
+    world_privkey_decr = KomradeSymmetricKeyWithoutPassphrase()
+    world_privkey_encr = KomradeEncryptedAsymmetricPrivateKey(
+        data=world_privkey_decr.encrypt(world_privkey.data)
+    )
+
     keycrypt.set(WORLD_NAME,world_pubkey.data,prefix='/pubkey/')
     keycrypt.set(world_uri,WORLD_NAME,prefix='/name/')
-    keycrypt.set(world_uri,world_privkey.data,prefix='/privkey/')
+    # keycrypt.set(world_uri,world_privkey.data,prefix='/privkey/')
+    keycrypt.set(world_uri,world_privkey_encr.data,prefix='/privkey_encr/')
+    keycrypt.set(world_uri,world_privkey_decr.data,prefix='/privkey_decr/')
 
 
 
