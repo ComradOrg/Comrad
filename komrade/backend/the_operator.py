@@ -187,10 +187,6 @@ class TheOperator(Operator):
         secret_login=data.get('secret_login')
 
         name=name.encode() if type(name)==str else name
-        # pubkey=pubkey.encode() if type(pubkey)==str else pubkey
-        # secret_login=secret_login.encode() if type(secret_login)==str else secret_login
-        # get my records
-        # uri = b64enc(pubkey)
         uri = b64enc(pubkey)
         secret_login = b64enc(secret_login)
         name_record = self.crypt_keys.get(
@@ -207,22 +203,21 @@ class TheOperator(Operator):
             prefix='/secret_login/'
         ))
 
-
         self.log(f'''Checking inputs:
-        
-{name} (input)
- vs.
-{name_record} (record)
+                
+        {name} (input)
+        vs.
+        {name_record} (record)
 
-{uri} (input)
- vs.
-{pubkey_record} (record)
+        {uri} (input)
+        vs.
+        {pubkey_record} (record)
 
-{secret_login} (input)
- vs.
-{secret_record} (record)
-''')
-        
+        {secret_login} (input)
+        vs.
+        {secret_record} (record)
+        ''')
+                
         # stop
         # check name?
         if name != name_record:
@@ -243,12 +238,15 @@ class TheOperator(Operator):
             return {
                 'success': True,
                 'status':f'Welcome back, Komrade @{name.decode()}.',
-                'inbox':self.get_inbox(msg_obj,do_login=False)
+                'status_type':'login',
+                'name':name_record,
+                'pubkey':pubkey_record
             }
         else:
             return {
                 'success': False,
                 'status':'Login failed.',
+                'status_type':'login',
             }
 
     def register_new_user(self,msg_obj):
@@ -521,7 +519,8 @@ class TheOperator(Operator):
             if not msg_to_op:
                 return {'success':False, 'status':'Cannot login outside of message context.'}
             res_login=self.require_login(msg_to_op,do_login=do_login)
-            if not res_login.get('success'): return res_login 
+            if not res_login.get('success'):
+                return {'res_login':res_login} 
 
         # (1) get inbox
         res_inbox=self.get_inbox(uri)
@@ -530,22 +529,35 @@ class TheOperator(Operator):
 
         # (2) get msgs
         res_msgs = self.get_msgs(inbox)
-        if not res_msgs.get('success'): return res_msgs
+        if not res_msgs.get('success'):
+            return {
+                'res_login':res_login,
+                'res_msgs':res_msgs
+            }
         msgs=res_msgs.get('posts')
 
         # (3) get posts
         posts=[]
         if include_posts and self.name!=WORLD_NAME:
             res_posts = self.get_posts()
-            if not res_posts.get('success'): return res_posts
-            posts=res.get('res_posts').get('posts',[])
+            if not res_posts.get('success'):
+                return {
+                    'res_login':res_login,
+                    'res_msgs':res_msgs,
+                    'res_posts':res_posts
+                }
+            posts=res_posts.get('posts',[])
 
         # return
         res={
             'success': True,
             'status': f'You have {len(msgs)} new messages, and {len(posts)} new posts.',
-            'posts': posts,
-            'msgs': msgs,
+            # 'posts': posts,
+            # 'msgs': msgs,
+            'res_login':res_login,
+            # 'res_inbox':res_inbox,
+            'res_msgs':res_msgs,
+            'res_posts':res_posts,
         }
         self.log('-->',res)
         return res
@@ -563,10 +575,12 @@ class TheOperator(Operator):
         for post_id in inbox:
             res_read_msg = world.read_msg(post_id)
             if res_read_msg.get('success'):
-                post=res_read_msg.get('msg2me')
+                post=res_read_msg.get('msg')
                 if post:
                     post[post_id]=post
         self.log('id2post for world',id2post)
+        
+        stop
         return id2post
 
         # (3) reencrypt for requester

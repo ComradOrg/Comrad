@@ -194,12 +194,15 @@ class CLI(Logger):
         self.komrade=Komrade(name)
         
         res = self.komrade.login()
+        return self.do_login(res)
+
+    def do_login(self,res)    
         # print('got login res:',res)
         self.log('<- komrade.login() <-',res)
         
-
         if res and type(res)==dict and 'success' in res and res['success']:
-            self.name=self.komrade.name
+            self.name=res['name']
+            self.komrade=Komrade(res['name'])
             self.loggedin=True
         else:
             self.name=None
@@ -208,13 +211,8 @@ class CLI(Logger):
         if res and 'status' in res:
             self.help()
             self.stat(res.get('status','?'),komrade_name='Operator')
-
-        # also see if we got a msg update
-        # if 'res_refresh' in res:
-        #     self.check(
-        #         res=res['res_refresh'],
-        #         statd={'use_prefix':False}
-        #     )
+        
+        return bool(res.get('success'))
 
     @property
     def logged_in(self):
@@ -228,14 +226,6 @@ class CLI(Logger):
             return False
         return True
 
-    # def meet(self,name):
-        
-    #     if not name:
-    #         name=input(f'@Operator: To whom would you like to introduce yourself?\n\n@{self.name}: ')
-    #     if not name: return
-
-    #     # meet?
-    #     self.komrade.meet(name)
 
     def meet(self,dat,returning=False):
         if self.with_required_login():
@@ -289,15 +279,21 @@ class CLI(Logger):
             print()
             self.stat(f'Message successfully sent to @{name_or_pubkey}.',komrade_name='Operator',pause=True)
 
+
+
+
     def update(self,dat=None,res=None,statd={}):
         self.log(f'<-- dat={dat}, res={res}')
-        if self.with_required_login():
-            res = self.komrade.get_updates()
-            self.log('<-- get_updates',res)
-            if not res['success']:
-                self.stat(res['status'],komrade_name='Operator')
-                return
+
+        ## get updates
+        # this does login, msgs, and posts in one req
+        res = self.komrade.get_updates()
+        self.log('<-- get_updates',res)
+        
+        # check logged in
+        if not self.do_login(res): return
         self.stat(res['status'],komrade_name='Operator',**statd)
+        
 
 
     def prompt_adduser(self,msg):
@@ -360,6 +356,9 @@ class CLI(Logger):
             return self.msg(msg.from_name)
         else:
             pass
+
+
+
 
     def read(self,dat='',inbox_res=None):
         if self.with_required_login():

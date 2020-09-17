@@ -433,14 +433,64 @@ class KomradeX(Caller):
         return self.msg(WORLD_NAME,something)
     
     
+    @property
+    def login_details(self):
+        return {
+            'name':self.name,
+            'secret_login':self.secret_login,
+            'pubkey':self.uri
+        }
 
+    def save_posts(self,
+            id2post,
+            inbox_prefix='/feed/',
+            post_prefix='/post/'):
+        
+        # update inbox
+        new_inbox = id2post.keys()
+        inbox = self.get_inbox_crypt(
+            prefix=inbox_prefix
+        )
+        inbox.prepend(new_inbox)
+
+        # update posts
+        for post_id,post in id2post.items():
+            self.crypt_data.set(
+                post_id,
+                post,
+                prefix=post_prefix
+            )
+            
+        res = {
+            'success':True,
+            'status':f'Saved {len(id2post)} posts.'
+        }
+
+        self.log('-->',res)
+        return res
+
+
+    def save_msgs(self,id2msg):
+        return self.save_posts(
+            id2post=id2msg,
+            inbox_prefix='/inbox/',
+            post_prefix='/msg/'
+        )
 
     ## Getting updates
     def get_updates(self):
+        # get any parameters we need
+        post_ids_read = list(self.inbox_read_db.values)
+
+        # compose msg
+        msg_to_op = {
+            **{self.login_details},
+            **{'post_ids_read':post_ids_read}
+        }
+        self.compose('msg to op ->',msg_to_op)
+
         res = self.ring_ring(
-            {
-                'seen':self.inbox_read_db.values
-            },
+            msg_to_op,
             route='get_updates'
         )
         self.log('<- Op.get_updates <-',res)
@@ -448,33 +498,30 @@ class KomradeX(Caller):
         # error?
         if not res.get('success'): return res
 
-        # (1) save inbox
-        inbox=res.get('res_inbox').get('inbox',[])
-        if inbox: self.inbox_db.prepend(inbox)
-
         # (2) save msgs
-        id2post=res.get('res_msgs').get('msgs',[])
-        for post_id,post in id2post.items():
-            post = self.crypt_data.set(
-                post_id,
-                post,
-                prefix='/post/'
-            )
+        id2msg=res.get('res_msgs').get('posts',[])
+        self.save_msgs(id2msg)
         
         # (3) save posts
-        # ...
+        id2post=res.get('res_posts').get('posts',[])
+        self.save_posts(id2post)
     
     
     def messages(self,show_read=True,show_unread=True):
         # meta inbox
         inbox = self.inbox_db.values
+        
         # filter?
-        if not show_read: inbox = [x for x in inbox if not x in set(self.inbox_read_db.values)]
-        if not show_unread: inbox = [x for x in inbox if not x in set(self.inbox_unread_db.values)]
+        if not show_read:
+            inbox = [x for x in inbox if not x in set(self.inbox_read_db.values)]
+        if not show_unread:
+            inbox = [x for x in inbox if not x in set(self.inbox_unread_db.values)]
+        
         # decrypt and read all posts
         results = [self.read_msg(post_id) for post_id in inbox]
-        msgs = [res.get('msg2me') for res in results if res.get('success')]
+        msgs = [res.get('msg') for res in results if res.get('success')]
         msgs = [x for x in msgs if x]
+        
         return msgs
 
     def read_msg(self,post_id=None,post_encr=None):
