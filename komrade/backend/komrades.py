@@ -505,12 +505,12 @@ class KomradeX(Caller):
 
         # (2) save msgs
         id2msg=res.get('res_msgs').get('posts',{})
-        self.log(f'downloaded {len(id2msg)} messages')
+        self.log(f'downloaded {len(id2msg)} messages:',list(id2msg.keys()))
         self.save_msgs(id2msg)
         
         # (3) save posts
         id2post=res.get('res_posts').get('posts',{})
-        self.log(f'downloaded {len(id2post)} posts')
+        self.log(f'downloaded {len(id2post)} posts:',list(id2post.keys()))
         self.save_posts(id2post)
 
         return res

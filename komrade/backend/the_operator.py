@@ -632,7 +632,7 @@ class TheOperator(Operator):
             #         'res_msgs':res_msgs,
             #         'res_posts':res_posts
             #     }
-            # posts=res_posts.get('posts',{})
+            posts=res_posts.get('posts',{})
 
         # return
         res={
