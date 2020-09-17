@@ -481,10 +481,11 @@ class TheOperator(Operator):
 
         # is valid?
         if not self.validate_msg(deliver_msg_d):
-            return {
+            res = {
                 'status':'Message was not valid. Records between Komrade and Operator do not match.',
                 'success':False
             }
+            self.log('-->',res)
 
         # add type
         deliver_msg_d['type']='DM'
