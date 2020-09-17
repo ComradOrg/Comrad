@@ -579,9 +579,17 @@ class TheOperator(Operator):
                 if post:
                     post[post_id]=post
         self.log('id2post for world',id2post)
+
+        res = {
+            'status':f'Succeeded in getting {len(id2post)} new posts.',
+            'success':True,
+            'posts':posts
+        }
+        self.log(f'--> {res}')
+        return res
         
-        stop
-        return id2post
+        # stop
+        # return id2post
 
         # (3) reencrypt for requester
         # inbox=res_inbox.get('inbox',[])
@@ -618,7 +626,7 @@ class TheOperator(Operator):
         res = {
             'status':'Succeeded in getting new messages and posts.',
             'success':True,
-            'msgs':posts
+            'posts':posts
         }
         self.log(f'--> {res}')
         return res
