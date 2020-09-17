@@ -93,11 +93,6 @@ As of the 23rd of August.
 ...
 
 
-
-
-
-### Animations from terminal app
-
 ## Usage
 
 ### Install
