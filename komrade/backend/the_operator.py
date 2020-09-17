@@ -649,14 +649,31 @@ class TheOperator(Operator):
     def get_posts(self):
         world=Komrade(WORLD_NAME)
         # (1) get inbox
-        res_inbox=self.get_inbox(world.uri)
-        if not res_inbox.get('success'): return res_inbox
-        inbox=res_inbox.get('inbox',[])
+        inbox_obj=self.get_inbox_crypt(uri=world.uri)
+        self.log('<-- inbox crypt',inbox_obj)
+        inbox=inbox_obj.values
+        self.log('<-- inbox crypt values',inbox)
+
+        # (2) get msgs
+        res_msgs = self.get_msgs(inbox)
+        self.log('res_msgs =',res_msgs)
+        if not res_msgs.get('success'):
+            return {
+                'success':False,
+                'res_msgs':res_msgs
+            }
+        id2msg=res_msgs.get('posts')
+        self.log('id2msg for world',id2msg)
 
         # (2) read msgs
         id2post={}
-        for post_id in inbox:
-            res_read_msg = world.read_msg(post_id)
+        for post_id,post in id2msg.items():
+            res_read_msg = world.read_msg(
+                post_id,
+                post_encr=post
+            )
+            self.log(post_id,res_read_msg,'res_read_msg')
+
             if res_read_msg.get('success'):
                 post=res_read_msg.get('msg')
                 if post:
