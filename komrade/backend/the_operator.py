@@ -599,9 +599,11 @@ class TheOperator(Operator):
     # (1) get inbox
     def get_inbox(self,inbox_uri):
         # ok, then find the inbox?
+        self.log('get_inbox <-',inbox_uri)
         inbox=self.get_inbox_crypt(
             uri=b64enc(inbox_uri),
         )
+        self.log('<-inbox <-',inbox)
         
         res = {
             'status':'Succeeded in getting inbox.',

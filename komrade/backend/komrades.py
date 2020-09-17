@@ -144,7 +144,7 @@ class KomradeX(Caller):
             print()
             logfunc('Connecting you to the @Operator...',komrade_name='Telephone')
             # print()
-            time.sleep(1)
+            # time.sleep(1)
 
         ## CALL OP WITH PUBKEY
         resp_msg_d = self.ring_ring(
