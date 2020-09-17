@@ -405,7 +405,7 @@ class CLI(Logger):
     def post(self,msg_s):
         if self.with_required_login():
             res = self.komrade.post(msg_s)
-            self.stat(res,komrade_name='Operator')
+            self.stat(res['status'],komrade_name='Operator')
 
 
 
