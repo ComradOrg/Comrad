@@ -68,7 +68,7 @@ class TheOperator(Operator):
                     self._keychain['privkey_encr']=privkey_encr_obj
 
         self._keychain = {**self.keychain()}
-        self.log('@Operator booted with keychain:',dict_format(self._keychain))
+        # self.log('@Operator booted with keychain:',dict_format(self._keychain))
         # clear_screen()
 
         
