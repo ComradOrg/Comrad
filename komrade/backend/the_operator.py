@@ -547,6 +547,7 @@ class TheOperator(Operator):
 
         # (3) get posts
         posts=[]
+        res_posts={}
         if include_posts and self.name!=WORLD_NAME:
             res_posts = self.get_posts()
             self.log('res_posts',res_posts)
