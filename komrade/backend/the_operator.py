@@ -342,11 +342,11 @@ class TheOperator(Operator):
         # which I on the server have access to private key.
         #  I need to decrypt and re-encrypt/reroute
         msg_to_world = Message(post_d)
-        self.log('msg to world',msg_to_world)
-        
+        self.log('msg to world',dict_format(msg_to_world.msg_d))
+         
         # decrypt
         msg_to_world.decrypt()
-        self.log('msg_to_world decrypted =',msg_to_world)
+        self.log('msg_to_world decrypted =',dict_format(msg_to_world.msg_d))
 
         exit()
 

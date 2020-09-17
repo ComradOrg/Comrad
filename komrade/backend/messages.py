@@ -70,6 +70,7 @@ class Message(Logger):
         import textwrap as tw
         msg_s = '\n'.join(tw.wrap(str(msg),CLI_WIDTH))
         hdr='#'*CLI_WIDTH
+        
         return f"""
 {hdr}
 from: @{self.from_name if self.from_name else ''} 
