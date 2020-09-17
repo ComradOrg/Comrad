@@ -334,7 +334,8 @@ class TheOperator(Operator):
 
     def post(self,msg_to_op):
         self.log('post <-',msg_to_op.msg_d)
-        post_d = msg_to_op.msg_d
+        self.log('post data <-',msg_to_op.data)
+        post_d = msg_to_op.data.get('post')
         
         # normally we'd deliver it to the person
         # but here we need to deliver it to...
@@ -375,7 +376,7 @@ class TheOperator(Operator):
                     }                    
                 }
             )
-            self.log(f'prepared msg for {contact}: {msg_from_op.msg_d}')
+            self.log(f'prepared msg for {contact}: {msg_from_op.msg}')
 
             # encrypt
             msg_from_op.encrypt()
