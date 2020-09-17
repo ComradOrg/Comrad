@@ -567,8 +567,14 @@ class KomradeX(Caller):
             }
         )
         # self.log('msg2me is now v1',msg2me)
-        msg2me.decrypt()
-        self.log('msg2me is now v2',dict_format(msg2me.msg_d))
+        try:
+            msg2me.decrypt()
+            self.log('msg2me is now v2',dict_format(msg2me.msg_d))
+        except ThemisError as e:
+            return {
+                'success':False,
+                'status':f'De/encryption failure: {e}'
+            }
 
         return {
             'success':True,
