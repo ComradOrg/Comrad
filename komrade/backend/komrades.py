@@ -533,37 +533,36 @@ class KomradeX(Caller):
             self.log('got msg:',msg)
             if msg:
                 msgs.append(msg)
-                        
+
         return msgs
 
     def read_msg(self,post_id=None,post_encr=None):
         # get post
         if not post_encr:
-            post_encr = self.crypt_data.get(post_id,prefix='/post/')
+            post_encr = self.crypt_data.get(
+                post_id,
+                prefix='/post/'
+            )
         self.log('found encrypted post store:',post_encr)
     
-        # it should be twice decrypted
-        msg_op2me_obj = Message(
-            from_whom=self.op,
-            to_whom=self,
-            msg=post_encr
-        )
-        msg_op2me_obj.post_id=post_id
-        self.log('assuming this is the message:',msg_op2me_obj)
+        # first from op to me?
+        msg_from_op_b_encr = post_encr
+        msg_from_op_b = SMessage(
+            self.privkey.data,
+            self.op.pubkey
+        ).unwrap(post_encr)
+        self.log('decrypted??',msg_from_op_b)
 
-        # decrypt
-        msg_op2me_obj.decrypt()
-        # decode?
-        # msg_dat = pickle.loads(msg_op2me_obj.msg)
-        # self.log('decoded???',msg_dat)
+        # decoded?
+        msg_from_op = pickle.loads(msg_from_op_b)
+        self.log('decoded?',msg_from_op)
 
-        # dict to/from/msg
-        self.log(msg_op2me_obj,'!?!?')
-        msg_op2me = msg_op2me_obj.msg.msg_d
-        self.log('msg_op2me is now',msg_op2me)
+        self.log('msg_from_op is now',msg_from_op)
 
         # this really to me?
-        assert msg_op2me.get('to') == self.uri
+        assert msg_from_op.get('to') == self.uri
+
+        stop
 
         # now try to decrypt?
         msg2me = Message(
@@ -588,6 +587,59 @@ class KomradeX(Caller):
             'success':True,
             'msg':msg2me
         }
+
+    # def read_msg0(self,post_id=None,post_encr=None):
+    #     # get post
+    #     if not post_encr:
+    #         post_encr = self.crypt_data.get(post_id,prefix='/post/')
+    #     self.log('found encrypted post store:',post_encr)
+    
+    #     # it should be twice decrypted
+    #     msg_op2me_obj = Message(
+    #         from_whom=self.op,
+    #         to_whom=self,
+    #         msg=post_encr
+    #     )
+    #     msg_op2me_obj.post_id=post_id
+    #     self.log('assuming this is the message:',msg_op2me_obj)
+
+    #     # decrypt
+    #     msg_op2me_obj.decrypt()
+    #     # decode?
+    #     # msg_dat = pickle.loads(msg_op2me_obj.msg)
+    #     # self.log('decoded???',msg_dat)
+
+    #     # dict to/from/msg
+    #     self.log(msg_op2me_obj,'!?!?')
+    #     msg_op2me = msg_op2me_obj.msg.msg_d
+    #     self.log('msg_op2me is now',msg_op2me)
+
+    #     # this really to me?
+    #     assert msg_op2me.get('to') == self.uri
+
+    #     # now try to decrypt?
+    #     msg2me = Message(
+    #         to_whom=self,
+    #         msg_d={
+    #             'from':msg_op2me.get('from'),
+    #             'from_name':msg_op2me.get('from_name'),
+    #             'msg': msg_op2me.get('msg')
+    #         }
+    #     )
+    #     # self.log('msg2me is now v1',msg2me)
+    #     try:
+    #         msg2me.decrypt()
+    #         self.log('msg2me is now v2',dict_format(msg2me.msg_d))
+    #     except ThemisError as e:
+    #         return {
+    #             'success':False,
+    #             'status':f'De/encryption failure: {e}'
+    #         }
+
+    #     return {
+    #         'success':True,
+    #         'msg':msg2me
+    #     }
 
 
 
