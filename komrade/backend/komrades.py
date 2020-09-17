@@ -529,6 +529,7 @@ class KomradeX(Caller):
         # decrypt and read all posts
         msgs=[]
         for post_id in inbox:
+            print('???',post_id)
             res_msg = self.read_msg(post_id)
             self.log('got msg:',res_msg)
             if res_msg.get('success') and res_msg.get('msg'):
