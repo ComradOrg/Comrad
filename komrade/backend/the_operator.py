@@ -342,10 +342,13 @@ class TheOperator(Operator):
         contacts = sorted([fn.split('.png')[0] for fn in os.listdir(PATH_QRCODES)])
         self.log('contacts =',contacts)
 
+        # mass send!
+        res = self.mass_deliver_msg(post_d,contacts)
         
         return {
             'status':'Hold your horses.',
             'success':False,
+            'res_mass_deliver_msg':res
         }
 
     def mass_deliver_msg(self,data,contacts):
@@ -379,11 +382,16 @@ class TheOperator(Operator):
             self.log('encrypted to:',msg_from_op.msg)
 
             # actually deliver
-            return self.actually_deliver_msg(msg_from_op)
+            res=self.actually_deliver_msg(msg_from_op)
+            self.log('delivery res =',res)
 
         for contact in contacts:
             do_mass_deliver_msg(contact)
 
+        return {
+            'success':True,
+            'status':f'Delivered post to {len(contacts)}.',
+        }
 
 
 
