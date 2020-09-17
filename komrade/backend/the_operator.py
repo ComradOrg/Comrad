@@ -660,7 +660,7 @@ class TheOperator(Operator):
             if res_read_msg.get('success'):
                 post=res_read_msg.get('msg')
                 if post:
-                    post[post_id]=post
+                    id2post[post_id]=post
         self.log('id2post for world',id2post)
 
         res = {
