@@ -206,6 +206,8 @@ class CryptList(Crypt):  # like inbox
     
     @property
     def values(self):
+        from pythemis.exception import ThemisError
+
         try:
             val_b=self.val_b
         except ThemisError:
