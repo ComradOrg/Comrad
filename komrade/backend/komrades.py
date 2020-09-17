@@ -346,7 +346,7 @@ class KomradeX(Caller):
         msgs = msgs_b.split(BSEP)
 
         res = {
-            'status':'Fetched {len(msgs)} poss.'
+            'status':'Fetched {len(msgs)} poss.',
             'success':True,
             'msgs':msgs
         }
