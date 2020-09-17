@@ -267,7 +267,7 @@ class Keymaker(Logger):
     def find_pubkey(self,name=None):
         self.log('<-',name)
         if not name: name=self.name
-        if 'pubkey' in self._keychain and self._keychain['pubkey']:
+        if self.name==name and 'pubkey' in self._keychain and self._keychain['pubkey']:
             pk=self._keychain['pubkey']
             return KomradeAsymmetricPublicKey(b64dec(pk)) if type(pk)==bytes else pk
         
