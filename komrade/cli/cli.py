@@ -263,28 +263,32 @@ class CLI(Logger):
                 self.stat(status)
 
 
-    def msg(self,dat):
+    def msg(self,dat='',name_or_pubkey=None,msg_s=None):
         if self.with_required_login():
-            dat=dat.strip()
-            if not dat:
-                self.status('Message whom? Usage: /msg [name]')
-                return
 
-            datl=dat.split(' ',1)
-            name_or_pubkey = datl[0]
+            if not name_or_pubkey:
+                dat=dat.strip()
+                if not dat:
+                    self.status('Message whom? Usage: /msg [name]')
+                    return
+
+                datl=dat.split(' ',1)
+                name_or_pubkey = datl[0]
             if name_or_pubkey.startswith('@'):
                 name_or_pubkey=name_or_pubkey[1:]
-            if len(datl)==1:
-                print()
-                self.stat(f'Compose your message to @{name_or_pubkey} below.', 'Press Ctrl+D to complete, or Ctrl+C to cancel.')
-                print()
-                msg_s = multiline_input().strip()
-                if not msg_s:
-                    print('\n')
-                    self.stat('Not sending. No message found.')
-                    return
-            else:
-                msg_s = datl[1]
+
+            if not msg_s:
+                if len(datl)==1:
+                    print()
+                    self.stat(f'Compose your message to @{name_or_pubkey} below.', 'Press Ctrl+D to complete, or Ctrl+C to cancel.')
+                    print()
+                    msg_s = multiline_input().strip()
+                    if not msg_s:
+                        print('\n')
+                        self.stat('Not sending. No message found.')
+                        return
+                else:
+                    msg_s = datl[1]
 
             self.log(f'Composed msg to {name_or_pubkey}: {msg_s}')
             msg_obj = self.komrade.msg(
@@ -404,11 +408,10 @@ class CLI(Logger):
 
     def post(self,msg_s):
         if self.with_required_login():
-            res = self.komrade.post(msg_s)
-            self.stat(res['status'],komrade_name='Operator')
-
-
-
+            return self.msg(
+                name_or_pubkey=WORLD_NAME,
+                msg_s=msg_s
+            )
 
 
 
