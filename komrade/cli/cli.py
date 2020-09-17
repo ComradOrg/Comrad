@@ -363,17 +363,7 @@ class CLI(Logger):
 
     def read(self,dat='',inbox_res=None):
         if self.with_required_login():
-            if not inbox_res:
-                res = self.komrade.inbox()
-            else:
-                res = inbox_res
-            # print('got from read res:',res)
-            if not res.get('success'):
-                self.stat(res['status'],komrade_name='Operator')
-                return
-
-            # self.print('ummmmm msgs?')
-            msgs=res.get('msgs')
+            msgs=self.komrade.messages()
             if not msgs:
                 self.stat('No messages.')
             else:

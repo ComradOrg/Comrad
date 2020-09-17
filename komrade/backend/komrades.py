@@ -474,7 +474,7 @@ class KomradeX(Caller):
         return self.save_posts(
             id2post=id2msg,
             inbox_prefix='/inbox/',
-            post_prefix='/msg/'
+            post_prefix='/post/'
         )
 
     ## Getting updates
@@ -500,10 +500,12 @@ class KomradeX(Caller):
 
         # (2) save msgs
         id2msg=res.get('res_msgs').get('posts',{})
+        self.log(f'downloaded {len(id2msg)} messages')
         self.save_msgs(id2msg)
         
         # (3) save posts
         id2post=res.get('res_posts').get('posts',{})
+        self.log(f'downloaded {len(id2post)} posts')
         self.save_posts(id2post)
 
         return res
@@ -543,8 +545,12 @@ class KomradeX(Caller):
 
         # decrypt
         msg_op2me_obj.decrypt()
+        # decode?
+        # msg_dat = pickle.loads(msg_op2me_obj.msg)
+        # self.log('decoded???',msg_dat)
 
         # dict to/from/msg
+        self.log(msg_op2me_obj,'!?!?')
         msg_op2me = msg_op2me_obj.msg.msg_d
         self.log('msg_op2me is now',msg_op2me)
 
