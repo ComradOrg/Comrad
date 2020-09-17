@@ -448,10 +448,12 @@ class KomradeX(Caller):
         
         # update inbox
         new_inbox = list(id2post.keys())
+        self.log('new_inbox ->',new_inbox)
         inbox = self.get_inbox_crypt(
             prefix=inbox_prefix
         )
         inbox.prepend(new_inbox)
+        self.log('new vals =',inbox.values)
 
         # update posts
         for post_id,post in id2post.items():

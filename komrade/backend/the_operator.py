@@ -113,7 +113,7 @@ class TheOperator(Operator):
         # self.log('msg_d',msg_d)
         msg_obj = Message(msg_d)
         
-        self.log(f'Decoding the binary, I discovered an encrypted message from {self.phone}\n: {msg_obj}')
+        # self.log(f'Decoding the binary, I discovered an encrypted message from {self.phone}\n: {msg_obj}')
         
         # decrypt?
         msg_obj.decrypt()
