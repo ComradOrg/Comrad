@@ -526,6 +526,7 @@ class TheOperator(Operator):
                 return {'res_login':res_login} 
 
         # (1) get inbox
+        self.log('uri??',uri,msg_to_op.msg_d)
         res_inbox=self.get_inbox(uri)
         if not res_inbox.get('success'): return res_inbox
         inbox=res_inbox.get('inbox',[])
