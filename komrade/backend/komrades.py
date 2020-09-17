@@ -529,10 +529,10 @@ class KomradeX(Caller):
         # decrypt and read all posts
         msgs=[]
         for post_id in inbox:
-            msg = self.read_msg(post_id)
-            self.log('got msg:',msg)
-            if msg:
-                msgs.append(msg)
+            res_msg = self.read_msg(post_id)
+            self.log('got msg:',res_msg)
+            if res_msg.get('success') and res_msg.get('msg'):
+                msgs.append(res_msg.get('msg'))
 
         return msgs
 
@@ -544,6 +544,8 @@ class KomradeX(Caller):
                 prefix='/post/'
             )
         self.log('found encrypted post store:',post_encr)
+
+        
     
         # first from op to me?
         msg_from_op_b_encr = post_encr
@@ -562,22 +564,30 @@ class KomradeX(Caller):
         # this really to me?
         assert msg_from_op.get('to') == self.uri
 
-        stop
+        # stop
 
         # now try to decrypt?
         msg2me = Message(
             to_whom=self,
             msg_d={
-                'from':msg_op2me.get('from'),
-                'from_name':msg_op2me.get('from_name'),
-                'msg': msg_op2me.get('msg')
+                'from':msg_from_op.get('from'),
+                'from_name':msg_from_op.get('from_name'),
+                'msg': msg_from_op.get('msg')
             }
         )
-        # self.log('msg2me is now v1',msg2me)
+        self.log('msg2me is now v1',msg2me,msg2me.is_encrypted,msg2me.has_embedded_msg)
+
+        if not msg2me.is_encrypted:
+            return {
+                'success':True,
+                'msg':msg2me
+            }
+
         try:
             msg2me.decrypt()
             self.log('msg2me is now v2',dict_format(msg2me.msg_d))
         except ThemisError as e:
+            self.log('decryption failuire!!!')
             return {
                 'success':False,
                 'status':f'De/encryption failure: {e}'

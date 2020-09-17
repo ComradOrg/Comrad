@@ -430,13 +430,19 @@ class TheOperator(Operator):
 
         # encrypt
         msg_from_op.encrypt()
+        self.log("Here's what it looks like before I actually_deliver it",msg_from_op)
 
         # deliver
         return self.actually_deliver_msg(msg_from_op)
 
     def actually_deliver_msg(self,msg_from_op):
+        self.log('msg_from_op <-',msg_from_op)
+        self.log('msg_from_op.msg_d <-',msg_from_op.msg_d)
+        self.log('msg_from_op.msg_b <-',msg_from_op.msg_b)
+        self.log('msg_from_op.msg <-',msg_from_op.msg)
+        
         msg_from_op_b_encr = msg_from_op.msg     #.msg_b  # pickle of msg_d
-        self.log('<-',msg_from_op_b_encr)
+        self.log('msg_from_op_b_encr <-',msg_from_op_b_encr)
         deliver_to = b64enc(msg_from_op.to_pubkey)
         deliver_to_b = b64dec(deliver_to)
 
