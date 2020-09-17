@@ -7,7 +7,6 @@ from komrade.backend import *
 
 def create_phonelines():
     # crypt
-    keymaker = Keymaker()
     keycrypt = Crypt(fn=PATH_CRYPT_OP_KEYS)
     # print(keycrypt.fn)
 
