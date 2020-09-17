@@ -455,7 +455,7 @@ class KomradeX(Caller):
 
         # update posts
         for post_id,post in id2post.items():
-            self.log(f'saving post!\n{post_id}\n\n{pickle.loads(post)}')
+            self.log(f'saving post!\n{post_id}\n\n{post}')
 
             self.crypt_data.set(
                 post_id,
@@ -517,18 +517,23 @@ class KomradeX(Caller):
     def messages(self,show_read=True,show_unread=True):
         # meta inbox
         inbox = self.inbox_db.values
-        
+        self.log('<- inbox',inbox)
+
         # filter?
         if not show_read:
             inbox = [x for x in inbox if not x in set(self.inbox_read_db.values)]
         if not show_unread:
             inbox = [x for x in inbox if not x in set(self.inbox_unread_db.values)]
+        self.log('<- inbox 2',inbox)
         
         # decrypt and read all posts
-        results = [self.read_msg(post_id) for post_id in inbox]
-        msgs = [res.get('msg') for res in results if res.get('success')]
-        msgs = [x for x in msgs if x]
-        
+        msgs=[]
+        for post_id in inbox:
+            msg = self.read_msg(post_id)
+            self.log('got msg:',msg)
+            if msg:
+                msgs.append(msg)
+                        
         return msgs
 
     def read_msg(self,post_id=None,post_encr=None):
