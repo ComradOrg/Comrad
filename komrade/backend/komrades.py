@@ -544,16 +544,21 @@ class KomradeX(Caller):
                 prefix='/post/'
             )
         self.log('found encrypted post store:',post_encr)
-
-        
     
         # first from op to me?
-        msg_from_op_b_encr = post_encr
-        msg_from_op_b = SMessage(
-            self.privkey.data,
-            self.op.pubkey.data
-        ).unwrap(post_encr)
-        self.log('decrypted??',msg_from_op_b)
+        try:
+            msg_from_op_b_encr = post_encr
+            msg_from_op_b = SMessage(
+                self.privkey.data,
+                self.op.pubkey.data
+            ).unwrap(post_encr)
+            self.log('decrypted??',msg_from_op_b)
+        except ThemisError as e:
+            self.log(f'!!!!! {e} !!!!!')
+            return {
+                'success':False,
+                'status':'Could not decrypt from operator.'
+            }
 
         # decoded?
         msg_from_op = pickle.loads(msg_from_op_b)
