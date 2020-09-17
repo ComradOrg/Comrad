@@ -515,7 +515,7 @@ class TheOperator(Operator):
         # uri?
         if not inbox_uri and not msg_to_op:
             return {'success':False, 'status':'Updates for whom?'}
-        uri = inbox_uri if inbox_uri else msg_to_op.from_pubkey
+        uri = inbox_uri if inbox_uri else b64enc(msg_to_op.from_pubkey)
 
         # req login?
         if do_login:
