@@ -615,7 +615,7 @@ class TheOperator(Operator):
                 'res_msgs':res_msgs
             }
         msgs=res_msgs.get('posts')
-        self.log('msgs',len(msgs),'...')
+        self.log('msgs_len',len(msgs),'...')
 
         # (3) get posts
         posts={}
