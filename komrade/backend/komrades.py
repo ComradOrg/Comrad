@@ -484,7 +484,7 @@ class KomradeX(Caller):
 
         # compose msg
         msg_to_op = {
-            **{self.login_details},
+            **self.login_details,
             **{'post_ids_read':post_ids_read}
         }
         self.compose('msg to op ->',msg_to_op)
