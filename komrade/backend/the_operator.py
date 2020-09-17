@@ -607,7 +607,7 @@ class TheOperator(Operator):
 
         # (2) get msgs
         res_msgs = self.get_msgs(inbox)
-        # self.log('res_msgs =',res_msgs)
+        self.log('res_msgs =',res_msgs)
         if not res_msgs.get('success'):
             return {
                 'success':False,
@@ -615,7 +615,7 @@ class TheOperator(Operator):
                 'res_msgs':res_msgs
             }
         msgs=res_msgs.get('posts')
-        self.log('msgs',len(msgs),msgs[0],'...')
+        self.log('msgs',len(msgs),'...')
 
         # (3) get posts
         posts={}
