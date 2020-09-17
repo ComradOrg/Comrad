@@ -536,6 +536,7 @@ class TheOperator(Operator):
             'res_inbox':res_inbox 
         }
         self.log('->',res)
+        return res
 
     def check_msgs(self,
             msg_to_op,
