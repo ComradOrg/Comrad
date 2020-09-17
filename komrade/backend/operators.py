@@ -53,7 +53,7 @@ class Operator(Keymaker):
         'register_new_user',
         'login',
         'deliver_msg',
-        'check_msgs',
+        'get_inbox',
         'download_msgs',
         'introduce_komrades',
         'post',
@@ -290,7 +290,7 @@ class Operator(Keymaker):
 
 
     ## inboxes?
-    def inbox_crypt(self,
+    def get_inbox_crypt(self,
             crypt=None,
             uri=None,
             prefix='/inbox/',
@@ -307,7 +307,7 @@ class Operator(Keymaker):
         
         if not encryptor_func or not decryptor_func:
             if not privkey_b: privkey_b=self.privkey.data
-            if not pubkey_b: pubkey_b=self.pubkey.data
+            if not pubkey_b: pubkey_b=self.op.pubkey.data
 
             smsg=SMessage(
                 privkey_b,

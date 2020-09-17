@@ -269,8 +269,8 @@ class KomradeX(Caller):
         self.log('Got resp_msg_d back from operator:',resp_msg_d)
 
         # check msgs?
-        if 'res_check_msgs' in resp_msg_d:
-            self.do_check_msgs(resp_msg_d['res_check_msgs'])
+        if 'inbox' in resp_msg_d:
+            self.do_check_msgs(resp_msg_d['inbox'])
             resp_msg_d['res_refresh'] = self.refresh(check_msgs=False) # already done in previous line
 
         self.log('-->',resp_msg_d)
@@ -439,31 +439,53 @@ class KomradeX(Caller):
         )
 
 
+    @property
+    def inbox_db(self):
+        if not hasattr(self,'_inbox_db'):
+            self._inbox_db=self.get_inbox_crypt(
+                prefix='/inbox/'
+            )
+        return self._inbox_db
+    @property
+    def inbox_unread_db(self):
+        if not hasattr(self,'_inbox_unread_db'):
+            self._inbox_unread_db=self.get_inbox_crypt(
+                prefix='/inbox/unread/',
+            )
+        return self._inbox_unread_db
+    @property
+    def inbox_read_db(self):
+        if not hasattr(self,'_inbox_read_db'):
+            self._inbox_read_db=self.get_inbox_crypt(
+                prefix='/inbox/read/',
+            )
+        return self._inbox_read_db
 
 
-    def check_msgs(self,inbox=None):
+
+    def download_inbox(self,uri=None):
         if not self.pubkey and self.privkey:
             return {'success':False,'status':'Need to be logged in'}
         
         # checking my own mail I presume?
-        if not inbox:
-            inbox=self.pubkey.data_b64
+        uri=self.uri if not uri else uri
 
         # send info op needs
         msg = {
             'secret_login':self.secret_login,
             'name':self.name,
             'pubkey':self.uri,
-            'inbox':inbox
+            'inbox':uri
         }
         self.log('sending msg to op:',msg)
 
         # Ring operator
         res = self.ring_ring(
             msg,
-            route='check_msgs'
+            route='get_inbox'
         )
         self.log('got back response:',res)
+        stop
 
         return self.do_check_msgs(res)
 
@@ -490,7 +512,7 @@ class KomradeX(Caller):
     def refresh(self,check_msgs=True):
         # refresh inbox
         if check_msgs:
-            self.check_msgs()
+            self.download_inbox()
 
         # status?
         inbox_status = self.get_inbox_ids()

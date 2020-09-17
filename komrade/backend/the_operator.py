@@ -243,7 +243,7 @@ class TheOperator(Operator):
             return {
                 'success': True,
                 'status':f'Welcome back, Komrade @{name.decode()}.',
-                'res_check_msgs':self.check_msgs(msg_obj,do_login=False)
+                'inbox':self.get_inbox(msg_obj,do_login=False)
             }
         else:
             return {
@@ -524,7 +524,7 @@ class TheOperator(Operator):
         self.log(f'put {msg_from_op} (or {msg_from_op_b_encr}) in {post_id}')
 
         # get inbox
-        inbox_crypt = self.inbox_crypt(pubkey_b=deliver_to_b)
+        inbox_crypt = self.get_inbox_crypt(pubkey_b=deliver_to_b)
         self.log('inbox_crypt',inbox_crypt)
         self.log('inbox_crypt.values',inbox_crypt.values)
         res_inbox = inbox_crypt.prepend(post_id)
@@ -538,7 +538,7 @@ class TheOperator(Operator):
         self.log('->',res)
         return res
 
-    def check_msgs(self,
+    def get_inbox(self,
             msg_to_op,
             required_fields = [
                 'secret_login',
@@ -554,30 +554,16 @@ class TheOperator(Operator):
                 return login_res
             
         # ok, then find the inbox?
-        inbox=msg_to_op.data.get('inbox')
-        if not inbox:
-            inbox=msg_to_op.data.get('pubkey')
-        if not inbox: 
-            res = {'success':False, 'status':'No inbox specified'}
-            self.log('!!',res)
-            return res
-        
-        self.log(f'using {inbox} ({b64enc(inbox)}) to get inbox')
-        
-        
-        inbox_encr = self.crypt_keys.get(
-            b64enc(inbox),
-            prefix='/inbox/'
+        inbox=self.get_inbox_crypt(
+            pubkey_b=b64dec(msg_to_op.from_pubkey)
         )
-        self.log('got back inbox encr',inbox_encr)
-
-        # fine: here, try this on for size
+        
         res = {
             'status':'Succeeded in getting inbox.',
             'success':True,
-            'data_encr':inbox_encr
+            'inbox':inbox.values if inbox else None
         }
-        self.log(f'returning from Op.check_msgs --> {res}')
+        self.log(f'returning from Op.get_inbox --> {res}')
         return res
     
     def download_msgs(self,
