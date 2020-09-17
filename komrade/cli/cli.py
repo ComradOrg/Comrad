@@ -417,7 +417,7 @@ class CLI(Logger):
                 msg_s=msg_s
             )
 
-    def feed(self):
+    def feed(self,dat=''):
         if self.with_required_login():
             inbox_res = self.komrade.fetch_posts()
             return self.read(inbox_res=inbox_res)
