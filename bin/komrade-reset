@@ -4,7 +4,7 @@ wd=`pwd`
 path=`realpath "$SCRIPTPATH/../../data"`
 echo "Removing $path. You will permanently lose your users and contacts. Proceed? "
 
-read -p "[Y/n] " y_n
+read -p "[y/N] " y_n
 
 echo $y_n
 
