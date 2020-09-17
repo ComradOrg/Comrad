@@ -339,14 +339,51 @@ class TheOperator(Operator):
         # normally we'd deliver it to the person
         # but here we need to deliver it to...
         # everyone?
-
-        self.log('contacts =',self.contacts())
+        contacts = sorted([fn.split('.png')[0] for fn in os.listdir(PATH_QRCODES)])
+        self.log('contacts =',contacts)
 
         
         return {
             'status':'Hold your horses.',
             'success':False,
         }
+
+    def mass_deliver_msg(self,data,contacts):
+        def do_mass_deliver_msg(contact,data=data):
+            self.log(f'<- delivering to {contact} the post: {data}')
+            msg_from_op = Message(
+                {
+                    'to':data.get('deliver_to'),
+                    'to_name':data.get('deliver_to_name'),
+                    'from':self.uri,
+                    'from_name':self.name,
+
+                    'msg':{
+                        
+                        'to':data.get('deliver_to'),
+                        'to_name':data.get('deliver_to_name'),
+                        'from':data.get('deliver_from'),
+                        'from_name':data.get('deliver_from_name'),
+                        'msg':{
+                            'txt':data.get('deliver_msg'),
+                            'type':'post',
+                            'note':f'Komrade @{data.get('deliver_from_name')} has posted the following message to the group @{data.get('deliver_to_name')}.'
+                        }
+                    }                    
+                }
+            )
+            self.log(f'prepared msg for {contact}: {msg_from_op}')
+
+            # encrypt
+            msg_from_op.encrypt()
+            self.log('encrypted to:',msg_from_op.msg)
+
+            # actually deliver
+            return self.actually_deliver_msg(msg_from_op)
+
+        for contact in contacts:
+            do_mass_deliver_msg(contact)
+
 
 
 

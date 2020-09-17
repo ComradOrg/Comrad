@@ -327,11 +327,11 @@ class KomradeX(Caller):
 
         # make dict (do not use normal msg_d key names!)
         post_d = {
-            'post_from':self.uri,
-            'post_from_name':self.name,
-            'post_to_name':to_name,
-            'post_to':to_komrade.uri,
-            'post_msg':something_encr
+            'deliver_from':self.uri,
+            'deliver_from_name':self.name,
+            'deliver_to_name':to_name,
+            'deliver_to':to_komrade.uri,
+            'deliver_msg':something_encr
         }
         self.log('post_d =',post_d)
         # enclose as message to operator
