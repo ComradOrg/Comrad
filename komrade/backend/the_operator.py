@@ -13,7 +13,6 @@ from komrade.backend.messages import Message
 # def TheOperator(*x,**y):
 #     from komrade.backend.operators import Komrade
 #     return Komrade(OPERATOR_NAME,*x,**y)
-OP_PRIVKEY = None
 
 class TheOperator(Operator):
     """
@@ -31,7 +30,6 @@ class TheOperator(Operator):
         """
         Boot up the operator. Requires knowing or setting a password of memory.
         """
-        global OP_PRIVKEY
 
         super().__init__(
             name,
@@ -59,26 +57,18 @@ class TheOperator(Operator):
         else:
             raise KomradeException('Public key for Operator on app and one at {PATH_OPERATOR_WEB_KEYS_URL} do not match. Shutting down.')
 
-        privkey=None
-        if os.path.exists(PATH_SUPER_SECRET_OP_KEY):
-            
-            if OP_PRIVKEY:
-                privkey=OP_PRIVKEY
-            else:
+        if os.path.exists(PATH_SUPER_SECRET_OP_KEY): 
                 print('Dare I claim to be the one true Operator?')
                 with open(PATH_SUPER_SECRET_OP_KEY,'rb') as f:
                     #pass_encr=f.read()
-                    privkey = f.read()
-                    # try:
-                    #     privkey=KomradeSymmetricKeyWithPassphrase().decrypt(pass_encr)
-                    #     if privkey: OP_PRIVKEY = privkey
-                    # except ThemisError:
-                    #     exit('invalid password. operator shutting down.')
-        if privkey:
-            self._keychain['privkey']=KomradeAsymmetricPrivateKey(b64dec(privkey))
-            # print(self._keychain['privkey'],'??')
+                    privkey_decr,privkey_encr = b64dec(f.read()).split(BSEP)
+                    privkey_decr_obj = KomradeSymmetricKeyWithoutPassphrase(privkey_decr)
+                    privkey_encr_obj = KomradeEncryptedAsymmetricPrivateKey(privkey_encr)
+                    self._keychain['privkey_decr']=privkey_decr_obj
+                    self._keychain['privkey_encr']=privkey_encr_obj
+
         self._keychain = {**self.keychain()}
-        # self.log('@Operator booted with keychain:',dict_format(self._keychain),'and passphrase',self.passphrase)
+        self.log('@Operator booted with keychain:',dict_format(self._keychain))
         # clear_screen()
 
         

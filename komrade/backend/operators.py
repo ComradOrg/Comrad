@@ -304,15 +304,19 @@ class Operator(Keymaker):
         if not uri: uri=self.uri
         
         if not encryptor_func or not decryptor_func:
-            if not privkey_b: privkey_b=self.privkey.data
-            if not pubkey_b: pubkey_b=self.op.pubkey.data
+            encryptor_func=self.privkey_decr.encrypt
+            decryptor_func=self.privkey_decr.decrypt
 
-            smsg=SMessage(
-                privkey_b,
-                pubkey_b
-            )
-            encryptor_func=smsg.wrap
-            decryptor_func=smsg.unwrap
+        # if not encryptor_func or not decryptor_func:
+        #     if not privkey_b: privkey_b=self.privkey.data
+        #     if not pubkey_b: pubkey_b=self.op.pubkey.data
+
+        #     smsg=SMessage(
+        #         privkey_b,
+        #         pubkey_b
+        #     )
+        #     encryptor_func=smsg.wrap
+        #     decryptor_func=smsg.unwrap
 
         inbox_crypt = CryptList(
             crypt=self.crypt_data,
