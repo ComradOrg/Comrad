@@ -291,7 +291,8 @@ class CLI(Logger):
         self.log('<-- get_updates',res)
         
         # check logged in
-        if not self.do_login(res): return
+        res_login=res.get('res_login',{})
+        if not self.do_login(res_login): return
         self.stat(res['status'],komrade_name='Operator',**statd)
 
 

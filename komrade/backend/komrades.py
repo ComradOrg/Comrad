@@ -505,6 +505,8 @@ class KomradeX(Caller):
         # (3) save posts
         id2post=res.get('res_posts').get('posts',[])
         self.save_posts(id2post)
+
+        return res
     
     
     def messages(self,show_read=True,show_unread=True):
