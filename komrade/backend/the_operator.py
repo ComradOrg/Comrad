@@ -350,8 +350,7 @@ class TheOperator(Operator):
             Komrade(post_d.get('to_name')).privkey.data,  # requires we have this privkey!!!
             Komrade(post_d.get('from_name')).pubkey.data
         ).unwrap(encr_txt)
-        self.log('unencr txt')
-        
+        self.log('unencr txt',txt)
 
         # normally we'd deliver it to the person
         # but here we need to deliver it to...
@@ -360,7 +359,7 @@ class TheOperator(Operator):
         self.log('contacts =',contacts)
 
         # mass send!
-        res = self.mass_deliver_msg(post_d,contacts)
+        res = self.mass_deliver_msg(txt,contacts)
         
         return {
             'status':'Hold your horses.',
