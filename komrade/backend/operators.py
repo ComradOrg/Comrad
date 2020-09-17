@@ -291,40 +291,15 @@ class Operator(Keymaker):
     def get_inbox_crypt(self,
             crypt=None,
             uri=None,
-            prefix='/inbox/',
-            encryptor_func=None,
-            decryptor_func=None):
-
-        # already
-        # if self._inbox_crypt is None:
-        # defaults
+            prefix='/inbox/'):
         if not crypt: crypt=self.crypt_data
         if not uri: uri=self.uri
-        
-        if not encryptor_func or not decryptor_func:
-            encryptor_func=self.privkey_decr.encrypt
-            decryptor_func=self.privkey_decr.decrypt
-
-        # if not encryptor_func or not decryptor_func:
-        #     if not privkey_b: privkey_b=self.privkey.data
-        #     if not pubkey_b: pubkey_b=self.op.pubkey.data
-
-        #     smsg=SMessage(
-        #         privkey_b,
-        #         pubkey_b
-        #     )
-        #     encryptor_func=smsg.wrap
-        #     decryptor_func=smsg.unwrap
-
         inbox_crypt = CryptList(
             crypt=self.crypt_data,
             keyname=self.uri,
-            prefix=prefix,
-            encryptor_func=encryptor_func,
-            decryptor_func=decryptor_func
+            prefix=prefix
         )
         self.log('-->',inbox_crypt)
-
         return inbox_crypt
 
 

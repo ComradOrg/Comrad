@@ -601,7 +601,6 @@ class TheOperator(Operator):
         # ok, then find the inbox?
         inbox=self.get_inbox_crypt(
             uri=b64enc(inbox_uri),
-            pubkey_b=b64dec(inbox_uri)
         )
         
         res = {
@@ -649,7 +648,6 @@ class TheOperator(Operator):
         if inbox_uri:
             inbox_db=self.get_inbox_crypt(
                 uri=inbox_uri,
-                pubkey_b=b64dec(inbox_uri)
             )
             res['deleted_from_inbox']=inbox_db.remove(
                 deleted_post_ids
