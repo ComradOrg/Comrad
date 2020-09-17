@@ -347,7 +347,7 @@ class KomradeX(Caller):
 
         res = self.ring_ring(
             msg_to_op,
-            route='introduce_komrades'
+            route='introduce'
         )
         self.log('res from op <-',res)
 
@@ -394,13 +394,14 @@ class KomradeX(Caller):
         if not someone.pubkey:
             self.log(f'''Don't know the public key of {someone}!''')
 
+        # write them message
         msg_obj = self.compose_msg_to(
             something,
             someone
         )
         self.log('composed msg:',msg_obj)
         
-        # encrypting
+        # encrypt it
         msg_obj.encrypt()
 
         # attaching
@@ -418,224 +419,77 @@ class KomradeX(Caller):
             }
             
         }
-
         self.log('going to send msg to op?',msg_to_op)
         
-        return self.ring_ring(
+        # dial operator
+        res=self.ring_ring(
             msg_to_op,
             route='deliver_msg'
         )
+        self.log('-->',res)
+        return res
+
+    def post(self,something):
+        return self.msg(WORLD_NAME,something)
+    
+    
 
 
-
-
-    def download_inbox(self,uri=None):
-        if not self.pubkey and self.privkey:
-            return {'success':False,'status':'Need to be logged in'}
-        
-        # checking my own mail I presume?
-        uri=self.uri if not uri else uri
-
-        # send info op needs
-        msg = {
-            'secret_login':self.secret_login,
-            'name':self.name,
-            'pubkey':self.uri,
-            'inbox':uri
-        }
-        self.log('sending msg to op:',msg)
-
-        # Ring operator
+    ## Getting updates
+    def get_updates(self):
         res = self.ring_ring(
-            msg,
-            route='get_inbox'
+            {
+                'seen':self.inbox_read_db.values
+            },
+            route='get_updates'
         )
-        self.log('got back response:',res)
+        self.log('<- Op.get_updates <-',res)
+
+        # error?
         if not res.get('success'): return res
-        inbox=res.get('inbox',[])
-        if inbox:
-            res['res_inbox']=self.inbox_db.prepend(inbox)
-        return res
 
-    def refresh(self,check_msgs=True):
-        # refresh inbox
-        if check_msgs:
-            self.download_inbox()
+        # (1) save inbox
+        inbox=res.get('res_inbox').get('inbox',[])
+        if inbox: self.inbox_db.prepend(inbox)
 
-        # download new messages
-        inbox_post_ids = self.inbox_db.values
-        self.download_msgs(
-            post_ids = inbox_post_ids
-        )
-
-        res = {
-            'success':True,
-            'status':'Messages refreshed',
-            'unread':unread,
-            'inbox':inbox
-        }
-        self.log('->',res)
-        return res
-
-    def save_inbox(self,
-            post_ids,
-            uri=None,
-            encrypted=False):
-        self.log('<-',post_ids)
-        newval = BSEP.join(post_ids)
-        
-        res = self.crypt_keys.set(
-            self.uri if not uri else uri,
-            newval,
-            prefix='/inbox/',
-            override=True
-        )
-        assert newval == self.crypt_keys.get(
-            self.uri,
-            prefix='/inbox/'
-        )
-        self.log('->',res)
-        return res
-
-    def delete_msg(self,post_id):
-        return self.delete_msgs([post_id])
-
-    def delete_msgs(self,post_ids):
-        inbox_ids = self.get_inbox_ids().get('inbox',[])
-        #print(inbox_ids,'v1',len(inbox_ids))
-        deleted=[]
-        for post_id in post_ids:
-            #print('deleting post:',post_id)
-            self.crypt_data.delete(
+        # (2) save msgs
+        id2post=res.get('res_msgs').get('msgs',[])
+        for post_id,post in id2post.items():
+            post = self.crypt_data.set(
                 post_id,
-                prefix='/post/',
+                post,
+                prefix='/post/'
             )
-            deleted+=[post_id]
         
-            #print(post_id,inbox_ids,post_id in inbox_ids,'???')
-            # stop
-            if post_id in inbox_ids:
-                # print('removing from inbox...')
-                inbox_ids.remove(post_id)
-        self.save_inbox(inbox_ids)
-        #print(inbox_ids,'v2',len(inbox_ids))
-
-        res= {
-            'success':not bool(set(post_ids) - set(deleted)),
-            'status':f'Deleted {len(deleted)} messages.',
-            'deleted':deleted
-        }
-        self.log('delete_msgs ->',res)
-        return res
-
-    def inbox(self,topn=100,only_unread=False,delete_malformed=False,check_msgs=False):
-        # refreshing inbox
-        res = self.refresh(check_msgs=check_msgs)
-        # print('got from refresh',res)
-        if not res['success']: return res
-        
-        boxname = 'inbox' if not only_unread else 'unread'
-        post_ids = res[boxname]
-        msgs=[]
-        post_ids_malformed=[]
-        for post_id in post_ids:
-            malformed = False
-            try:
-                res = self.read_msg(post_id)
-                # print('GOT FROM READ_MSG',res)
-            except ThemisError as e:
-                print(f'!! Could not decrypt post {post_id}')
-                malformed = True
-
-            #print(res,'ressss')
-            if not res.get('success'):
-                # return res
-                continue
-
-            msg=res.get('msg')
-            if not msg: continue
-            # print(msg,'?!?!??!')
-            # stop
-            
-            if not msg.from_name or not msg.from_pubkey:
-                print('!! Invalid sender info!')
-                malformed = True
-
-            msg.post_id=post_id
-
-            if not malformed:
-                # print('good msg:',msg)
-                msgs.append(msg)
-            else:
-                post_ids_malformed.append(post_id)
-            
-            if len(msgs)>=topn: break
-            # print('!!',post_id,msg.from_whom, msg.to_whom, msg.from_whom is self)
-
-        if delete_malformed:
-            self.delete_msgs(post_ids_malformed)
-
-        #print(msgs,'msssgs')
-        return {'success':True,
-        'msgs':msgs}
-
-        # return all messages read?
-
-
-    def get_inbox_ids(self):
-        inbox = self.crypt_keys.get(
-            self.uri,
-            prefix='/inbox/',
-        )
-
-        # decrypt inbox?
-        if inbox:
-            inbox = b64enc(inbox).split(BSEP)
-            self.log('inbox_l',inbox)
-        else:
-            inbox=[]
-
-        # find the unread ones
-        unread = []
-        for post_id in inbox:
-            if not post_id: continue
-            if not self.crypt_data.get(post_id,prefix='/post/'):
-                unread.append(post_id)
-
-        self.log(f'I {self} have {len(unread)} new messages')        
-        res = {
-            'success':True,
-            'status':'Inbox retrieved.',
-            'unread':unread,
-            'inbox':inbox
-        }
-        self.log('->',res)
-        return res
+        # (3) save posts
+        # ...
     
     
-    def read_msg(self,post_id):
+    def messages(self,show_read=True,show_unread=True):
+        # meta inbox
+        inbox = self.inbox_db.values
+        # filter?
+        if not show_read: inbox = [x for x in inbox if not x in set(self.inbox_read_db.values)]
+        if not show_unread: inbox = [x for x in inbox if not x in set(self.inbox_unread_db.values)]
+        # decrypt and read all posts
+        results = [self.read_msg(post_id) for post_id in inbox]
+        msgs = [res.get('msg2me') for res in results if res.get('success')]
+        msgs = [x for x in msgs if x]
+        return msgs
+
+    def read_msg(self,post_id=None,post_encr=None):
         # get post
-        post_encr = self.crypt_data.get(post_id,prefix='/post/')
-        # print(post_id,'????')
         if not post_encr:
-            self.download_msgs([post_id])
             post_encr = self.crypt_data.get(post_id,prefix='/post/')
-            # print(post_id,'????')
-            
-            return {
-                'success':False,
-                'status':'Post not found.'
-            }
         self.log('found encrypted post store:',post_encr)
-        # self.log('unpickling?',pickle.loads(post_encr))
-        
-
+    
         # it should be twice decrypted
         msg_op2me_obj = Message(
             from_whom=self.op,
             to_whom=self,
             msg=post_encr
         )
+        msg_op2me_obj.post_id=post_id
         self.log('assuming this is the message:',msg_op2me_obj)
 
         # decrypt
@@ -667,113 +521,18 @@ class KomradeX(Caller):
         }
 
 
+
+
+
+
+
+
+
+
+
+
+
     
-    def download_msgs(self,post_ids=[],inbox=None):
-        if not post_ids:
-            # get unerad
-            post_ids = self.get_inbox_ids().get('unread',[])
-        if not post_ids:
-            return {'success':False,'status':'No messages requested'}
-
-        # ask Op for them
-        res = self.ring_ring(
-            {
-                'secret_login':self.secret_login,
-                'name':self.name,
-                'pubkey':self.uri,
-                'post_ids':post_ids,
-            },
-            route='download_msgs'
-        )
-
-        # print('got back from op!',res)
-        if not 'data_encr' or not res['data_encr'] or type(res['data_encr'])!=dict:
-            return {'success':False, 'status':'No valid data returned.'}
-
-        # store -- encrypted!
-        posts_downloaded = []
-        for post_id,post_encr in res['data_encr'].items():
-            # print('storing...',post_id)
-            self.crypt_data.set(
-                post_id,
-                post_encr,
-                prefix='/post/'
-            )
-            posts_downloaded.append(post_id)
-        return {
-            'success':True,
-            'status':'Messages downloaded',
-            'downloaded':posts_downloaded,
-        }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    def fetch_posts(self,n=100,only_from=[],not_from=[]):
-        # already seen?
-        seen_post_ids_b = self.crypt_keys.get(
-            'seen_post_ids',
-            prefix='/cache/'
-        )
-        if seen_post_ids_b:
-            seen_post_ids=pickle.loads(seen_post_ids_b)
-        else:
-            seen_post_ids=[]
-        self.log('seen_post_ids =',seen_post_ids)
-
-        # ring operator
-        res_b = self.ring_ring(
-            {
-                'seen_post_ids':seen_post_ids,
-                'only_from':only_from,
-                'not_from':not_from,
-                'n':n
-            },
-            route='fetch_posts'
-        )
-        self.log('res_b <-',res_b)
-
-        # msg from world?
-        msg_from_world = Message(
-            from_whom=self.op,#Komrade(WORLD_NAME),
-            to_whom=self,
-            msg=res_b
-        )
-        self.log('converted to msg:',msg_from_world.msg_d)
-        msg_from_world.decrypt()
-        self.log('decrypted msg:',msg_from_world)
-
-        # get binary blob for all fetched posts
-        msgs_d = msg_from_world.msg
-        self.log('msgs_d??',msgs_d)
-        msgs = msgs_d['msg'].split(BSEP) if msgs_d['msg'] else []
-
-        res = {
-            'status':f'Fetched {len(msgs)} poss.',
-            'success':True,
-            'msgs':msgs
-        }
-
-        self.log('->',res)
-        return res
-
-
-    def post(self,something):
-        return self.msg(WORLD_NAME,something)
         
 
 

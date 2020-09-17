@@ -53,11 +53,9 @@ class Operator(Keymaker):
         'register_new_user',
         'login',
         'deliver_msg',
-        'get_inbox',
-        'download_msgs',
-        'introduce_komrades',
+        'introduce',
         'post',
-        'fetch_posts'
+        'get_updates'
     ]
 
 

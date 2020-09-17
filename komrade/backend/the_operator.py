@@ -504,32 +504,82 @@ class TheOperator(Operator):
 
     # (0) get updates
     # user enters here
-    def get_updates(self,msg_to_op,do_login=True):
-        # req login
-        login_res=self.require_login(msg_to_op,do_login=do_login)
-        if not login_res.get('success'): return login_res 
+    def get_updates(self,
+            msg_to_op=None,
+            inbox_uri=None,
+            do_login=True,
+            include_posts=True):
+        self.log('<-',msg_to_op,inbox_uri)
+
+        # uri?
+        if not inbox_uri and not msg_to_op:
+            return {'success':False, 'status':'Updates for whom?'}
+        uri = inbox_uri if inbox_uri else msg_to_op.from_pubkey
+
+        # req login?
+        if do_login:
+            if not msg_to_op:
+                return {'success':False, 'status':'Cannot login outside of message context.'}
+            res_login=self.require_login(msg_to_op,do_login=do_login)
+            if not res_login.get('success'): return res_login 
 
         # (1) get inbox
-        inbox_res = self.get_inbox()
-        if not inbox_res.get('success'): return inbox_res
-        inbox=inbox_res.get('inbox',[])
+        res_inbox=self.get_inbox(uri)
+        if not res_inbox.get('success'): return res_inbox
+        inbox=res_inbox.get('inbox',[])
 
-        # (2) get posts
+        # (2) get msgs
+        res_msgs = self.get_msgs(inbox)
+        if not res_msgs.get('success'): return res_msgs
+        msgs=res_msgs.get('posts')
+
+        # (3) get posts
+        posts=[]
+        if include_posts and self.name!=WORLD_NAME:
+            res_posts = self.get_posts()
+            if not res_posts.get('success'): return res_posts
+            posts=res.get('res_posts').get('posts',[])
+
+        # return
+        res={
+            'success': True,
+            'status': f'You have {len(msgs)} new messages, and {len(posts)} new posts.',
+            'posts': posts,
+            'msgs': msgs,
+        }
+        self.log('-->',res)
+        return res
+    
+    ## posts
+    def get_posts(self):
+        world=Komrade(WORLD_NAME)
+        # (1) get inbox
+        res_inbox=self.get_inbox(world.uri)
+        if not res_inbox.get('success'): return res_inbox
+        inbox=res_inbox.get('inbox',[])
+
+        # (2) read msgs
+        id2post={}
+        for post_id in inbox:
+            res_read_msg = world.read_msg(post_id)
+            if res_read_msg.get('success'):
+                post=res_read_msg.get('msg2me')
+                if post:
+                    post[post_id]=post
+        self.log('id2post for world',id2post)
+        return id2post
+
+        # (3) reencrypt for requester
+        # inbox=res_inbox.get('inbox',[])
 
 
 
     # (1) get inbox
-    def get_inbox(self,
-            msg_to_op,
-            do_login=True,
-            delete_afterward=False):
-        # req login
-        login_res=self.require_login(msg_to_op,do_login=do_login)
-        if not login_res.get('success'): return login_res 
-            
+    def get_inbox(self,inbox_uri):
         # ok, then find the inbox?
         inbox=self.get_inbox_crypt(
-            pubkey_b=b64dec(msg_to_op.from_pubkey)
+            uri=inbox_uri,
+            pubkey_b=b64dec(inbox_uri)
         )
         
         res = {
@@ -541,7 +591,7 @@ class TheOperator(Operator):
         self.log(f'--> {res}')
         return res
 
-    def get_posts(self,post_ids):
+    def get_msgs(self,post_ids):
         posts={}
         for post_id in post_ids:
             post = self.crypt_data.get(
@@ -554,7 +604,7 @@ class TheOperator(Operator):
         res = {
             'status':'Succeeded in getting new messages and posts.',
             'success':True,
-            'posts':posts
+            'msgs':posts
         }
         self.log(f'--> {res}')
         return res
@@ -588,19 +638,7 @@ class TheOperator(Operator):
 
 
 
-
-
-
-
-
-
-
-
-
-    ## posts
-    def fetch_posts(self,msg_to_op):
-        self.log('<-',msg_to_op)
-
+    def get_posts(self):
         # get posts by personating world
         world = Komrade(WORLD_NAME)
         world_inbox_res = world.inbox()
@@ -639,7 +677,7 @@ class TheOperator(Operator):
     # INTRODUCTIONS/MEETING
     ###
 
-    def introduce_komrades(self,msg_to_op):
+    def introduce(self,msg_to_op):
         # # logged in?
         # self.log('introduce got:',msg_to_op)
         # login_res = self.login(msg_to_op)

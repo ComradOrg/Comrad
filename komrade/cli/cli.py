@@ -21,7 +21,7 @@ class CLI(Logger):
         'meet':'meet a komrade',
         'who':'show contacts or info',
         'msg':'write people',
-        'check':'check mail',
+        'update':'check mail',
         'read':'read mail',
         'verbose':'show/hide log output',
         'post':'post to world',
@@ -210,11 +210,11 @@ class CLI(Logger):
             self.stat(res.get('status','?'),komrade_name='Operator')
 
         # also see if we got a msg update
-        if 'res_refresh' in res:
-            self.check(
-                res=res['res_refresh'],
-                statd={'use_prefix':False}
-            )
+        # if 'res_refresh' in res:
+        #     self.check(
+        #         res=res['res_refresh'],
+        #         statd={'use_prefix':False}
+        #     )
 
     @property
     def logged_in(self):
@@ -289,21 +289,16 @@ class CLI(Logger):
             print()
             self.stat(f'Message successfully sent to @{name_or_pubkey}.',komrade_name='Operator',pause=True)
 
-    def check(self,dat=None,res=None,statd={}):
+    def update(self,dat=None,res=None,statd={}):
         self.log(f'<-- dat={dat}, res={res}')
-        if not res:
-            if self.with_required_login():
-                res = self.komrade.refresh()
-                if not res['success']:
-                    self.stat(res['status'],komrade_name='Operator')
-                    return
-    
-        unr = res.get('unread',[])
-        inb = res.get('inbox',[])
-        print()
-        self.stat(f'You have {len(unr)} unread messages, with {len(inb)} total in your inbox.',komrade_name='Operator',**statd)
-        self.log(f'--> unr={unr}, inb={inb}')
-        # stop
+        if self.with_required_login():
+            res = self.komrade.get_updates()
+            self.log('<-- get_updates',res)
+            if not res['success']:
+                self.stat(res['status'],komrade_name='Operator')
+                return
+        self.stat(res['status'],komrade_name='Operator',**statd)
+
 
     def prompt_adduser(self,msg):
         # self.print('prompt got:',msg)
