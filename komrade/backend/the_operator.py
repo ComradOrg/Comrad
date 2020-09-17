@@ -546,7 +546,7 @@ class TheOperator(Operator):
         msgs=res_msgs.get('posts')
 
         # (3) get posts
-        posts=[]
+        posts={}
         res_posts={}
         if include_posts and self.name!=WORLD_NAME:
             res_posts = self.get_posts()
@@ -557,7 +557,7 @@ class TheOperator(Operator):
                     'res_msgs':res_msgs,
                     'res_posts':res_posts
                 }
-            posts=res_posts.get('posts',[])
+            posts=res_posts.get('posts',{})
 
         # return
         res={
