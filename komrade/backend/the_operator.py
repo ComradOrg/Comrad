@@ -520,16 +520,10 @@ class TheOperator(Operator):
         # (1) get inbox
         self.log('uri??',uri,msg_to_op.msg_d)
         # res_inbox=self.get_inbox(uri)
-        inbox=self.get_inbox_crypt(
-            uri=inbox_uri,
-        )
-        self.log('<-- inbox crypt',inbox)
-        self.log('<-- inbox crypt values',inbox.values)
-
-        
-        self.log('res_inbox<--',res_inbox)
-        if not res_inbox.get('success'): return res_inbox
-        inbox=res_inbox.get('inbox',[])
+        inbox_obj=self.get_inbox_crypt(uri=inbox_uri)
+        self.log('<-- inbox crypt',inbox_obj)
+        inbox=inbox_obj.values
+        self.log('<-- inbox crypt values',inbox)
 
         # (2) get msgs
         res_msgs = self.get_msgs(inbox)
