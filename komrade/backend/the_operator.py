@@ -795,20 +795,32 @@ class TheOperator(Operator):
         else:
             txt=f'''Komrade @{meet_from_name} would like to make your acquaintance.\n\nTheir public key is:\n{meet_from_uri.decode()}.'''
 
-        deliver_msg_d = {
+        # deliver_msg_d = {
+        #     'to':meet_uri,
+        #     'to_name':meet_name,
+
+        #     'from':self.uri,
+        #     'from_name':self.name,
+   
+        #     'msg':{
+        #         'txt':txt,
+        #         'type':'prompt',
+        #         'prompt_id':'addcontact',
+        #         'meet_name':meet_from_name,
+        #         'meet':meet_from_uri,
+        #     }
+        # }
+        deliver_msg_d={
             'to':meet_uri,
             'to_name':meet_name,
-
+            
             'from':self.uri,
             'from_name':self.name,
-   
-            'msg':{
-                'txt':txt,
-                'type':'prompt',
-                'prompt_id':'addcontact',
-                'meet_name':meet_from_name,
-                'meet':meet_from_uri,
-            }
+            
+            'msg':txt,
+
+            'type':'prompt',
+            'prompt_id':'addcontact'
         }
         
         self.log('deliver_msg_d ->',deliver_msg_d)
