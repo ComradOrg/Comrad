@@ -269,10 +269,12 @@ class Keymaker(Logger):
         if 'pubkey' in self._keychain and self._keychain['pubkey']:
             pk=self._keychain['pubkey']
             return KomradeAsymmetricPublicKey(b64dec(pk)) if type(pk)==bytes else pk
-        res = self.crypt_keys.get(name, prefix='/pubkey/')
+        
+        res = self.load_qr(self.name)
         if not res:
-            res = self.load_qr(self.name)
+            res = self.crypt_keys.get(name, prefix='/pubkey/')
         if not res: return
+        
         return KomradeAsymmetricPublicKey(b64dec(res))
         
         # self.log('I don\'t know my public key! Do I need to register?')
