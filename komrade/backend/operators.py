@@ -55,7 +55,8 @@ class Operator(Keymaker):
         'deliver_msg',
         'check_msgs',
         'download_msgs',
-        'introduce_komrades'
+        'introduce_komrades',
+        'post'
     ]
 
 

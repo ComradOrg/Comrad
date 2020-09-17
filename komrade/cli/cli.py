@@ -23,7 +23,8 @@ class CLI(Logger):
         'msg':'write people',
         'check':'check mail',
         'read':'read mail',
-        'verbose':'show/hide log output'
+        'verbose':'show/hide log output',
+        'post':'post to world',
     }
 
     def __init__(self,name='',cmd='',persona=None):
@@ -401,7 +402,10 @@ class CLI(Logger):
                 self.help()
 
 
-
+    def post(self,msg_s):
+        if self.with_required_login():
+            res = self.komrade.post(msg_s)
+            self.stat(res,komrade_name='Operator')
 
 
 

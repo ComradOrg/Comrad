@@ -324,6 +324,25 @@ class TheOperator(Operator):
        
         # self.log('Operator returning result:',dict_format(res,tab=2))
 
+
+
+
+
+
+    def post(self,msg_to_op):
+        self.log('post <-',msg_to_op)
+        data = msg_to_op.data
+        posts_b = data.get('posts_b')
+        self.log('posts_b',posts_b)
+
+        return {
+            'status':'Hold your horses.',
+            'success':False,
+        }
+
+
+
+
     def deliver_msg(self,msg_to_op):
         data = msg_to_op.data
         deliver_to = data.get('deliver_to')
@@ -645,6 +664,25 @@ from_komrade = {from_komrade}
         res = self.actually_deliver_msg(msg_from_op)
         res['msg_sent']=txt
         return res
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 def test_op():
     from komrade.backend.the_telephone import TheTelephone
