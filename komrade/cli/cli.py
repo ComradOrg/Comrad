@@ -346,7 +346,7 @@ class CLI(Logger):
         do=do.strip().lower()
         if do=='d':
             # self.print('del',msg.post_id)
-            res=self.komrade.delete_msg(msg.post_id)
+            res=self.komrade.delete_post(msg.post_id)
             if res.get('success'):
                 self.stat('Deleted message.')
             else:

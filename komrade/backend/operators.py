@@ -302,6 +302,42 @@ class Operator(Keymaker):
         self.log('-->',inbox_crypt)
         return inbox_crypt
 
+    def delete_post(self,post_id,**y):
+        return self.delete_posts([post_id],**y)
+
+    def delete_posts(self,
+            post_ids,
+            inbox_uri=None,
+            inbox_prefix='/inbox/',
+            post_prefix='/post/'):
+        
+        # delete from posts
+        deleted_post_ids=[]
+        for post_id in post_ids:
+            if self.crypt_data.delete(
+                post_id,
+                prefix=post_prefix
+            ):
+                deleted_post_ids.append(post_id)
+        self.log('deleted_post_ids',deleted_post_ids,'...')
+        
+        res = {
+            'deleted':post_ids,
+        }
+
+        # delete from inbox
+        inbox_uri = self.uri if not inbox_uri else inbox_uri
+        if inbox_uri:
+            inbox_db=self.get_inbox_crypt(
+                uri=inbox_uri,
+            )
+            res['deleted_from_inbox']=inbox_db.remove(
+                deleted_post_ids
+            )
+        
+        self.log('-->',res)
+        return res
+
 
     
     @property

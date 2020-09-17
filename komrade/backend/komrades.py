@@ -536,6 +536,10 @@ class KomradeX(Caller):
 
         return msgs
 
+    # def delete_msg(self,post_id):
+
+
+
     def read_msg(self,post_id=None,post_encr=None):
         # get post
         if not post_encr:
@@ -551,7 +555,7 @@ class KomradeX(Caller):
             msg_from_op_b = SMessage(
                 self.privkey.data,
                 self.op.pubkey.data
-            ).unwrap(post_encr)
+            ).unwrap(msg_from_op_b_encr)
             self.log('decrypted??',msg_from_op_b)
         except ThemisError as e:
             self.log(f'!!!!! {e} !!!!!')
@@ -598,6 +602,7 @@ class KomradeX(Caller):
                 'status':f'De/encryption failure: {e}'
             }
 
+        msg2me.post_id=post_id
         return {
             'success':True,
             'msg':msg2me

@@ -707,31 +707,7 @@ class TheOperator(Operator):
         self.log(f'--> {res}')
         return res
 
-    def delete_posts(self,post_ids,inbox_uri=None):
-        # delete from posts
-        deleted_post_ids=[]
-        for post_id in post_ids:
-            if self.crypt_data.delete(
-                post_id,
-                prefix='/post/'
-            ):
-                deleted_post_ids.append(post_id)
-        self.log('deleted_post_ids',deleted_post_ids,'...')
-        res = {
-            'deleted':post_ids,
-        }
 
-        # delete from inbox
-        if inbox_uri:
-            inbox_db=self.get_inbox_crypt(
-                uri=inbox_uri,
-            )
-            res['deleted_from_inbox']=inbox_db.remove(
-                deleted_post_ids
-            )
-        
-        self.log('-->',res)
-        return res
 
 
 
