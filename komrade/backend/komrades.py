@@ -576,9 +576,15 @@ class KomradeX(Caller):
         self.log('msg_from_op is now',msg_from_op)
 
         # this really to me?
-        assert msg_from_op.get('to') == self.uri
-
-        # stop
+        if msg_from_op.get('to_name') != self.name:
+            if msg_from_op.get('to_name') == WORLD_NAME:
+                return {
+                    'success':True,
+                    'msg':Message(msg_from_op)
+                }
+            else:
+                raise KomradeException('Why am I getting this msg?')
+                return
 
         # now try to decrypt?
         msg2me = Message(
