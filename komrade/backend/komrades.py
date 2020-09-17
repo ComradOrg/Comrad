@@ -323,7 +323,7 @@ class KomradeX(Caller):
             return {'success':False,'status':'Meet whom?'}
         
         # already met this person?
-        # keystr=self.name+'->'+name
+        keystr=self.name+'->'+name
         # if self.crypt_keys.get(
         #     keystr,
         #     prefix='/met/'
