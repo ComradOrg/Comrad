@@ -16,7 +16,7 @@ PATH_KOMRADE_KEYS = os.path.join(PATH_KOMRADE,'.keys')
 PATH_KOMRADE_DATA = os.path.join(PATH_KOMRADE,'.data')
 
 PATH_CRYPT_OP_KEYS = os.path.join(PATH_KOMRADE_KEYS,'.op.db.keys.crypt')
-PATH_CRYPT_OP_DATA = os.path.join(PATH_KOMRADE_DATA,'.op.db.data.encr')
+PATH_CRYPT_OP_DATA = os.path.join(PATH_KOMRADE_DATA,'.op.db.data.crypt')
 # PATH_CRYPT_CA_KEYS = os.path.join(PATH_KOMRADE_KEYS,'.ca.db.keys.crypt')
 # PATH_CRYPT_CA_DATA = os.path.join(PATH_KOMRADE_DATA,'.ca.db.data.encr')
 PATH_CRYPT_CA_KEYS = PATH_CRYPT_OP_KEYS

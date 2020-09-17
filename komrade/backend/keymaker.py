@@ -381,13 +381,21 @@ class Keymaker(Logger):
     @property
     def crypt_keys(self):
         if not hasattr(self,'_crypt_keys'):
-            self._crypt_keys = Crypt(fn=self.path_crypt_keys)
+            self._crypt_keys = Crypt(
+                fn=self.path_crypt_keys,
+                encryptor_func=self.privkey_decr.encrypt,
+                decryptor_func=self.privkey_decr.decrypt,
+            )
         return self._crypt_keys
 
     @property
     def crypt_data(self):
         if not hasattr(self,'_crypt_data'):
-            self._crypt_data = Crypt(fn=self.path_crypt_data)
+            self._crypt_data = Crypt(
+                fn=self.path_crypt_data,
+                encryptor_func=self.privkey_decr.encrypt,
+                decryptor_func=self.privkey_decr.decrypt,
+            )
         return self._crypt_data
 
 

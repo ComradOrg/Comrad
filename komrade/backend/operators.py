@@ -292,8 +292,6 @@ class Operator(Keymaker):
             crypt=None,
             uri=None,
             prefix='/inbox/',
-            privkey_b=None,
-            pubkey_b=None,
             encryptor_func=None,
             decryptor_func=None):
 
