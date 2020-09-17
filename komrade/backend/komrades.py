@@ -520,6 +520,12 @@ class KomradeX(Caller):
         self.save_msgs(id2msg)
         self.save_posts(id2post)
 
+        # return {
+        #     'status':f'Retrieved {len(id2post)} posts and {len(id2msg)} messages.',
+        #     'id2msg':id2msg,
+        #     'id2post':id2post
+        # }
+        res['status']=f'Retrieved {len(id2post)} posts and {len(id2msg)} messages.'
         return res
     
     
