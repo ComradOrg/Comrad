@@ -377,7 +377,7 @@ class CLI(Logger):
         else:
             pass
 
-    def read(self,dat,inbox_res=None):
+    def read(self,dat='',inbox_res=None):
         if self.with_required_login():
             if not inbox_res:
                 res = self.komrade.inbox()
