@@ -376,9 +376,12 @@ class CLI(Logger):
         else:
             pass
 
-    def read(self,dat):
+    def read(self,dat,inbox_res=None):
         if self.with_required_login():
-            res = self.komrade.inbox()
+            if not inbox_res:
+                res = self.komrade.inbox()
+            else:
+                res = inbox_res
             # print('got from read res:',res)
             if not res.get('success'):
                 self.stat(res['status'],komrade_name='Operator')
@@ -413,7 +416,10 @@ class CLI(Logger):
                 msg_s=msg_s
             )
 
-
+    def feed(self):
+        if self.with_required_login():
+            inbox_res = self.komrade.fetch_posts()
+            return self.read(inbox_res=inbox_res)
 
 
 

@@ -327,7 +327,8 @@ class KomradeX(Caller):
             route='fetch_posts'
         )
 
-        print(fetch_posts,'fetched_posts')
+        print(res,'fetched_posts')
+        return res
 
     
     # def post(self,something,to_name=WORLD_NAME):
