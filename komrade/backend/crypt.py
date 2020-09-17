@@ -48,6 +48,7 @@ class Crypt(Logger):
             self.secret = b''
         self.encrypt_values = encrypt_values
         if self.secret and encrypt_values and (not encryptor_func or not decryptor_func):
+            from komrade.backend.keymaker import KomradeSymmetricKeyWithPassphrase
             self.key = KomradeSymmetricKeyWithPassphrase(
                 passphrase=self.secret
             )
