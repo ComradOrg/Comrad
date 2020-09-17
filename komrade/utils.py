@@ -31,6 +31,26 @@ def log(*x,off=False):
         with open(path_log,'a') as of:
             of.write('\n'+tolog+'\n')
 
+from komrade.constants import CLI_WIDTH
+def wrapp(*msgs,prefix='',min_prefix_len=0,width=CLI_WIDTH,use_prefix=False):
+    blank=' '*(len(prefix) if len(prefix)>min_prefix_len else min_prefix_len)
+    total_msg=[]
+    for i,msg in enumerate(msgs):
+        if not msg: msg=''
+        msg=msg.replace('\r\n','\n').replace('\r','\n')
+        for ii,ln in enumerate(msg.split('\n')):
+            if not ln:
+                total_msg+=['']
+            ln_wrap=tw.wrap(ln,width-len(prefix))
+            for iii,lnw in enumerate(ln_wrap):
+                prfx=prefix + (' '*(len(blank)-len(prefix))) if (not i and not ii and not iii and use_prefix) else blank
+                x=prfx+lnw
+                total_msg+=[x]
+    return '\n'.join(total_msg)
+
+
+
+
 def clear_screen():
     import os
     # pass
