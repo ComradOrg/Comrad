@@ -227,12 +227,13 @@ KEYMAKER_DEFAULT_KEY_TYPES = {
 
 
 def get_key_obj(keyname,data,key_types=KEYMAKER_DEFAULT_KEY_TYPES):
-    try:
-        data_s = data.decode()
-        if data_s == KomradeSymmetricKeyWithPassphrase.__name__:
-            return KomradeSymmetricKeyWithPassphrase()
-    except UnicodeDecodeError:
-        pass
+    if keyname.endswith('_decr'):
+        try:
+            data_s = data.decode()
+            if data_s == KEY_TYPE_SYMMETRIC_WITH_PASSPHRASE:
+                return KomradeSymmetricKeyWithPassphrase()
+        except UnicodeDecodeError:
+            return KomradeSymmetricKeyWithoutPassphrase(data)
 
     return key_types[keyname](data)
 
