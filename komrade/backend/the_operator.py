@@ -671,6 +671,7 @@ class TheOperator(Operator):
         # (2) read msgs
         id2post={}
         for post_id,post in id2msg.items():
+            self.log('id2msg post_id',post_id,post)
             res_read_msg = world.read_msg(
                 post_id,
                 post_encr=post
