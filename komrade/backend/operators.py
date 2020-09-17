@@ -87,6 +87,7 @@ class Operator(Keymaker):
         # add to phonebook
         if name: PHONEBOOK[name]=self
         if self.pubkey: PHONEBOOK[self.pubkey.data_b64]=self
+        self._inbox_crypt=None
         
 
     @property
@@ -275,10 +276,6 @@ class Operator(Keymaker):
         # print('new_msg',new_msg)
         return new_msg
 
-
-
-
-
     def pronto_pronto(self, msg_obj):
         self.log(f'''*ring *ring* 
 ...
@@ -288,28 +285,44 @@ class Operator(Keymaker):
 
         return self.route_msg(msg_obj,reencrypt=True)
 
-        # route_response = self.route_msg(msg_obj)
-        # self.log('route_response',route_response)
-        # # set this to be the new msg
-        # #msg_obj.msg = msg_obj.msg_d['msg'] = response
-        # #self.log('what msg_obj looks like now:',msg_obj)
 
-        # # send new content back
-        # # from komrade.backend.messages import Message
-        # # if type(route_response)==Message:
-        # #     resp_msg_obj = route_response
-        # # else:    
-        # resp_msg_obj = msg_obj.to_whom.compose_msg_to(
-        #     route_response,
-        #     msg_obj.from_whom
-        # )
-        # self.log('resp_msg_obj',resp_msg_obj)
+    
+
+
+    ## inboxes?
+    def inbox_crypt(self,
+            crypt=None,
+            uri=None,
+            prefix='/inbox/',
+            privkey=None,
+            pubkey=None,
+            encryptor_func=None,
+            decryptor_func=None):
+
+        # already
+        # if self._inbox_crypt is None:
+        # defaults
+        if not crypt: crypt=self.crypt_data
+        if not uri: uri=self.uri
         
-        # # re-encrypt
-        # if not resp_msg_obj.is_encrypted:
-        #     resp_msg_obj.encrypt()
-        #     self.log(f're-encrypted: {resp_msg_obj}')
-        
-        # # pass msg back the chain
-        # return resp_msg_obj
-        
+        if not encryptor_func or not decryptor_func:
+            if not privkey: privkey=self.privkey
+            if not pubkey: pubkey=self.pubkey
+
+            smsg=SMessage(
+                privkey.data,
+                pubkey.data
+            )
+            encryptor_func=smsg.wrap
+            decryptor_func=smsg.unwrap
+
+        inbox_crypt = CryptList(
+            crypt=self.crypt_data,
+            keyname=self.uri,
+            prefix=prefix,
+            encryptor_func=encryptor_func,
+            decryptor_func=decryptor_func
+        )
+        self.log('-->',inbox_crypt)
+
+        return inbox_crypt

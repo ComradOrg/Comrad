@@ -15,6 +15,8 @@ LOG_GET_SET = 0
 
 
 
+
+
 class Crypt(Logger):
     def __init__(self,name=None,fn=None,cell=None,init_d=None,use_secret=CRYPT_USE_SECRET,path_secret=PATH_CRYPT_SECRET,encrypt_values=True,path_encrypt_key=PATH_CRYPT_SECRET_KEY):
         if not name and fn: name=os.path.basename(fn).replace('.','_')
@@ -174,24 +176,93 @@ class DataCrypt(Crypt):
         return super().__init__(name=PATH_CRYPT_CA_DATA.replace('.','_'))
 
 
-from collections import defaultdict
-class CryptMemory(Crypt):
-    def __init__(self):
-        self.data = defaultdict(None) 
-        self.crypt = defaultdict(None)
-        self.cell = None
+
+class CryptList(Crypt):  # like inbox
+    def __init__(self,
+            crypt,
+            keyname,
+            prefix='',
+            encryptor_func=lambda x: x,
+            decryptor_func=lambda x: x):
+        
+        self.crypt=crypt
+        self.keyname=keyname
+        self.prefix=prefix
+        self.encryptor_func=encryptor_func
+        self.decryptor_func=decryptor_func
     
-    def set(self,k,v,prefix=''):
-        k_b=self.package_key(k,prefix=prefix)
-        v_b=self.package_val(v)
-        self.data[k]=v_b
-        self.crypt[k_b]=v_b
+    @property
+    def val_b_encr(self):
+        return self.crypt.get(
+            self.keyname,
+            prefix=self.prefix
+        )
     
+    @property
+    def val_b(self):
+        val_b_encr=self.val_b_encr
+        if not val_b_encr: return None
+        return self.decryptor_func(val_b_encr)
+    
+    @property
+    def values(self):
+        val_b=self.val_b
+        if not val_b: return []
+        return pickle.loads(val_b)
+
+    def prepend(self,x):
+        return self.append(x,insert=0)
+
+    def append(self,x,insert=None):
+        val_l = self.values
+        # print('val_l =',val_l)
+        if insert is not None:
+            val_l.insert(insert,x)
+        else:
+            val_l.append(x)
+        # print('val_l2 =',val_l)
+        
+        return self.set(val_l)
+
+    def set(self,val_l):
+        val_b = pickle.dumps(val_l)
+        val_b_encr = self.encryptor_func(val_b)
+        return self.crypt.set(
+            self.keyname,
+            val_b_encr,
+            prefix=self.prefix,
+            override=True
+        )
+
+    def remove(self,l):
+        if type(l)!=list: l=[l]
+        lset=set(l)
+        values = [x for x in self.values if x not in lset]
+        return self.set(values)
+
 
 
 if __name__=='__main__':
     crypt = Crypt('testt')
 
-    print(crypt.set('hellothere',b'ryan'))
+    from komrade import KomradeSymmetricKeyWithPassphrase
+    key = KomradeSymmetricKeyWithPassphrase()
 
-    # print(crypt.get(b'hello there'))
+
+    crypt_list = CryptList(
+        crypt=crypt,
+        keyname='MyInbox2',
+        prefix='inbox',
+        encryptor_func=key.encrypt,
+        decryptor_func=key.decrypt
+    )
+
+    print(crypt_list.values)
+
+    print(crypt_list.remove('cool thing 0'))
+
+    # print(crypt_list.append('cool thing 1'))
+    
+    print(crypt_list.prepend('cool thing 0'))
+
+    print(crypt_list.values)

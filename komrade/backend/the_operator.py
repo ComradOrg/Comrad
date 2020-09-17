@@ -424,61 +424,76 @@ class TheOperator(Operator):
         }
 
 
+    def validate_msg(self,msg_d):
+        if not is_valid_msg_d(msg_d): return False
+        
+        # alleged
+        (
+            alleged_to_name,
+            alleged_to_pub,
+            alleged_from_name,
+            alleged_from_pub
+        ) = (
+            msg_d.get('to_name'),
+            msg_d.get('to'),
+            msg_d.get('from_name'),
+            msg_d.get('from')
+        )
 
+        # recorded
+        (
+            real_to_name,
+            real_to_pub,
+            real_from_name,
+            real_from_pub
+        ) = (
+            self.find_name(alleged_to_pub),
+            self.find_pubkey(alleged_to_name),
+            self.find_name(alleged_from_pub),
+            self.find_pubkey(alleged_from_name)
+        )
+
+        try:
+            assert alleged_to_name == real_to_name
+            assert alleged_to_pub == real_to_pub
+            assert alleged_from_name == real_from_name
+            assert alleged_from_pub == real_from_pub
+        except AssertionError:
+            return False
+        return True
 
     def deliver_msg(self,msg_to_op):
         data = msg_to_op.data
-        deliver_to = data.get('deliver_to')
-        deliver_from = data.get('deliver_from')
-        deliver_msg = data.get('deliver_msg')
+        deliver_msg_d = data.get('deliver_msg')
 
-        if not deliver_to or not deliver_from or not deliver_msg:
-            return {'success':False, 'status':'Invalid input.'}
-        
-        if b64enc(deliver_from) != b64enc(data['from']):
-            return {'success':False, 'status':'Sender to me is not the sender of the message I am to forward'}
+        # is valid?
+        if not self.validate_msg(deliver_msg_d):
+            return {
+                'status':'Message was not valid. Records between Komrade and Operator do not match.',
+                'success':False
+            }
 
-        to_komrade = Komrade(pubkey=deliver_to)
-        from_komrade = Komrade(pubkey=deliver_from)
-        deliver_to_b = b64dec(deliver_to)
+        # add type
+        deliver_msg_d['type']='DM'
 
-        self.log(f'''Got:
-data = {data}
-deliver_to = {deliver_to}
-deliver_from = {deliver_from}
-deliver_msg = {deliver_msg}
-
-to_komrade = {to_komrade}
-from_komrade = {from_komrade}
-''')    
-
-        ## just deliver?
-        
+        # package
         from komrade.backend.messages import Message
         msg_from_op = Message(
             from_whom=self,
             msg_d = {
-                'to':data.get('deliver_to'),
-                'to_name':data.get('deliver_to_name'),
-                
+                'to':deliver_msg_d.get('to'),
+                'to_name':deliver_msg_d.get('to_name'),
                 'msg':{
-                    
-                    'to':data.get('deliver_to'),
-                    'to_name':data.get('deliver_to_name'),
-                    'from':data.get('deliver_from'),
-                    'from_name':data.get('deliver_from_name'),
-                    'msg':data.get('deliver_msg'),
+                    deliver_msg_d
                 },
-
-                'note':'Someone (marked "from") would like to send you (marked "to") this message (marked "msg").'
             }
         )
-
         self.log(f'{self}: Prepared this msg for delivery:\n{msg_from_op}')
 
         # encrypt
         msg_from_op.encrypt()
 
+        # deliver
         return self.actually_deliver_msg(msg_from_op)
 
     def actually_deliver_msg(self,msg_from_op):
@@ -489,7 +504,7 @@ from_komrade = {from_komrade}
 
         # save new post
         post_id = get_random_binary_id()
-        self.crypt_keys.set(
+        self.crypt_data.set(
             post_id,
             msg_from_op_b_encr,
             prefix='/post/'
@@ -602,7 +617,7 @@ from_komrade = {from_komrade}
         posts = {}
         for post_id in post_ids:
             
-            post = self.crypt_keys.get(b64enc(post_id),prefix='/post/')
+            post = self.crypt_data.get(b64enc(post_id),prefix='/post/')
             if post:
                 posts[post_id] = post
             self.log('looking for:',post_id,post)
@@ -633,7 +648,7 @@ from_komrade = {from_komrade}
     def delete_msgs(self,post_ids,inbox_uri=None):
         # @hack: this a bit dangerous?
         for post_id in post_ids:
-            self.crypt_keys.delete(
+            self.crypt_data.delete(
                 post_id,
                 prefix='/post/'
             )

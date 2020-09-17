@@ -280,7 +280,7 @@ class Keymaker(Logger):
         # return res
 
     def find_name(self,pubkey_b64):
-        res = self.crypt_keys.get(b64enc(q), prefix='/name/')
+        res = self.crypt_keys.get(b64enc(pubkey_b64), prefix='/name/')
         return res
 
     @property

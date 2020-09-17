@@ -421,11 +421,14 @@ class KomradeX(Caller):
 
         # enclosing
         msg_to_op = {
-            'deliver_from':self.pubkey.data_b64,
-            'deliver_from_name':self.name,
-            'deliver_to':someone.pubkey.data_b64,
-            'deliver_to_name':someone.name,
-            'deliver_msg':direct_msg_data,
+            'deliver_msg': {
+                'from':self.pubkey.data_b64,
+                'from_name':self.name,
+                'to':someone.pubkey.data_b64,
+                'to_name':someone.name,
+                'msg':direct_msg_data,
+            }
+            
         }
 
         self.log('going to send msg to op?',msg_to_op)
@@ -434,6 +437,9 @@ class KomradeX(Caller):
             msg_to_op,
             route='deliver_msg'
         )
+
+
+
 
     def check_msgs(self,inbox=None):
         if not self.pubkey and self.privkey:
@@ -534,7 +540,7 @@ class KomradeX(Caller):
         deleted=[]
         for post_id in post_ids:
             #print('deleting post:',post_id)
-            self.crypt_keys.delete(
+            self.crypt_data.delete(
                 post_id,
                 prefix='/post/',
             )
@@ -627,7 +633,7 @@ class KomradeX(Caller):
         unread = []
         for post_id in inbox:
             if not post_id: continue
-            if not self.crypt_keys.get(post_id,prefix='/post/'):
+            if not self.crypt_data.get(post_id,prefix='/post/'):
                 unread.append(post_id)
 
         self.log(f'I {self} have {len(unread)} new messages')        
@@ -643,11 +649,11 @@ class KomradeX(Caller):
     
     def read_msg(self,post_id):
         # get post
-        post_encr = self.crypt_keys.get(post_id,prefix='/post/')
+        post_encr = self.crypt_data.get(post_id,prefix='/post/')
         # print(post_id,'????')
         if not post_encr:
             self.download_msgs([post_id])
-            post_encr = self.crypt_keys.get(post_id,prefix='/post/')
+            post_encr = self.crypt_data.get(post_id,prefix='/post/')
             # print(post_id,'????')
             
             return {
@@ -722,7 +728,7 @@ class KomradeX(Caller):
         posts_downloaded = []
         for post_id,post_encr in res['data_encr'].items():
             # print('storing...',post_id)
-            self.crypt_keys.set(
+            self.crypt_data.set(
                 post_id,
                 post_encr,
                 prefix='/post/'
