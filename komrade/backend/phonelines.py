@@ -14,10 +14,12 @@ def create_phonelines():
     op_keypair = KomradeAsymmetricKey()
     op_pubkey,op_privkey = op_keypair.pubkey_obj,op_keypair.privkey_obj
     op_uri = op_pubkey.data_b64
+
     op_privkey_decr = KomradeSymmetricKeyWithoutPassphrase()
     op_privkey_encr = KomradeEncryptedAsymmetricPrivateKey(
         data=op_privkey_decr.encrypt(op_privkey.data)
     )
+    
     keycrypt.set(OPERATOR_NAME,op_pubkey.data,prefix='/pubkey/')
     keycrypt.set(op_uri,OPERATOR_NAME,prefix='/name/')
     with open(PATH_SUPER_SECRET_OP_KEY,'wb') as of:
