@@ -195,7 +195,7 @@ values = {self.values}
         return pickle.loads(val_b)
 
     def prepend(self,x_l):
-        return self.append(x,insert=0)
+        return self.append(x_l,insert=0)
 
     def append(self,x_l,insert=None):
         if type(x_l)!=list: x_l=[x_l]
