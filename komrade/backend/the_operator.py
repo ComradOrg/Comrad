@@ -583,7 +583,7 @@ class TheOperator(Operator):
         res = {
             'status':f'Succeeded in getting {len(id2post)} new posts.',
             'success':True,
-            'posts':posts
+            'posts':id2post
         }
         self.log(f'--> {res}')
         return res
