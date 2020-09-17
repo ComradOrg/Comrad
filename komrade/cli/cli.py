@@ -131,10 +131,10 @@ class CLI(Logger):
 /register [name]  -->   new komrade"""
         else:
             HELPSTR=f"""
-/feed             -->   scroll through feed
-/dms              -->   see your direct msgs
+/feed             -->   scroll feed
+/dms              -->   see your DMs
 /msg [name]       -->   send a DM
-/refresh          -->   refresh feed/DMs
+/refresh          -->   refresh data
 /meet [name]      -->   exchange info
 /who [name]       -->   show contacts"""
 
