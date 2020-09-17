@@ -528,7 +528,7 @@ class TheOperator(Operator):
         self.log('inbox_crypt',inbox_crypt)
         self.log('inbox_crypt.values',inbox_crypt.values)
         res_inbox = inbox_crypt.prepend(post_id)
-
+        self.log('inbox_crypt.values v2',inbox_crypt.values)
         res = {
             'status':'Message delivered.',
             'success':True,
