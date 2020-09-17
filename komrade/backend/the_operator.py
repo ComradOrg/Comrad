@@ -335,8 +335,10 @@ class TheOperator(Operator):
         posts_b = data.get('posts_b')
         self.log('posts_b',posts_b)
 
+        msg_to_op.msg = posts_b
+        msg_to_op.decrypt()
+        self.log('decrypted msg to op',msg_to_op.msg_d)
         # decrypt?
-        
 
         return {
             'status':'Hold your horses.',

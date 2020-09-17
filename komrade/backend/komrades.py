@@ -341,7 +341,7 @@ class KomradeX(Caller):
         # get total binary package
         posts_b = BSEP.join(posts)
         self.ring_ring(
-            posts_b,
+            {'posts_b':posts_b},
             route='post'
         )
         
