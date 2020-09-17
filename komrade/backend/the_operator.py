@@ -328,44 +328,66 @@ class TheOperator(Operator):
         # self.log('Operator returning result:',dict_format(res,tab=2))
 
 
+    def fetch_posts(self,msg_to_op):
+
+        # get posts by personating world
+        world = Komrade(WORLD_NAME)
+        world_inbox_res = world.inbox()
+        if not world_inbox_res.get('success'):
+            return world_inbox_res
+        world_msgs = world_inbox_res.get('msgs')
+
+        # encrypt to sender from  world
+        world_msgs_b = BSEP.join([msg.msg_b for msg in world_msgs])
+        world_msg_to_sender = Message(
+            from_whom=world,
+            to_whom=msg_to_op.from_whom,
+            msg=world_msgs_b
+        )
+        self.log(world_msg_to_sender,'<- world_msg_to_sender')
+        # encrypt
+        world_msg_to_sender.encrypt()
+        self.log(world_msg_to_sender,'<- world_msg_to_sender encrypted')
+
+        return world_msg_to_sender.msg_d
 
 
+    # def post1(self,msg_to_op):
+    #     self.log('post <-',msg_to_op.msg_d)
+    #     self.log('post data <-',msg_to_op.data)
+    #     post_d = msg_to_op.data.get('post')
+    #     self.log('post_d =',post_d)
 
+    #     # need to decrypt this first -- it's to World,
+    #     # which I on the server have access to private key.
+    #     #  I need to decrypt and re-encrypt/reroute
+    #     #msg_to_world = Message(post_d)
+    #     #self.log('msg to world',dict_format(msg_to_world.msg_d))
 
-    def post(self,msg_to_op):
-        self.log('post <-',msg_to_op.msg_d)
-        self.log('post data <-',msg_to_op.data)
-        post_d = msg_to_op.data.get('post')
-        self.log('post_d =',post_d)
+    #     # decrypt
+    #     encr_txt = post_d.get('msg')
+    #     txt = SMessage(
+    #         Komrade(post_d.get('to_name')).privkey.data,  # requires we have this privkey!!!
+    #         Komrade(post_d.get('from_name')).pubkey.data
+    #     ).unwrap(encr_txt)
+    #     self.log('unencr txt',txt)
 
-        # need to decrypt this first -- it's to World,
-        # which I on the server have access to private key.
-        #  I need to decrypt and re-encrypt/reroute
-        #msg_to_world = Message(post_d)
-        #self.log('msg to world',dict_format(msg_to_world.msg_d))
+    #     post
 
-        # decrypt
-        encr_txt = post_d.get('msg')
-        txt = SMessage(
-            Komrade(post_d.get('to_name')).privkey.data,  # requires we have this privkey!!!
-            Komrade(post_d.get('from_name')).pubkey.data
-        ).unwrap(encr_txt)
-        self.log('unencr txt',txt)
+    #     # normally we'd deliver it to the person
+    #     # but here we need to deliver it to...
+    #     # everyone?
+    #     contacts = sorted([fn.split('.png')[0] for fn in os.listdir(PATH_QRCODES)])
+    #     self.log('contacts =',contacts)
 
-        # normally we'd deliver it to the person
-        # but here we need to deliver it to...
-        # everyone?
-        contacts = sorted([fn.split('.png')[0] for fn in os.listdir(PATH_QRCODES)])
-        self.log('contacts =',contacts)
-
-        # mass send!
-        res = self.mass_deliver_msg(txt,contacts)
+    #     # mass send!
+    #     res = self.mass_deliver_msg(txt,contacts)
         
-        return {
-            'status':'Hold your horses.',
-            'success':False,
-            'res_mass_deliver_msg':res
-        }
+    #     return {
+    #         'status':'Hold your horses.',
+    #         'success':False,
+    #         'res_mass_deliver_msg':res
+    #     }
 
     def mass_deliver_msg(self,post_msg_d,contacts):
         def do_mass_deliver_msg(contact,post_msg_d=post_msg_d):

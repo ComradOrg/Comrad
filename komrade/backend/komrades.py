@@ -306,41 +306,67 @@ class KomradeX(Caller):
             msg[ROUTE_KEYNAME]=route
         return super().ring_ring(msg,caller=self,**y)
 
+
+    def fetch_posts(self,n=100,only_from=[],not_from=[]):
+        # already seen?
+        seen_post_ids = pickle.loads(
+            self.crypt_keys.get(
+                'seen_post_ids',
+                prefix='/cache/'
+            )
+        )
+
+        # ring operator
+        res = self.ring_ring(
+            {
+                'seen_post_ids':seen_post_ids,
+                'only_from':only_from,
+                'not_from':not_from,
+                'n':n
+            },
+            route='fetch_posts'
+        )
+
+        print(fetch_posts,'fetched_posts')
+
     
-    def post(self,something,to_name=WORLD_NAME):
-        self.log('<-',something,to_name)
-        # encryption chain:
-            # me -> world
-                # me -> op
-                # op <- me
-            # op -> others
-        to_komrade = Komrade(to_name)
-        self.log('posting to',to_name,to_komrade,to_komrade.uri)
-        # make post data
+    # def post(self,something,to_name=WORLD_NAME):
+    #     self.log('<-',something,to_name)
+    #     # encryption chain:
+    #         # me -> world
+    #             # me -> op
+    #             # op <- me
+    #         # op -> others
+    #     to_komrade = Komrade(to_name)
+    #     self.log('posting to',to_name,to_komrade,to_komrade.uri)
+    #     # make post data
         
 
-        # encrypt
-        something_encr = SMessage(
-            self.privkey.data,
-            to_komrade.pubkey.data
-        ).wrap(something)
+    #     # encrypt
+    #     something_encr = SMessage(
+    #         self.privkey.data,
+    #         to_komrade.pubkey.data
+    #     ).wrap(something)
 
-        # make dict (do not use normal msg_d key names!)
-        post_d = {
-            'post':{
-                'from':self.uri,
-                'from_name':self.name,
-                'to_name':to_name,
-                'to':to_komrade.uri,
-                'msg':something_encr
-            }
-        }
-        self.log('post_d =',post_d)
-        # enclose as message to operator
-        self.ring_ring(
-            post_d,
-            route='post'
-        )
+    #     # make dict (do not use normal msg_d key names!)
+    #     post_d = {
+    #         'post':{
+    #             'from':self.uri,
+    #             'from_name':self.name,
+    #             'to_name':to_name,
+    #             'to':to_komrade.uri,
+    #             'msg':something_encr
+    #         }
+    #     }
+    #     self.log('post_d =',post_d)
+    #     # enclose as message to operator
+    #     self.ring_ring(
+    #         post_d,
+    #         route='post'
+    #     )
+
+    def post(self,something):
+        return self.msg(WORLD_NAME,something)
         
 
 
@@ -587,6 +613,7 @@ class KomradeX(Caller):
         }
         self.log('->',res)
         return res
+    
     
     def read_msg(self,post_id):
         # get post
