@@ -447,7 +447,7 @@ class TheOperator(Operator):
     def actually_deliver_msg(self,msg_from_op):
         msg_from_op_b_encr = msg_from_op.msg     #.msg_b  # pickle of msg_d
         self.log('<-',msg_from_op_b_encr)
-        deliver_to = msg_from_op.to_pubkey
+        deliver_to = b64enc(msg_from_op.to_pubkey)
         deliver_to_b = b64dec(deliver_to)
 
         # save new post
@@ -460,7 +460,10 @@ class TheOperator(Operator):
         self.log(f'put {msg_from_op} (or {msg_from_op_b_encr}) in {post_id}')
 
         # get inbox
-        inbox_crypt = self.get_inbox_crypt(pubkey_b=deliver_to_b)
+        inbox_crypt = self.get_inbox_crypt(
+            uri=deliver_to,
+            pubkey_b=deliver_to_b,
+        )
         self.log('inbox_crypt',inbox_crypt)
         self.log('inbox_crypt.values',inbox_crypt.values)
         res_inbox = inbox_crypt.prepend(post_id)
@@ -527,7 +530,9 @@ class TheOperator(Operator):
 
         # (1) get inbox
         self.log('uri??',uri,msg_to_op.msg_d)
-        res_inbox=self.get_inbox(uri)
+        res_inbox=self.get_inbox_crypt(
+            uri
+        )
         if not res_inbox.get('success'): return res_inbox
         inbox=res_inbox.get('inbox',[])
 
