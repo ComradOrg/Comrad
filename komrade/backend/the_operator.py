@@ -620,7 +620,10 @@ class TheOperator(Operator):
         posts={}
         res_posts={}
         if include_posts and self.name!=WORLD_NAME:
-            res_posts = self.get_posts()
+            res_posts = self.get_posts(
+                reencrypt_to=msg_to_op.from_pubkey,
+                reencrypt_to_name=msg_to_op.from_name
+            )
             self.log('res_posts',res_posts)
             if not res_posts.get('success'):
                 return {
@@ -646,7 +649,7 @@ class TheOperator(Operator):
         return res
     
     ## posts
-    def get_posts(self):
+    def get_posts(self,reencrypt_to_uri,reencrypt_to_name=None):
         world=Komrade(WORLD_NAME)
         # (1) get inbox
         inbox_obj=self.get_inbox_crypt(uri=world.uri)
@@ -678,7 +681,20 @@ class TheOperator(Operator):
                 post=res_read_msg.get('msg')
                 if post:
                     id2post[post_id]=post
-        self.log('id2post for world',id2post)
+        # self.log('id2post for world',id2post)
+
+        # (3) reencrypt for requester
+        reencrypt_to_b = b64dec(reencrypt_to_uri)
+        for post_id,post in id2post.items():
+            # post is post object!
+            self.log('post_id',post_id,post.msg_d)
+            post_b = post.msg_b
+            post_b_encrbyop = SMessage(
+                self.privkey.data,
+                reencrypt_to_b
+            ).wrap(post_b)
+            id2post[post_id]=post_b_encrbyop
+            self.log('-->',post_b_encrbyop,'\n')
 
         res = {
             'status':f'Succeeded in getting {len(id2post)} new posts.',
