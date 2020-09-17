@@ -333,7 +333,7 @@ class KomradeX(Caller):
 
         # msg from world?
         msg_from_world = Message(
-            from_whom=Komrade(WORLD_NAME),
+            from_whom=self.op,#Komrade(WORLD_NAME),
             to_whom=self,
             msg=res_b
         )
