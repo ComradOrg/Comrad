@@ -575,7 +575,7 @@ class TheOperator(Operator):
             msg_to_op=None,
             inbox_uri=None,
             do_login=True,
-            include_posts=False):
+            include_posts=True):
         self.log('<-',msg_to_op,inbox_uri)
 
         # uri?
@@ -586,10 +586,16 @@ class TheOperator(Operator):
         # req login?
         if do_login:
             if not msg_to_op:
-                return {'success':False, 'status':'Cannot login outside of message context.'}
+                return {
+                    'success':False,
+                    'status':'Cannot login outside of message context.'
+                }
             res_login=self.require_login(msg_to_op,do_login=do_login)
             if not res_login.get('success'):
-                return {'res_login':res_login} 
+                return {
+                    'success':False,
+                    'res_login':res_login
+                } 
 
         # (1) get inbox
         self.log('uri??',uri,msg_to_op.msg_d)
@@ -604,6 +610,7 @@ class TheOperator(Operator):
         self.log('res_msgs =',res_msgs)
         if not res_msgs.get('success'):
             return {
+                'success':False,
                 'res_login':res_login,
                 'res_msgs':res_msgs
             }
@@ -617,6 +624,7 @@ class TheOperator(Operator):
             self.log('res_posts',res_posts)
             if not res_posts.get('success'):
                 return {
+                    'success':False,
                     'res_login':res_login,
                     'res_msgs':res_msgs,
                     'res_posts':res_posts
@@ -706,38 +714,6 @@ class TheOperator(Operator):
         }
         self.log(f'--> {res}')
         return res
-
-
-
-
-
-    # def get_posts(self):
-    #     # get posts by personating world
-    #     world = Komrade(WORLD_NAME)
-    #     world_inbox_res = world.inbox()
-    #     self.log('world_inbox_res',world_inbox_res)
-    #     if not world_inbox_res.get('success'):
-    #         return world_inbox_res
-    #     world_msgs = world_inbox_res.get('msgs')
-    #     self.log('world_msgs',world_msgs)
-
-    #     # encrypt to sender from world
-    #     world_msgs_b = BSEP.join([msg.msg_b for msg in world_msgs])
-    #     world_msg_to_sender = Message(
-    #         from_whom=world,
-    #         to_whom=msg_to_op.from_whom,
-    #         msg=world_msgs_b
-    #     )
-    #     self.log(world_msg_to_sender,'<- world_msg_to_sender')
-    #     # encrypt
-    #     world_msg_to_sender.encrypt()
-    #     self.log(world_msg_to_sender,'<- world_msg_to_sender encrypted')
-
-    #     return world_msg_to_sender.msg_d
-
-
-
-
 
 
 
