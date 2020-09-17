@@ -533,7 +533,9 @@ class KomradeX(Caller):
             res_msg = self.read_msg(post_id)
             self.log('got msg:',res_msg)
             if res_msg.get('success') and res_msg.get('msg'):
-                msgs.append(res_msg.get('msg'))
+                msgx=res_msg.get('msg')
+                msgx.post_id=post_id
+                msgs.append(msgx)
 
         return msgs
 
