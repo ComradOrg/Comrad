@@ -4,8 +4,8 @@ Storage for both keys and data
 import os,sys; sys.path.append(os.path.abspath(os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__),'..')),'..')))
 from komrade import *
 from simplekv.fs import FilesystemStore
-from simplekv.memory.redisstore import RedisStore
-import redis
+# from simplekv.memory.redisstore import RedisStore
+# import redis
 import hashlib,os
 import zlib
 from pythemis.exception import ThemisError
