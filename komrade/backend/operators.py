@@ -56,7 +56,8 @@ class Operator(Keymaker):
         'check_msgs',
         'download_msgs',
         'introduce_komrades',
-        'post'
+        'post',
+        'fetch_posts'
     ]
 
 
