@@ -326,3 +326,27 @@ class Operator(Keymaker):
         self.log('-->',inbox_crypt)
 
         return inbox_crypt
+
+
+    
+    @property
+    def inbox_db(self):
+        if not hasattr(self,'_inbox_db'):
+            self._inbox_db=self.get_inbox_crypt(
+                prefix='/inbox/'
+            )
+        return self._inbox_db
+    @property
+    def inbox_unread_db(self):
+        if not hasattr(self,'_inbox_unread_db'):
+            self._inbox_unread_db=self.get_inbox_crypt(
+                prefix='/inbox/unread/',
+            )
+        return self._inbox_unread_db
+    @property
+    def inbox_read_db(self):
+        if not hasattr(self,'_inbox_read_db'):
+            self._inbox_read_db=self.get_inbox_crypt(
+                prefix='/inbox/read/',
+            )
+        return self._inbox_read_db

@@ -328,69 +328,7 @@ class TheOperator(Operator):
         # self.log('Operator returning result:',dict_format(res,tab=2))
 
 
-    def fetch_posts(self,msg_to_op):
-        self.log('<-',msg_to_op)
 
-        # get posts by personating world
-        world = Komrade(WORLD_NAME)
-        world_inbox_res = world.inbox()
-        self.log('world_inbox_res',world_inbox_res)
-        if not world_inbox_res.get('success'):
-            return world_inbox_res
-        world_msgs = world_inbox_res.get('msgs')
-        self.log('world_msgs',world_msgs)
-
-        # encrypt to sender from world
-        world_msgs_b = BSEP.join([msg.msg_b for msg in world_msgs])
-        world_msg_to_sender = Message(
-            from_whom=world,
-            to_whom=msg_to_op.from_whom,
-            msg=world_msgs_b
-        )
-        self.log(world_msg_to_sender,'<- world_msg_to_sender')
-        # encrypt
-        world_msg_to_sender.encrypt()
-        self.log(world_msg_to_sender,'<- world_msg_to_sender encrypted')
-
-        return world_msg_to_sender.msg_d
-
-
-    # def post1(self,msg_to_op):
-    #     self.log('post <-',msg_to_op.msg_d)
-    #     self.log('post data <-',msg_to_op.data)
-    #     post_d = msg_to_op.data.get('post')
-    #     self.log('post_d =',post_d)
-
-    #     # need to decrypt this first -- it's to World,
-    #     # which I on the server have access to private key.
-    #     #  I need to decrypt and re-encrypt/reroute
-    #     #msg_to_world = Message(post_d)
-    #     #self.log('msg to world',dict_format(msg_to_world.msg_d))
-
-    #     # decrypt
-    #     encr_txt = post_d.get('msg')
-    #     txt = SMessage(
-    #         Komrade(post_d.get('to_name')).privkey.data,  # requires we have this privkey!!!
-    #         Komrade(post_d.get('from_name')).pubkey.data
-    #     ).unwrap(encr_txt)
-    #     self.log('unencr txt',txt)
-
-    #     post
-
-    #     # normally we'd deliver it to the person
-    #     # but here we need to deliver it to...
-    #     # everyone?
-    #     contacts = sorted([fn.split('.png')[0] for fn in os.listdir(PATH_QRCODES)])
-    #     self.log('contacts =',contacts)
-
-    #     # mass send!
-    #     res = self.mass_deliver_msg(txt,contacts)
-        
-    #     return {
-    #         'status':'Hold your horses.',
-    #         'success':False,
-    #         'res_mass_deliver_msg':res
-    #     }
 
     def mass_deliver_msg(self,post_msg_d,contacts):
         def do_mass_deliver_msg(contact,post_msg_d=post_msg_d):
@@ -538,20 +476,56 @@ class TheOperator(Operator):
         self.log('->',res)
         return res
 
-    def get_inbox(self,
-            msg_to_op,
-            required_fields = [
-                'secret_login',
-                'name',
-                'pubkey',
-                'inbox',
-            ],do_login=True):
 
+
+
+
+
+
+
+
+    ### 
+    # LETS SIMPLIFY THIS
+    # Komrade -> Op: get_updates()
+    # gets new DMs, new posts,
+    # both index/inbox and content/body
+    ###
+
+    def require_login(self,msg_to_op,do_login=True):
         # logged in?
         if do_login:
             login_res = self.login(msg_to_op)
             if not login_res.get('success'):
                 return login_res
+            return {'success':True,'status':'Logged in.'}
+        else:
+            return {'success':True,'status':'Login not required.'}
+
+
+    # (0) get updates
+    # user enters here
+    def get_updates(self,msg_to_op,do_login=True):
+        # req login
+        login_res=self.require_login(msg_to_op,do_login=do_login)
+        if not login_res.get('success'): return login_res 
+
+        # (1) get inbox
+        inbox_res = self.get_inbox()
+        if not inbox_res.get('success'): return inbox_res
+        inbox=inbox_res.get('inbox',[])
+
+        # (2) get posts
+
+
+
+    # (1) get inbox
+    def get_inbox(self,
+            msg_to_op,
+            do_login=True,
+            delete_afterward=False):
+        # req login
+        login_res=self.require_login(msg_to_op,do_login=do_login)
+        if not login_res.get('success'): return login_res 
             
         # ok, then find the inbox?
         inbox=self.get_inbox_crypt(
@@ -561,112 +535,109 @@ class TheOperator(Operator):
         res = {
             'status':'Succeeded in getting inbox.',
             'success':True,
-            'inbox':inbox.values if inbox else None
-        }
-        self.log(f'returning from Op.get_inbox --> {res}')
-        return res
-    
-    def download_msgs(self,
-            msg_to_op,
-            required_fields = [
-                'secret_login',
-                'name',
-                'pubkey',
-                'post_ids',
-            ],
-            delete_afterward=True):
-
-        # logged in?
-        login_res = self.login(msg_to_op)
-        if not login_res.get('success'):
-            return login_res
-        
-        # ok, then find the posts?
-        post_ids=msg_to_op.data.get('post_ids',[])
-        if not post_ids: return {'success':False, 'status':'No post_ids specified'}
-        
-        posts = {}
-        for post_id in post_ids:
-            
-            post = self.crypt_data.get(b64enc(post_id),prefix='/post/')
-            if post:
-                posts[post_id] = post
-            self.log('looking for:',post_id,post)
-        self.log(f'I {self} found {len(posts)} for {msg_to_op.from_name}')
-
-        # delete?
-        res = {
-            'status':'Succeeded in downloading new messages.' + (' I\'ve already deleted these messages from the server.' if delete_afterward else ''),
-            'success':True,
-            'data_encr':posts
+            'inbox':inbox.values if inbox else []
         }
 
-        # delete?
-        if delete_afterward:
-            res['res_delete_msgs'] = self.delete_msgs(
-                post_ids,
-                inbox_uri = b64enc(
-                    msg_to_op.data.get('pubkey')
-                )
-            )
-        
-        # show res
-        self.log('->',res)
+        self.log(f'--> {res}')
         return res
-        
-        
 
-    def delete_msgs(self,post_ids,inbox_uri=None):
-        # @hack: this a bit dangerous?
+    def get_posts(self,post_ids):
+        posts={}
         for post_id in post_ids:
-            self.crypt_data.delete(
+            post = self.crypt_data.get(
                 post_id,
                 prefix='/post/'
             )
-            self.log('deleting post id',post_id,'...')
-
-        # if inbox, remove these posts from it
-        if inbox_uri:
-            # unwrap
-            inbox = self.crypt_keys.get(
-                inbox_uri,
-                prefix='/inbox/'
-            )
-            if inbox:
-                inbox = SMessage(
-                    self.privkey.data,
-                    b64dec(inbox_uri)
-                ).unwrap(inbox)
-            self.log('unwrapped inbox_encr:',inbox)
-            inbox_l = inbox.split(BSEP)
-            self.log('length v1:',len(inbox_l))
-
-            # alter
-            inbox_l = [pid for pid in inbox_l if pid not in post_ids]
-            self.log('length v2:',len(inbox_l))
-            
-            # rewrap
-            inbox = BSEP.join(inbox_l)
-            if inbox:
-            #print('inboxxx',inbox)
-                inbox = SMessage(
-                    self.privkey.data,
-                    b64dec(inbox_uri)
-                ).wrap(inbox)
-
-            # overwrite!
-            self.crypt_keys.set(
-                inbox_uri,
-                inbox,
-                prefix='/inbox/',
-                override=True
-            )
-
-        return {
+            if post: posts[post_id] = post
+        self.log(f'I {self} found {len(posts)} for {msg_to_op.from_name}')
+        
+        res = {
+            'status':'Succeeded in getting new messages and posts.',
             'success':True,
+            'posts':posts
+        }
+        self.log(f'--> {res}')
+        return res
+
+    def delete_posts(self,post_ids,inbox_uri=None):
+        # delete from posts
+        deleted_post_ids=[]
+        for post_id in post_ids:
+            if self.crypt_data.delete(
+                post_id,
+                prefix='/post/'
+            ):
+                deleted_post_ids.append(post_id)
+        self.log('deleted_post_ids',deleted_post_ids,'...')
+        res = {
             'deleted':post_ids,
         }
 
+        # delete from inbox
+        if inbox_uri:
+            inbox_db=self.get_inbox_crypt(
+                uri=inbox_uri,
+                pubkey_b=b64dec(inbox_uri)
+            )
+            res['deleted_from_inbox']=inbox_db.remove(
+                deleted_post_ids
+            )
+        
+        self.log('-->',res)
+        return res
+
+
+
+
+
+
+
+
+
+
+
+
+    ## posts
+    def fetch_posts(self,msg_to_op):
+        self.log('<-',msg_to_op)
+
+        # get posts by personating world
+        world = Komrade(WORLD_NAME)
+        world_inbox_res = world.inbox()
+        self.log('world_inbox_res',world_inbox_res)
+        if not world_inbox_res.get('success'):
+            return world_inbox_res
+        world_msgs = world_inbox_res.get('msgs')
+        self.log('world_msgs',world_msgs)
+
+        # encrypt to sender from world
+        world_msgs_b = BSEP.join([msg.msg_b for msg in world_msgs])
+        world_msg_to_sender = Message(
+            from_whom=world,
+            to_whom=msg_to_op.from_whom,
+            msg=world_msgs_b
+        )
+        self.log(world_msg_to_sender,'<- world_msg_to_sender')
+        # encrypt
+        world_msg_to_sender.encrypt()
+        self.log(world_msg_to_sender,'<- world_msg_to_sender encrypted')
+
+        return world_msg_to_sender.msg_d
+
+
+
+
+
+
+
+
+
+
+
+
+    ###
+    # INTRODUCTIONS/MEETING
+    ###
 
     def introduce_komrades(self,msg_to_op):
         # # logged in?

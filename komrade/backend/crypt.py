@@ -210,17 +210,20 @@ class CryptList(Crypt):  # like inbox
         if not val_b: return []
         return pickle.loads(val_b)
 
-    def prepend(self,x):
+    def prepend(self,x_l):
         return self.append(x,insert=0)
 
-    def append(self,x,insert=None):
+    def append(self,x_l,insert=None):
+        if type(x_l)!=list: x_l=[x_l]
         val_l = self.values
+        x_l = [x for x in x_l if not x in set(val_l)]
         # print('val_l =',val_l)
-        if insert is not None:
-            val_l.insert(insert,x)
-        else:
-            val_l.append(x)
-        # print('val_l2 =',val_l)
+        for x in x_l:
+            if insert is not None:
+                val_l.insert(insert,x)
+            else:
+                val_l.append(x)
+            # print('val_l2 =',val_l)
         
         return self.set(val_l)
 

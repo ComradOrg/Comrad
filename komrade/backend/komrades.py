@@ -70,6 +70,24 @@ class KomradeX(Caller):
         return answer
 
 
+
+    ## Talking with Operator
+    def ring_ring(self,msg,route=None,**y):
+        if type(msg)==dict and not ROUTE_KEYNAME in msg:
+            msg[ROUTE_KEYNAME]=route
+        return super().ring_ring(msg,caller=self,**y)
+
+
+
+
+
+
+    ####################################
+    ## (1) Logging in and registering ##
+    ####################################
+
+
+
     def register(self, name = None, passphrase = None, is_group=None, show_intro=0,show_body=True,logfunc=None):
         # global PHONEBOOK
         
@@ -278,122 +296,92 @@ class KomradeX(Caller):
 
 
 
-    ## MEETING PEOPLE
 
-    def find(self,someone):
-        if type(someone)==str:
-            return Komrade(name=someone)
-        if type(someone)==bytes:
-            return Komrade(pubkey=someone)
-        self.log('what is type of someoen here?',type(someone))
-        return someone
 
-    # def meet(self,someone):
-    #     # get person obj
-    #     someone = self.find(someone)
-    #     self.log('got someone =',someone,type(someone))
 
+
+
+
+
+
+
+
+
+
+    ########################
+    ## (2) MEETING PEOPLE ##
+    ########################
 
     def contacts(self):
         # who do I know?
         return sorted([fn.split('.png')[0] for fn in os.listdir(PATH_QRCODES)])
 
 
+    ### MEETING PEOLPE
+    def meet(self,name=None,pubkey=None,returning=False):
+        if not name and not pubkey:
+            return {'success':False,'status':'Meet whom?'}
+        
+        # already met this person?
+        keystr=self.name+'->'+name
+        if self.crypt_keys.get(
+            keystr,
+            prefix='/met/'
+        ):
+            return {
+                'success':False,
+                'status':f'You have already sent an introduction to @{name}. It would be rude to send another.'
+            }
 
+        # send msg to op
+        msg_to_op = {
+            'name':self.name,
+            'secret_login':self.secret_login,
+            'pubkey':self.uri,
 
-    def ring_ring(self,msg,route=None,**y):
-        if type(msg)==dict and not ROUTE_KEYNAME in msg:
-            msg[ROUTE_KEYNAME]=route
-        return super().ring_ring(msg,caller=self,**y)
-
-
-    def fetch_posts(self,n=100,only_from=[],not_from=[]):
-        # already seen?
-        seen_post_ids_b = self.crypt_keys.get(
-            'seen_post_ids',
-            prefix='/cache/'
-        )
-        if seen_post_ids_b:
-            seen_post_ids=pickle.loads(seen_post_ids_b)
-        else:
-            seen_post_ids=[]
-        self.log('seen_post_ids =',seen_post_ids)
-
-        # ring operator
-        res_b = self.ring_ring(
-            {
-                'seen_post_ids':seen_post_ids,
-                'only_from':only_from,
-                'not_from':not_from,
-                'n':n
-            },
-            route='fetch_posts'
-        )
-        self.log('res_b <-',res_b)
-
-        # msg from world?
-        msg_from_world = Message(
-            from_whom=self.op,#Komrade(WORLD_NAME),
-            to_whom=self,
-            msg=res_b
-        )
-        self.log('converted to msg:',msg_from_world.msg_d)
-        msg_from_world.decrypt()
-        self.log('decrypted msg:',msg_from_world)
-
-        # get binary blob for all fetched posts
-        msgs_d = msg_from_world.msg
-        self.log('msgs_d??',msgs_d)
-        msgs = msgs_d['msg'].split(BSEP) if msgs_d['msg'] else []
-
-        res = {
-            'status':f'Fetched {len(msgs)} poss.',
-            'success':True,
-            'msgs':msgs
+            'meet_name':name,
+            'meet_pubkey':pubkey,
+            'returning':returning
         }
+        self.log('msg_to_op',msg_to_op)
 
-        self.log('->',res)
+        res = self.ring_ring(
+            msg_to_op,
+            route='introduce_komrades'
+        )
+        self.log('res from op <-',res)
+
+        # record that I've already tried this
+        self.crypt_keys.set(
+            keystr,
+            b'y',
+            prefix='/met/'
+        )
+
+        # return result
         return res
 
-    
-    # def post(self,something,to_name=WORLD_NAME):
-    #     self.log('<-',something,to_name)
-    #     # encryption chain:
-    #         # me -> world
-    #             # me -> op
-    #             # op <- me
-    #         # op -> others
-    #     to_komrade = Komrade(to_name)
-    #     self.log('posting to',to_name,to_komrade,to_komrade.uri)
-    #     # make post data
-        
 
-    #     # encrypt
-    #     something_encr = SMessage(
-    #         self.privkey.data,
-    #         to_komrade.pubkey.data
-    #     ).wrap(something)
 
-    #     # make dict (do not use normal msg_d key names!)
-    #     post_d = {
-    #         'post':{
-    #             'from':self.uri,
-    #             'from_name':self.name,
-    #             'to_name':to_name,
-    #             'to':to_komrade.uri,
-    #             'msg':something_encr
-    #         }
-    #     }
-    #     self.log('post_d =',post_d)
-    #     # enclose as message to operator
-    #     self.ring_ring(
-    #         post_d,
-    #         route='post'
-    #     )
 
-    def post(self,something):
-        return self.msg(WORLD_NAME,something)
-        
+
+
+
+
+
+
+
+
+
+
+
+
+
+    ###################
+    ## (3) MESSAGING ##
+    ###################
+
+
 
 
     
@@ -439,28 +427,6 @@ class KomradeX(Caller):
         )
 
 
-    @property
-    def inbox_db(self):
-        if not hasattr(self,'_inbox_db'):
-            self._inbox_db=self.get_inbox_crypt(
-                prefix='/inbox/'
-            )
-        return self._inbox_db
-    @property
-    def inbox_unread_db(self):
-        if not hasattr(self,'_inbox_unread_db'):
-            self._inbox_unread_db=self.get_inbox_crypt(
-                prefix='/inbox/unread/',
-            )
-        return self._inbox_unread_db
-    @property
-    def inbox_read_db(self):
-        if not hasattr(self,'_inbox_read_db'):
-            self._inbox_read_db=self.get_inbox_crypt(
-                prefix='/inbox/read/',
-            )
-        return self._inbox_read_db
-
 
 
     def download_inbox(self,uri=None):
@@ -485,44 +451,22 @@ class KomradeX(Caller):
             route='get_inbox'
         )
         self.log('got back response:',res)
-        stop
-
-        return self.do_check_msgs(res)
-
-    def do_check_msgs(self,res):
-        # decrypt?
-        if not res.get('data_encr'):
-            return {'success':False, 'status':'No data'} 
-        inbox_encr = res['data_encr']
-
-        inbox = SMessage(
-            self.privkey.data,
-            self.op.pubkey.data
-        ).unwrap(inbox_encr)
-        self.log('inbox decrypted:',inbox)
-
-        # overwrite my local inbox with encrypted one from op?
-        return self.crypt_keys.set(
-            self.uri,
-            inbox,
-            prefix='/inbox/',
-            override=True
-        )
+        if not res.get('success'): return res
+        inbox=res.get('inbox',[])
+        if inbox:
+            res['res_inbox']=self.inbox_db.prepend(inbox)
+        return res
 
     def refresh(self,check_msgs=True):
         # refresh inbox
         if check_msgs:
             self.download_inbox()
 
-        # status?
-        inbox_status = self.get_inbox_ids()
-        if not inbox_status['success']: return inbox_status
-
-        unread=inbox_status.get('unread',[])
-        inbox=inbox_status.get('inbox',[])
-        
         # download new messages
-        self.download_msgs(post_ids = inbox)
+        inbox_post_ids = self.inbox_db.values
+        self.download_msgs(
+            post_ids = inbox_post_ids
+        )
 
         res = {
             'success':True,
@@ -764,48 +708,103 @@ class KomradeX(Caller):
 
 
 
-    ### MEETING PEOLPE
-    def meet(self,name=None,pubkey=None,returning=False):
-        if not name and not pubkey:
-            return {'success':False,'status':'Meet whom?'}
 
 
-        keystr=self.name+'->'+name
 
-        # if self.crypt_keys.get(
-        #     keystr,
-        #     prefix='/met/'
-        # ):
-        #     return {
-        #         'success':False,
-        #         'status':f'You have already sent an introduction to @{name}. It would be rude to send another.'
-        #     }
 
-        msg_to_op = {
-            'name':self.name,
-            'secret_login':self.secret_login,
-            'pubkey':self.uri,
 
-            'meet_name':name,
-            'meet_pubkey':pubkey,
-            'returning':returning
+
+
+
+
+
+
+
+
+
+
+    def fetch_posts(self,n=100,only_from=[],not_from=[]):
+        # already seen?
+        seen_post_ids_b = self.crypt_keys.get(
+            'seen_post_ids',
+            prefix='/cache/'
+        )
+        if seen_post_ids_b:
+            seen_post_ids=pickle.loads(seen_post_ids_b)
+        else:
+            seen_post_ids=[]
+        self.log('seen_post_ids =',seen_post_ids)
+
+        # ring operator
+        res_b = self.ring_ring(
+            {
+                'seen_post_ids':seen_post_ids,
+                'only_from':only_from,
+                'not_from':not_from,
+                'n':n
+            },
+            route='fetch_posts'
+        )
+        self.log('res_b <-',res_b)
+
+        # msg from world?
+        msg_from_world = Message(
+            from_whom=self.op,#Komrade(WORLD_NAME),
+            to_whom=self,
+            msg=res_b
+        )
+        self.log('converted to msg:',msg_from_world.msg_d)
+        msg_from_world.decrypt()
+        self.log('decrypted msg:',msg_from_world)
+
+        # get binary blob for all fetched posts
+        msgs_d = msg_from_world.msg
+        self.log('msgs_d??',msgs_d)
+        msgs = msgs_d['msg'].split(BSEP) if msgs_d['msg'] else []
+
+        res = {
+            'status':f'Fetched {len(msgs)} poss.',
+            'success':True,
+            'msgs':msgs
         }
-        # print('msg_to_op',msg_to_op)
 
-        res = self.ring_ring(
-            msg_to_op,
-            route='introduce_komrades'
-        )
-        # print('res from op',res)
-
-        # record that I've already tried this
-        self.crypt_keys.set(
-            keystr,
-            b'y',
-            prefix='/met/'
-        )
-
+        self.log('->',res)
         return res
+
+
+    def post(self,something):
+        return self.msg(WORLD_NAME,something)
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 def test_register():
