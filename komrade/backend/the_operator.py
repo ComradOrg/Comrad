@@ -531,11 +531,13 @@ class TheOperator(Operator):
         # (1) get inbox
         self.log('uri??',uri,msg_to_op.msg_d)
         res_inbox=self.get_inbox(uri)
+        self.log('res_inbox<--',res_inbox)
         if not res_inbox.get('success'): return res_inbox
         inbox=res_inbox.get('inbox',[])
 
         # (2) get msgs
         res_msgs = self.get_msgs(inbox)
+        self.log('res_msgs =',res_msgs)
         if not res_msgs.get('success'):
             return {
                 'res_login':res_login,
@@ -547,6 +549,7 @@ class TheOperator(Operator):
         posts=[]
         if include_posts and self.name!=WORLD_NAME:
             res_posts = self.get_posts()
+            self.log('res_posts',res_posts)
             if not res_posts.get('success'):
                 return {
                     'res_login':res_login,
@@ -607,7 +610,7 @@ class TheOperator(Operator):
     def get_inbox(self,inbox_uri):
         # ok, then find the inbox?
         inbox=self.get_inbox_crypt(
-            uri=inbox_uri,
+            uri=b64enc(inbox_uri),
             pubkey_b=b64dec(inbox_uri)
         )
         
