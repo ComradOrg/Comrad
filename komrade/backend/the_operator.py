@@ -613,7 +613,7 @@ class TheOperator(Operator):
                 prefix='/post/'
             )
             if post: posts[post_id] = post
-        self.log(f'I {self} found {len(posts)} for {msg_to_op.from_name}')
+        self.log(f'I {self} found {len(posts)}')
         
         res = {
             'status':'Succeeded in getting new messages and posts.',
