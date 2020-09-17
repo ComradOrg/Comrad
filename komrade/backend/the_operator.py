@@ -336,7 +336,20 @@ class TheOperator(Operator):
         self.log('post <-',msg_to_op.msg_d)
         self.log('post data <-',msg_to_op.data)
         post_d = msg_to_op.data.get('post')
+        self.log('post_d =',post_d)
+
+        # need to decrypt this first -- it's to World,
+        # which I on the server have access to private key.
+        #  I need to decrypt and re-encrypt/reroute
+        msg_to_world = Message(post_d)
+        self.log('msg to world',msg_to_world)
         
+        # decrypt
+        msg_to_world.decrypt()
+        self.log('msg_to_world decrypted =',msg_to_world)
+
+        exit()
+
         # normally we'd deliver it to the person
         # but here we need to deliver it to...
         # everyone?
@@ -352,28 +365,17 @@ class TheOperator(Operator):
             'res_mass_deliver_msg':res
         }
 
-    def mass_deliver_msg(self,data,contacts):
-        def do_mass_deliver_msg(contact,data=data):
-            self.log(f'<- delivering to {contact} the post: {data}')
+    def mass_deliver_msg(self,post_msg_d,contacts):
+        def do_mass_deliver_msg(contact,post_msg_d=post_msg_d):
+            self.log(f'<- delivering to {contact} the post: {post_msg_d}')
             msg_from_op = Message(
-                {
-                    'to':data.get('deliver_to'),
-                    'to_name':data.get('deliver_to_name'),
+                {  # op -> komrade
+
+                    'to':post_msg_d.get('to'),
+                    'to_name':post_msg_d.get('from'),
                     'from':self.uri,
                     'from_name':self.name,
-
-                    'msg':{
-                        
-                        'to':data.get('deliver_to'),
-                        'to_name':data.get('deliver_to_name'),
-                        'from':data.get('deliver_from'),
-                        'from_name':data.get('deliver_from_name'),
-                        'msg':{
-                            'txt':data.get('deliver_msg'),
-                            'type':'post',
-                            'note':f'''Komrade @{data.get('deliver_from_name')} has posted the following message to the group @{data.get('deliver_to_name')}.'''
-                        }
-                    }                    
+                    'msg':post_msg_d.get             
                 }
             )
             self.log(f'prepared msg for {contact}: {msg_from_op.msg}')
