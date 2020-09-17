@@ -196,7 +196,7 @@ class CLI(Logger):
         res = self.komrade.login()
         return self.do_login(res)
 
-    def do_login(self,res)    
+    def do_login(self,res):
         # print('got login res:',res)
         self.log('<- komrade.login() <-',res)
         
@@ -293,7 +293,7 @@ class CLI(Logger):
         # check logged in
         if not self.do_login(res): return
         self.stat(res['status'],komrade_name='Operator',**statd)
-        
+
 
 
     def prompt_adduser(self,msg):
