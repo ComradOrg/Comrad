@@ -342,8 +342,9 @@ class KomradeX(Caller):
         self.log('decrypted msg:',msg_from_world)
 
         # get binary blob for all fetched posts
-        msgs_b = msg_from_world.msg
-        msgs = msgs_b.split(BSEP)
+        msgs_d = msg_from_world.msg
+        self.log('msgs_d??',msgs_d)
+        msgs = msgs_d['msg'].split(BSEP)
 
         res = {
             'status':'Fetched {len(msgs)} poss.',
