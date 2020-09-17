@@ -314,22 +314,26 @@ class KomradeX(Caller):
                 # me -> op
                 # op <- me
             # op -> others
-
-        self.log(to_name,Komrade(to_name))
+        to_komrade = Komrade(to_name)
+        self.log('posting to',to_name,to_komrade,to_komrade.uri)
         # make post data
+        
+
+        # encrypt
+        something_encr = SMessage(
+            self.privkey.data,
+            to_komrade.pubkey.data
+        ).wrap(something)
+
+        # make dict (do not use normal msg_d key names!)
         post_d = {
-            'from':self.uri,
-            'from_name':self.name,
-            'to_name':to_name,
-            'to':Komrade(to_name).uri,
-            'msg':something
+            'post_from':self.uri,
+            'post_from_name':self.name,
+            'post_to_name':to_name,
+            'post_to':to_komrade.uri,
+            'post_msg':something_encr
         }
         self.log('post_d =',post_d)
-
-        # make post into Message
-        post = Message(post_d)
-        post.encrypt()
-
         # enclose as message to operator
         self.ring_ring(
             post_d,

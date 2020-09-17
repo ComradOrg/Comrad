@@ -331,28 +331,15 @@ class TheOperator(Operator):
 
     def post(self,msg_to_op):
         self.log('post <-',msg_to_op.msg_d)
-        data = msg_to_op.data
-        posts_b = data.get('posts_b')
-        self.log('posts_b',posts_b)
+        post_d = msg_to_op.msg_d
+        
+        # normally we'd deliver it to the person
+        # but here we need to deliver it to...
+        # everyone?
 
-        # decode?
-        self.log('posts_b_l',posts_b.split(BSEP))
+        self.log('contacts =',self.contacts())
 
-        posts = pickle.loads(posts_b)
-        self.log('posts unpickled',posts)
-
-        # decrypt?
-        posts_decr = SMessage(
-            self.privkey.data,
-            msg_to_op.msg_d.get('from')
-        )
-        self.log('decrypted posts',posts_decr)
-
-
-        # msg_to_op.decrypt()
-        # self.log('decrypted msg to op',msg_to_op.msg_d)
-        # # decrypt?
-
+        
         return {
             'status':'Hold your horses.',
             'success':False,
