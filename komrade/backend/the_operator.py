@@ -375,7 +375,7 @@ class TheOperator(Operator):
                     }                    
                 }
             )
-            self.log(f'prepared msg for {contact}: {msg_from_op}')
+            self.log(f'prepared msg for {contact}: {msg_from_op.msg_d}')
 
             # encrypt
             msg_from_op.encrypt()
