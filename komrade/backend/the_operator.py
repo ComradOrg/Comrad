@@ -651,6 +651,22 @@ class TheOperator(Operator):
     ## posts
     def get_posts(self,reencrypt_to_uri,reencrypt_to_name=None):
         world=Komrade(WORLD_NAME)
+
+        res = {'msgs':world.messages()}
+        self.log('res!!!',res)
+
+
+
+
+
+
+
+
+
+
+
+        return res
+
         # (1) get inbox
         inbox_obj=self.get_inbox_crypt(uri=world.uri)
         self.log('<-- inbox crypt',inbox_obj)
@@ -670,8 +686,15 @@ class TheOperator(Operator):
 
         # (2) read msgs
         id2post={}
-        for post_id,post in id2msg.items():
-            self.log('id2msg post_id',post_id,post)
+        for post_id,post_encr in id2msg.items():
+            self.log('id2msg post_id =',post_id)
+            self.log('id2msg post_encr =',post_encr)
+
+            post = SMessage(
+                world.privkey.data,
+
+            )
+
             res_read_msg = world.read_msg(
                 post_id,
                 post_encr=post
