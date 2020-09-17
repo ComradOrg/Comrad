@@ -320,7 +320,7 @@ class KomradeX(Caller):
         self.log('seen_post_ids =',seen_post_ids)
 
         # ring operator
-        res = self.ring_ring(
+        res_b = self.ring_ring(
             {
                 'seen_post_ids':seen_post_ids,
                 'only_from':only_from,
@@ -329,8 +329,29 @@ class KomradeX(Caller):
             },
             route='fetch_posts'
         )
+        self.log('res_b <-',res_b)
 
-        self.log(res,'<- fetched_posts')
+        # msg from world?
+        msg_from_world = Message(
+            from_whom=Komrade(WORLD_NAME),
+            to_whom=self,
+            msg=res_b
+        )
+        self.log('converted to msg:',msg_from_world)
+        msg_from_world.decrypt()
+        self.log('decrypted msg:',msg_from_world)
+
+        # get binary blob for all fetched posts
+        msgs_b = msg_from_world.msg
+        msgs = msgs_b.split(BSEP)
+
+        res = {
+            'status':'Fetched {len(msgs)} poss.'
+            'success':True,
+            'msgs':msgs
+        }
+
+        self.log('->',res)
         return res
 
     
