@@ -21,7 +21,7 @@ class CLI(Logger):
         'meet':'meet a komrade',
         'who':'show contacts or info',
         'msg':'write people',
-        'update':'check mail',
+        'refresh':'refresh feed/DMs',
         'dms':'read DMs',
         'feed':'read posts',
         'verbose':'show/hide log output',
@@ -128,18 +128,15 @@ class CLI(Logger):
         if not self.logged_in:
             HELPSTR=f"""
 /login [name]     -->   log back in
-/register [name]  -->   new komrade
-"""
+/register [name]  -->   new komrade"""
         else:
             HELPSTR=f"""
-/update           -->   refresh feed/DMs
 /feed             -->   scroll through feed
 /dms              -->   see your direct msgs
 /msg [name]       -->   send a DM
-
+/refresh          -->   refresh feed/DMs
 /meet [name]      -->   exchange info
-/who [name]       -->   show contacts
-"""
+/who [name]       -->   show contacts"""
 
         HELPSTR+=f"""
 /help             -->   seek help
