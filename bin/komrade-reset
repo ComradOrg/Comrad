@@ -1,0 +1,17 @@
+SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+wd=`pwd`
+path=`realpath "$SCRIPTPATH/../../data"`
+echo "Removing $path. You will permanently lose your users and contacts. Proceed? "
+
+read -p "[Y/n] " y_n
+
+echo $y_n
+
+if [ ! "$y_n" = "y" ]; then
+    echo "Cancelling"
+else
+    rm -r $path
+    echo "Reregistering..."
+    komrade-cli /register
+fi

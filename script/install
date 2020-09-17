@@ -54,7 +54,7 @@ then
         echo "Use HTTPS or SSH for git?"
         read -p "[HTPS/ssh] " git_method
         
-        if [ git_method=="ssh" ]
+        if [ "$git_method" = "ssh" ]
         then
             echo "using ssh..."
             git clone git@github.com:Komrade/Komrade.git
@@ -87,7 +87,7 @@ then
     echo "pyenv not installed. install?"
     read -p "[Y/n] " pyenv_yn
 
-    if [ ! pyenv_yn=="n" ]; then
+    if [ "$pyenv_yn" = "n" ]; then
         echo "Not installing pyenv."
     else
         export PYENV_ROOT="$HOME/.pyenv"

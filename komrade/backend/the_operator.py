@@ -284,6 +284,9 @@ class TheOperator(Operator):
                 'status': f"{OPERATOR_INTRO}I'm sorry, but I can't register the name of {name}."
             }
 
+        # save QR also?
+        self.save_uri_as_qrcode(uri_id=uri_id,name=name)
+
         # compose result
         res = {
             'success':success,
