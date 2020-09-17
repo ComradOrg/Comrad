@@ -323,15 +323,15 @@ class KomradeX(Caller):
             return {'success':False,'status':'Meet whom?'}
         
         # already met this person?
-        keystr=self.name+'->'+name
-        if self.crypt_keys.get(
-            keystr,
-            prefix='/met/'
-        ):
-            return {
-                'success':False,
-                'status':f'You have already sent an introduction to @{name}. It would be rude to send another.'
-            }
+        # keystr=self.name+'->'+name
+        # if self.crypt_keys.get(
+        #     keystr,
+        #     prefix='/met/'
+        # ):
+        #     return {
+        #         'success':False,
+        #         'status':f'You have already sent an introduction to @{name}. It would be rude to send another.'
+        #     }
 
         # send msg to op
         msg_to_op = {
