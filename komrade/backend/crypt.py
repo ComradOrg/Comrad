@@ -206,7 +206,11 @@ class CryptList(Crypt):  # like inbox
     
     @property
     def values(self):
-        val_b=self.val_b
+        try:
+            val_b=self.val_b
+        except ThemisError:
+            self.log(f'!! DECRYPTION FAILURE: {e}')
+            return []
         if not val_b: return []
         return pickle.loads(val_b)
 
