@@ -487,7 +487,7 @@ class KomradeX(Caller):
             **self.login_details,
             **{'post_ids_read':post_ids_read}
         }
-        self.compose('msg to op ->',msg_to_op)
+        self.log('msg to op ->',msg_to_op)
 
         res = self.ring_ring(
             msg_to_op,
