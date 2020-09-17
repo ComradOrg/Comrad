@@ -86,7 +86,7 @@ class Crypt(Logger):
         if self.encrypt_values:
             try:
                 k_b = self.decryptor_func(k_b)
-            except TemisError as e:
+            except ThemisError as e:
                 self.log('!! DECRYPTION ERROR:',e)
         return k_b
 
