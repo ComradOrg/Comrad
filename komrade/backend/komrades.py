@@ -344,10 +344,10 @@ class KomradeX(Caller):
         # get binary blob for all fetched posts
         msgs_d = msg_from_world.msg
         self.log('msgs_d??',msgs_d)
-        msgs = msgs_d['msg'].split(BSEP) if msgs['msg'] else []
+        msgs = msgs_d['msg'].split(BSEP) if msgs_d['msg'] else []
 
         res = {
-            'status':'Fetched {len(msgs)} poss.',
+            'status':f'Fetched {len(msgs)} poss.',
             'success':True,
             'msgs':msgs
         }
