@@ -512,7 +512,7 @@ class TheOperator(Operator):
             msg_to_op=None,
             inbox_uri=None,
             do_login=True,
-            include_posts=True):
+            include_posts=False):
         self.log('<-',msg_to_op,inbox_uri)
 
         # uri?
