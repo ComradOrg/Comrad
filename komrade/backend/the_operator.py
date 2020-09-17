@@ -497,9 +497,7 @@ class TheOperator(Operator):
             msg_d = {
                 'to':deliver_msg_d.get('to'),
                 'to_name':deliver_msg_d.get('to_name'),
-                'msg':{
-                    deliver_msg_d
-                },
+                'msg':deliver_msg_d
             }
         )
         self.log(f'{self}: Prepared this msg for delivery:\n{msg_from_op}')
