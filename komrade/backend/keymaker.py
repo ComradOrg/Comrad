@@ -393,10 +393,16 @@ class Keymaker(Logger):
         if not hasattr(self,'_crypt_data'):
             self._crypt_data = Crypt(
                 fn=self.path_crypt_data,
-                encryptor_func=self.privkey_decr.encrypt,
-                decryptor_func=self.privkey_decr.decrypt,
+                encryptor_func=self.encrypt,
+                decryptor_func=self.decrypt,
             )
         return self._crypt_data
+
+    def encrypt(self,*x,**y):
+        return self.privkey_decr.encrypt(*x,**y)
+    def decrypt(self,*x,**y):
+        return self.privkey_decr.decrypt(*x,**y)
+    
 
 
   
