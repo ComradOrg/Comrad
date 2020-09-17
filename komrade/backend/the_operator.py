@@ -652,29 +652,29 @@ class TheOperator(Operator):
 
 
 
-    def get_posts(self):
-        # get posts by personating world
-        world = Komrade(WORLD_NAME)
-        world_inbox_res = world.inbox()
-        self.log('world_inbox_res',world_inbox_res)
-        if not world_inbox_res.get('success'):
-            return world_inbox_res
-        world_msgs = world_inbox_res.get('msgs')
-        self.log('world_msgs',world_msgs)
+    # def get_posts(self):
+    #     # get posts by personating world
+    #     world = Komrade(WORLD_NAME)
+    #     world_inbox_res = world.inbox()
+    #     self.log('world_inbox_res',world_inbox_res)
+    #     if not world_inbox_res.get('success'):
+    #         return world_inbox_res
+    #     world_msgs = world_inbox_res.get('msgs')
+    #     self.log('world_msgs',world_msgs)
 
-        # encrypt to sender from world
-        world_msgs_b = BSEP.join([msg.msg_b for msg in world_msgs])
-        world_msg_to_sender = Message(
-            from_whom=world,
-            to_whom=msg_to_op.from_whom,
-            msg=world_msgs_b
-        )
-        self.log(world_msg_to_sender,'<- world_msg_to_sender')
-        # encrypt
-        world_msg_to_sender.encrypt()
-        self.log(world_msg_to_sender,'<- world_msg_to_sender encrypted')
+    #     # encrypt to sender from world
+    #     world_msgs_b = BSEP.join([msg.msg_b for msg in world_msgs])
+    #     world_msg_to_sender = Message(
+    #         from_whom=world,
+    #         to_whom=msg_to_op.from_whom,
+    #         msg=world_msgs_b
+    #     )
+    #     self.log(world_msg_to_sender,'<- world_msg_to_sender')
+    #     # encrypt
+    #     world_msg_to_sender.encrypt()
+    #     self.log(world_msg_to_sender,'<- world_msg_to_sender encrypted')
 
-        return world_msg_to_sender.msg_d
+    #     return world_msg_to_sender.msg_d
 
 
 
