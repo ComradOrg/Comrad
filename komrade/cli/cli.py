@@ -132,9 +132,10 @@ class CLI(Logger):
 """
         else:
             HELPSTR=f"""
-/check            -->   check messages
-/read             -->   read messages
-/msg [name]       -->   send message
+/update           -->   refresh feed/DMs
+/feed             -->   scroll through feed
+/dms              -->   see your direct msgs
+/msg [name]       -->   send a DM
 
 /meet [name]      -->   exchange info
 /who [name]       -->   show contacts
