@@ -618,7 +618,7 @@ class KomradeX(Caller):
 
         # decrypt inbox?
         if inbox:
-            inbox = inbox.split(BSEP)
+            inbox = b64enc(inbox).split(BSEP)
             self.log('inbox_l',inbox)
         else:
             inbox=[]
