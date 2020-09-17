@@ -166,6 +166,14 @@ class CryptList(Crypt):  # like inbox
         self.prefix=prefix
         self.encryptor_func=encryptor_func
         self.decryptor_func=decryptor_func
+
+    def __repr__(self):
+        return f"""
+(CryptList)
+val_b_encr = {self.val_b_encr}
+val_b = {self.val_b}
+values = {self.values}
+        """
     
     @property
     def val_b_encr(self):

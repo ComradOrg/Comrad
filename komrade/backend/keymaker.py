@@ -228,9 +228,10 @@ KEYMAKER_DEFAULT_KEY_TYPES = {
 
 def get_key_obj(keyname,data,key_types=KEYMAKER_DEFAULT_KEY_TYPES):
     if keyname.endswith('_decr'):
+        # print('get_key_obj',keyname,data)#,key_types)
         try:
             data_s = data.decode()
-            if data_s == KEY_TYPE_SYMMETRIC_WITH_PASSPHRASE:
+            if data_s in {KEY_TYPE_SYMMETRIC_WITH_PASSPHRASE,KomradeSymmetricKeyWithPassphrase.__name__}:
                 return KomradeSymmetricKeyWithPassphrase()
         except UnicodeDecodeError:
             return KomradeSymmetricKeyWithoutPassphrase(data)
@@ -505,7 +506,7 @@ class Keymaker(Logger):
                     encr_key = decr_key.encrypt(unencr_key.data)
                     keychain[encr_key_name] = get_key_obj(encr_key_name,encr_key)
             except ThemisError as e:
-                exit('Incorrect password.')
+                #exit('Incorrect password.')
                 #self.log('error!!',e,decrypt,decr_key,encr_key,decr_key_name,encr_key_name)
                 pass
 

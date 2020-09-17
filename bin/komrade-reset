@@ -12,6 +12,6 @@ if [ ! "$y_n" = "y" ]; then
     echo "Cancelling"
 else
     rm -r $path
-    echo "Reregistering..."
-    komrade-cli /register
+    #echo "Reregistering..."
+    #komrade-cli /register
 fi
