@@ -454,6 +454,18 @@ class TheOperator(Operator):
             self.find_pubkey(alleged_from_name)
         )
 
+        self.log(f'''
+        alleged_to_name = {alleged_to_name} 
+        alleged_to_pub = {alleged_to_pub}
+        alleged_from_name = {alleged_from_name}
+        alleged_from_pub = {alleged_from_pub}
+
+        real_to_name = {real_to_name}
+        real_to_pub = {real_to_pub}
+        real_from_name = {real_from_name}
+        real_from_pub = {real_from_pub}
+        ''')
+
         try:
             assert alleged_to_name == real_to_name
             assert alleged_to_pub == real_to_pub
