@@ -457,7 +457,8 @@ class TheOperator(Operator):
             'status':'Message delivered.',
             'success':True,
             'post_id':post_id,
-            'res_inbox':res_inbox 
+            'res_inbox':res_inbox,
+            'msg_d':deliver_msg_d
         }
         self.log('->',res)
         return res
