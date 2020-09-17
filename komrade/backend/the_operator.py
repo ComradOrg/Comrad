@@ -510,7 +510,7 @@ class TheOperator(Operator):
 
     def actually_deliver_msg(self,msg_from_op):
         msg_from_op_b_encr = msg_from_op.msg     #.msg_b  # pickle of msg_d
-        self.log('got this:',msg_from_op_b_encr)
+        self.log('<-',msg_from_op_b_encr)
         deliver_to = msg_from_op.to_pubkey
         deliver_to_b = b64dec(deliver_to)
 
@@ -524,46 +524,18 @@ class TheOperator(Operator):
         self.log(f'put {msg_from_op} (or {msg_from_op_b_encr}) in {post_id}')
 
         # get inbox
-        inbox_old_encr = self.crypt_keys.get(
-            deliver_to,
-            prefix='/inbox/'
-        )
-        self.log(f'old inbox for {deliver_to}',inbox_old_encr)
-        
-        if inbox_old_encr:
-            inbox_old = SMessage(
-                self.privkey.data,
-                deliver_to_b
-            ).unwrap(inbox_old_encr) #.split(BSEP)
-        else:
-            inbox_old=b''
-        self.log('reloaded inbox:',inbox_old)
+        inbox_crypt = self.inbox_crypt(pubkey_b=deliver_to_b)
+        self.log('inbox_crypt',inbox_crypt)
+        self.log('inbox_crypt.values',inbox_crypt.values)
+        res_inbox = inbox_crypt.prepend(post_id)
 
-        # add new inbox
-        inbox_new = post_id + (BSEP+inbox_old if inbox_old else b'')
-        self.log('new inbox = ',inbox_new)
-
-        # reencrypt
-        inbox_new_encr = SMessage(
-            self.privkey.data,
-            deliver_to_b
-        ).wrap(inbox_new)
-
-        # encrypt
-        self.log('new inbox encr:',inbox_new_encr)
-        # save back to crypt
-        self.crypt_keys.set(
-            deliver_to,
-            inbox_new_encr,
-            prefix='/inbox/',
-            override=True
-        )
-
-        return {
+        res = {
             'status':'Message delivered.',
             'success':True,
-            'post_id':post_id
+            'post_id':post_id,
+            'res_inbox':res_inbox 
         }
+        self.log('->',res)
 
     def check_msgs(self,
             msg_to_op,

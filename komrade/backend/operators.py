@@ -294,8 +294,8 @@ class Operator(Keymaker):
             crypt=None,
             uri=None,
             prefix='/inbox/',
-            privkey=None,
-            pubkey=None,
+            privkey_b=None,
+            pubkey_b=None,
             encryptor_func=None,
             decryptor_func=None):
 
@@ -306,12 +306,12 @@ class Operator(Keymaker):
         if not uri: uri=self.uri
         
         if not encryptor_func or not decryptor_func:
-            if not privkey: privkey=self.privkey
-            if not pubkey: pubkey=self.pubkey
+            if not privkey_b: privkey_b=self.privkey.data
+            if not pubkey_b: pubkey_b=self.pubkey.data
 
             smsg=SMessage(
-                privkey.data,
-                pubkey.data
+                privkey_b,
+                pubkey_b
             )
             encryptor_func=smsg.wrap
             decryptor_func=smsg.unwrap
