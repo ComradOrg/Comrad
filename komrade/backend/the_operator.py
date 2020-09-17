@@ -341,14 +341,17 @@ class TheOperator(Operator):
         # need to decrypt this first -- it's to World,
         # which I on the server have access to private key.
         #  I need to decrypt and re-encrypt/reroute
-        msg_to_world = Message(post_d)
-        self.log('msg to world',dict_format(msg_to_world.msg_d))
-         
-        # decrypt
-        msg_to_world.decrypt()
-        self.log('msg_to_world decrypted =',dict_format(msg_to_world.msg_d))
+        #msg_to_world = Message(post_d)
+        #self.log('msg to world',dict_format(msg_to_world.msg_d))
 
-        exit()
+        # decrypt
+        encr_txt = post_d.get('msg')
+        txt = SMessage(
+            Komrade(post_d.get('to_name')).privkey.data,  # requires we have this privkey!!!
+            Komrade(post_d.get('from_name')).pubkey.data
+        ).unwrap(encr_txt)
+        self.log('unencr txt')
+        
 
         # normally we'd deliver it to the person
         # but here we need to deliver it to...
