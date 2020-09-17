@@ -457,7 +457,7 @@ class KomradeX(Caller):
 
         # update posts
         for post_id,post in id2post.items():
-            self.log(f'saving post!\n{post_id}\n\n{post}')
+            self.log(f'saving post! --> {post_prefix}{post_id} --> {post}')
 
             self.crypt_data.set(
                 post_id,
