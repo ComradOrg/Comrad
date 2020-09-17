@@ -239,7 +239,7 @@ class TheOperator(Operator):
                 'success': True,
                 'status':f'Welcome back, Komrade @{name.decode()}.',
                 'status_type':'login',
-                'name':name_record,
+                'name':name_record.decode(),
                 'pubkey':pubkey_record
             }
         else:
