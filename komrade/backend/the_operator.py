@@ -426,7 +426,7 @@ class TheOperator(Operator):
                 'msg':deliver_msg_d
             }
         )
-        self.log(f'{self}: Prepared this msg for delivery:\n{msg_from_op}\n\n{msg_from_op.msg_d}')
+        self.log(f'{self}: Prepared this msg for delivery:\n{msg_from_op}\n\n{dict_format(msg_from_op.msg_d)}')
 
         # encrypt
         msg_from_op.encrypt()
