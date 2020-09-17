@@ -190,6 +190,7 @@ class CryptList(Crypt):  # like inbox
         self.prefix=prefix
         self.encryptor_func=encryptor_func
         self.decryptor_func=decryptor_func
+        self.secret=self.crypt.secret
     
     @property
     def val_b_encr(self):
