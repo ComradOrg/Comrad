@@ -425,6 +425,7 @@ class TheOperator(Operator):
 
 
     def validate_msg(self,msg_d):
+        from komrade.backend.messages import is_valid_msg_d
         if not is_valid_msg_d(msg_d): return False
         
         # alleged
