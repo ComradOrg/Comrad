@@ -271,13 +271,12 @@ class Keymaker(Logger):
             pk=self._keychain['pubkey']
             return KomradeAsymmetricPublicKey(b64dec(pk)) if type(pk)==bytes else pk
         
-        res = self.load_qr(self.name)
-        self.log(f'load_qr({name}) -->',res)
-        
+        res = self.crypt_keys.get(name, prefix='/pubkey/')
+        self.log(f'crypt_keys({name}) -->',res)
         if not res:
-            res = self.crypt_keys.get(name, prefix='/pubkey/')
+            res = self.load_qr(self.name)
+            self.log(f'load_qr({name}) -->',res)
         if not res: return
-
         key = KomradeAsymmetricPublicKey(b64dec(res))
         self.log('-->',key)
         return key
