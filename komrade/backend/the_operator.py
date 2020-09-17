@@ -335,10 +335,23 @@ class TheOperator(Operator):
         posts_b = data.get('posts_b')
         self.log('posts_b',posts_b)
 
-        msg_to_op.msg = posts_b
-        msg_to_op.decrypt()
-        self.log('decrypted msg to op',msg_to_op.msg_d)
+        # decode?
+        self.log('posts_b_l',posts_b.split(BSEP))
+
+        posts = pickle.loads(posts_b)
+        self.log('posts unpickled',posts)
+
         # decrypt?
+        posts_decr = SMessage(
+            self.privkey.data,
+            msg_to_op.msg_d.get('from')
+        )
+        self.log('decrypted posts',posts_decr)
+
+
+        # msg_to_op.decrypt()
+        # self.log('decrypted msg to op',msg_to_op.msg_d)
+        # # decrypt?
 
         return {
             'status':'Hold your horses.',
