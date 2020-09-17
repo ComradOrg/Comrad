@@ -383,7 +383,7 @@ class Keymaker(Logger):
         if not hasattr(self,'_crypt_keys'):
             self._crypt_keys = Crypt(
                 fn=self.path_crypt_keys,
-                encrypt_values=True
+                encrypt_values=False
             )
         return self._crypt_keys
 

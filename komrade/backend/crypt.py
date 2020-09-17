@@ -24,7 +24,7 @@ class Crypt(Logger):
             fn=None,
             use_secret=CRYPT_USE_SECRET,
             path_secret=PATH_CRYPT_SECRET,
-            encrypt_values=True,
+            encrypt_values=False,
             encryptor_func=None,
             decryptor_func=None):
         
