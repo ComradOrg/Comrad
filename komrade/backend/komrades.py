@@ -317,6 +317,7 @@ class KomradeX(Caller):
             seen_post_ids=pickle.loads(seen_post_ids_b)
         else:
             seen_post_ids=[]
+        self.log('seen_post_ids =',seen_post_ids)
 
         # ring operator
         res = self.ring_ring(
@@ -329,7 +330,7 @@ class KomradeX(Caller):
             route='fetch_posts'
         )
 
-        print(res,'fetched_posts')
+        self.log(res,'<- fetched_posts')
         return res
 
     
