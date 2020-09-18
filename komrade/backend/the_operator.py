@@ -467,21 +467,28 @@ class TheOperator(Operator):
     def post(self,msg_to_op):
         # This
         self.log('<--',msg_to_op.msg_d)
+        world = Komrade(WORLD_NAME)
 
         # attached msg
         attached_msg = msg_to_op.msg.get('data')
         self.log('attached_msg =',attached_msg)
         if not attached_msg: return
 
+        # double encrypt it as a message to world
+        attached_msg_encr_op2world = SMessage(
+            self.privkey.data,
+            world.pubkey.data
+        ).wrap(attached_msg)
+
         # just store as the encrypted binary -> world it came in?
         # save
         post_id = get_random_binary_id()
         self.crypt_data.set(
             post_id,
-            attached_msg,
+            attached_msg_encr_op2world,
             prefix='/post/'
         )
-        self.log(f'put {attached_msg} in {post_id}')
+        self.log(f'put {attached_msg_encr_op2world} in {post_id}')
 
         # update post index
         post_index = self.get_inbox_crypt(
@@ -518,17 +525,64 @@ class TheOperator(Operator):
         self.log('post_ids =',post_ids)
 
         # get posts
+        world=Komrade(WORLD_NAME)
+        id2post={}
         for post_id in post_ids:
-            encr_msg_content = self.crypt_data.get(
+            encr_msg_content_op2world = self.crypt_data.get(
                 post_id,
                 prefix='/post/'
             )
-            self.log('<-- encr_msg_content',encr_msg_content,'at post id',post_id)
-            if not encr_msg_content: continue
+            self.log('<-- encr_msg_content_op2world',encr_msg_content_op2world,'at post id',post_id)
+            if not encr_msg_content_op2world: continue
 
-            msg_content = SMes
+            # decrypt from op
+            post_pkg_b = SMessage(
+                world.privkey.data,
+                self.pubkey.data
+            ).unwrap(encr_msg_content_op2world)
+            self.log('post_pkg_b',post_pkg_b)
 
+            # decode
+            post_pkg_d = pickle.loads(post_pkg_b)
+            self.log('post_pkg_d',post_pkg_d)
+            from_uri = post_pkg_d.get('post_from')
+            from_name = post_pkg_d.get('post_from_name')
+            post_b_signed_encr4world = post_pkg_d.get('post')
+            if not from_uri or not from_name or b64enc(self.find_pubkey(from_name))!=from_uri or not post_b_signed_encr4world:
+                return {
+                    'success':False,
+                    'status':'Records do not match.'
+                }
 
+            # decrypt from post author komrade
+            post_b_signed = SMessage(
+                world.privkey.data,
+                b64dec(from_uri)
+            ).unwrap(post_b_signed_encr4world)
+            self.log('post_b_signed',post_b_signed)
+
+            # re-encrypt for the post requester komrade
+            post_pkg_d2 = {
+                'post':post_b_signed,
+                'post_from':from_uri,
+                'post_from_name':from_name
+            }
+            post_pkg_b2 = pickle.dumps(post_pkg_d2)
+            post_pkg_b2_encr_op2kom = SMessage(
+                self.privkey.data,
+                b64dec(msg_to_op.from_pubkey)
+            ).wrap(post_pkg_b2)
+
+            # store and return this
+            id2post[post_id] = post_pkg_b2_encr_op2kom
+        
+        res = {
+            'status':f'Succeeded in getting {len(id2post)} new posts.',
+            'success':True,
+            'posts':id2post
+        }
+        self.log('-->',res)
+        return res
 
 
 

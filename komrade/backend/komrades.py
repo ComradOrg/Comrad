@@ -470,8 +470,16 @@ class KomradeX(Caller):
         # self.log('something_b_signed_b64 =',something_b_signed_b64)
 
         # encrypt package to world (or op?)
+        world=Komrade(WORLD_NAME)
+        something_b_signed_encr4world = SMessage(
+            self.privkey.data,
+            world.pubkey.data
+        ).wrap(something_b_signed)
+        self.log(something_b_signed_encr4world)
+        
+        
         post_pkg_d = {
-            'post':something_b_signed,
+            'post':something_b_signed_encr4world,
             'post_from':self.uri,
             'post_from_name':self.name
         }
@@ -480,15 +488,15 @@ class KomradeX(Caller):
         post_pkg_b = pickle.dumps(post_pkg_d)
         self.log('post_pkg_b =',post_pkg_d)
 
-        post_pkg_b_encr4world = SMessage(
-            self.privkey.data,
-            Komrade(WORLD_NAME).pubkey.data
-        ).wrap(post_pkg_b)
-        self.log(post_pkg_b_encr4world)
+        # post_pkg_b_encr4world = SMessage(
+        #     self.privkey.data,
+        #     Komrade(WORLD_NAME).pubkey.data
+        # ).wrap(post_pkg_b)
+        # self.log(post_pkg_b_encr4world)
 
         res_op = self.ring_ring(
             {
-                'data':post_pkg_b_encr4world
+                'data':post_pkg_b
             },
             route='post'
         )
