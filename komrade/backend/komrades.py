@@ -368,7 +368,7 @@ class KomradeX(Caller):
         succ=res.get('success')
         if succ:
             msgd=res.get('msg_d',{})
-            msg=msgd.get('msg')
+            msg=msgd.get('msg',{}).get('txt','[?]')
             toname=msgd.get('to_name')
             status = f"""I sent the following message to {toname}:\n\n"{msg}" """
         else:

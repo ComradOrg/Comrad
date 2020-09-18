@@ -834,7 +834,9 @@ class TheOperator(Operator):
             'msg':{
                 'txt':txt,
                 'type':'prompt',
-                'prompt_id':'addcontact'
+                'prompt_id':'addcontact',
+                'meet_name':meet_from_name,
+                'meet_uri':meet_from_uri
             }
         }
         
