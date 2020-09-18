@@ -17,4 +17,5 @@ else
     #komrade-cli /register
     cd $path_code
     python -c "from komrade import *; create_phonelines()"
+    komrade-update
 fi
