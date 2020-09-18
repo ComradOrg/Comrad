@@ -242,10 +242,10 @@ class DataCrypt(Crypt):
 
 
 class CryptList(object):
-    def __init__(self,keyname):
+    def __init__(self,keyname,prefix='',**y):
         self.redis = redis.StrictRedis()
         # self.store = RedisStore(self.redis)
-        self.keyname=keyname
+        self.keyname=prefix+keyname
 
     def package_val(self,val):
         return b64enc_s(val)
