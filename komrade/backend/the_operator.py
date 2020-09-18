@@ -61,7 +61,7 @@ class TheOperator(Operator):
                 print('Dare I claim to be the one true Operator?')
                 with open(PATH_SUPER_SECRET_OP_KEY,'rb') as f:
                     #pass_encr=f.read()
-                    privkey_decr,privkey_encr = b64dec(f.read()).split(BSEP)
+                    privkey_decr,privkey_encr,wk1,wk2 = b64dec(f.read()).split(BSEP)
                     privkey_decr_obj = KomradeSymmetricKeyWithoutPassphrase(privkey_decr)
                     privkey_encr_obj = KomradeEncryptedAsymmetricPrivateKey(privkey_encr)
                     self._keychain['privkey_decr']=privkey_decr_obj

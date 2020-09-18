@@ -15,13 +15,19 @@ class KomradeX(Caller):
 
     def __init__(self, name=None, pubkey=None):
         super().__init__(name=name)
-        # self.log(f'booted komrade with {name} and {passphrase} and\n\n{dict_format(self.keychain())}')
-        # if SHOW_STATUS:
-        #     from komrade.cli import CLI
-        #     self.cli = CLI(name=name, komrade=self)
         self.boot(create=False)
-        # self.name=name
-        # pass
+        # special?
+        if self.name==WORLD_NAME:
+            if os.path.exists(PATH_SUPER_SECRET_OP_KEY): 
+                print(f'Dare I claim to be the one true @{WORLD_NAME}?')
+                with open(PATH_SUPER_SECRET_OP_KEY,'rb') as f:
+                    #pass_encr=f.read()
+                    opk1,opk2,privkey_decr,privkey_encr = b64dec(f.read()).split(BSEP)
+                    privkey_decr_obj = KomradeSymmetricKeyWithoutPassphrase(privkey_decr)
+                    privkey_encr_obj = KomradeEncryptedAsymmetricPrivateKey(privkey_encr)
+                    self._keychain['privkey_decr']=privkey_decr_obj
+                    self._keychain['privkey_encr']=privkey_encr_obj
+
 
     def boot(self,create=False,ping=False):
         # Do I already have my keys?
