@@ -717,12 +717,12 @@ class TheOperator(Operator):
         if include_posts:
             res_posts = self.get_posts(msg_to_op)
             self.log('res_posts',res_posts)
-        posts=res_msgs.get('posts',{})
+        posts=res_posts.get('posts',{})
 
         # if one is in the other???
         shared_ids = set(list(posts.keys())) & set(list(msgs.keys()))
+        self.log('shared_ids = ',shared_ids,'???')
         if shared_ids:
-            self.log('shared_ids = ',shared_ids,'???')
             for idx in shared_ids:
                 del msgs[idx]
 
