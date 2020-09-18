@@ -141,10 +141,10 @@ class CLI(Logger):
             HELPSTR=f"""
 /refresh         -->     get new data
 
-/feed            -->     scroll feed    ({num_feed_msgs})
+/feed            -->     scroll feed   ({num_feed_msgs})
 /post            -->     post to all
 
-/dms             -->     see your DMs   ({num_inbox_msgs})
+/dms             -->     see your DMs  ({num_inbox_msgs})
 /dm [name]       -->     send a DM
 /meet [name]     -->     exchange info
 /who [name]      -->     show contacts
@@ -154,7 +154,7 @@ class CLI(Logger):
 /help            -->     seek help
 /exit            -->     exit app
 """
-        helpstr = tw.indent(HELPSTR.strip()+'\n\n',' '*13)
+        helpstr = tw.indent(HELPSTR.strip()+'\n\n',' '*11)
         self.print(helpstr)
         # self.print(border+helpstr+'\n'+self.border)
 
