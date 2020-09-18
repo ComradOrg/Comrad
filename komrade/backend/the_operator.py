@@ -859,15 +859,24 @@ def test_op():
     phone = TheTelephone()
     # phone.boot()
     keychain_ph = phone.keychain()
+
+    world = Komrade(WORLD_NAME)
+    keychain_w = world.keychain()
     
     
     from pprint import pprint
     print('REASSEMBLED OPERATOR KEYCHAIN')
-    pprint(keychain_op)
+    print(dict_format(keychain_op))
     # stop
+    print()
 
     print('REASSEMBLED TELEPHONE KEYCHAIN')
-    pprint(keychain_ph)
+    print(dict_format(keychain_ph))
+    print()
+    
+    print('REASSEMBLED WORLD KEYCHAIN')
+    print(dict_format(keychain_w))
+    print()
     
     # print(op.pubkey(keychain=keychain))
     # print(op.crypt_keys.get(op.pubkey(), prefix='/privkey_encr/'))
