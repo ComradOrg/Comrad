@@ -684,15 +684,13 @@ class TheOperator(Operator):
             # self.log('my_msg_world',msg)
         for post_id in post_ids:
             msg=world.read_msg(post_id)
-            self.log(post_id,'----->',msg)
+            self.log('postttttiddddd',post_id,'----->',msg)
 
         res = {
             'status':f'', #Succeeded in getting {len(id2post)} new posts.',
             'success':True,
             'posts':{} #id2post
         }
-
-        stop
 
     # def get_posts1(self,reencrypt_to_uri,reencrypt_to_name=None):
     #     world=Komrade(WORLD_NAME)
