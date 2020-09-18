@@ -684,7 +684,8 @@ class TheOperator(Operator):
             # self.log('my_msg_world',msg)
         for post_id in post_ids:
             msg=world.read_msg(post_id)
-            self.log('postttttiddddd',post_id,'----->',msg.msg_d)
+            x=msg if type(msg)==dict else msg.msg_d
+            self.log('postttttiddddd',post_id,type(msg),'----->',x)
 
         res = {
             'status':f'', #Succeeded in getting {len(id2post)} new posts.',
