@@ -469,7 +469,7 @@ class TheOperator(Operator):
         self.log('<--',msg_to_op.msg_d)
 
         # attached msg
-        attached_msg = msg_to_op.msg
+        attached_msg = msg_to_op.data
         self.log('attached_msg =',attached_msg)
 
         # just store as encrypted binary?
