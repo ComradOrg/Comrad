@@ -395,14 +395,17 @@ class CLI(Logger):
             self.help()
 
 
-    def post(self,dat=''):
+    def post(self,dat='',maxlen=MAX_POST_LEN):
         if self.with_required_login():
             self.stat(f'Write your post below. Maximum of 1000 characters.', 'Press Ctrl+D to complete, or Ctrl+C to cancel.')
             print()
-            msg_s = multiline_input().strip()
+            msg_s = multiline_input() #.strip()
             if not msg_s:
                 print('\n')
                 self.stat('Not sending. No text entered.')
+                return
+            if len(msg_s)>maxlen:
+                self.stat(f'Not sending. Message is {len(msg_s)-maxlen} over the character limit of {maxlen}.\n\nThe message you wanted to send was (in case you want to copy/paste it to edit it):\n\n{msg_s}')
                 return
 
         self.log(f'Post written: {msg_s}')
