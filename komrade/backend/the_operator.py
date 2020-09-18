@@ -750,7 +750,7 @@ class TheOperator(Operator):
         self.log(f'--> {res}')
         return res
 
-    def get_msgs(self,inbox_uri):
+    def get_msgs(self,inbox_uri,delete_afterward=True):
         # (1) get inbox
         inbox_obj=self.get_inbox_crypt(uri=inbox_uri)
         self.log('<-- inbox crypt',inbox_obj)
@@ -767,10 +767,22 @@ class TheOperator(Operator):
             if post:
                 id2msg[post_id] = post
         self.log(f'I {self} found {len(id2msg)}')
+
+        # delete?
+        if delete_afterward:
+            del_res = self.delete_posts(
+                post_ids = list(id2msg.keys())
+            )
+            self.log('del_res',del_res)
+        else:
+            del_res={}
+
+
         res = {
             'status':f'Succeeded in getting {len(id2msg)} new messages.',
             'success':True,
-            'posts':id2msg
+            'posts':id2msg,
+            'res_delete':del_res
         }
         self.log(f'--> {res}')
         return res
