@@ -241,11 +241,12 @@ class DataCrypt(Crypt):
 
 
 
-class CryptList(object):
+class CryptList(Logger):
     def __init__(self,keyname,prefix='',**y):
         self.redis = redis.StrictRedis()
         # self.store = RedisStore(self.redis)
         self.keyname=b64enc_s(prefix)+b64enc_s(keyname)
+        self.log('loading CryptList',keyname,prefix,self.keyname)
 
     def package_val(self,val):
         return b64enc_s(val)
@@ -254,25 +255,35 @@ class CryptList(object):
         return b64dec(val)
 
     def append(self,val):
+        self.log('<--val',val)
         if type(val)==list: return [self.append(x) for x in val]
         val_x = self.package_val(val)
-        return self.redis.rpush(self.keyname,val_x)
+        res = self.redis.rpush(self.keyname,val_x)
+        self.log('-->',res)
+        return res
 
     def prepend(self,val):
+        self.log('<--val',val)
         if type(val)==list: return [self.prepend(x) for x in val]
         val_x = self.package_val(val)
-        return self.redis.lpush(self.keyname,val_x)
+        res = self.redis.lpush(self.keyname,val_x)
+        self.log('-->',res)
+        return res
 
     @property
     def values(self):    
         l = self.redis.lrange(self.keyname, 0, -1 )
-        return [self.unpackage_val(x) for x in l]
+        vals = [self.unpackage_val(x) for x in l]
+        self.log('-->',vals)
+        return vals
 
     def remove(self,val):
+        self.log('<--',val)
         if type(val)==list: return [self.remove(x) for x in val]
         val_x = self.package_val(val)
-        return self.redis.lrem(self.keyname, 0, val_x)
-
+        res = self.redis.lrem(self.keyname, 0, val_x)
+        self.log('-->',res)
+        return res
 
 
 
