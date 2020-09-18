@@ -249,10 +249,14 @@ class CryptList(Logger):
         self.log('loading CryptList',keyname,prefix,self.keyname)
 
     def package_val(self,val):
-        return b64enc_s(val)
+        if type(val)==bytes: val=val.decode()
+        # return b64enc_s(val)
+        return val
 
     def unpackage_val(self,val):
-        return b64dec(val)
+        if type(val)==str: val=val.encode()
+        # return b64dec(val)
+        return val
 
     def append(self,val):
         self.log('<--val',val)
