@@ -801,7 +801,7 @@ class TheOperator(Operator):
             b64dec(meet_uri)
         ).wrap(txt)
         self.log('txt -> encr',txt,txt_encr)
-        stop
+        
         deliver_msg_d={
             'to':meet_uri,
             'to_name':meet_name,
