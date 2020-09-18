@@ -719,13 +719,6 @@ class TheOperator(Operator):
             self.log('res_posts',res_posts)
         posts=res_posts.get('posts',{})
 
-        # if one is in the other???
-        shared_ids = set(list(posts.keys())) & set(list(msgs.keys()))
-        self.log('shared_ids = ',shared_ids,'???')
-        if shared_ids:
-            for idx in shared_ids:
-                del msgs[idx]
-
         # return
         res={
             'success': True,
