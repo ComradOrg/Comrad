@@ -622,6 +622,8 @@ class TheOperator(Operator):
         posts={}
         res_posts={}
         if include_posts and self.name!=WORLD_NAME:
+            self.log('including posts!',self.name,WORLD_NAME)
+            
             res_posts = self.get_posts(
                 reencrypt_to_uri=msg_to_op.from_pubkey,
                 reencrypt_to_name=msg_to_op.from_name
