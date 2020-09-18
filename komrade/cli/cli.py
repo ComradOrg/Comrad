@@ -135,8 +135,8 @@ class CLI(Logger):
 /login [name]    -->     log back in
 /register [name] -->     new komrade"""
         else:
-            num_inbox_msgs = len(self.komrade.get_inbox_crypt(prefix='/inbox/').values)
-            num_feed_msgs = len(self.komrade.get_inbox_crypt(prefix='/feed/').values)
+            num_inbox_msgs = len(self.komrade.messages()) #len(self.komrade.get_inbox_crypt(prefix='/inbox/').values)
+            num_feed_msgs = len(self.komrade.posts()) #len(self.komrade.get_inbox_crypt(prefix='/feed/').values)
 
             HELPSTR=f"""
 /refresh         -->     get new data
