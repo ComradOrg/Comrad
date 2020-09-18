@@ -199,9 +199,9 @@ class CLI(Logger):
         if not name: name=input('name: ')
         if not name: return
         self.komrade=Komrade(name)
-        
-        res = self.komrade.login()
-        return self.do_login(res)
+        return self.refresh()
+        # res = self.komrade.login()
+        # return self.do_login(res)
 
     def do_login(self,res):
         # print('got login res:',res)
@@ -299,6 +299,8 @@ class CLI(Logger):
         res_login=res.get('res_login',{})
         if not self.do_login(res_login): return
         self.stat(res['status'],komrade_name='Operator',**statd)
+
+        return res
 
 
 
