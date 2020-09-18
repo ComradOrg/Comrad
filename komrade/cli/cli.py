@@ -26,7 +26,8 @@ class CLI(Logger):
         'feed':'read posts',
         'verbose':'show/hide log output',
         'post':'post to world',
-        'feed':'fetch posts'
+        'feed':'fetch posts',
+        'exit':'exit komrade'
     }
 
     def __init__(self,name='',cmd='',persona=None):
@@ -128,23 +129,29 @@ class CLI(Logger):
         border = '-'*(40)
         if not self.logged_in:
             HELPSTR=f"""
-/login [name]     -->   log back in
-/register [name]  -->   new komrade"""
+/login [name]    -->     log back in
+/register [name] -->     new komrade"""
         else:
             HELPSTR=f"""
-/feed             -->   scroll feed
-/dms              -->   see your DMs
-/msg [name]       -->   send a DM
-/refresh          -->   refresh data
-/meet [name]      -->   exchange info
-/who [name]       -->   show contacts"""
+/feed            -->     scroll feed
+/dms             -->     see your DMs
+/refresh         -->     refresh data
+
+/msg [name]      -->     send a DM
+/meet [name]     -->     exchange info
+/who [name]      -->     show contacts
+"""
 
         HELPSTR+=f"""
-/help             -->   seek help
+/help            -->     seek help
+/exit            -->     exit app
 """
         helpstr = tw.indent(HELPSTR.strip()+'\n\n',' '*13)
         self.print(helpstr)
         # self.print(border+helpstr+'\n'+self.border)
+
+    def exit(self,dat=''):
+        exit('Goodbye.')
 
     @property
     def border(self):

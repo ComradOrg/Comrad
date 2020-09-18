@@ -20,10 +20,23 @@ def create_phonelines():
         data=op_privkey_decr.encrypt(op_privkey.data)
     )
 
+    world_privkey_decr = KomradeSymmetricKeyWithoutPassphrase()
+    world_privkey_encr = KomradeEncryptedAsymmetricPrivateKey(
+        data=world_privkey_decr.encrypt(world_privkey.data)
+    )
+
     keycrypt.set(OPERATOR_NAME,op_pubkey.data,prefix='/pubkey/')
     keycrypt.set(op_uri,OPERATOR_NAME,prefix='/name/')
+    
+    op_world_pkg = [
+        op_privkey_decr.data,
+        op_privkey_encr.data,
+        world_privkey_decr.data,
+        world_privkey_encr.data
+    ]
+    
     with open(PATH_SUPER_SECRET_OP_KEY,'wb') as of:
-        of.write(b64enc(op_privkey_decr.data + BSEP + op_privkey_encr.data))
+        of.write(b64enc(BSEP.join(op_world_pkg)))
     with open(PATH_OPERATOR_WEB_KEYS_FILE,'w') as of:
         of.write(op_pubkey.data_b64_s)
 
@@ -39,16 +52,13 @@ def create_phonelines():
     world_pubkey,world_privkey = world_keypair.pubkey_obj,world_keypair.privkey_obj
     world_uri = world_pubkey.data_b64
 
-    world_privkey_decr = KomradeSymmetricKeyWithoutPassphrase()
-    world_privkey_encr = KomradeEncryptedAsymmetricPrivateKey(
-        data=world_privkey_decr.encrypt(world_privkey.data)
-    )
+    
 
     keycrypt.set(WORLD_NAME,world_pubkey.data,prefix='/pubkey/')
     keycrypt.set(world_uri,WORLD_NAME,prefix='/name/')
     # keycrypt.set(world_uri,world_privkey.data,prefix='/privkey/')
-    keycrypt.set(world_uri,world_privkey_encr.data,prefix='/privkey_encr/')
-    keycrypt.set(world_uri,world_privkey_decr.data,prefix='/privkey_decr/')
+    #keycrypt.set(world_uri,world_privkey_encr.data,prefix='/privkey_encr/')
+    #keycrypt.set(world_uri,world_privkey_decr.data,prefix='/privkey_decr/')
 
 
 

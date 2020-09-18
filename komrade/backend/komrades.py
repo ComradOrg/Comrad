@@ -566,13 +566,13 @@ class KomradeX(Caller):
         self.log('<- unread',unread)
 
         # filter out posts!?!?! @hack
-        if inbox_prefix=='/inbox/':
-            bad_prefix = '/feed/' if inbox_prefix=='/inbox/' else '/inbox/'
-            bad_db=self.get_inbox_crypt(prefix=inbox_prefix)
-            bad = bad_db.values
-            self.log('bad',bad_prefix,'for me',inbox_prefix,'=',bad)
-            inbox = [x for x in inbox if x not in set(bad)]
-            self.log('<- inbox 2',inbox)        
+        # if inbox_prefix=='/inbox/':
+        #     bad_prefix = '/feed/' if inbox_prefix=='/inbox/' else '/inbox/'
+        #     bad_db=self.get_inbox_crypt(prefix=inbox_prefix)
+        #     bad = bad_db.values
+        #     self.log('bad',bad_prefix,'for me',inbox_prefix,'=',bad)
+        #     inbox = [x for x in inbox if x not in set(bad)]
+        #     self.log('<- inbox 2',inbox)        
 
         # filter?
         if not show_read: inbox = [x for x in inbox if not x in set(read)]
@@ -581,7 +581,7 @@ class KomradeX(Caller):
         # decrypt and read all posts
         msgs=[]
         for post_id in inbox:
-            # print('???',post_id)
+            self.log('???',post_id,inbox_prefix)
             res_msg = self.read_msg(post_id)
             self.log('got msg:',res_msg)
             if res_msg.get('success') and res_msg.get('msg'):
@@ -607,10 +607,10 @@ class KomradeX(Caller):
         # first from op to me?
         try:
             msg_from_op_b_encr = post_encr
-            self.log('!?!?',self.name,self.uri,self.keychain())
+            self.log('!?!?',self.name,self.uri,post_id,'\n',self.privkey)
             msg_from_op_b = SMessage(
                 self.privkey.data,
-                self.op.pubkey.data
+                Komrade(WORLD_NAME).pubkey.data
             ).unwrap(msg_from_op_b_encr)
             self.log('decrypted??',msg_from_op_b)
         except (ThemisError,TypeError) as e:
