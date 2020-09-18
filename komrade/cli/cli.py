@@ -395,12 +395,26 @@ class CLI(Logger):
             self.help()
 
 
-    def post(self,msg_s):
+    def post(self,dat=''):
         if self.with_required_login():
-            return self.msg(
-                name_or_pubkey=WORLD_NAME,
-                msg_s=msg_s
-            )
+            self.stat(f'Write your post below. Maximum of 1000 characters.', 'Press Ctrl+D to complete, or Ctrl+C to cancel.')
+            print()
+            msg_s = multiline_input().strip()
+            if not msg_s:
+                print('\n')
+                self.stat('Not sending. No text entered.')
+                return
+            else:
+                msg_s = datl[1]
+
+        self.log(f'Post written: {msg_s}')
+        msg_obj = self.komrade.post(
+            msg_s
+        )
+        self.log(f'Posted: {msg_obj}')
+        print()
+        self.stat(f'Posted to {WORLD_NAME}.',komrade_name='Operator',pause=True)
+
 
 
 
