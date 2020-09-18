@@ -767,8 +767,8 @@ class KomradeX(Caller):
                     'msg':Message(msg_from_op)
                 }
             else:
-                print(msg_from_op)
-                raise KomradeException('Why am I getting this msg?')
+                # print(msg_from_op)
+                raise KomradeException('Why am I getting this msg? '+str(msg_from_op))
                 return
 
         # now try to decrypt?
