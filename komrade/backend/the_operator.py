@@ -720,7 +720,11 @@ class TheOperator(Operator):
         posts=res_msgs.get('posts',{})
 
         # if one is in the other???
-        assert not (set(list(posts.keys())) & set(list(msgs.keys())))
+        shared_ids = set(list(posts.keys())) & set(list(msgs.keys()))
+        if shared_ids:
+            self.log('shared_ids = ',shared_ids,'???')
+            for idx in shared_ids:
+                del msgs[idx]
 
         # return
         res={
