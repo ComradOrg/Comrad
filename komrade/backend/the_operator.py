@@ -681,7 +681,7 @@ class TheOperator(Operator):
         # for msg in world.messages():
             # self.log('my_msg_world',msg)
         for post_id in post_ids:
-            msg=self.read_msg(post_id)
+            msg=world.read_msg(post_id)
             self.log(post_id,'----->',msg)
 
         stop
