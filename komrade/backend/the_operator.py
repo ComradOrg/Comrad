@@ -836,7 +836,7 @@ class TheOperator(Operator):
                 'type':'prompt',
                 'prompt_id':'addcontact',
                 'meet_name':meet_from_name,
-                'meet_uri':meet_from_uri
+                'meet':meet_from_uri
             }
         }
         
