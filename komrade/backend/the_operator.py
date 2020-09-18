@@ -492,7 +492,7 @@ class TheOperator(Operator):
 
         # update post index
         post_index = self.get_inbox_crypt(
-            uri=world.uri,
+            uri='posts',
             prefix='/index/'
         )
         self.log('post_index',post_index)
@@ -521,7 +521,7 @@ class TheOperator(Operator):
         self.log('world name??',WORLD_NAME,'??????')
 
         index = self.get_inbox_crypt(
-            uri=world.uri,
+            uri='posts',
             prefix='/index/'
         )
         self.log('<- index',index)
