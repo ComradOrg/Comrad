@@ -411,7 +411,7 @@ class CLI(Logger):
         )
         self.log(f'Posted: {msg_obj}')
         print()
-        self.stat(f'Posted to {WORLD_NAME}:\n{msg_obj}',komrade_name='Operator',pause=True)
+        self.stat(f'Post sent to @{WORLD_NAME}.',komrade_name='Operator',pause=True)
 
 
 
