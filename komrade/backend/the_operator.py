@@ -529,6 +529,8 @@ class TheOperator(Operator):
 
         # get posts
         world=Komrade(WORLD_NAME)
+        self.log('world keys are:',world.keychain().keys())
+
         id2post={}
         for post_id in post_ids:
             # skip if seen?
