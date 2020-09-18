@@ -604,9 +604,81 @@ class KomradeX(Caller):
     
     
     def posts(self,**y):
-        return self.messages(
-            inbox_prefix='/feed/'
+        inbox_prefix='/feed/'
+        inbox_db=self.get_inbox_crypt(prefix=inbox_prefix)
+        read_db=self.get_inbox_crypt(prefix=inbox_prefix+'read/')
+        unread_db=self.get_inbox_crypt(prefix=inbox_prefix+'unread/')
+        self.log('post index<-',inbox_db)
+
+        posts=[]
+        for post_id in inbox_db.values:
+            self.log('???',post_id,inbox_prefix)
+            res_post = self.read_post(post_id)
+            self.log('got post:',res_post)
+            if res_post.get('success') and res_post.get('post'):
+                post=res_post.get('post')
+                post.post_id=post_id
+                posts.append(post)
+        return posts
+
+    def read_post(self,post_id,post_encr=None):
+        # get post
+        if not post_encr:
+            post_encr = self.crypt_data.get(
+                post_id,
+                prefix='/post/'
+            )
+        self.log('found encrypted post store:',post_encr)
+    
+        # first from op to me?
+        try:
+            msg_from_op_b_encr = post_encr
+            self.log('!?!?',self.name,self.uri,post_id,'\n',self.privkey)
+            msg_from_op_b = SMessage(
+                self.privkey.data,
+                self.op.pubkey.data
+            ).unwrap(msg_from_op_b_encr)
+            self.log('decrypted??',msg_from_op_b)
+        except (ThemisError,TypeError) as e:
+            self.log(f'!!!!! {e} !!!!!')
+            return {
+                'success':False,
+                'status':'Could not decrypt from operator.'
+            }
+
+        # decoded?
+        msg_from_op = pickle.loads(msg_from_op_b)
+        self.log('decoded?',msg_from_op)
+        post_signed_b = msg_from_op.get('post')
+        post_from_uri = msg_from_op.get('post_from')
+        post_from_name = msg_from_op.get('post_from_name')
+
+        # verify!
+        try:
+            post_b = sverify(
+                b64dec(post_from_uri),
+                post_signed_b
+            )
+        except ThemisError:
+            return {'success':False,'status':'Verification failed'}
+
+        # decode
+        post_data = pickle.loads(post_b)
+
+        # pretend its a message to world?
+        post_obj = Message(
+            {
+                'from':post_from_uri,'from_name':post_from_name,
+                'to':Komrade(WORLD_NAME).uri, 'to_name':WORLD_NAME,
+                'msg':post_data
+            }
         )
+        self.log('post obj?',post_obj)
+        post_obj.post_id = post_id
+        return {
+            'success':True,
+            'post':post_obj
+        }
 
     def messages(self,
             show_read=True,
