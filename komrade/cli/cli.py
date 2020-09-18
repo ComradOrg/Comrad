@@ -127,16 +127,24 @@ class CLI(Logger):
         self.boot()
 
         border = '-'*(40)
+
+        
+
         if not self.logged_in:
             HELPSTR=f"""
 /login [name]    -->     log back in
 /register [name] -->     new komrade"""
         else:
-            HELPSTR=f"""
-/feed            -->     scroll feed
-/dms             -->     see your DMs
-/refresh         -->     refresh data
+            num_inbox_msgs = len(self.komrade.get_inbox_crypt(prefix='/inbox/').values)
+            num_feed_msgs = len(self.komrade.get_inbox_crypt(prefix='/feed/').values)
 
+            HELPSTR=f"""
+/refresh         -->     get new data
+
+/feed            -->     scroll feed    ({num_feed_msgs})
+/post            -->     post to all
+
+/dms             -->     see your DMs   ({num_inbox_msgs})
 /dm [name]       -->     send a DM
 /meet [name]     -->     exchange info
 /who [name]      -->     show contacts
