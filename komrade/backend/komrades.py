@@ -599,7 +599,7 @@ class KomradeX(Caller):
         #     'id2msg':id2msg,
         #     'id2post':id2post
         # }
-        res['status']=f'Retrieved {len(id2post)} new posts and {len(id2msg)} new messages.'
+        res['status']=f'You\'ve got {len(id2post)} new posts and {len(id2msg)} new messages.'
         return res
     
     
