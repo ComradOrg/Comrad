@@ -492,7 +492,7 @@ class TheOperator(Operator):
 
         # update post index
         post_index = self.get_inbox_crypt(
-            uri=WORLD_NAME,
+            uri=world.uri,
             prefix='/index/'
         )
         self.log('post_index',post_index)
@@ -516,11 +516,12 @@ class TheOperator(Operator):
         self.log('seen =',seen)
 
         # get index
+        world=Komrade(WORLD_NAME)
         
         self.log('world name??',WORLD_NAME,'??????')
 
         index = self.get_inbox_crypt(
-            uri=WORLD_NAME,
+            uri=world.uri,
             prefix='/index/'
         )
         self.log('<- index',index)
@@ -528,7 +529,6 @@ class TheOperator(Operator):
         self.log('post_ids =',post_ids)
 
         # get posts
-        world=Komrade(WORLD_NAME)
         # self.log('world keys are:',world.keychain().keys())
 
         id2post={}
