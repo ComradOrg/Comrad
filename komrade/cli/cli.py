@@ -404,8 +404,6 @@ class CLI(Logger):
                 print('\n')
                 self.stat('Not sending. No text entered.')
                 return
-            else:
-                msg_s = datl[1]
 
         self.log(f'Post written: {msg_s}')
         msg_obj = self.komrade.post(
@@ -413,7 +411,7 @@ class CLI(Logger):
         )
         self.log(f'Posted: {msg_obj}')
         print()
-        self.stat(f'Posted to {WORLD_NAME}.',komrade_name='Operator',pause=True)
+        self.stat(f'Posted to {WORLD_NAME}:\n{msg_obj}',komrade_name='Operator',pause=True)
 
 
 
