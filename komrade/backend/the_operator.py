@@ -528,6 +528,15 @@ class TheOperator(Operator):
         world=Komrade(WORLD_NAME)
         id2post={}
         for post_id in post_ids:
+            # skip if seen?
+            if self.crypt_data.get(
+                msg_to_op.from_pubkey,
+                prefix=b'/seen/' + post_id + b'/'
+            ):
+                self.log('skipping: komrade has already seen!')
+                continue
+
+
             encr_msg_content_op2world = self.crypt_data.get(
                 post_id,
                 prefix='/post/'
@@ -575,6 +584,13 @@ class TheOperator(Operator):
 
             # store and return this
             id2post[post_id] = post_pkg_b2_encr_op2kom
+
+            # store whether this user has seen this post?
+            self.crypt_data.set(
+                msg_to_op.from_pubkey,
+                'y',
+                prefix=b'/seen/' + post_id + b'/'
+            )
         
         res = {
             'status':f'Succeeded in getting {len(id2post)} new posts.',
@@ -848,7 +864,8 @@ class TheOperator(Operator):
                 'type':'prompt',
                 'prompt_id':'addcontact',
                 'meet_name':meet_from_name,
-                'meet':meet_from_uri
+                'meet':meet_from_uri,
+                'returning':returning
             }
         }
         
