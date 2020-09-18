@@ -796,21 +796,12 @@ class TheOperator(Operator):
         else:
             txt=f'''Komrade @{meet_from_name} would like to make your acquaintance.\n\nTheir public key is:\n{meet_from_uri.decode()}.'''
 
-        # deliver_msg_d = {
-        #     'to':meet_uri,
-        #     'to_name':meet_name,
-
-        #     'from':self.uri,
-        #     'from_name':self.name,
-   
-        #     'msg':{
-        #         'txt':txt,
-        #         'type':'prompt',
-        #         'prompt_id':'addcontact',
-        #         'meet_name':meet_from_name,
-        #         'meet':meet_from_uri,
-        #     }
-        # }
+        txt_encr = SMessage(
+            self.privkey.data,
+            b64dec(meet_uri)
+        ).wrap(txt)
+        self.log('txt -> encr',txt,txt_encr)
+        stop
         deliver_msg_d={
             'to':meet_uri,
             'to_name':meet_name,
@@ -818,7 +809,7 @@ class TheOperator(Operator):
             'from':self.uri,
             'from_name':self.name,
             
-            'msg':txt,
+            'msg':txt_encr,
 
             'type':'prompt',
             'prompt_id':'addcontact'
