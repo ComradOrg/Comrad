@@ -352,14 +352,27 @@ class KomradeX(Caller):
         self.log('res from op <-',res)
 
         # record that I've already tried this
-        self.crypt_keys.set(
-            keystr,
-            b'y',
-            prefix='/met/'
-        )
+        # self.crypt_keys.set(
+        #     keystr,
+        #     b'y',
+        #     prefix='/met/'
+        # )
 
         # return result
-        return res
+        succ=res.get('success')
+        if succ:
+            msgd=res.get('msg_d',{})
+            msg=msgd.get('msg')
+            toname=msgd.get('to_name')
+            status = f"""I sent the following message to {toname}:\n\n"{msg}" """
+        else:
+            status = res.get('status')
+        return {
+            'status':status,
+            'success':succ,
+            'res':res
+        }
+
 
 
 

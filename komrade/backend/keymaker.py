@@ -64,7 +64,10 @@ class KomradeSymmetricKeyWithPassphrase(KomradeSymmetricKey):
     @property
     def passhash(self):
         if not self._passhash:
-            self._passhash = hasher(getpass(WHY_MSG))
+            try:
+                self._passhash = hasher(getpass(WHY_MSG))
+            except (KeyboardInterrupt,EOFError) as e:
+                exit('@Keymaker: Incorrect password. Goodbye.')
         return self._passhash
 
     def __init__(self,passphrase=None,passhash=None):
