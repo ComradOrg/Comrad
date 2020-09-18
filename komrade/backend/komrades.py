@@ -452,9 +452,30 @@ class KomradeX(Caller):
     #    return self.msg(WORLD_NAME,something)
     
     def post(self,something):
+        # sign it!
+        self.log('something =',something)
+
+        something_b = pickle.dumps(something)
+        self.log('something_b =',something_b)
+
+        something_b_signed = ssign(
+            self.privkey.data,
+            something_b
+        )
+        self.log('something_b_signed =',something_b_signed)
+
+        something_b_signed_b64 = b64enc(
+            something_b_signed
+        )
+        self.log('something_b_signed_b64 =',something_b_signed_b64)
+
         res_op = self.ring_ring(
             {
-                'post':something
+                'data': {
+                    'post':something_b_signed_b64,
+                    'post_from':self.uri,
+                    'post_from_name':self.name
+                }
             },
             route='post'
         )
