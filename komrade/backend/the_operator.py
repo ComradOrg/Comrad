@@ -710,14 +710,17 @@ class TheOperator(Operator):
         # (2) get msgs
         res_msgs = self.get_msgs(uri)
         self.log('res_msgs',res_msgs)
-        msgs=res_msgs.get('posts',[])
+        msgs=res_msgs.get('posts',{})
 
         # (3) get posts
         res_posts={}
         if include_posts:
             res_posts = self.get_posts(msg_to_op)
             self.log('res_posts',res_posts)
-        posts=res_msgs.get('posts',[])
+        posts=res_msgs.get('posts',{})
+
+        # if one is in the other???
+        assert not (set(list(posts.keys())) & set(list(msgs.keys())))
 
         # return
         res={
