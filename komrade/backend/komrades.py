@@ -533,7 +533,7 @@ class KomradeX(Caller):
         # @hack! why is this happening?
 
 
-        # id2msg = dict([(k,v) for k,v in id2msg.items() if k not in id2post])
+        id2msg = dict([(k,v) for k,v in id2msg.items() if k not in id2post])
         self.log(f'downloaded {len(id2msg)} messages:',list(id2msg.keys()))
         if include_posts:
             self.log(f'downloaded {len(id2post)} posts:',list(id2post.keys()))
