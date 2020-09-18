@@ -616,7 +616,7 @@ class KomradeX(Caller):
             self.log('!?!?',self.name,self.uri,post_id,'\n',self.privkey)
             msg_from_op_b = SMessage(
                 self.privkey.data,
-                Komrade(WORLD_NAME).pubkey.data
+                self.op.pubkey.data
             ).unwrap(msg_from_op_b_encr)
             self.log('decrypted??',msg_from_op_b)
         except (ThemisError,TypeError) as e:

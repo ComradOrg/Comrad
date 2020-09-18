@@ -655,13 +655,13 @@ class TheOperator(Operator):
         world=Komrade(WORLD_NAME)
 
         # (1) get inbox
-        inbox_obj=self.get_inbox_crypt(uri=world.uri)
+        inbox_obj=world.get_inbox_crypt()
         self.log('<-- inbox crypt',inbox_obj)
         inbox=inbox_obj.values
         self.log('<-- inbox crypt values',inbox)
 
         # (2) get msgs
-        res_msgs = self.get_msgs(inbox)
+        res_msgs = world.get_msgs(inbox)
         self.log('res_msgs =',res_msgs)
         if not res_msgs.get('success'):
             return {
@@ -796,11 +796,11 @@ class TheOperator(Operator):
         else:
             txt=f'''Komrade @{meet_from_name} would like to make your acquaintance.\n\nTheir public key is:\n{meet_from_uri.decode()}.'''
 
-        txt_encr = SMessage(
-            self.privkey.data,
-            b64dec(meet_uri)
-        ).wrap(txt)
-        self.log('txt -> encr',txt,txt_encr)
+        # txt_encr = SMessage(
+        #     self.privkey.data,
+        #     b64dec(meet_uri)
+        # ).wrap(txt)
+        # self.log('txt -> encr',txt,txt_encr)
         
         deliver_msg_d={
             'to':meet_uri,
@@ -809,7 +809,7 @@ class TheOperator(Operator):
             'from':self.uri,
             'from_name':self.name,
             
-            'msg':txt_encr,
+            'msg':txt,
 
             'type':'prompt',
             'prompt_id':'addcontact'
