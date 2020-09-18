@@ -261,6 +261,7 @@ class CLI(Logger):
                 name_or_pubkey=name_or_pubkey[1:]
 
             if not msg_s:
+                datl=dat.split()
                 if len(datl)==1:
                     print()
                     self.stat(f'Compose your message to @{name_or_pubkey} below.', 'Press Ctrl+D to complete, or Ctrl+C to cancel.')
