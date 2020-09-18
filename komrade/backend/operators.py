@@ -296,7 +296,7 @@ class Operator(Keymaker):
         if not uri: uri=self.uri
         inbox_crypt = CryptList(
             crypt=self.crypt_data,
-            keyname=self.uri,
+            keyname=uri,
             prefix=prefix
         )
         self.log('-->',inbox_crypt)
