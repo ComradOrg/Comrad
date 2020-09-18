@@ -177,10 +177,12 @@ values = {self.values}
     
     @property
     def val_b_encr(self):
-        return self.crypt.get(
+        res = self.crypt.get(
             self.keyname,
             prefix=self.prefix
         )
+        self.log('res from crypt:',res)
+        return res
     
     @property
     def val_b(self):
