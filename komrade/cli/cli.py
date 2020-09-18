@@ -298,7 +298,7 @@ class CLI(Logger):
         # check logged in
         res_login=res.get('res_login',{})
         if not self.do_login(res_login): return
-        self.stat(res['status'],komrade_name='Operator',use_prefix=False,**statd)
+        self.stat('',res['status'],komrade_name='Operator',**statd)
 
         return res
 
