@@ -245,7 +245,7 @@ class CryptList(object):
     def __init__(self,keyname,prefix='',**y):
         self.redis = redis.StrictRedis()
         # self.store = RedisStore(self.redis)
-        self.keyname=prefix+keyname
+        self.keyname=b64enc_s(prefix)+b64enc_s(keyname)
 
     def package_val(self,val):
         return b64enc_s(val)
