@@ -370,7 +370,7 @@ class CLI(Logger):
             do_pause()
         elif do=='r':
             # self.print('@todo: replying...')
-            return self.msg(msg.from_name)
+            return self.dm(msg.from_name)
         else:
             pass
 
