@@ -599,7 +599,7 @@ class TheOperator(Operator):
                 } 
 
         # (1) get inbox
-        self.log('uri??',uri,msg_to_op.msg_d)
+        self.log('uri??',uri)
         # res_inbox=self.get_inbox(uri)
         inbox_obj=self.get_inbox_crypt(uri=inbox_uri)
         self.log('<-- inbox crypt',inbox_obj)

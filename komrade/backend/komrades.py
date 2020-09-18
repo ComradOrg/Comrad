@@ -502,7 +502,7 @@ class KomradeX(Caller):
         )
 
     ## Getting updates
-    def get_updates(self):
+    def get_updates(self,include_posts=True):
         # get any parameters we need
         post_ids_read = list(self.inbox_read_db.values)
 
@@ -526,7 +526,8 @@ class KomradeX(Caller):
         id2msg=res.get('res_msgs').get('posts',{})
         
         # (3) save posts
-        id2post=res.get('res_posts').get('posts',{})
+        if include_posts:
+            id2post=res.get('res_posts').get('posts',{})
         
         # save them: but posts arent msgs!
         # @hack! why is this happening?
@@ -534,10 +535,12 @@ class KomradeX(Caller):
 
         id2msg = dict([(k,v) for k,v in id2msg.items() if k not in id2post])
         self.log(f'downloaded {len(id2msg)} messages:',list(id2msg.keys()))
-        self.log(f'downloaded {len(id2post)} posts:',list(id2post.keys()))
+        if include_posts:
+            self.log(f'downloaded {len(id2post)} posts:',list(id2post.keys()))
 
         self.save_msgs(id2msg)
-        self.save_posts(id2post)
+        if include_posts:
+            self.save_posts(id2post)
 
         # return {
         #     'status':f'Retrieved {len(id2post)} posts and {len(id2msg)} messages.',
