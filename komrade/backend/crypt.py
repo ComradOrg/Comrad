@@ -241,7 +241,7 @@ values = {self.values}
 
 
 
-class CryptList2(Logger):
+class CryptListRedis(Logger):
     def __init__(self,keyname,prefix='',**y):
         self.redis = redis.StrictRedis()
         # self.store = RedisStore(self.redis)
