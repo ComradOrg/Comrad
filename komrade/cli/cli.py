@@ -339,7 +339,7 @@ class CLI(Logger):
                 res = self.komrade.meet(meet_name,returning=True)
                 if res.get('success'):
                     self.log('res?!',res)
-                    self.stat('Returning the invitation:',f'"{res.get("msg_d",{}).get("msg",{}).get("txt","[?]")}"',use_prefix=True)
+                    self.stat('Returning the invitation:',f'"{res.get("res",{}).get("msg_d",{}).get("msg",{}).get("txt","[?]")}"',use_prefix=True)
                     do_pause()
                 else:
                     self.stat(msg.get('status'))
