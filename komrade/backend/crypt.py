@@ -155,93 +155,93 @@ class DataCrypt(Crypt):
 
 
 
-# class CryptList(Crypt):  # like inbox
-#     def __init__(self,
-#             crypt,
-#             keyname,
-#             prefix='',
-#             encryptor_func=lambda x: x,
-#             decryptor_func=lambda x: x):
+class CryptList(Crypt):  # like inbox
+    def __init__(self,
+            crypt,
+            keyname,
+            prefix='',
+            encryptor_func=lambda x: x,
+            decryptor_func=lambda x: x):
         
-#         self.crypt=crypt
-#         self.keyname=keyname
-#         self.prefix=prefix
-#         self.encryptor_func=encryptor_func
-#         self.decryptor_func=decryptor_func
+        self.crypt=crypt
+        self.keyname=keyname
+        self.prefix=prefix
+        self.encryptor_func=encryptor_func
+        self.decryptor_func=decryptor_func
 
-#     def __repr__(self):
-#         return f"""
-# (CryptList)
-# val_b_encr = {self.val_b_encr}
-# val_b = {self.val_b}
-# values = {self.values}
-#         """
+    def __repr__(self):
+        return f"""
+(CryptList)
+val_b_encr = {self.val_b_encr}
+val_b = {self.val_b}
+values = {self.values}
+        """
     
-#     @property
-#     def val_b_encr(self):
-#         res = self.crypt.get(
-#             self.keyname,
-#             prefix=self.prefix
-#         )
-#         self.log('res from crypt:',res)
-#         return res
+    @property
+    def val_b_encr(self):
+        res = self.crypt.get(
+            self.keyname,
+            prefix=self.prefix
+        )
+        self.log('res from crypt:',res)
+        return res
     
-#     @property
-#     def val_b(self):
-#         val_b_encr=self.val_b_encr
-#         if not val_b_encr: return None
-#         return self.decryptor_func(val_b_encr)
+    @property
+    def val_b(self):
+        val_b_encr=self.val_b_encr
+        if not val_b_encr: return None
+        return self.decryptor_func(val_b_encr)
     
-#     @property
-#     def values(self):
-#         if not hasattr(self,'_values') or not self._values:    
-#             val_b=self.val_b
-#             if not val_b: return []
-#             self._values = pickle.loads(val_b)
-#         return self._values
+    @property
+    def values(self):
+        if not hasattr(self,'_values') or not self._values:    
+            val_b=self.val_b
+            if not val_b: return []
+            self._values = pickle.loads(val_b)
+        return self._values
 
-#     def prepend(self,x_l):
-#         return self.append(x_l,insert=0)
+    def prepend(self,x_l):
+        return self.append(x_l,insert=0)
 
-#     def append(self,x_l,insert=None):
-#         if type(x_l)!=list: x_l=[x_l]
-#         val_l = self.values
-#         self.log('val_l =',val_l)
-#         x_l = [x for x in x_l if not x in set(val_l)]
-#         # print('val_l =',val_l)
-#         for x in x_l:
-#             if insert is not None:
-#                 val_l.insert(insert,x)
-#             else:
-#                 val_l.append(x)
-#             # print('val_l2 =',val_l)
-#         return self.set(val_l)
+    def append(self,x_l,insert=None):
+        if type(x_l)!=list: x_l=[x_l]
+        val_l = self.values
+        self.log('val_l =',val_l)
+        x_l = [x for x in x_l if not x in set(val_l)]
+        # print('val_l =',val_l)
+        for x in x_l:
+            if insert is not None:
+                val_l.insert(insert,x)
+            else:
+                val_l.append(x)
+            # print('val_l2 =',val_l)
+        return self.set(val_l)
 
-#     def set(self,val_l):
-#         self._values = val_l
+    def set(self,val_l):
+        self._values = val_l
 
-#         val_b = pickle.dumps(val_l)
-#         val_b_encr = self.encryptor_func(val_b)
-#         return self.crypt.set(
-#             self.keyname,
-#             val_b_encr,
-#             prefix=self.prefix,
-#             override=True
-#         )
+        val_b = pickle.dumps(val_l)
+        val_b_encr = self.encryptor_func(val_b)
+        return self.crypt.set(
+            self.keyname,
+            val_b_encr,
+            prefix=self.prefix,
+            override=True
+        )
 
-#     def remove(self,l):
-#         if type(l)!=list: l=[l]
-#         lset=set(l)
-#         values = [x for x in self.values if x not in lset]
-#         return self.set(values)
-
-
+    def remove(self,l):
+        if type(l)!=list: l=[l]
+        lset=set(l)
+        values = [x for x in self.values if x not in lset]
+        return self.set(values)
 
 
 
 
 
-class CryptList(Logger):
+
+
+class CryptList2(Logger):
     def __init__(self,keyname,prefix='',**y):
         self.redis = redis.StrictRedis()
         # self.store = RedisStore(self.redis)
