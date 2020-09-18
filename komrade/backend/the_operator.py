@@ -676,8 +676,13 @@ class TheOperator(Operator):
         world.save_msgs(id2msg)
         self.log('id2msg saved!')
 
-        for msg in world.messages():
-            self.log('my_msg_world',msg)
+        post_ids = list(id2msg.keys())
+
+        # for msg in world.messages():
+            # self.log('my_msg_world',msg)
+        for post_id in post_ids:
+            msg=self.read_msg(post_id)
+            self.log(post_id,'----->',msg)
 
         stop
 
