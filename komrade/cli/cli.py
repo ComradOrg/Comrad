@@ -280,7 +280,7 @@ class CLI(Logger):
 
     def refresh(self,dat=None,res=None,statd={}):
         self.log(f'<-- dat={dat}, res={res}')
-        stop
+        # stop
 
         ## get updates
         # this does login, msgs, and posts in one req
