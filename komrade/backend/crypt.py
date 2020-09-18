@@ -254,10 +254,12 @@ class CryptList(object):
         return b64dec(val)
 
     def append(self,val):
+        if type(val)==list: return [self.append(x) for x in val]
         val_x = self.package_val(val)
         return self.redis.rpush(self.keyname,val_x)
 
     def prepend(self,val):
+        if type(val)==list: return [self.prepend(x) for x in val]
         val_x = self.package_val(val)
         return self.redis.lpush(self.keyname,val_x)
 
@@ -267,6 +269,7 @@ class CryptList(object):
         return [self.unpackage_val(x) for x in l]
 
     def remove(self,val):
+        if type(val)==list: return [self.remove(x) for x in val]
         val_x = self.package_val(val)
         return self.redis.lrem(self.keyname, 0, val_x)
 
