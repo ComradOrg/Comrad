@@ -516,6 +516,9 @@ class TheOperator(Operator):
         self.log('seen =',seen)
 
         # get index
+        
+        self.log('world name??',WORLD_NAME,'??????')
+
         index = self.get_inbox_crypt(
             uri=WORLD_NAME,
             prefix='/index/'
