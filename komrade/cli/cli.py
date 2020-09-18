@@ -410,8 +410,8 @@ class CLI(Logger):
                 msg3='The message you wanted to send is copied above (in case you want to copy/paste it to edit it).'
                 err = f'{msg1}\n\n{msg2}\n\n{msg_s}'
                 err2= f'{msg1}\n\n{msg3}'
-                self.stat(err)
-                self.stat(err2)
+                self.stat(msg1)
+                # self.stat(err2)
                 return
 
         self.log(f'Post written: {msg_s}')
