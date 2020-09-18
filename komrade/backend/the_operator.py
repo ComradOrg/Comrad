@@ -831,10 +831,11 @@ class TheOperator(Operator):
             'from':self.uri,
             'from_name':self.name,
             
-            'msg':txt,
-
-            'type':'prompt',
-            'prompt_id':'addcontact'
+            'msg':{
+                'txt':txt,
+                'type':'prompt',
+                'prompt_id':'addcontact'
+            }
         }
         
         self.log('deliver_msg_d ->',deliver_msg_d)

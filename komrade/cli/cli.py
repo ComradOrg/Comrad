@@ -384,7 +384,7 @@ class CLI(Logger):
                     self.stat(f'Showing message {i+1} of {len(msgs)}, from newest to oldest. Hit Ctrl+D to exit.')
                     print()
                     print(msg)
-                    # self.print('DATA',msg.msg_d)
+                    self.log('DATA',msg.msg_d)
                     if msg.data.get('prompt_id')=='addcontact':
                         self.prompt_adduser(msg)
                     
