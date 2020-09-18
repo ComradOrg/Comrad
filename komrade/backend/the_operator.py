@@ -469,25 +469,19 @@ class TheOperator(Operator):
         self.log('<--',msg_to_op.msg_d)
 
         # attached msg
-        attached_msg = msg_to_op.msg
+        attached_msg = msg_to_op.msg.get('data')
         self.log('attached_msg =',attached_msg)
+        if not attached_msg: return
 
-        # just store as encrypted binary?
-        msg_to_op.encrypt()
-        self.log('<--',msg_to_op.msg_d)
-
-        # encr without metadata
-        encr_msg_content = msg_to_op.msg
-        self.log('encr_msg_content',encr_msg_content)
-
-         # save
+        # just store as the encrypted binary -> world it came in?
+        # save
         post_id = get_random_binary_id()
         self.crypt_data.set(
             post_id,
-            encr_msg_content,
+            attached_msg,
             prefix='/post/'
         )
-        self.log(f'put {encr_msg_content} in {post_id}')
+        self.log(f'put {attached_msg} in {post_id}')
 
         # update post index
         post_index = self.get_inbox_crypt(
