@@ -20,7 +20,7 @@ class CLI(Logger):
         'login':'log back in', 
         'meet':'meet a komrade',
         'who':'show contacts or info',
-        'msg':'write people',
+        'dm':'write people',
         'refresh':'refresh feed/DMs',
         'dms':'read DMs',
         'feed':'read posts',
@@ -137,7 +137,7 @@ class CLI(Logger):
 /dms             -->     see your DMs
 /refresh         -->     refresh data
 
-/msg [name]      -->     send a DM
+/dm [name]       -->     send a DM
 /meet [name]     -->     exchange info
 /who [name]      -->     show contacts
 """
@@ -246,7 +246,7 @@ class CLI(Logger):
             self.stat(status)
 
 
-    def msg(self,dat='',name_or_pubkey=None,msg_s=None):
+    def dm(self,dat='',name_or_pubkey=None,msg_s=None):
         if self.with_required_login():
 
             if not name_or_pubkey:
