@@ -408,7 +408,7 @@ class CLI(Logger):
                 msg1=f'Not sending. Message is {len(msg_s)-maxlen} characters over the character limit of {maxlen}.'
                 msg2='The message you wanted to send is copied below (in case you want to copy/paste it to edit it):',
                 msg3='The message you wanted to send is copied above (in case you want to copy/paste it to edit it).'
-                err = f'{msg1}\n\n{msg2}\n\n{msg_s}\n\n{msg3'
+                err = f'{msg1}\n\n{msg2}\n\n{msg_s}\n\n{msg3}'
                 self.stat(err)
                 return
 
