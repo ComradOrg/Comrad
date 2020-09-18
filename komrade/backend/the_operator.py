@@ -686,6 +686,25 @@ class TheOperator(Operator):
             msg=world.read_msg(post_id)
             if 'msg' in msg: msg=msg['msg'].msg_d
             self.log('postttttiddddd',post_id,type(msg),'----->',msg)
+            if not msg:
+                self.log('post no msg!?!?',msg)
+                continue
+
+            # we need to reencrypt this back!
+            msg_back_from_world = Message(
+                {
+                    'from':world.uri, 'from_name':world.name,
+                    'to': b64enc(reencrypt_to_uri),
+                    'to_name': reencrypt_to_name if reencrypt_to_name else self.find_name(reencrypt_to_uri),
+                    'msg':msg
+                }
+            )
+            self.log('msg_back_from_world',msg_back_from_world)
+            msg_back.encrypt()
+            self.log('msg_back_from_world',msg_back_from_world)
+
+
+
 
         res = {
             'status':f'', #Succeeded in getting {len(id2post)} new posts.',
