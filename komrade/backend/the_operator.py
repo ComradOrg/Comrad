@@ -464,9 +464,75 @@ class TheOperator(Operator):
         return res
 
 
+    def post(self,msg_to_op):
+        # This
+        self.log('<--',msg_to_op.msg_d)
 
+        # attached msg
+        attached_msg = msg_to_op.msg
+        self.log('attached_msg =',attached_msg)
 
+        # just store as encrypted binary?
+        msg_to_op.encrypt()
+        self.log('<--',msg_to_op.msg_d)
 
+        # encr without metadata
+        encr_msg_content = msg_to_op.msg
+        self.log('encr_msg_content',encr_msg_content)
+
+         # save
+        post_id = get_random_binary_id()
+        self.crypt_data.set(
+            post_id,
+            encr_msg_content,
+            prefix='/post/'
+        )
+        self.log(f'put {encr_msg_content} in {post_id}')
+
+        # update post index
+        post_index = self.get_inbox_crypt(
+            uri=WORLD_NAME,
+            prefix='/index/'
+        )
+        self.log('post_index',post_index)
+        post_index.prepend(post_id)
+
+        res = {
+            'status':'Saved message successfully',
+            'success':True,
+            'post_id':post_id,
+            'msg_saved':attached_msg
+        }
+        self.log('res =',res)
+        return res
+
+    def get_posts(self,msg_to_op,max_posts=25):
+        # data
+        self.log('<-',msg_to_op)
+        data=msg_to_op.data
+        self.log('<- data',data)
+        seen = set(data.get('seen',[]))
+        self.log('seen =',seen)
+
+        # get index
+        index = self.get_inbox_crypt(
+            uri=WORLD_NAME,
+            prefix='/index/'
+        )
+        self.log('<- index',index)
+        post_ids = [x for x in index.values if not x in seen]
+        self.log('post_ids =',post_ids)
+
+        # get posts
+        for post_id in post_ids:
+            encr_msg_content = self.crypt_data.get(
+                post_id,
+                prefix='/post/'
+            )
+            self.log('<-- encr_msg_content',encr_msg_content,'at post id',post_id)
+            if not encr_msg_content: continue
+
+            msg_content = SMes
 
 
 
@@ -652,79 +718,79 @@ class TheOperator(Operator):
         self.log('-->',res)
         return res
     
-    ## posts
-    def get_posts(self,
-            reencrypt_to_uri,
-            reencrypt_to_name=None):
+    # ## posts
+    # def get_posts(self,
+    #         reencrypt_to_uri,
+    #         reencrypt_to_name=None):
         
-        world=Komrade(WORLD_NAME)
+    #     world=Komrade(WORLD_NAME)
 
-        # (1) get inbox
-        inbox_obj=world.get_inbox_crypt()
-        self.log('<-- inbox crypt',inbox_obj)
-        inbox=inbox_obj.values
-        self.log('<-- inbox crypt values',inbox)
+    #     # (1) get inbox
+    #     inbox_obj=world.get_inbox_crypt()
+    #     self.log('<-- inbox crypt',inbox_obj)
+    #     inbox=inbox_obj.values
+    #     self.log('<-- inbox crypt values',inbox)
         
-        # (2) get msgs
-        res_msgs = self.get_msgs(inbox)
-        # self.log('res_msgs =',res_msgs)
-        if not res_msgs.get('success'):
-            return {
-                'success':False,
-                'res_msgs':res_msgs
-            }
-        id2msg=res_msgs.get('posts')
-        self.log('id2msg for world',len(id2msg))
-        world.save_msgs(id2msg)
-        self.log('id2msg saved!')
+    #     # (2) get msgs
+    #     res_msgs = self.get_msgs(inbox)
+    #     # self.log('res_msgs =',res_msgs)
+    #     if not res_msgs.get('success'):
+    #         return {
+    #             'success':False,
+    #             'res_msgs':res_msgs
+    #         }
+    #     id2msg=res_msgs.get('posts')
+    #     self.log('id2msg for world',len(id2msg))
+    #     world.save_msgs(id2msg)
+    #     self.log('id2msg saved!')
 
-        post_ids = list(id2msg.keys())
+    #     post_ids = list(id2msg.keys())
 
-        # for msg in world.messages():
-            # self.log('my_msg_world',msg)
-        id2post_encr = {}
-        for post_id in post_ids:
-            msg=world.read_msg(post_id)
-            if 'msg' in msg: msg=msg['msg'].msg_d
-            self.log('postttttiddddd',post_id,type(msg),'----->',msg)
-            if not msg:
-                self.log('post no msg!?!?',msg)
-                continue
+    #     # for msg in world.messages():
+    #         # self.log('my_msg_world',msg)
+    #     id2post_encr = {}
+    #     for post_id in post_ids:
+    #         msg=world.read_msg(post_id)
+    #         if 'msg' in msg: msg=msg['msg'].msg_d
+    #         self.log('postttttiddddd',post_id,type(msg),'----->',msg)
+    #         if not msg:
+    #             self.log('post no msg!?!?',msg)
+    #             continue
 
-            # we need to reencrypt this back!
-            # inner)
-            msg_back_from_world = Message(
-                {
-                    'from':world.uri, 'from_name':world.name,
-                    'to': b64enc(reencrypt_to_uri),
-                    'to_name': reencrypt_to_name if reencrypt_to_name else self.find_name(reencrypt_to_uri),
-                    'msg':msg
-                }
-            )
-            self.log('msg_back_from_world',msg_back_from_world.msg_d)
-            msg_back_from_world.encrypt()
-            self.log('msg_back_from_world',msg_back_from_world.msg_d)
+    #         # we need to reencrypt this back!
+    #         # inner)
+    #         msg_back_from_world = Message(
+    #             {
+    #                 'from':world.uri, 'from_name':world.name,
+    #                 'to': b64enc(reencrypt_to_uri),
+    #                 'to_name': reencrypt_to_name if reencrypt_to_name else self.find_name(reencrypt_to_uri),
+    #                 'msg':msg
+    #             }
+    #         )
+    #         self.log('msg_back_from_world',msg_back_from_world.msg_d)
+    #         msg_back_from_world.encrypt()
+    #         self.log('msg_back_from_world',msg_back_from_world.msg_d)
             
-            # now reencrypt from op
-            # outer) 
-            msg_back_from_world_b = msg_back_from_world.msg_b
-            self.log('msg_back_from_world_b',msg_back_from_world_b)
+    #         # now reencrypt from op
+    #         # outer) 
+    #         msg_back_from_world_b = msg_back_from_world.msg_b
+    #         self.log('msg_back_from_world_b',msg_back_from_world_b)
 
-            msg_back_from_world_b_encr = SMessage(
-                self.privkey.data,
-                b64dec(reencrypt_to_uri)
-            ).wrap(msg_back_from_world_b)
-            self.log('msg_back_from_world_b_encr',msg_back_from_world_b_encr)
+    #         msg_back_from_world_b_encr = SMessage(
+    #             self.privkey.data,
+    #             b64dec(reencrypt_to_uri)
+    #         ).wrap(msg_back_from_world_b)
+    #         self.log('msg_back_from_world_b_encr',msg_back_from_world_b_encr)
 
-            # store
-            id2post_encr[post_id] = msg_back_from_world_b_encr
+    #         # store
+    #         id2post_encr[post_id] = msg_back_from_world_b_encr
 
-        res = {
-            'status':f'Retrieved {len(id2post_encr)} posts.',
-            'success':True,
-            'posts':id2post_encr
-        }
-        return res
+    #     res = {
+    #         'status':f'Retrieved {len(id2post_encr)} posts.',
+    #         'success':True,
+    #         'posts':id2post_encr
+    #     }
+    #     return res
 
     # def get_posts1(self,reencrypt_to_uri,reencrypt_to_name=None):
     #     world=Komrade(WORLD_NAME)

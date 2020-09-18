@@ -448,9 +448,19 @@ class KomradeX(Caller):
         self.log('-->',res)
         return res
 
-    def post(self,something):
-        return self.msg(WORLD_NAME,something)
+    #def post(self,something):
+    #    return self.msg(WORLD_NAME,something)
     
+    def post(self,something):
+        res_op = self.ring_ring(
+            {
+                'post':something
+            },
+            route='post'
+        )
+        self.log('post res from Op <-',res_op)
+        return res_op
+
     
     @property
     def login_details(self):
