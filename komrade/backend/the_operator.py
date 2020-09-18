@@ -548,11 +548,11 @@ class TheOperator(Operator):
             from_uri = post_pkg_d.get('post_from')
             from_name = post_pkg_d.get('post_from_name')
             post_b_signed_encr4world = post_pkg_d.get('post')
-            if not from_uri or not from_name or b64enc(self.find_pubkey(from_name))!=from_uri or not post_b_signed_encr4world:
-                return {
-                    'success':False,
-                    'status':'Records do not match.'
-                }
+            # if not from_uri or not from_name or b64enc(self.find_pubkey(from_name))!=from_uri or not post_b_signed_encr4world:
+            #     return {
+            #         'success':False,
+            #         'status':'Records do not match.'
+            #     }
 
             # decrypt from post author komrade
             post_b_signed = SMessage(
