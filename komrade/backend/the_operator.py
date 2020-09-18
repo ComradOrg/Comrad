@@ -682,6 +682,7 @@ class TheOperator(Operator):
 
         # for msg in world.messages():
             # self.log('my_msg_world',msg)
+        id2post_encr = {}
         for post_id in post_ids:
             msg=world.read_msg(post_id)
             if 'msg' in msg: msg=msg['msg'].msg_d
@@ -691,6 +692,7 @@ class TheOperator(Operator):
                 continue
 
             # we need to reencrypt this back!
+            # inner)
             msg_back_from_world = Message(
                 {
                     'from':world.uri, 'from_name':world.name,
@@ -702,14 +704,25 @@ class TheOperator(Operator):
             self.log('msg_back_from_world',msg_back_from_world.msg_d)
             msg_back_from_world.encrypt()
             self.log('msg_back_from_world',msg_back_from_world.msg_d)
+            
+            # now reencrypt from op
+            # outer) 
+            msg_back_from_world_b = msg_back_from_world.msg_b
+            self.log('msg_back_from_world_b',msg_back_from_world_b)
 
+            msg_back_from_world_b_encr = SMessage(
+                self.privkey.data,
+                b64dec(reencrypt_to_uri)
+            ).wrap(msg_back_from_world_b)
+            self.log('msg_back_from_world_b_encr',msg_back_from_world_b_encr)
 
-
+            # store
+            id2post_encr[post_id] = msg_back_from_world_b_encr
 
         res = {
-            'status':f'', #Succeeded in getting {len(id2post)} new posts.',
+            'status':f'Retrieved {len(id2post_encr)} posts.',
             'success':True,
-            'posts':{} #id2post
+            'posts':id2post_encr
         }
         return res
 
