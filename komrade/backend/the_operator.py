@@ -700,7 +700,7 @@ class TheOperator(Operator):
                 }
             )
             self.log('msg_back_from_world',msg_back_from_world)
-            msg_back.encrypt()
+            msg_back_from_world.encrypt()
             self.log('msg_back_from_world',msg_back_from_world)
 
 
