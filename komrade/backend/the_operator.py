@@ -699,9 +699,9 @@ class TheOperator(Operator):
                     'msg':msg
                 }
             )
-            self.log('msg_back_from_world',msg_back_from_world)
+            self.log('msg_back_from_world',msg_back_from_world.msg_d)
             msg_back_from_world.encrypt()
-            self.log('msg_back_from_world',msg_back_from_world)
+            self.log('msg_back_from_world',msg_back_from_world.msg_d)
 
 
 
