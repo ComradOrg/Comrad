@@ -651,69 +651,80 @@ class TheOperator(Operator):
         return res
     
     ## posts
-    def get_posts(self,reencrypt_to_uri,reencrypt_to_name=None):
-        world=Komrade(WORLD_NAME)
-
-        # (1) get inbox
-        inbox_obj=world.get_inbox_crypt()
-        self.log('<-- inbox crypt',inbox_obj)
-        inbox=inbox_obj.values
-        self.log('<-- inbox crypt values',inbox)
-
-        # (2) get msgs
-        res_msgs = self.get_msgs(inbox)
-        # self.log('res_msgs =',res_msgs)
-        if not res_msgs.get('success'):
-            return {
-                'success':False,
-                'res_msgs':res_msgs
-            }
-        id2msg=res_msgs.get('posts')
-        self.log('id2msg for world',len(id2msg))
-
-        # (2) read msgs
-        id2post={}
-        for post_id,post_encr in id2msg.items():
-            self.log('id2msg post_id =',post_id)
-            self.log('id2msg post_encr =',post_encr)
-            res_read_msg = world.read_msg(
-                post_id,
-                post_encr=post_encr
-            )
-            self.log(post_id,res_read_msg,'res_read_msg')
-
-            if res_read_msg.get('success'):
-                post=res_read_msg.get('msg')
-                if post:
-                    id2post[post_id]=post
-        # self.log('id2post for world',id2post)
-
-        # (3) reencrypt for requester
-        reencrypt_to_b = b64dec(reencrypt_to_uri)
-        for post_id,post in id2post.items():
-            # post is post object!
-            self.log('post_id',post_id,post.msg_d)
-            post_b = post.msg_b
-            post_b_encrbyop = SMessage(
-                self.privkey.data,
-                reencrypt_to_b
-            ).wrap(post_b)
-            id2post[post_id]=post_b_encrbyop
-            self.log('-->',post_b_encrbyop,'\n')
-
-        res = {
-            'status':f'Succeeded in getting {len(id2post)} new posts.',
-            'success':True,
-            'posts':id2post
-        }
-        self.log(f'--> {res}')
-        return res
+    def get_posts(self,
+            reencrypt_to_uri,
+            reencrypt_to_name=None):
         
-        # stop
-        # return id2post
+        world=Komrade(WORLD_NAME)
+        world.get_updates(include_posts=False)
+        for msg in world.messages():
+            self.log('my_msg_world',msg)
 
-        # (3) reencrypt for requester
-        # inbox=res_inbox.get('inbox',[])
+        stop
+
+    # def get_posts1(self,reencrypt_to_uri,reencrypt_to_name=None):
+    #     world=Komrade(WORLD_NAME)
+
+    #     # (1) get inbox
+    #     inbox_obj=world.get_inbox_crypt()
+    #     self.log('<-- inbox crypt',inbox_obj)
+    #     inbox=inbox_obj.values
+    #     self.log('<-- inbox crypt values',inbox)
+
+    #     # (2) get msgs
+    #     res_msgs = self.get_msgs(inbox)
+    #     # self.log('res_msgs =',res_msgs)
+    #     if not res_msgs.get('success'):
+    #         return {
+    #             'success':False,
+    #             'res_msgs':res_msgs
+    #         }
+    #     id2msg=res_msgs.get('posts')
+    #     self.log('id2msg for world',len(id2msg))
+
+    #     # (2) read msgs
+    #     id2post={}
+    #     for post_id,post_encr in id2msg.items():
+    #         self.log('id2msg post_id =',post_id)
+    #         self.log('id2msg post_encr =',post_encr)
+    #         res_read_msg = world.read_msg(
+    #             post_id,
+    #             post_encr=post_encr
+    #         )
+    #         self.log(post_id,res_read_msg,'res_read_msg')
+
+    #         if res_read_msg.get('success'):
+    #             post=res_read_msg.get('msg')
+    #             if post:
+    #                 id2post[post_id]=post
+    #     # self.log('id2post for world',id2post)
+
+    #     # (3) reencrypt for requester
+    #     reencrypt_to_b = b64dec(reencrypt_to_uri)
+    #     for post_id,post in id2post.items():
+    #         # post is post object!
+    #         self.log('post_id',post_id,post.msg_d)
+    #         post_b = post.msg_b
+    #         post_b_encrbyop = SMessage(
+    #             self.privkey.data,
+    #             reencrypt_to_b
+    #         ).wrap(post_b)
+    #         id2post[post_id]=post_b_encrbyop
+    #         self.log('-->',post_b_encrbyop,'\n')
+
+    #     res = {
+    #         'status':f'Succeeded in getting {len(id2post)} new posts.',
+    #         'success':True,
+    #         'posts':id2post
+    #     }
+    #     self.log(f'--> {res}')
+    #     return res
+        
+    #     # stop
+    #     # return id2post
+
+    #     # (3) reencrypt for requester
+    #     # inbox=res_inbox.get('inbox',[])
 
 
 
