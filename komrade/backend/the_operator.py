@@ -691,6 +691,7 @@ class TheOperator(Operator):
             'success':True,
             'posts':{} #id2post
         }
+        return res
 
     # def get_posts1(self,reencrypt_to_uri,reencrypt_to_name=None):
     #     world=Komrade(WORLD_NAME)
