@@ -190,9 +190,11 @@ values = {self.values}
     
     @property
     def values(self):
-        val_b=self.val_b
-        if not val_b: return []
-        return pickle.loads(val_b)
+        if not hasattr(self,'_values') or not self._values:    
+            val_b=self.val_b
+            if not val_b: return []
+            self._values = pickle.loads(val_b)
+        return self._values
 
     def prepend(self,x_l):
         return self.append(x_l,insert=0)
@@ -209,10 +211,11 @@ values = {self.values}
             else:
                 val_l.append(x)
             # print('val_l2 =',val_l)
-        
         return self.set(val_l)
 
     def set(self,val_l):
+        self._values = val_l
+
         val_b = pickle.dumps(val_l)
         val_b_encr = self.encryptor_func(val_b)
         return self.crypt.set(
@@ -247,7 +250,7 @@ if __name__=='__main__':
 
     print(crypt_list.values)
 
-    print(crypt_list.remove('cool thing 0'))
+    # print(crypt_list.remove('cool thing 0'))
 
     # print(crypt_list.append('cool thing 1'))
     
