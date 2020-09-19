@@ -12,3 +12,4 @@ lib
 #*.keys
 .op.*
 *.pyc
+torpy

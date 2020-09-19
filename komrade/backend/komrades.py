@@ -13,8 +13,8 @@ from komrade.backend.messages import Message
 
 class KomradeX(Caller):
 
-    def __init__(self, name=None, pubkey=None):
-        super().__init__(name=name)
+    def __init__(self, name=None, pubkey=None, callbacks={}):
+        super().__init__(name=name, callbacks=callbacks)
         self.boot(create=False)
         # special?
         if self.name==WORLD_NAME:

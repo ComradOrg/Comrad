@@ -91,6 +91,9 @@ def dict_format(d, tab=0):
 import inspect,time
 from komrade.constants import *
 class Logger(object):
+    def __init__(self,callbacks={}):
+        self._callbacks=callbacks
+
     @property
     def off(self):
         x=os.environ.get('KOMRADE_SHOW_LOG')

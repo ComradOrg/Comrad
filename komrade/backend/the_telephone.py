@@ -3,7 +3,7 @@ import os,sys; sys.path.append(os.path.abspath(os.path.join(os.path.abspath(os.p
 from komrade import *
 from komrade.backend import *
 from komrade.backend.phonelines import *
-
+import requests
 
 # def TheTelephone(*x,**y):
 #     return Komrade(TELEPHONE_NAME,*x,**y)
@@ -13,12 +13,13 @@ class TheTelephone(Operator):
     """
     API client class for Caller to interact with The Operator.
     """
-    def __init__(self, caller=None):
+    def __init__(self, caller=None, callbacks={}):
         super().__init__(name=TELEPHONE_NAME)
         self.caller=caller
         from komrade.backend.phonelines import check_phonelines
         keychain = check_phonelines()[TELEPHONE_NAME]
         self._keychain ={**self.load_keychain_from_bytes(keychain)}
+        self._callbacks=callbacks
 
 
     def send_and_receive(self,msg_d,**y):
@@ -46,7 +47,7 @@ class TheTelephone(Operator):
         # dial the operator
         URL = OPERATOR_API_URL + msg_b64_str_esc + '/'
         self.log("DIALING THE OPERATOR:",URL)
-        phonecall=komrade_request(URL)
+        phonecall=self.komrade_request(URL)
         if phonecall.status_code!=200:
             self.log('!! error in request',phonecall.status_code,phonecall.text)
             return
@@ -82,6 +83,85 @@ class TheTelephone(Operator):
             get_resp_from=self.send_and_receive,
             **y
         )
+
+    ### Requests functionality
+    def komrade_request(self,url,allow_clearnet = ALLOW_CLEARNET):
+        if '.onion' in url or not allow_clearnet:
+            return self.tor_request(url)
+        return requests.get(url,timeout=600)
+
+    def tor_request(self,url):
+        return tor_request_in_python(url)
+        # return tor_request_in_proxy(url)
+
+    async def tor_request_async(self,url):
+        return await tor_request_in_python_async(url)
+        
+
+    def tor_request_in_proxy(self,url):
+        with get_tor_proxy_session() as s:
+            return s.get(url,timeout=60)
+
+    async def tor_request_in_python_async(self,url):
+        import requests_async as requests
+        tor = TorClient(
+            callbacks=self._callbacks
+        )
+        with tor.get_guard() as guard:
+            adapter = TorHttpAdapter(guard, 3, retries=RETRIES)
+
+            async with requests.Session() as s:
+                s.headers.update({'User-Agent': 'Mozilla/5.0'})
+                s.mount('http://', adapter)
+                s.mount('https://', adapter)
+                return await s.get(url, timeout=60)
+
+
+    def tor_request_in_python(self,url):
+        tor = TorClient(
+            callbacks=self._callbacks
+        )
+        with tor.get_guard() as guard:
+            adapter = TorHttpAdapter(guard, 3, retries=RETRIES)
+
+            with requests.Session() as s:
+                s.headers.update({'User-Agent': 'Mozilla/5.0'})
+                s.mount('http://', adapter)
+                s.mount('https://', adapter)
+                r = s.get(url, timeout=60)
+                return r
+
+    def get_tor_proxy_session(self):
+        session = requests.session()
+        # Tor uses the 9050 port as the default socks port
+        session.proxies = {'http':  'socks5://127.0.0.1:9050',
+                        'https': 'socks5://127.0.0.1:9050'}
+        return session    
+
+    def get_async_tor_proxy_session(self):
+        import requests_futures
+        from requests_futures.sessions import FuturesSession
+        session = FuturesSession()
+        # Tor uses the 9050 port as the default socks port
+        session.proxies = {'http':  'socks5://127.0.0.1:9050',
+                        'https': 'socks5://127.0.0.1:9050'}
+        return session    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         
     
 def test_call():

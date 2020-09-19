@@ -257,6 +257,9 @@ class Keymaker(Logger):
                 path_crypt_keys=PATH_CRYPT_CA_KEYS,
                 path_crypt_data=PATH_CRYPT_CA_DATA):
         
+        # init logger with callbacks
+        super().__init__(callbacks=callbacks)
+
         # set defaults
         self.name=name
         self._uri_id=uri_id

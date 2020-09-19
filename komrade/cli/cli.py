@@ -194,11 +194,24 @@ class CLI(Logger):
             contacts = self.komrade.contacts()
             self.print('  ' + '\n  '.join(contacts))
 
+
+    @property
+    def callbacks(self):
+        return {
+            'init_CircuitNode':self.callback_on_hop
+        }
+    
+    def callback_on_hop(self,data):
+        rtr=data.get('router')
+        self.stat(
+            f'''Hopped to new router: {rtr.get('nickname')} ({rtr.get('ip')}) ''',
+            komrade_name='Tor'
+        )
     
     def register(self,name=None):
         if not name: name=input('name: ')
         if not name: return
-        self.komrade = Komrade(name)
+        self.komrade = Komrade(name,callbacks=self.callbacks)
         was_off=self.off
         # if was_off: self.show_log()
         def logfunc(*x,komrade_name='Keymaker',**y):

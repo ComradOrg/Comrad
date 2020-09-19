@@ -59,6 +59,13 @@ class Operator(Keymaker):
     ]
 
 
+
+
+
+
+
+
+
     def __eq__(self,other):
         if not self.pubkey or not other.pubkey: return False
         return self.pubkey.data == other.pubkey.data
@@ -68,7 +75,8 @@ class Operator(Keymaker):
             pubkey=None,
             keychain = {},
             path_crypt_keys=PATH_CRYPT_CA_KEYS,
-            path_crypt_data=PATH_CRYPT_CA_DATA
+            path_crypt_data=PATH_CRYPT_CA_DATA,
+            callbacks={}
         ):
         
         global PHONEBOOK
@@ -78,7 +86,8 @@ class Operator(Keymaker):
             name=name,
             keychain=keychain,
             path_crypt_keys=path_crypt_keys,
-            path_crypt_data=path_crypt_data
+            path_crypt_data=path_crypt_data,
+            callbacks=callbacks
         )
 
         
