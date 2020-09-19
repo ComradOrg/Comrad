@@ -617,9 +617,11 @@ class KomradeX(Caller):
         #     'id2msg':id2msg,
         #     'id2post':id2post
         # }
-        res['status']=''
-        if len(id2post) or len(id2msg):
-            res['status']=f'You\'ve got {len(id2post)} new posts and {len(id2msg)} new messages.'
+        #res['status']=''
+        #if len(id2post) or len(id2msg):
+        #    res['status']=f'You\'ve got {len(id2post)} new posts and {len(id2msg)} new messages.'
+        res['status']=f'You have {len(self.posts(unread=True))} posts and {len(self.messages(unread=True))} unread msgs.'
+        
         return res
     
     
@@ -701,52 +703,34 @@ class KomradeX(Caller):
         }
 
     def messages(self,
-            show_read=True,
-            show_unread=True,
+            unread=None,
             inbox_prefix='/inbox/'):
         # meta inbox
         self.log('<--',inbox_prefix,'???')
 
         inbox_db=self.get_inbox_crypt(prefix=inbox_prefix)
         read_db=self.get_inbox_crypt(prefix=inbox_prefix+'read/')
-        unread_db=self.get_inbox_crypt(prefix=inbox_prefix+'unread/')
 
         inbox = inbox_db.values
         read = read_db.values
-        unread = unread_db.values
         self.log('<- inbox',inbox)
         self.log('<- read',read)
-        self.log('<- unread',unread)
-
-        # filter out posts!?!?! @hack
-        # if inbox_prefix=='/inbox/':
-        #     bad_prefix = '/feed/' if inbox_prefix=='/inbox/' else '/inbox/'
-        #     bad_db=self.get_inbox_crypt(prefix=inbox_prefix)
-        #     bad = bad_db.values
-        #     self.log('bad',bad_prefix,'for me',inbox_prefix,'=',bad)
-        #     inbox = [x for x in inbox if x not in set(bad)]
-        #     self.log('<- inbox 2',inbox)        
 
         # filter?
-        if not show_read: inbox = [x for x in inbox if not x in set(read)]
-        if not show_unread: inbox = [x for x in inbox if not x in set(unread)]
+        if unread:
+            inbox = [x for x in inbox if not x in set(read)]
         
         # decrypt and read all posts
         msgs=[]
         for post_id in inbox:
-            self.log('???',post_id,inbox_prefix)
+            # self.log('???',post_id,inbox_prefix)
             res_msg = self.read_msg(post_id)
-            self.log('got msg:',res_msg)
+            # self.log('got msg:',res_msg)
             if res_msg.get('success') and res_msg.get('msg'):
                 msgx=res_msg.get('msg')
                 msgx.post_id=post_id
                 msgs.append(msgx)
-
         return msgs
-
-    # def delete_msg(self,post_id):
-
-
 
     def read_msg(self,post_id=None,post_encr=None):
         # get post
