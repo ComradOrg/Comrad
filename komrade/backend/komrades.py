@@ -245,6 +245,24 @@ class KomradeX(Caller):
         logfunc(f'Congratulations. Welcome, {self}.',pause=True,clear=True)
         # self.help()
 
+
+        ##
+        # last minute: get posts
+        if 'res_posts' in resp_msg_d and resp_msg_d['res_posts'].get('success'):
+            id2post=resp_msg_d.get('res_posts').get('posts',{})
+            if id2post:
+                self.log('found starter posts:',list(id2post.keys()))
+            self.save_posts(id2post)
+            resp_msg_d['status']+=f'  You\'ve got {len(id2post)} new posts and 0 new messages.'
+        
+        return resp_msg_d
+
+
+        ###
+
+
+
+
         return resp_msg_d
 
 

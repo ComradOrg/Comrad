@@ -126,8 +126,6 @@ class CLI(Logger):
         clear_screen()
         self.boot()
 
-        border = '-'*(40)
-
         
 
         if not self.logged_in:
