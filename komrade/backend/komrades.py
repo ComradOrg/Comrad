@@ -620,9 +620,26 @@ class KomradeX(Caller):
         #res['status']=''
         #if len(id2post) or len(id2msg):
         #    res['status']=f'You\'ve got {len(id2post)} new posts and {len(id2msg)} new messages.'
-        res['status']=f'You have {len(self.posts(unread=True))} posts and {len(self.messages(unread=True))} unread msgs.'
+        
+        _nup=self.num_unread_posts
+        _num=self.num_unread_msgs
+        res['status']=f'''You have {_nup} unseen post{'s' if _nup!=1 else ''} and {_num} unread msg{'s' if _num!=1 else ''}.'''
         
         return res
+    
+    def num_unread_posts(self):
+        return len(self.posts(unread=True))
+
+    def num_posts(self):
+        return len(self.posts())
+
+    def num_unread_msgs(self):
+        return len(self.messages(unread=True))
+
+    def num_msgs(self):
+        return len(self.messages())
+
+    
     
     
     def posts(self,**y):
