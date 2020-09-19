@@ -355,7 +355,7 @@ class CLI(Logger):
     def prompt_msg(self,msg):
         clear_screen()
         print(msg)
-        self.stat('Type "r" to reply to this message, "d" to delete it, or hit Enter to continue.')
+        self.stat('Type "r" to reply to this message, "d" to delete it, or hit Enter to continue.',use_prefix=False)
         do = input(f'\n{self.komrade}: ')
         do=do.strip().lower()
         if do=='d':
