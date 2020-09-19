@@ -10,7 +10,7 @@ But a digital network can be redesigned. The technology behind these social medi
 
 ## Core principles
 
-### Illegible
+### Confidential
 
 All of your data are strongly encrypted end-to-end: only you and those you write to can decrypt and read it. To anyone without the right decryption 'key', the data is nonsense.
 
