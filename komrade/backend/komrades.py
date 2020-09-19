@@ -763,10 +763,9 @@ class KomradeX(Caller):
         inbox_prefix=msg_or_post.inbox_prefix
         self.log('inbox_prefix',inbox_prefix)
         read_db=self.get_inbox_crypt(prefix=inbox_prefix+'read/')
-        self.log('read_db',read_db)
+        self.log('read_db.values 1',read_db.values)
         read_db.append(msg_or_post.post_id)
-        self.log('read_db',read_db)
-        self.log('read_db.values',read_db.values)
+        self.log('read_db.values 2',read_db.values)
 
 
     def read_msg(self,post_id=None,post_encr=None):
