@@ -122,6 +122,30 @@ class CLI(Logger):
         border=tw.indent(border, ' '*2)
         print('\n'+logo)#),max_pause=0.005)
 
+
+    def status_str(self,unr,tot):
+        read=tot-unr
+        # return f'{unr}/{tot}' if unr else str(tot)
+        return f'({unr}*)' if unr else f'({unr})'
+        # return f'{unr}* of {tot}' if tot else str(tot)
+
+    @property
+    def post_status_str(self):
+        if not self.komrade: return ''
+        return self.status_str(
+            unr=self.komrade.num_unread_posts,
+            tot=self.komrade.num_posts
+        )
+
+    @property
+    def msg_status_str(self):
+        if not self.komrade: return ''
+        return self.status_str(
+            unr=self.komrade.num_unread_msgs,
+            tot=self.komrade.num_msgs
+        )
+
+
     def help(self,*x,**y):
         clear_screen()
         self.boot()
@@ -133,16 +157,13 @@ class CLI(Logger):
 /login [name]    -->     log back in
 /register [name] -->     new komrade"""
         else:
-            num_inbox_msgs = len(self.komrade.messages()) #len(self.komrade.get_inbox_crypt(prefix='/inbox/').values)
-            num_feed_msgs = len(self.komrade.posts()) #len(self.komrade.get_inbox_crypt(prefix='/feed/').values)
-
             HELPSTR=f"""
 /refresh         -->     get new data
 
-/feed            -->     scroll feed   ({num_feed_msgs})
+/feed            -->     scroll feed    {self.post_status_str}
 /post            -->     post to all
 
-/dms             -->     see your DMs  ({num_inbox_msgs})
+/dms             -->     see your DMs   {self.msg_status_str}
 /dm [name]       -->     send a DM
 /meet [name]     -->     exchange info
 /who [name]      -->     show contacts

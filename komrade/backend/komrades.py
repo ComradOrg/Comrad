@@ -646,15 +646,20 @@ class KomradeX(Caller):
     
     
     
-    def posts(self,**y):
+    def posts(self,
+            unread=None,
+            inbox_prefix='/inbox/'):
         inbox_prefix='/feed/'
-        inbox_db=self.get_inbox_crypt(prefix=inbox_prefix)
-        read_db=self.get_inbox_crypt(prefix=inbox_prefix+'read/')
-        unread_db=self.get_inbox_crypt(prefix=inbox_prefix+'unread/')
-        self.log('post index<-',inbox_db)
+        inbox=self.get_inbox_crypt(prefix=inbox_prefix).values
+        read=self.get_inbox_crypt(prefix=inbox_prefix+'read/').values
+        self.log('post index<-',inbox)
+        self.log('post index read<-',read)
+
+        if unread:
+            inbox = [x for x in inbox if not x in set(read)]
 
         posts=[]
-        for post_id in inbox_db.values:
+        for post_id in inbox:
             self.log('???',post_id,inbox_prefix)
             res_post = self.read_post(post_id)
             self.log('got post:',res_post)
