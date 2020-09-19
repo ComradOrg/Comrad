@@ -15,6 +15,7 @@ class KomradeX(Caller):
 
     def __init__(self, name=None, pubkey=None, callbacks={}):
         super().__init__(name=name, callbacks=callbacks)
+        self.log(f'Starting up with callbacks: {self._callbacks}')
         self.boot(create=False)
         # special?
         if self.name==WORLD_NAME:

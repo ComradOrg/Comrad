@@ -3,6 +3,7 @@ import os,sys; sys.path.append(os.path.abspath(os.path.join(os.path.abspath(os.p
 from komrade import *
 from komrade.backend import *
 from komrade.backend.phonelines import *
+from komrade.backend.operators import CALLBACKS
 import requests
 
 # def TheTelephone(*x,**y):
@@ -14,12 +15,13 @@ class TheTelephone(Operator):
     API client class for Caller to interact with The Operator.
     """
     def __init__(self, caller=None, callbacks={}):
-        super().__init__(name=TELEPHONE_NAME)
+        super().__init__(name=TELEPHONE_NAME,callbacks=callbacks)
         self.caller=caller
         from komrade.backend.phonelines import check_phonelines
         keychain = check_phonelines()[TELEPHONE_NAME]
         self._keychain ={**self.load_keychain_from_bytes(keychain)}
-        self._callbacks=callbacks
+
+        self.log(f'Starting up with callbacks: {self._callbacks}')
 
 
     def send_and_receive(self,msg_d,**y):
@@ -91,15 +93,15 @@ class TheTelephone(Operator):
         return requests.get(url,timeout=600)
 
     def tor_request(self,url):
-        return tor_request_in_python(url)
+        return self.tor_request_in_python(url)
         # return tor_request_in_proxy(url)
 
     async def tor_request_async(self,url):
-        return await tor_request_in_python_async(url)
+        return await self.tor_request_in_python_async(url)
         
 
     def tor_request_in_proxy(self,url):
-        with get_tor_proxy_session() as s:
+        with self.get_tor_proxy_session() as s:
             return s.get(url,timeout=60)
 
     async def tor_request_in_python_async(self,url):
@@ -122,7 +124,7 @@ class TheTelephone(Operator):
             callbacks=self._callbacks
         )
         with tor.get_guard() as guard:
-            adapter = TorHttpAdapter(guard, 3, retries=RETRIES)
+            adapter = TorHttpAdapter(guard, 3, retries=RETRIES, callbacks=self._callbacks)
 
             with requests.Session() as s:
                 s.headers.update({'User-Agent': 'Mozilla/5.0'})

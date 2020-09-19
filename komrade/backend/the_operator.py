@@ -26,7 +26,7 @@ class TheOperator(Operator):
         return TELEPHONE
     
 
-    def __init__(self, name = OPERATOR_NAME, passphrase=None):
+    def __init__(self, name = OPERATOR_NAME, passphrase=None, callbacks={}):
         """
         Boot up the operator. Requires knowing or setting a password of memory.
         """
@@ -34,7 +34,8 @@ class TheOperator(Operator):
         super().__init__(
             name,
             path_crypt_keys=PATH_CRYPT_OP_KEYS,
-            path_crypt_data=PATH_CRYPT_OP_DATA
+            path_crypt_data=PATH_CRYPT_OP_DATA,
+            callbacks=callbacks
         )
         from komrade.backend.phonelines import check_phonelines
         keychain = check_phonelines()[OPERATOR_NAME]

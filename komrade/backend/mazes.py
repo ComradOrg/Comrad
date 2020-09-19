@@ -4,74 +4,74 @@ from komrade import *
 
 log=print
 
-def komrade_request(url,allow_clearnet = ALLOW_CLEARNET):
-    if '.onion' in url or not allow_clearnet:
-        return tor_request(url)
-    return requests.get(url,timeout=600)
+# def komrade_request(url,allow_clearnet = ALLOW_CLEARNET):
+#     if '.onion' in url or not allow_clearnet:
+#         return tor_request(url)
+#     return requests.get(url,timeout=600)
 
-def tor_request(url):
-    return tor_request_in_python(url)
-    # return tor_request_in_proxy(url)
+# def tor_request(url):
+#     return tor_request_in_python(url)
+#     # return tor_request_in_proxy(url)
 
-async def tor_request_async(url):
-    return await tor_request_in_python_async(url)
+# async def tor_request_async(url):
+#     return await tor_request_in_python_async(url)
     
 
-def tor_request_in_proxy(url):
-    with get_tor_proxy_session() as s:
-        return s.get(url,timeout=60)
+# def tor_request_in_proxy(url):
+#     with get_tor_proxy_session() as s:
+#         return s.get(url,timeout=60)
 
-async def tor_request_in_python_async(url):
-    import requests_async as requests
-    tor = TorClient()
-    with tor.get_guard() as guard:
-        adapter = TorHttpAdapter(guard, 3, retries=RETRIES)
+# async def tor_request_in_python_async(url):
+#     import requests_async as requests
+#     tor = TorClient()
+#     with tor.get_guard() as guard:
+#         adapter = TorHttpAdapter(guard, 3, retries=RETRIES)
 
-        async with requests.Session() as s:
-            # await s
-            s.headers.update({'User-Agent': 'Mozilla/5.0'})
-            s.mount('http://', adapter)
-            s.mount('https://', adapter)
-            return await s.get(url, timeout=60)
+#         async with requests.Session() as s:
+#             # await s
+#             s.headers.update({'User-Agent': 'Mozilla/5.0'})
+#             s.mount('http://', adapter)
+#             s.mount('https://', adapter)
+#             return await s.get(url, timeout=60)
 
 
-def tor_request_in_python(url):
-    tor = TorClient()
-    with tor.get_guard() as guard:
-        adapter = TorHttpAdapter(guard, 3, retries=RETRIES)
+# def tor_request_in_python(url):
+#     tor = TorClient()
+#     with tor.get_guard() as guard:
+#         adapter = TorHttpAdapter(guard, 3, retries=RETRIES)
 
-        with requests.Session() as s:
-            s.headers.update({'User-Agent': 'Mozilla/5.0'})
-            s.mount('http://', adapter)
-            s.mount('https://', adapter)
+#         with requests.Session() as s:
+#             s.headers.update({'User-Agent': 'Mozilla/5.0'})
+#             s.mount('http://', adapter)
+#             s.mount('https://', adapter)
 
-            # r = s.get(url, timeout=30)
-            # r = s.post('http://u7spnj3dmwumzoa4.onion/op/',data=b'hello world', timeout=30)
-            #_dat = 'Z29iYmxlZHlnb29rZ29iYmxlZHlnb29rZ29iYmxlZHlnb29rZ29iYmxlZHlnb29rZ29iYmxlZHlnb29rZ29iYmxlZHlnb29rZ29iYmxlZHlnb29rZ29iYmxlZHlnb29rZ29iYmxlZHlnb29r'
-            r = s.get(url, timeout=60)
+#             # r = s.get(url, timeout=30)
+#             # r = s.post('http://u7spnj3dmwumzoa4.onion/op/',data=b'hello world', timeout=30)
+#             #_dat = 'Z29iYmxlZHlnb29rZ29iYmxlZHlnb29rZ29iYmxlZHlnb29rZ29iYmxlZHlnb29rZ29iYmxlZHlnb29rZ29iYmxlZHlnb29rZ29iYmxlZHlnb29rZ29iYmxlZHlnb29rZ29iYmxlZHlnb29r'
+#             r = s.get(url, timeout=60)
             
-            return r
-            #return r
+#             return r
+#             #return r
 
-            # #r = s.get('http://u7spnj3dmwumzoa4.onion',timeout=30)    
-            # print (r, r.text[:1000])
-            # return s
+#             # #r = s.get('http://u7spnj3dmwumzoa4.onion',timeout=30)    
+#             # print (r, r.text[:1000])
+#             # return s
 
-def get_tor_proxy_session():
-    session = requests.session()
-    # Tor uses the 9050 port as the default socks port
-    session.proxies = {'http':  'socks5://127.0.0.1:9050',
-                    'https': 'socks5://127.0.0.1:9050'}
-    return session    
+# def get_tor_proxy_session():
+#     session = requests.session()
+#     # Tor uses the 9050 port as the default socks port
+#     session.proxies = {'http':  'socks5://127.0.0.1:9050',
+#                     'https': 'socks5://127.0.0.1:9050'}
+#     return session    
 
-def get_async_tor_proxy_session():
-    import requests_futures
-    from requests_futures.sessions import FuturesSession
-    session = FuturesSession()
-    # Tor uses the 9050 port as the default socks port
-    session.proxies = {'http':  'socks5://127.0.0.1:9050',
-                    'https': 'socks5://127.0.0.1:9050'}
-    return session    
+# def get_async_tor_proxy_session():
+#     import requests_futures
+#     from requests_futures.sessions import FuturesSession
+#     session = FuturesSession()
+#     # Tor uses the 9050 port as the default socks port
+#     session.proxies = {'http':  'socks5://127.0.0.1:9050',
+#                     'https': 'socks5://127.0.0.1:9050'}
+#     return session    
 
 
 

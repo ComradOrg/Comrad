@@ -198,15 +198,18 @@ class CLI(Logger):
     @property
     def callbacks(self):
         return {
-            'init_CircuitNode':self.callback_on_hop
+            'torpy_extend_circuit':self.callback_on_hop
         }
     
     def callback_on_hop(self,data):
         rtr=data.get('router')
+        msg=f'''Hopped to new router: {rtr.get('nickname')} ({rtr.get('ip')}) '''
         self.stat(
-            f'''Hopped to new router: {rtr.get('nickname')} ({rtr.get('ip')}) ''',
+            msg,
             komrade_name='Tor'
         )
+        input('pausing on callback: '+msg)
+
     
     def register(self,name=None):
         if not name: name=input('name: ')
@@ -238,7 +241,7 @@ class CLI(Logger):
         # self.print(self,name,self.name,self.komrade,self.loggedin)
         if not name: name=input('name: ')
         if not name: return
-        self.komrade=Komrade(name)
+        self.komrade=Komrade(name,callbacks=self.callbacks)
         return self.refresh()
         # res = self.komrade.login()
         # return self.do_login(res)
@@ -249,7 +252,7 @@ class CLI(Logger):
         
         if res and type(res)==dict and 'success' in res and res['success']:
             self.name=res['name']
-            self.komrade=Komrade(res['name'])
+            self.komrade=Komrade(res['name'],callbacks=self.callbacks)
             self.loggedin=True
         else:
             self.name=None

@@ -6,6 +6,7 @@ from komrade.backend import *
 
 # BEGIN PHONE BOOK (in memory singleton mapping)
 PHONEBOOK = {}
+CALLBACKS = {}
 
 # Factory constructor
 def Komrade(name=None,pubkey=None,*x,**y):
@@ -13,7 +14,7 @@ def Komrade(name=None,pubkey=None,*x,**y):
     if name and not pubkey and type(name)==bytes:
         pubkey=b64enc(name)
         name=None  
-    
+
 
     from komrade.backend.the_operator import TheOperator
     from komrade.backend.the_telephone import TheTelephone
@@ -27,16 +28,25 @@ def Komrade(name=None,pubkey=None,*x,**y):
     pk64 = None if not pubkey else b64enc(pubkey)
     if pk64 in PHONEBOOK: return PHONEBOOK[pk64]
 
+    global CALLBACKS
+    callbacks = y.get('callbacks',{})
+    callbacks = callbacks if callbacks else CALLBACKS
+    CALLBACKS = callbacks
+    
     # print(f'finding Komrade {name} / {pubkey} for the first time!')
     # operator?
     if name==OPERATOR_NAME:
-        kommie = TheOperator() #(*x,**y)
+        kommie = TheOperator(callbacks=callbacks) #(*x,**y)
     if name==TELEPHONE_NAME:
-        kommie = TheTelephone() #(*x,**y)
+        kommie = TheTelephone(callbacks=callbacks) #(*x,**y)
     else:
         # print('booting new kommie')
         kommie = KomradeX(name,*x,**y)
     
+    
+    
+
+
     # print('found!',name,PHONEBOOK[name],PHONEBOOK[name].keychain())
     PHONEBOOK[name] = kommie
     if kommie.pubkey:
@@ -107,7 +117,7 @@ class Operator(Keymaker):
         global TELEPHONE,TELEPHONE_KEYCHAIN
         if TELEPHONE: return TELEPHONE
 
-        self._phone=TELEPHONE=TheTelephone()
+        self._phone=TELEPHONE=TheTelephone(callbacks=self._callbacks)
 
         return TELEPHONE
 
@@ -121,7 +131,7 @@ class Operator(Keymaker):
         global OPERATOR,OPERATOR_KEYCHAIN
         if OPERATOR: return OPERATOR
         
-        self._op=OPERATOR=TheOperator()
+        self._op=OPERATOR=TheOperator(callbacks=self._callbacks)
         
         return OPERATOR
 
