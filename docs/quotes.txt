@@ -1,0 +1,14 @@
+This is not the place to go into the development of machinery in detail; rather only in its general aspect; in so far as the means of labour, as a physical thing, loses its direct form, becomes fixed capital, and confronts the worker physically as capital. In machinery, knowledge appears as alien, external to him; and living labour [as] subsumed under self-activating objectified labour. The worker appears as superfluous to the extent that his action is not determined by [capital's] requirements.
+
+...
+
+Nature builds no machines, no locomotives, railways, electric telegraphs, self-acting mules etc. These are products of human industry; natural material transformed into organs of the human will over nature, or of human participation in nature. They are organs of the human brain, created by the human hand; the power of knowledge, objectified. The development of fixed capital indicates to what degree general social knowledge has become a direct force of production, and to what degree, hence, the conditions of the process of social life itself have come under the control of the general intellect and been transformed in accordance with it. To what degree the powers of social production have been produced, not only in the form of knowledge, but also as immediate organs of social practice, of the real life process.
+
+
+
+Nature builds no machines, ... These are products of human industry; ... organs of the human brain, created by the human hand; the power of knowledge, objectified. The development of [machinery] indicates to what degree ... knowledge has become a direct force of production, and to what degree, hence, the conditions of the process of social life itself have come under the control of the general intellect and been transformed in accordance with it.
+ 
+-Marx, Fragment on machines
+
+When you think about it, there's no way to input things into a computer. It's all... the holes only go out, right? Like you can plug a keyboard or a mouse in but that's a trick because the computer thinks the inputs are outputs. That's a programmer trick, basically magic. The key to the future is to make holes that go in too.
+-Zuck, azquotes.com

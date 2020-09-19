@@ -88,9 +88,9 @@ As of the 23rd of August.
 
 <img src="komrade/app/assets/komrade-terminal-preview--2020-09-16--msg.gif" alt="GIF animation of messaging" />
 
-### Post 
+### Posting
 
-...
+<img src="komrade/app/assets/komrade-terminal-preview--2020-09-19--posting.gif" alt="GIF animation of posting" />
 
 
 ## Usage

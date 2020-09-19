@@ -125,8 +125,8 @@ class CLI(Logger):
 
     def status_str(self,unr,tot):
         read=tot-unr
-        # return f'{unr}/{tot}' if unr else str(tot)
-        return f'({unr}*)' if unr else f'({unr})'
+        return f'({unr}*/{tot})' if unr else f'({tot})'
+        # return f'({unr}*)' if unr else f'({unr})'
         # return f'{unr}* of {tot}' if tot else str(tot)
 
     @property
