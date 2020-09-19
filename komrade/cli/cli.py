@@ -370,6 +370,8 @@ class CLI(Logger):
             # self.print('@todo: replying...')
             return self.dm(msg.from_name)
         else:
+            # seen this msg!
+            self.komrade.seen_msg(msg)
             pass
 
 

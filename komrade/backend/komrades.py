@@ -661,6 +661,7 @@ class KomradeX(Caller):
             if res_post.get('success') and res_post.get('post'):
                 post=res_post.get('post')
                 post.post_id=post_id
+                post.inbox_prefix=inbox_prefix
                 posts.append(post)
         return posts
 
@@ -750,8 +751,23 @@ class KomradeX(Caller):
             if res_msg.get('success') and res_msg.get('msg'):
                 msgx=res_msg.get('msg')
                 msgx.post_id=post_id
+                msgx.inbox_prefix=inbox_prefix
                 msgs.append(msgx)
         return msgs
+
+    def seen_msg(self,msg_or_post):
+        # read_msgs = self.get_inbox_crypt(
+        #     uri=self.uri,
+        #     prefix=msg_or_post.inbox_prefix + 'read/'
+        # )
+        inbox_prefix=msg_or_post.inbox_prefix
+        self.log('inbox_prefix',inbox_prefix)
+        read_db=self.get_inbox_crypt(prefix=inbox_prefix+'read/')
+        self.log('read_db',read_db)
+        read_db.append(msg_or_post.post_id)
+        self.log('read_db',read_db)
+        self.log('read_db.values',read_db.values)
+
 
     def read_msg(self,post_id=None,post_encr=None):
         # get post
