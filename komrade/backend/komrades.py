@@ -627,15 +627,19 @@ class KomradeX(Caller):
         
         return res
     
+    @property
     def num_unread_posts(self):
         return len(self.posts(unread=True))
 
+    @property
     def num_posts(self):
         return len(self.posts())
 
+    @property
     def num_unread_msgs(self):
         return len(self.messages(unread=True))
 
+    @property
     def num_msgs(self):
         return len(self.messages())
 
