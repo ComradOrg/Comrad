@@ -4,8 +4,8 @@ KOMRADE_ONION = 'u7spnj3dmwumzoa4.onion'
 KOMRADE_ONION2 = 'rwg4zcnpwshv4laq.onion' #'128.232.229.63' #'komrade.app'
 
 
-# OPERATOR_API_URL = f'http://{KOMRADE_ONION}/op/'
-OPERATOR_API_URL = f'http://{KOMRADE_URL}/op/'
+OPERATOR_API_URL = f'http://{KOMRADE_ONION}/op/'
+# OPERATOR_API_URL = f'http://{KOMRADE_URL}/op/'
 
 
 # paths
@@ -167,6 +167,7 @@ SAVE_LOGS = 1
 CLI_TITLE = 'KOMRADE'
 CLI_FONT = 'clr5x6'#'colossal'
 CLI_WIDTH = STATUS_LINE_WIDTH = 60
+CLI_HEIGHT = 30
 
 
 MAX_POST_LEN = 1000

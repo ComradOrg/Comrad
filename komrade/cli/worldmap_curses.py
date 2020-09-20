@@ -1,6 +1,6 @@
 # Code from 
 # https://github.com/snorfalorpagus/ascii-world-map
-
+import os,sys; sys.path.append(os.path.abspath(os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__),'..')),'..')))
 
 import json
 from functools import partial
@@ -10,101 +10,23 @@ from shapely import ops
 import pyproj,math,os
 import rtree
 import curses,random,time
-
+from komrade.utils import Logger
+import pandas as pd
+import numpy as np
 
 import warnings
 warnings.filterwarnings(action='ignore')
 
+PLACE_MARKER='@'
+BASEMAP_MARKER='_'
+PATH_MARKER='+'
+
+# # read the data into a list of shapely geometries
+# with open(os.path.join(os.path.dirname(__file__),"data/world-countries2.json")) as f:
+#     data = json.load(f)
 
 
-# read the data into a list of shapely geometries
-with open(os.path.join(os.path.dirname(__file__),"data/world-countries2.json")) as f:
-    data = json.load(f)
-
-
-
-def print_map(countries=[]):
-
-    geoms_all = [
-        shape(feature["geometry"])
-        for feature in data["features"]
-    ]
-
-    geoms = [
-        shape(feature["geometry"])
-        for feature in data["features"]
-        if not countries or feature.get('properties',{}).get('name',None) in countries
-    ]
-
-    # transform the geometries into web mercator
-    wgs84 = pyproj.Proj(init="EPSG:4326")
-    webmerc = pyproj.Proj(proj="webmerc")
-    t = partial(pyproj.transform, wgs84, webmerc)
-    geoms = [ops.transform(t, geom) for geom in geoms]
-    geoms_all = [ops.transform(t, geom) for geom in geoms_all]
-
-    # create a spatial index of the geometries
-    def gen(geoms):
-        for n, geom in enumerate(geoms):
-            yield n, geom.bounds, geom
-    index = rtree.index.Index(gen(geoms))
-    index_all = rtree.index.Index(gen(geoms_all))
-
-
-
-    # get the window size
-    size = get_terminal_size(fallback=(80, 24))
-    columns = size.columns
-    lines = size.lines - 1 - 3  # allow for prompt at bottom
-
-    # calculate the projected extent and pixel size
-    # xmin, ymin = t(-180, -85)
-    # xmax, ymax = t(180, 85)
-    xmin, ymin = t(-180, -62)
-    xmax, ymax = t(180, 79)
-    pixel_width = (xmax - xmin) / columns
-    pixel_height = (ymax - ymin) / lines
-
-    land = "*"
-    water = " "
-    highlight='█'
-
-
-    # stringl=[]
-    # os.system('cls' if os.name == 'nt' else 'clear')
-    for line in range(lines):
-        for col in range(columns):
-            # get the projected x, y of the pixel centroid
-            x = xmin + (col + 0.5) * pixel_width
-            y = ymax - (line + 0.5) * pixel_height
-            # check for a collision
-            objects = [n.object for n in index.intersection((x, y, x, y), objects=True)]
-            
-            value = False
-            done=False
-            for geom in objects:
-                value = geom.intersects(Point(x, y))
-                if value:
-                    print(highlight,end="")
-                    # stringl+=[highlight]
-                    done=True
-                    break
-            
-            if not done:
-                objects = [n.object for n in index_all.intersection((x, y, x, y), objects=True)]
-                for geom in objects:
-                    value = geom.intersects(Point(x, y))
-                    if value:
-                        break
-                print(land if value else water, end="")
-                # stringl+=[land if value else water]
-        print("")
-        # stringl+=['\n']
-
-        # string = ''.join(stringl)
-        # print(string)
-
-places = {
+default_places = {
     'Cambridge':(52.205338,0.121817),
     'Sydney':(-33.868820,151.209290),
     'New York':(40.712776,-74.005974),
@@ -118,141 +40,278 @@ places = {
 
 }
 
-places_utm = {
-    'Honolulu':(618431.58,2357505.97),
-    'Tokyo':(394946.08,3946063.75),
-    'Ushuaia':(544808.23,3927028.51),
-    'Reykjavik':(459698.38,7111571.73)
-}
-
-
-def print_map_simple(places):
-    size = get_terminal_size(fallback=(80, 24))
-    columns = size.columns
-    lines = size.lines - 1 - 3  # allow for prompt at bottom
-
-    # calculate the projected extent and pixel size
-    # xmin, ymin = (-180, -85)
-    # xmax, ymax = (180, 85)
-    # pixel_width = (xmax - xmin) / columns
-    # pixel_height = (ymax - ymin) / lines
-
-    long_min,long_max = -180,180
-    # lat_min,lat_max = -85,85
-    lat_min,lat_max = -75,80
-
-
-    # utm_easting_min = 166640
-    # utm_easting_max = 833360
-    # utm_northing_min = 1110400
-    # utm_northing_max = 9334080
-    utm_easting_min = places_utm['Honolulu'][0]
-    utm_easting_max = places_utm['Tokyo'][0]
-    utm_northing_min = places_utm['Ushuaia'][1]
-    utm_northing_max = places_utm['Reykjavik'][1]
-
-    # import pyproj as proj
-
-    # setup your projections
-    # crs_wgs = proj.Proj(init='epsg:4326') # assuming you're using WGS84 geographic
-    # crs_bng = proj.Proj(init='epsg:27700') # use a locally appropriate projected CRS
-
-
-    import utm
-
-    normed = {}
-    for place,(lat,long) in places.items():
-        # wgs84 = pyproj.Proj(init="EPSG:4326")
-        # webmerc = pyproj.Proj(proj="webmerc")
-        # x, y = proj.transform(wgs84, webmerc, long, lat)
-        
-
-
-        longx = (long - long_min) / (long_max - long_min)
-        laty = (lat - lat_min) / (lat_max - lat_min)
-
-        utm_easting,utm_northing,utm_zone_num,utm_zone_letter = utm.from_latlon(lat,long)
-        
-        utmx = (utm_easting - utm_easting_min) / (utm_easting_max - utm_easting_min)
-        utmy = (utm_northing - utm_northing_min) / (utm_northing_max - utm_northing_min)
-
-
-        # norm = ( int(longx*columns), int(laty*lines) )
-        norm = ( int(utmx*columns), int(utmy*lines) )
-        # print(place,(utm_easting,utm_northing),(utmx,utmy),norm)
-
-        norm = (norm[0], lines - norm[1])
-
-        normed[norm] = place
-
-    p_i=None
-    place_now=None
-    for line in range(lines):
-        for col in range(columns):
-            if (col,line) in normed:
-                print('*',end="")
-                place=normed[(col,line)]
-                place_now=place
-                p_i=0
-            elif p_i is not None:
-                try:
-                    print(place_now[p_i],end="")
-                    p_i+=1
-                except IndexError:
-                    place_now=None
-                    p_i=None
-            else:
-                print(" ",end="")
-    print()
-
-
 
 # print_map(['Brazil','Netherlands','Thailand'])
 # print_map_simple(places)
 
-def print_map(places):
-    curses.wrapper(run_print_map)
+class Map(Logger):
 
-def run_print_map(stdscr):
-    curses.use_default_colors()
-    stdscr.addstr(0,0,'helloooooo')
-    stdscr.refresh()
+    def __init__(self,stdscr):
+        self.stdscr=stdscr
+        self.base_df=None
+        self.last_coords=None
+        self.stdscr.clear()
 
-    rows, cols = stdscr.getmaxyx()
-    print(rows,cols)
-    rows = rows-10
-    cols = cols - 10
-    
-    df = do_print_map(places,rows,cols)
-    for df_i,df_row in df.iterrows():
-        #try:
-        stdscr.addstr(df_row.y_win,df_row.x_win,'x '+df_row.place)
-        #except curses.error:
-        #    pass
-        stdscr.getch()
+    @property
+    def width(self):
+        return get_terminal_size().columns - 1
+        # from komrade.constants import CLI_WIDTH
+        # return CLI_WIDTH
 
+    @property
+    def height(self):
+        return get_terminal_size().lines - 1
+        # from komrade.constants import CLI_HEIGHT
+        # return CLI_HEIGHT
 
-def do_print_map(places,rows,cols):
-    normed = []
-    for place,(lat,long) in places.items():
+    def precompute_basemap(self,countries=[]):
+        data_fn=os.path.join(
+            os.path.dirname(__file__),
+            "data/world-countries.json"
+        )
+        with open(data_fn) as f:
+            data = json.load(f)
+
+        geoms = [
+            shape(feature["geometry"])
+            for feature in data["features"]
+        ]
+        
+        # transform the geometries into web mercator
         wgs84 = pyproj.Proj(init="EPSG:4326")
         webmerc = pyproj.Proj(proj="webmerc")
-        x, y = pyproj.transform(wgs84, webmerc, long, lat)
-        norm = {'place':place,'lat':lat,'long':long,'x':x,'y':y}
-        normed.append(norm)
+        t = partial(pyproj.transform, wgs84, webmerc)
+        geoms = [ops.transform(t, geom) for geom in geoms]
 
-    import pandas as pd
-    df=pd.DataFrame(normed)
-    def do_norm(x,xcol): return (x - xcol.min()) / (xcol.max() - xcol.min())
-    df['x_norm'] = [do_norm(x,df['x']) for x in df['x']]
-    df['y_norm'] = [do_norm(y,df['y']) for y in df['y']]
-    df['x_win'] = [int(x*cols) for x in df['x_norm']]
-    df['y_win'] = [rows - int(y*rows) for y in df['y_norm']]
+        # create a spatial index of the geometries
+        def gen(geoms):
+            for n, geom in enumerate(geoms):
+                yield n, geom.bounds, geom
+        index = rtree.index.Index(gen(geoms))
 
-    return df
+        # get the window size
+        columns = self.width
+        lines = self.height  # allow for prompt at bottom
+
+        # calculate the projected extent and pixel size
+        # xmin, ymin = t(-180, -85)
+        # xmax, ymax = t(180, 85)
+        xmin, ymin = t(-170, -55)
+        xmax, ymax = t(165, 75)
+        pixel_width = (xmax - xmin) / columns
+        pixel_height = (ymax - ymin) / lines
+
+        land = "*"
+        water = " "
+
+
+        # stringl=[]
+        # os.system('cls' if os.name == 'nt' else 'clear')
+        ld=[]
+        for line in range(lines):
+            for col in range(columns):
+                # get the projected x, y of the pixel centroid
+                x = xmin + (col + 0.5) * pixel_width
+                y = ymax - (line + 0.5) * pixel_height
+                # check for a collision
+
+                # self.log((col,line), (x,y),'???')
+
+                objects = [n.object for n in index.intersection((x, y, x, y), objects=True)]
+                value=None
+                for geom in objects:
+                    value = geom.intersects(Point(x, y))
+                    if value:
+                        d={'x':x,'y':y} #,'col':col,'row':line}
+                        ld+=[d]
+                        break
+                self.stdscr.addstr(line,col,land if value else water)
+                self.stdscr.refresh()
+                # print(land if value else water, end="")
+            # print("")
+            # stringl+=['\n']
+            df=pd.DataFrame(ld)
+            # self.log(df,'!!')
+            df['x_norm']=self.do_norm(df['x'])
+            df['y_norm']=self.do_norm(df['y'])
+            df.to_csv(os.path.join(os.path.dirname(data_fn),'basemap.csv'),index=False)
+
+            # string = ''.join(stringl)
+            # print(string)
+            
+    def do_norm(self,xcol):
+        # self.log('<--',xcol)
+        minn=xcol.min()
+        maxx=xcol.max()
+        xcol=pd.Series([x + minn for x in xcol])
+        minn=xcol.min()
+        maxx=xcol.max()
+        res = [(x - minn) / (maxx - minn) for x in xcol]
+        # self.log('-->',res)
+        return res
+
+    def add_base_map(self):
+        # x,y coords
+        self.base_df=df=pd.read_csv(os.path.join(os.path.dirname(__file__),'data/basemap.csv'))
+        # self.log(df)
+
+        # convert to screen,coords
+        coords = {
+            (
+                int(x*self.width),
+                int(y*self.height)
+            )
+            for x,y in zip(df.x_norm,df.y_norm)
+        }
+        # self.log(coords)
+        # stop
+
+        for row in range(self.width):
+            for line in range(self.height):
+                if (row,line) in coords:
+                    self.stdscr.addstr(self.height - line,row,BASEMAP_MARKER)
+                    self.stdscr.refresh()
+        # self.stdscr.getch()
+
+    def run_print_map(self,places=[],labels=False,msg=[],offset_y=0):
+        if msg:
+            for i,x in enumerate(msg):
+                x='--> '+x if i else x
+                self.stdscr.addstr(i,0,x)
+                self.stdscr.refresh()
+            self.msg=msg
+        if not places: return
+
+        df = self.do_print_map(places) 
+        self.log(df,'!?!?!?')
+        coords = {
+            (
+                int(x*self.width),
+                int(y*self.height)
+            )
+            for x,y in zip(df.x_norm,df.y_norm)
+        }
+        self.log('coords:',coords)
+        
+        for x,y in coords:
+            # lines?
+            self.log('xy:',x,y,self.last_coords)
+            if self.last_coords:
+                lx,ly=self.last_coords
+                went_north = bool(ly-y)
+                went_east = bool(lx-x)
+                
+                self.log(f'{lx} -> {x} (x); {ly} -> {y} (y)')
+                self.log(f'went east? {went_east}; went north? {went_north}')
+
+                path_x = list(range(lx if lx<x else x, (lx if lx>x else x)+1))
+                path_y = list(range(ly if ly<y else y, (ly if ly>y else y)+1))
+
+                if lx>x: path_x.reverse()
+                if ly>y: path_y.reverse()
+
+                self.log('path_x:',path_x)
+                self.log('path_y:',path_y)
+                minlen=min(len(path_x), len(path_y))
+
+                hops_x = slice(path_x,minlen)
+                hops_y = slice(path_y,minlen)
+                lcoord_x=None
+                lcoord_y=None
+                for hop_x,hop_y in zip(hops_x,hops_y):
+                    self.log('hop_x',hop_x)
+                    self.log('hop_y',hop_y)
+                    hopmaxlen=max([len(hop_x),len(hop_y)])
+                    
+                    hopcoords=[]
+                    for hi in range(hopmaxlen):
+                        hx=hop_x[hi] if hi<len(hop_x) else hop_x[-1]
+                        hy=hop_y[hi] if hi<len(hop_y) else hop_y[-1]
+                        hopcoords+=[(hx,hy)]
+                    for xx,yy in hopcoords:
+                        ycoord=self.height - yy - offset_y
+                        xcoord=xx
+                        self.log('!?',xcoord,ycoord,self.stdscr.instr(ycoord, xcoord,1).decode(),PLACE_MARKER)
+                        if self.stdscr.instr(ycoord, xcoord, 1).decode() != PLACE_MARKER:
+                            self.stdscr.addstr(ycoord,xcoord,PATH_MARKER)
+                            self.stdscr.refresh()
+                            time.sleep(0.01)
+                        lcoord_x=xx
+                        lcoord_y=yy
+
+            self.last_coords=(x,y)
+            self.stdscr.addstr(self.height - y - offset_y,x,PLACE_MARKER)
+            self.stdscr.refresh()
+            time.sleep(.1)
+
+
+
+
+
+    def endwin(self):
+        # time.sleep(1)
+        curses.endwin()
+
+
+    def do_print_map(self,places):
+        normed = []
+        import utm
+        for place,(lat,long) in places:# .items():
+            wgs84 = pyproj.Proj(init="EPSG:4326")
+            webmerc = pyproj.Proj(proj="webmerc")
+            x, y = pyproj.transform(wgs84, webmerc, long, lat)
+            # x,y,_,_ = utm.from_latlon(lat,long)
+            norm = {'place':place,'lat':lat,'long':long,'x':x,'y':y}
+            normed.append(norm)
+            self.log('norm:',norm)
+
+        import pandas as pd
+        df=pd.DataFrame(normed)#.dropna()
+        df=df.append(self.base_df).fillna('') # add basemap!
+        df=df[['place','x','y']]
+        self.log(df,'with basemap')
+        df=df[~df.isin([np.nan, np.inf, -np.inf]).any(1)]
+        # self.log('normed',df)
+        
+            
+
+        df['x_norm'] = self.do_norm(df.x)
+        df['y_norm'] = self.do_norm(df.y) 
+        # self.log('NORMED\n',df)
+        self.log('nas dropped',df)
+        return df[df.place!='']
+
+
+def make_map():
+    return curses.wrapper(make_map_curses)
+
+def make_map_curses(stdscr):
+    curses.use_default_colors()
+    map = Map(stdscr)
+    return map
+
+
+def slice(l,num_slices=None,slice_length=None,runts=True,random=False):
+	"""
+	Returns a new list of n evenly-sized segments of the original list
+	"""
+	if random:
+		import random
+		random.shuffle(l)
+	if not num_slices and not slice_length: return l
+	if not slice_length: slice_length=int(len(l)/num_slices)
+	newlist=[l[i:i+slice_length] for i in range(0, len(l), slice_length)]
+	if runts: return newlist
+	return [lx for lx in newlist if len(lx)==slice_length]
+
 
 
 if __name__ == '__main__':
-    
-    # do_print_map(places,60,30)
-    print_map(places)
+    try:
+        map=make_map()
+        map.precompute_basemap()
+        # map.add_base_map()
+    except KeyboardInterrupt:
+        map.endwin()
+
+

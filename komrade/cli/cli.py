@@ -18,8 +18,10 @@ logging.getLogger('pyproj').propagate=False
 logging.getLogger('rtree').propagate=False
 
 torpy_logger.propagate=False
+from shutil import get_terminal_size
 
-
+CLI_WIDTH = get_terminal_size().columns
+CLI_HEIGHT = get_terminal_size().lines-1
 
 class CLI(Logger):
     ROUTES = {
@@ -68,8 +70,8 @@ class CLI(Logger):
 
     def run(self,inp='',name=''):
         # if name: self.name=name
-        # clear_screen()
-        # self.boot()
+        clear_screen()
+        self.boot()
         if not inp:
             self.help()
 
@@ -133,15 +135,14 @@ class CLI(Logger):
         # # x='\n'.join(tw.wrap(x,CLI_WIDTH))
         # # print(x)
 
-    def boot(self,indent=None):
-        if indent is None:
-            indent=int(round(CLI_WIDTH*.18333333))
+    def boot(self,indent=None,scan=True):
         logo=art.text2art(CLI_TITLE,font=CLI_FONT).replace('\r\n','\n')
-        border = '-' * CLI_WIDTH # (len(logo.strip().split('\n')[0]))
-        # logo=make_key_discreet_str(logo,chance_redacted=0.1) #.decode()
-        logo=tw.indent(logo, ' '*indent)
-        border=tw.indent(border, ' '*2)
-        print('\n'+logo)#),max_pause=0.005)
+        newlogo=[]
+        for logo_ln in logo.split('\n'):
+            logo_ln = logo_ln.center(CLI_WIDTH,' ')
+            newlogo.append(logo_ln)
+        newlogo_s='\n'.join(newlogo)
+        scan_print(newlogo_s,speed=5) if scan else self.print(newlogo_s)
 
 
     def status_str(self,unr,tot):
@@ -169,7 +170,7 @@ class CLI(Logger):
 
     def help(self,*x,**y):
         clear_screen()
-        self.boot()
+        self.boot(scan=False)
 
         
 
@@ -181,10 +182,10 @@ class CLI(Logger):
             HELPSTR=f"""
 /refresh         -->     get new data
 
-/feed            -->     scroll feed    {self.post_status_str}
+/feed            -->     scroll feed {self.post_status_str}
 /post            -->     post to all
 
-/dms             -->     see your DMs   {self.msg_status_str}
+/dms             -->     see DMs     {self.msg_status_str}
 /dm [name]       -->     send a DM
 /meet [name]     -->     exchange info
 /who [name]      -->     show contacts
@@ -195,8 +196,14 @@ class CLI(Logger):
 /exit            -->     exit app
 """
         helpstr = tw.indent(HELPSTR.strip()+'\n\n',' '*11)
-        self.print(helpstr)
+        # self.print(helpstr)
         # self.print(border+helpstr+'\n'+self.border)
+        lns=[ln.strip() for ln in helpstr.split('\n')]
+        maxlen=max([len(ln) for ln in lns])
+        for ln in lns:
+            for n in range(len(ln),maxlen): ln +=' '
+            print(ln.center(CLI_WIDTH))
+
 
     def exit(self,dat=''):
         exit('Goodbye.')
@@ -224,29 +231,41 @@ class CLI(Logger):
         }
     
     def callback_on_hop(self,rtr):
-        from worldmap import print_map,print_map_simple
-        # clear_screen()
+        def run_map():
+            from worldmap_curses import make_map #,print_map_simple
+            # clear_screen()
+            if not hasattr(self,'_mapscr') or not self._mapscr:
+                self._mapscr = mapscr = make_map()
+                mapscr.add_base_map()
+                # stop
+            else:
+                mapscr = self._mapscr
+            # return
 
-        deets = self.ipinfo_handler.getDetails(rtr.ip)
-        self.hops.insert(0,(rtr,deets))
-        country = deets.country_name
-        places = dict([
-            (_deets.city,tuple(float(_) for _ in _deets.loc.split(',')))
-            for (_rtr,_deets) in self.hops
-        ])
-        clear_screen()
-        # print_map_simple(places)
-        print_map(places)
-        # print_map([_deets.country_name for _rtr,_deets in self.hops])
+            # mapscr.stdscr.getch()
+
+            deets = self.ipinfo_handler.getDetails(rtr.ip)
+            self.hops.append((rtr,deets))
+            places = [
+                (_deets.city,tuple(float(_) for _ in _deets.loc.split(',')))
+                for (_rtr,_deets) in [(rtr,deets)]
+            ]
 
 
-        msg=f'''Hopped to new router: {rtr.nickname} ({rtr.ip}) in {deets.city}, {deets.country_name} ({deets.loc})'''
-        self.stat(
-            msg,
-            komrade_name='Tor'
-        )
-        print()
-        # input('pausing on callback: '+msg)
+            msg = ['@Tor: Hiding your IP by hopping it around the globe:'] + [f'{_deets.city}, {_deets.country_name} ({_rtr.nickname})' for _rtr,_deets in self.hops
+            ]
+            mapscr.run_print_map(places,msg=msg)
+            
+            
+            # self.stat(
+            #     msg,
+            #     komrade_name='Tor'
+            # )
+            # print()
+            # input('pausing on callback: '+msg)
+
+        run_map()
+        # self._mapscr=None
 
     
     def register(self,name=None):
@@ -297,6 +316,7 @@ class CLI(Logger):
             self.loggedin=False
             self.komrade=None
         if res and 'status' in res:
+            self.boot(scan=False)
             self.help()
             self.stat(res.get('status','?'),komrade_name='Operator')
         
@@ -373,7 +393,17 @@ class CLI(Logger):
 
         ## get updates
         # this does login, msgs, and posts in one req
+        self.stat('@Telephone: Patching you through to the @Operator. One moment please...')
+        time.sleep(0.25)
         res = self.komrade.get_updates()
+        if hasattr(self,'_mapscr') and self._mapscr:
+            #stop
+            msg=self._mapscr.msg + ['???, ??? (@Operator)']
+            self._mapscr.run_print_map(msg=msg)
+            time.sleep(1)
+            self._mapscr.endwin()
+            self._mapscr=None
+            self.hops=[]
         self.log('<-- get_updates',res)
         
         # check logged in

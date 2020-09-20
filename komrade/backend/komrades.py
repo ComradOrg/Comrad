@@ -575,12 +575,11 @@ class KomradeX(Caller):
     ## Getting updates
     def get_updates(self,include_posts=True):
         # get any parameters we need
-        post_ids_read = list(self.inbox_read_db.values)
+        # post_ids_read = list(self.inbox_read_db.values)
 
         # compose msg
         msg_to_op = {
             **self.login_details,
-            **{'post_ids_read':post_ids_read}
         }
         self.log('msg to op ->',msg_to_op)
 

@@ -200,6 +200,6 @@ def print_map_simple(places):
     print()
 
 
-
-# print_map(['Brazil','Netherlands','Thailand'])
-# print_map_simple(places)
+if __name__ == '__main__':
+    print_map() #['Brazil','Netherlands','Thailand'])
+    # print_map_simple(places)
