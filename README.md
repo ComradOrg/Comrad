@@ -76,6 +76,10 @@ As of the 23rd of August.
 
 ### Animations from terminal app
 
+#### Connecting through Tor
+
+<img src="komrade/app/assets/komrade-terminal-preview--2020-09-20--tor.gif" height="600" alt="GIF animation of Tor connection" />
+
 #### Register/Login
 
 <img src="komrade/app/assets/komrade-terminal-preview--2020-09-16--register.gif" height="500" alt="GIF animation of registering new user" />
