@@ -78,7 +78,7 @@ As of the 23rd of August.
 
 #### Connecting through Tor
 
-<img src="komrade/app/assets/komrade-terminal-preview--2020-09-20--tor.gif" height="600" alt="GIF animation of Tor connection" />
+<img src="komrade/app/assets/komrade-terminal-preview--2020-09-20--tor.gif" alt="GIF animation of Tor connection" />
 
 #### Register/Login
 
