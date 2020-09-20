@@ -72,7 +72,7 @@ We present a simplified set of social media features drawn from everything that'
 
 As of the 23rd of August.
 
-<img src="komrade/app/assets/komrade-screen-preview-2020-08-23.gif" height="600" alt="GIF animation" />
+<img src="komrade/app/assets/komrade-screen-preview-2020-08-23.gif" alt="GIF animation" />
 
 ### Animations from terminal app
 
