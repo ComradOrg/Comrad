@@ -118,9 +118,44 @@
     size_hint:None,None
     pos_hint: {'center_x': .5}#, 'bottom':1}
 
+<PasswordPopup>:
+    id: passpopup
+    type: "custom"
+    size: ('300dp','300dp')
+
+    MDBoxLayout:
+        id: msg_popup_box_layout
+        size_hint:(None,None)
+        orientation: 'vertical'
+        cols:1
+        md_bg_color: rgb(*COLOR_CARD)
+        spacing:'0dp'
+        padding:'0dp'
+        pos_hint: {'center_x':0.5, 'center_y':0.5}
+        radius:[20,] 
+        border_radius:20
+        canvas:
+            Color:
+                rgba: rgb(*COLOR_CARD_BORDER,a=0.5)
+            Line:
+                width: 1
+                rounded_rectangle: (self.x, self.y, self.width, self.height, 20, 20, 20, 20)
+
+    
+    
+
 <RegisterButton>:
     text: ""
-    on_release: self.register()
+    on_release: self.enter()
+    theme_text_color: "Custom"
+    text_color: rgb(*COLOR_TEXT)
+    md_bg_color: 0,0,0,1
+    # font_size:'24sp'
+    # size_hint:1,None
+
+<LoginButton>:
+    text: ""
+    on_release: self.login()
     theme_text_color: "Custom"
     text_color: rgb(*COLOR_TEXT)
     md_bg_color: 0,0,0,1

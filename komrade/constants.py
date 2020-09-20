@@ -4,8 +4,8 @@ KOMRADE_ONION = 'u7spnj3dmwumzoa4.onion'
 KOMRADE_ONION2 = 'rwg4zcnpwshv4laq.onion' #'128.232.229.63' #'komrade.app'
 
 
-OPERATOR_API_URL = f'http://{KOMRADE_ONION}/op/'
-# OPERATOR_API_URL = f'http://{KOMRADE_URL}/op/'
+# OPERATOR_API_URL = f'http://{KOMRADE_ONION}/op/'
+OPERATOR_API_URL = f'http://{KOMRADE_URL}/op/'
 
 
 # paths
@@ -17,6 +17,7 @@ PATH_KOMRADE_DATA = os.path.join(PATH_KOMRADE,'.data')
 
 PATH_CRYPT_OP_KEYS = os.path.join(PATH_KOMRADE_KEYS,'.op.db.keys.crypt')
 PATH_CRYPT_OP_DATA = os.path.join(PATH_KOMRADE_DATA,'.op.db.data.crypt')
+
 # PATH_CRYPT_CA_KEYS = os.path.join(PATH_KOMRADE_KEYS,'.ca.db.keys.crypt')
 # PATH_CRYPT_CA_DATA = os.path.join(PATH_KOMRADE_DATA,'.ca.db.data.encr')
 PATH_CRYPT_CA_KEYS = PATH_CRYPT_OP_KEYS
@@ -25,6 +26,8 @@ PATH_QRCODES = os.path.join(PATH_KOMRADE,'contacts')
 # PATH_SECRETS = os.path.join(PATH_KOMRADE,'.secrets')
 PATH_SECRETS = PATH_SUPER_SECRETS = os.path.join(PATH_USER_HOME,'.secrets')
 PATH_SUPER_SECRET_OP_KEY = os.path.join(PATH_SUPER_SECRETS,'.komrade.op.key')
+
+
 
 PATH_LOG_OUTPUT = os.path.join(PATH_KOMRADE,'logs')
 

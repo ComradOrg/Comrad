@@ -10,6 +10,8 @@ from pythemis.skeygen import GenerateSymmetricKey
 from pythemis.scell import SCellSeal
 from pythemis.exception import ThemisError
 
+import logging 
+logger=logging.getLogger(__name__)
 
  
 class KomradeKey(ABC,Logger):
@@ -65,12 +67,14 @@ class KomradeSymmetricKeyWithPassphrase(KomradeSymmetricKey):
     def passhash(self):
         if not self._passhash:
             try:
-                self._passhash = hasher(getpass(WHY_MSG))
+                self._passhash = hasher(self.getpass_func(WHY_MSG))
             except (KeyboardInterrupt,EOFError) as e:
                 exit('@Keymaker: Incorrect password. Goodbye.')
         return self._passhash
 
-    def __init__(self,passphrase=None,passhash=None):
+    def __init__(self,passphrase=None,passhash=None,getpass_func=None):
+        self.getpass_func = getpass_func if getpass_func else getpass
+        # logger.info('Pass key started with getpass func:',self.getpass_func)
         if passhash:
             self._passhash = passhash
         elif passphrase:
@@ -229,13 +233,13 @@ KEYMAKER_DEFAULT_KEY_TYPES = {
 
 
 
-def get_key_obj(keyname,data,key_types=KEYMAKER_DEFAULT_KEY_TYPES):
+def get_key_obj(keyname,data,key_types=KEYMAKER_DEFAULT_KEY_TYPES,getpass_func=None):
     if keyname.endswith('_decr'):
         # print('get_key_obj',keyname,data)#,key_types)
         try:
             data_s = data.decode()
             if data_s in {KEY_TYPE_SYMMETRIC_WITH_PASSPHRASE,KomradeSymmetricKeyWithPassphrase.__name__}:
-                return KomradeSymmetricKeyWithPassphrase()
+                return KomradeSymmetricKeyWithPassphrase(getpass_func=getpass_func)
         except UnicodeDecodeError:
             return KomradeSymmetricKeyWithoutPassphrase(data)
 
@@ -256,7 +260,8 @@ class Keymaker(Logger):
                 keychain={},
                 path_crypt_keys=PATH_CRYPT_CA_KEYS,
                 path_crypt_data=PATH_CRYPT_CA_DATA,
-                callbacks={}):
+                callbacks={},
+                getpass_func=None):
         
         # init logger with callbacks
         super().__init__(callbacks=callbacks)
@@ -268,6 +273,8 @@ class Keymaker(Logger):
         self._keychain={**keychain}
         self.path_crypt_keys=path_crypt_keys
         self.path_crypt_data=path_crypt_data
+        self.getpass_func=getpass_func
+        # logger.info('Keymaker booted with getpass_func',getpass_func)
 
         # boot keychain
         self._keychain = self.keychain()
@@ -308,7 +315,7 @@ class Keymaker(Logger):
 
     def load_keychain_from_bytes(self,keychain):
         for keyname,keyval in keychain.items():
-            keychain[keyname] = get_key_obj(keyname,keyval)
+            keychain[keyname] = get_key_obj(keyname,keyval,getpass_func=self.getpass_func)
         return keychain
 
     def keychain(self,look_for=KEYMAKER_DEFAULT_ALL_KEY_NAMES):
@@ -328,7 +335,7 @@ class Keymaker(Logger):
                 if keyname in keys and keys[keyname]: continue
                 key = self.crypt_keys.get(uri,prefix=f'/{keyname}/')
                 # print('found in crypt:',key,'for',keyname)
-                if key: keys[keyname]=get_key_obj(keyname,key)
+                if key: keys[keyname]=get_key_obj(keyname,key,getpass_func=self.getpass_func)
         
         # try to assemble
         keys = self.assemble(self.assemble(keys))
@@ -506,12 +513,12 @@ class Keymaker(Logger):
                     encr_key = keychain.get(encr_key_name)
                     # self.log(f'about to decrypt {encr_key} with {decr_key} and {decr_key.cell}')
                     unencr_key = decr_key.decrypt(encr_key.data)
-                    keychain[unencr_key_name] = get_key_obj(unencr_key_name,unencr_key)
+                    keychain[unencr_key_name] = get_key_obj(unencr_key_name,unencr_key,getpass_func=self.getpass_func)
                 else:
                     # unencr_key = keychain.get(unencr_key_name)
                     # self.log(f'about to encrypt {unencr_key} with {decr_key}')
                     encr_key = decr_key.encrypt(unencr_key.data)
-                    keychain[encr_key_name] = get_key_obj(encr_key_name,encr_key)
+                    keychain[encr_key_name] = get_key_obj(encr_key_name,encr_key,getpass_func=self.getpass_func)
             except ThemisError as e:
                 #exit('Incorrect password.')
                 #self.log('error!!',e,decrypt,decr_key,encr_key,decr_key_name,encr_key_name)

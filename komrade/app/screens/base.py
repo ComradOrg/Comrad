@@ -11,6 +11,7 @@ import asyncio
 
 ### Base screens
 class BaseScreen(MDScreen):
+
     @property
     def root(self):
         return self.app.root
@@ -25,6 +26,14 @@ class BaseScreen(MDScreen):
     @property
     def channel(self):
         return self.app.channel
+
+
+
+
+
+
+
+
 
 
 

@@ -28,17 +28,17 @@ class CallbackHandler(Handler):
         #                     log_entry, headers={"Content-type": "application/json"}).content
 
 
-def logger():
+def logger(name=__name__):
     import logging
     handler = logging.StreamHandler()
     formatter = logging.Formatter('[%(asctime)s]\n%(message)s\n')
     handler.setFormatter(formatter)
-    logger = logging.getLogger('komrade')
+    logger = logging.getLogger(name)
     logger.addHandler(handler)
     logger.setLevel(logging.DEBUG)
     return logger
 
-LOG = None
+LOG = logger().info
 
 def log(*x,off=False):
     global LOG

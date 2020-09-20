@@ -142,7 +142,7 @@ class PostCard(MDCard):
             recip='@'+recip if recip and recip[0].isalpha() else recip
             self.author_label.text+='\n[size=14sp]to '+recip+'[/size]'
             self.author_label.markup=True
-        self.author_label.font_size = '18sp'
+        self.author_label.font_size = '24sp'
         self.author_avatar = author_avatar = PostAuthorAvatar(source=f'assets/avatars/{self.author}.png') #self.img_src)
         self.author_section_layout.add_widget(author_avatar)
         self.author_section_layout.add_widget(author_label)
@@ -175,6 +175,8 @@ class PostCard(MDCard):
             # self.log(image.image_ratio)
 
         self.post_content = PostContent(text=self.content)
+        self.post_content.font_size = '24sp'
+
         
         # post_layout = PostGridLayout()
         #content = PostContent()
@@ -241,27 +243,56 @@ class PostCard(MDCard):
 class FeedScreen(BaseScreen):
     posts = ListProperty()
 
-    def on_pre_enter(self):
-        super().on_pre_enter()
+    # def on_pre_enter(self):
+    #     if not hasattr(self,'get_posts'): self.get_posts=self.app.komrade.posts
+    #     super().on_pre_enter()
+    #     for post in self.posts:
+    #         self.ids.post_carousel.remove_widget(post)
         
-        async def go():
-            # self.log('ids:' +str(self.ids.post_carousel.ids))
-            for post in self.posts:
-                self.ids.post_carousel.remove_widget(post)
-            
-            i=0
-            lim=25
-            posts=await self.app.get_posts(self.app.uri)
-            for i,post in enumerate(reversed(posts)):
-            # for i,post in enumerate(posts)):
-                #if ln.startswith('@') or ln.startswith('RT '): continue
-                #i+=1
-                if i>lim: break
-                
-                #post = Post(title=f'Marx Zuckerberg', content=ln.strip())
-                #self.log('???')
-                post_obj = PostCard(post)
-                self.posts.append(post_obj)
-                self.ids.post_carousel.add_widget(post_obj)
-        asyncio.create_task(go())
+    #     i=0
+    #     lim=25
+    #     self.app.komrade.get_updates()
+    #     posts=self.get_posts()
+    #     for i,post in enumerate(reversed(posts)):
+    #         if i>lim: break
+    #         data = {
+    #             'author':post.from_name,
+    #             'to_name':post.to_name,
+    #             'content':post.msg.get('txt') if type(post.msg)==dict else str(post.msg)
+    #         }
+    #         post_obj = PostCard(data)
+    #         self.posts.append(post_obj)
+    #         self.ids.post_carousel.add_widget(post_obj)
+
+    def on_pre_enter(self):
+        self.clear_deck()
+        # for i,x 
+
+
+
+
+        ####
+    # 
+
+    @property
+    def cards(self):
+        if not hasattr(self,'_cards'): self._cards=[]
+        return self._cards
+
+    def clear_deck(self):
+        for card in self.cards:
+            self.ids.post_carousel.remove_widget(card)
+
+    def add_card(self,data):
+        card = PostCard(data)
+        if not hasattr(self,'_cards'): self._cards=[]
+        self._cards.append(card)
+
+        self.app.log('card!',data)
+        self.app.log('ids:',self.ids.keys(), type(self))
+        self.app.log('card obj?',card)
+        # self.ids.post_carousel.add_widget(card)
+        stop
+
+
 

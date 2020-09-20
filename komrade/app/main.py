@@ -5,7 +5,8 @@ from config import *
 import os,sys; sys.path.append(os.path.abspath(os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__),'..')),'..')))
 from komrade import *
 from komrade.api import Api
-
+import logging
+logger=logging.getLogger(__name__)
 
 # monkeypatching the things that asyncio needs
 import subprocess
@@ -94,6 +95,15 @@ class MyLayout(MDBoxLayout):
         self.post_id=post_id
         self.change_screen('view')
 
+
+
+
+
+
+
+
+
+
 class ProgressPopup(MDDialog): pass
 class MessagePopup(MDDialog): pass
 class MyBoxLayout(MDBoxLayout): pass
@@ -134,28 +144,6 @@ class MyToolbar(MDToolbar):
 
 
 
-def get_tor_proxy_session():
-    session = requests.session()
-    # Tor uses the 9050 port as the default socks port
-    session.proxies = {'http':  'socks5://127.0.0.1:9150',
-                       'https': 'socks5://127.0.0.1:9150'}
-    return session    
-
-def get_async_tor_proxy_session():
-    from requests_futures.sessions import FuturesSession
-    session = FuturesSession()
-    # Tor uses the 9050 port as the default socks port
-    session.proxies = {'http':  'socks5://127.0.0.1:9150',
-                       'https': 'socks5://127.0.0.1:9150'}
-    return session    
-
-
-def get_tor_python_session():
-    from torpy.http.requests import TorRequests
-    with TorRequests() as tor_requests:
-        with tor_requests.get_session() as s:
-            return s
-
 def draw_background(widget, img_fn='assets/bg.png'):
     from kivy.core.image import Image as CoreImage
     from kivy.graphics import Color, Rectangle 
@@ -195,74 +183,39 @@ def route(uri):
 
 # DEFAULT_SCREEN = route(DEFAULT_URI)
 
-class MainApp(MDApp):
+class MainApp(MDApp, Logger):
     title = 'Komrade'
     logged_in=False
-    # store = JsonStore('../p2p/.keys.json')
-    # store_global = JsonStore('../p2p/.keys.global.json')
-    store = JsonStore('app.json')
     login_expiry = 60 * 60 * 24 * 7  # once a week
     texture = ObjectProperty()
-    uri = '/inbox/world'
+    uri='/do/login'
 
-    # def connect(self):
-    #     # connect to kad?   
-    #     self.node = p2p.connect()
     def rgb(self,*_): return rgb(*_)
 
     def change_screen(self, screen, *args):
         self.screen=screen
         self.root.change_screen(screen,*args)
 
-    @property
-    def channel(self):
-        if not hasattr(self,'uri'): return None
-        if self.uri.count('/')<2: return None
-        return self.uri.split('/')[2]
-
-    def change_screen_from_uri(self,uri,*args):
-        self.uri=uri
-        self.log('CHANGING SCREEN',uri,'??')
-        return self.root.change_screen_from_uri(uri,*args)
+    def get_username(self): return self._name
 
     @property
-    def logger(self):
-        if not hasattr(self,'_logger'):
-            import logging
-            handler = logging.StreamHandler()
-            formatter = logging.Formatter('[%(asctime)s]\n%(message)s\n')
-            handler.setFormatter(formatter)
-            self._logger = logger = logging.getLogger('komrade')
-            logger.addHandler(handler)
-            logger.setLevel(logging.DEBUG)
-        return self._logger
-
-    def log(self,*args,**msgs):
-        line = ' '.join(str(x) for x in args)
-        self.logger.debug(line)
+    def crypt(self):
+        if not hasattr(self,'_crypt'):
+            from komrade.backend.crypt import Crypt
+            self._crypt = Crypt(
+                fn=PATH_CRYPT_CA_DATA,
+                encrypt_values=False,
+            )
+        return self._crypt
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.event_loop_worker = None
         self.loop=asyncio.get_event_loop()
         
-        # load json storage
-        self.username=''
-        self.load_store()
-        self.uri=DEFAULT_URI
-        
         # connect to API
-        self.api = Api(log=self.log)
-
-    @property
-    async def node(self):
-        return await self.api.node
-
-    def get_username(self):
-        if hasattr(self,'username'): return self.username
-        self.load_store()
-        if hasattr(self,'username'): return self.username
-        return ''
+        self.komrade=None
+        self._name=''
 
 
     def build(self):
@@ -288,7 +241,9 @@ class MainApp(MDApp):
         
         return self.root
 
-
+    # def boot(self,username):
+    #     kommie = Komrade(username)
+    #     if self.exists_locally_as_contact()
 
 
     def load_store(self):
@@ -355,34 +310,14 @@ class MainApp(MDApp):
 
     @property
     def keys(self):
-        return self.api.keys
+        return self.komrade.contacts()
             
     async def get_post(self,post_id):
-        return await self.api.get_post(post_id)
+        return self.komrade.read_post()
 
-    async def get_posts(self,uri=b'/inbox/world'):
-        return await self.persona.read_inbox(uri)
+    def get_posts(self,uri=b'/inbox/world'):
+        return self.komrade.posts()
         
-
-        # if uri.count('/')<2: raise Exception('not a URI: '+uri)
-        # if 'login' in uri:
-        #     raise Exception('!!!! '+uri)
-
-        # self.log(f'app.get_posts(uri={uri} -> ...')
-        # data = await self.api.get_posts(uri)
-        # self.log(f'app.get_posts() got back from api.get_posts() a {type(data)}')
-
-        # newdata=[]
-        # for d in data:
-        #     # self.log('data d:',d)
-        #     if not 'val' in d: continue
-        #     newdict = dict(d['val'].items())
-        #     newdict['timestamp']=float(d['time'])
-        #     newdict['to_name']=d['channel']
-        #     newdata.append(newdict)
-        
-        # # return index
-        # return newdata
 
     async def get_channel_posts(self,channel,prefix='inbox'):
         # am I allowed to?
@@ -408,17 +343,17 @@ class MainApp(MDApp):
         are finished
         '''
         # self.other_task = asyncio.ensure_future(self.waste_time_freely())
-        self.other_task = asyncio.ensure_future(self.api.connect_forever())
+        # self.other_task = asyncio.ensure_future(self.api.connect_forever())
 
         async def run_wrapper():
             # we don't actually need to set asyncio as the lib because it is
             # the default, but it doesn't hurt to be explicit
             await self.async_run() #async_lib='asyncio')
             print('App done')
-            self.other_task.cancel()
+            # self.other_task.cancel()
 
-        return asyncio.gather(run_wrapper(), self.other_task)
-
+        # return asyncio.gather(run_wrapper(), self.other_task)
+        asyncio.run(run_wrapper())
 
 
 
@@ -431,12 +366,21 @@ class MainApp(MDApp):
         self.dialog.open()
         #stop
 
+    def stat(self,msg,komrade_name='Telephone',pause=False,**y):
+        logger.info(msg)
+        # self.open_msg_dialog(msg)
+        self.root.add_card({
+            'author':komrade_name,
+            'to_name':self.komrade.name if self.komrade else '?',
+            'content':str(msg)
+        })
+
     def open_msg_dialog(self,msg):
         from screens.post.post import MessagePopup,ProgressPopup
         if not hasattr(self,'msg_dialog') or not self.msg_dialog:
             self.msg_dialog = MessagePopup()
-        self.msg_dialog.ids.msg_label.text=msg
-        self.msg_dialog.open()
+            self.msg_dialog.ids.msg_label.text=msg
+            self.msg_dialog.open()
 
     def close_dialog(self):
         if hasattr(self,'dialog'):

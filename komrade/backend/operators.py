@@ -86,7 +86,8 @@ class Operator(Keymaker):
             keychain = {},
             path_crypt_keys=PATH_CRYPT_CA_KEYS,
             path_crypt_data=PATH_CRYPT_CA_DATA,
-            callbacks={}
+            callbacks={},
+            getpass_func=None
         ):
         
         global PHONEBOOK
@@ -97,7 +98,8 @@ class Operator(Keymaker):
             keychain=keychain,
             path_crypt_keys=path_crypt_keys,
             path_crypt_data=path_crypt_data,
-            callbacks=callbacks
+            callbacks=callbacks,
+            getpass_func=getpass_func
         )
 
         

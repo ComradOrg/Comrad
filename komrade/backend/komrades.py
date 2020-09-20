@@ -4,7 +4,8 @@ from komrade.backend import *
 from komrade.backend.keymaker import *
 from komrade.backend.messages import Message
 
-
+import logging
+logger = logging.getLogger(__name__)
 
 
 
@@ -13,8 +14,9 @@ from komrade.backend.messages import Message
 
 class KomradeX(Caller):
 
-    def __init__(self, name=None, pubkey=None, callbacks={}):
-        super().__init__(name=name, callbacks=callbacks)
+    def __init__(self, name=None, pubkey=None, callbacks={}, getpass_func=None):
+        # logger.info('booting KomradeX with getpass_func:',getpass_func)
+        super().__init__(name=name, callbacks=callbacks, getpass_func=getpass_func)
         self.log(f'Starting up with callbacks: {self._callbacks}')
         self.boot(create=False)
         # special?
@@ -143,7 +145,7 @@ class KomradeX(Caller):
         qr_str=self.qr_str(pubkey.data_b64)
         logfunc(f'(1) You may store your public key both on your device hardware, as well as share it with anyone you wish:\n\n{pubkey.data_b64_s}\n\nIt will also be stored as a QR code on your device:\n{qr_str}',pause=True,clear=True)
         logfunc('You must also register your username and public key with Komrade @Operator on the remote server.\n\nShall Komrade @Telephone send them over?',pause=False,clear=False)#),dict_format(data,tab=2),pause=True)
-        ok_to_send = input(f'\n@{name}: [Y/n] ')
+        ok_to_send = 'y' #input(f'\n@{name}: [Y/n] ')
         if ok_to_send.strip().lower()=='n':
             logfunc('Cancelling registration.')
             return
@@ -181,6 +183,8 @@ class KomradeX(Caller):
         ## 3) Have passphrase?
         if SHOW_STATUS and not passphrase:
             passphrase = self.cli.status_keymaker_part2(name,passphrase,pubkey,privkey,hasher,self)
+        elif not passphrase and self.getpass_func:
+            passphrase=self.getpass_func(WHY_MSG)
         else:
             if not passphrase: passphrase = DEBUG_DEFAULT_PASSPHRASE
             while not passphrase:
@@ -661,7 +665,11 @@ class KomradeX(Caller):
         posts=[]
         for post_id in inbox:
             self.log('???',post_id,inbox_prefix)
-            res_post = self.read_post(post_id)
+            try:
+                res_post = self.read_post(post_id)
+            except ThemisError as e:
+                self.log('!! ',e)
+                continue
             self.log('got post:',res_post)
             if res_post.get('success') and res_post.get('post'):
                 post=res_post.get('post')

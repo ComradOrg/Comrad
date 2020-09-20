@@ -31,7 +31,7 @@ if platform.platform().startswith('Linux'):
     HEIGHT *= 1.25
 
 
-WINDOW_SIZE=int(HEIGHT * ASPECT_RATIO),int(HEIGHT)
+WINDOW_SIZE=int(HEIGHT),int(HEIGHT * ASPECT_RATIO)
 
 BG_IMG='assets/bg-brown.png'
 
