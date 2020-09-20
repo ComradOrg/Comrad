@@ -6,6 +6,7 @@ from komrade.backend.phonelines import *
 from komrade.backend.operators import CALLBACKS
 import requests
 
+
 # def TheTelephone(*x,**y):
 #     return Komrade(TELEPHONE_NAME,*x,**y)
 
@@ -120,11 +121,9 @@ class TheTelephone(Operator):
 
 
     def tor_request_in_python(self,url):
-        tor = TorClient(
-            callbacks=self._callbacks
-        )
+        tor = TorClient()
         with tor.get_guard() as guard:
-            adapter = TorHttpAdapter(guard, 3, retries=RETRIES, callbacks=self._callbacks)
+            adapter = TorHttpAdapter(guard, 3, retries=RETRIES)
 
             with requests.Session() as s:
                 s.headers.update({'User-Agent': 'Mozilla/5.0'})

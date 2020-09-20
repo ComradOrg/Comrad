@@ -4,6 +4,49 @@ from komrade import *
 
 log=print
 
+
+
+from logging import Handler
+class MazeWalker(Handler):
+    def __init__(self,callbacks={},*x,**y):
+        super().__init__(*x,**y)
+        self._callbacks=callbacks
+        self.walk = []
+        
+
+    
+    def emit(self, record):
+        from torpy.documents.network_status import Router
+        walk=self.walk
+        
+        for arg in record.args:
+            if type(arg)==Router:
+                router = arg
+                if router.ip in walk: continue
+                walk.append(router.ip)
+
+                # print('! Found router:',record.msg % record.args)
+                # print(router.ip,walk)
+                # print()
+
+                if record.msg.startswith('Connecting to guard node'):
+                    f = self._callbacks.get('torpy_guard_node_connect')
+                    if f: f(router)
+                elif record.msg.startswith('Extending the circuit'):
+                    f = self._callbacks.get('torpy_extend_circuit')
+                    if f: f(router)
+                
+                
+        pass
+    
+
+
+
+
+
+
+
+
 # def komrade_request(url,allow_clearnet = ALLOW_CLEARNET):
 #     if '.onion' in url or not allow_clearnet:
 #         return tor_request(url)

@@ -4,6 +4,29 @@ class KomradeException(Exception): pass
 import sys,os
 sys.path.append(os.path.dirname(__file__))
 
+from logging import Handler
+class CallbackHandler(Handler):
+    def __init__(self,callbacks={},*x,**y):
+        super().__init__(*x,**y)
+        self._callbacks=callbacks
+    def emit(self, record):
+        # print(record)
+        # stop
+        # print('!!!!',record.msg, record.args)
+        from torpy.documents.network_status import Router
+
+        for arg in record.args:
+            if type(arg)==Router:
+                print('! Found router:',record.msg % record.args)
+        # if len(record.args)==1 and type(record.args[0])==Router:
+            # print('! Router:',record.msg,record.args[0].nickname)
+
+        pass
+        
+        #log_entry = self.format(record)
+        #return requests.post('http://example.com:8080/',
+        #                     log_entry, headers={"Content-type": "application/json"}).content
+
 
 def logger():
     import logging

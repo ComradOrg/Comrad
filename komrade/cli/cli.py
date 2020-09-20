@@ -3,7 +3,7 @@ from komrade import *
 from komrade.backend import *
 import art
 import textwrap as tw
-import readline
+import readline,logging
 readline.set_completer_delims('\t')
 # from tab_completer import tabCompleter
 tabber=tabCompleter()
@@ -11,6 +11,14 @@ if 'libedit' in readline.__doc__:
     readline.parse_and_bind("bind ^I rl_complete")
 else:
     readline.parse_and_bind("tab: complete")
+torpy_logger = logging.getLogger('torpy')
+logging.getLogger('urllib3').propagate=False
+logging.getLogger('shapely').propagate=False
+logging.getLogger('pyproj').propagate=False
+logging.getLogger('rtree').propagate=False
+
+torpy_logger.propagate=False
+
 
 
 class CLI(Logger):
@@ -37,11 +45,23 @@ class CLI(Logger):
         self.loggedin=False
         self.tabber=tabber
         self.log('ROUTES:',self.ROUTES)
+        self.hops=[]
 
         # Routes
         rts=['/'+k for k in self.ROUTES]
         tabber.createListCompleter(rts)
         readline.set_completer(tabber.listCompleter)
+
+        # logging
+        from komrade.backend.mazes import MazeWalker
+        self.walker=MazeWalker(callbacks=self.callbacks)
+        self.torpy_logger = logging.getLogger('torpy')
+        self.torpy_logger.propagate=False
+        self.torpy_logger.addHandler(self.walker)
+
+        import ipinfo
+        ipinfo_access_token = '90df1baf7c373a'
+        self.ipinfo_handler = ipinfo.getHandler(ipinfo_access_token)
 
     def verbose(self,*x):
         self.toggle_log()
@@ -68,6 +88,7 @@ class CLI(Logger):
             except KomradeException as e:
                 self.stat(f'I could not handle your request. {e}\n')
             #await asyncio.sleep(0.5)
+            self.walker.walk=[] # reset logger's walk?
 
     def route(self,inp):
         inp=inp.strip()
@@ -198,17 +219,34 @@ class CLI(Logger):
     @property
     def callbacks(self):
         return {
-            'torpy_extend_circuit':self.callback_on_hop
+            'torpy_guard_node_connect':self.callback_on_hop,
+            'torpy_extend_circuit':self.callback_on_hop,
         }
     
-    def callback_on_hop(self,data):
-        rtr=data.get('router')
-        msg=f'''Hopped to new router: {rtr.get('nickname')} ({rtr.get('ip')}) '''
+    def callback_on_hop(self,rtr):
+        from worldmap import print_map,print_map_simple
+        # clear_screen()
+
+        deets = self.ipinfo_handler.getDetails(rtr.ip)
+        self.hops.insert(0,(rtr,deets))
+        country = deets.country_name
+        places = dict([
+            (_deets.city,tuple(float(_) for _ in _deets.loc.split(',')))
+            for (_rtr,_deets) in self.hops
+        ])
+        clear_screen()
+        # print_map_simple(places)
+        print_map(places)
+        # print_map([_deets.country_name for _rtr,_deets in self.hops])
+
+
+        msg=f'''Hopped to new router: {rtr.nickname} ({rtr.ip}) in {deets.city}, {deets.country_name} ({deets.loc})'''
         self.stat(
             msg,
             komrade_name='Tor'
         )
-        input('pausing on callback: '+msg)
+        print()
+        # input('pausing on callback: '+msg)
 
     
     def register(self,name=None):
