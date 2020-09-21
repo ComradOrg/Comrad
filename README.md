@@ -64,6 +64,10 @@ We present a simplified set of social media features drawn from everything that'
   * Message securely with encrypted contents (e.g. Signal) ✔
   * Message with untraceable metadata via Tor (new) ✔
 
+### How is this different from? ...
+
+See [wiki page here](https://github.com/Komrade/Komrade/wiki/Comparison-of-alternataive-social-networks). And help edit, if you can! Still learning about landscape of alternative social media.
+
 ## Progress
 
 ### Animations from mobile/desktop app
