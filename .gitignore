@@ -13,3 +13,4 @@ lib
 .op.*
 *.pyc
 torpy
+*checkpoint.ipynb
