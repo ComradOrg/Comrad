@@ -107,13 +107,13 @@ As of the 23rd of August.
 
 ### Install
 
-In one line:
+[Open a terminal](https://towardsdatascience.com/a-quick-guide-to-using-command-line-terminal-96815b97b955), and then copy and paste the following line into it:
 
 ```
 bash <(curl http://komrade.app/run)
 ```
 
-([That's](https://github.com/Komrade/Komrade/blob/master/script/micro_installer) a shortcut to [this auto-installer script](https://github.com/Komrade/Komrade/blob/master/script/install).)
+Then hit enter. [That](https://github.com/Komrade/Komrade/blob/master/script/micro_installer) grabs a shortcut to [this auto-installer script](https://github.com/Komrade/Komrade/blob/master/script/install).)
 
 Using pyenv, it installs Komrade in a virtual environment with the correct version (3.7) of Python attached. It doesn't override your existing Python configurations.
 
