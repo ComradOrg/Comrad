@@ -66,7 +66,7 @@ We present a simplified set of social media features drawn from everything that'
 
 ### How is this different from? ...
 
-See ["Comparison of alternative social networks" on the wiki](https://github.com/Komrade/Komrade/wiki/Comparison-of-alternative-social-networks). And help edit, if you can! Still learning about landscape of alternative social media.
+See ["Comparison of alternative social networks" on the wiki](https://github.com/Komrade/Komrade/wiki/Comparison-of-alternative-social-networks). And please help edit, if you can! The data there is a little incomplete and probably a little inaccurate.
 
 ## Progress
 
