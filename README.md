@@ -114,7 +114,7 @@ bash <(curl http://komrade.app/run)
 ```
 
 Then hit enter. [That](https://github.com/Komrade/Komrade/blob/master/script/micro_installer) grabs a shortcut to [this auto-installer script](https://github.com/Komrade/Komrade/blob/master/script/install).)
-
+   
 Using pyenv, it installs Komrade in a virtual environment with the correct version (3.7) of Python attached. It doesn't override your existing Python configurations.
 
 ### Run
