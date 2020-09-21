@@ -98,6 +98,10 @@ As of the 23rd of August.
 
 <img src="komrade/app/assets/komrade-terminal-preview--2020-09-19--posting.gif" alt="GIF animation of posting" />
 
+### Installing
+
+<img src="komrade/app/assets/komrade-terminal-preview--2020-09-20--install1.gif" alt="GIF animation of installing" />
+
 
 ## Usage
 
