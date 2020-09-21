@@ -393,9 +393,14 @@ class CLI(Logger):
 
         ## get updates
         # this does login, msgs, and posts in one req
-        self.stat('@Telephone: Patching you through to the @Operator. One moment please...')
         time.sleep(0.25)
         res = self.komrade.get_updates()
+        #print(res.get('success'))
+        if not res.get('success'):
+            self.stat(res.get('status'))
+            return
+
+        self.stat('@Telephone: Patching you through to the @Operator. One moment please...')
         if hasattr(self,'_mapscr') and self._mapscr:
             #stop
             msg=self._mapscr.msg + ['???, ??? (@Operator)']

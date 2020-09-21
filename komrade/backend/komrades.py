@@ -270,20 +270,22 @@ class KomradeX(Caller):
 
         return resp_msg_d
 
+    def get_secret_login(self,pubkey):
+        return self.crypt_keys.get(
+            b64enc(pubkey),
+            prefix='/secret_login/'
+        )
 
     @property
     def secret_login(self):
-        return self.crypt_keys.get(
-            self.pubkey.data_b64,
-            prefix='/secret_login/'
-        )
+        return self.get_secret_login(self.pubkey.data_b64)
 
     def login(self,passphrase=None):
         # what keys do I have?
         keys = self.keychain()
 
         # check hardware
-        if not 'pubkey' in keys:
+        if not 'pubkey' in keys or not self.pubkey:
             emsg='''Login impossible. I do not have this komrade's public key, much less private one.'''
             # self.log()
             return {'success':False, 'status':emsg}
@@ -301,7 +303,7 @@ class KomradeX(Caller):
         msg = {
             'name':self.name,
             'pubkey':keys['pubkey'].data,
-            'secret_login':self.secret_login
+            'secret_login':self.get_secret_login(keys['pubkey'].data)
         }
 
         # ask operator and get response
@@ -580,7 +582,11 @@ class KomradeX(Caller):
     def get_updates(self,include_posts=True):
         # get any parameters we need
         # post_ids_read = list(self.inbox_read_db.values)
-
+        if not self.pubkey:
+            return {'success':False, 'status':'Cannot log into this user whose public key I do not have'}
+        if not self.privkey:
+            return {'success':False, 'status':'Cannot log into this user whose private key I do not have'}
+        
         # compose msg
         msg_to_op = {
             **self.login_details,
