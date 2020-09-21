@@ -397,7 +397,7 @@ class CLI(Logger):
         res = self.komrade.get_updates()
         #print(res.get('success'))
         if not res.get('success'):
-            self.stat(res.get('status'))
+            self.stat(res.get('status'),komrade_name='')
             return
 
         self.stat('@Telephone: Patching you through to the @Operator. One moment please...')
