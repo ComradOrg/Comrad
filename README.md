@@ -179,7 +179,9 @@ We are using [Themis](https://github.com/cossacklabs/themis), a high-level cross
 
 Code is primarily in:
 
-   * [komrade/backend/keymaker.py](komrade/backend/keymaker.py)
-   * [komrade/backend/komrades.py](komrade/backend/komrades.py)
-   * [komrade/backend/phonelines.py](komrade/backend/phonelines.py)
+  * [komrade/backend/keymaker.py](komrade/backend/keymaker.py)
+
+  * [komrade/backend/komrades.py](komrade/backend/komrades.py)
+
+  * [komrade/backend/phonelines.py](komrade/backend/phonelines.py)
 
