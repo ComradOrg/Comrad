@@ -126,7 +126,7 @@ echo '
 ## the pyenv way
 cd $path_repo
 
-if command -v pyenv &> /dev/null
+if command -v pyenv &> /dev/null    
 then
     pyenv install -s
     pyenv local
