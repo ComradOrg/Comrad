@@ -59,18 +59,20 @@ then
         then
             echo "using ssh..."
             git clone git@github.com:Komrade/Komrade.git
+            git checkout installer
         else
             git clone https://github.com/Komrade/Komrade.git
+            git checkout installer
         fi
         mv Komrade code
     fi
 else
     cd $path_komrade
-    curl -s -LO https://github.com/Komrade/Komrade/archive/master.zip
-    unzip master.zip
-    rm master.zip
-    cp -rT Komrade-master code
-    rm -r Komrade-master
+    curl -s -LO https://github.com/Komrade/Komrade/archive/installer.zip
+    unzip installer.zip
+    rm installer.zip
+    cp -rT Komrade-installer code
+    rm -r Komrade-installer
 fi
 
 
