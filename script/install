@@ -134,7 +134,7 @@ then
 fi
 
 pythonexec="$path_komrade/lib/miniconda3/bin/python"
-
+     
 
 echo '
 
