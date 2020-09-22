@@ -18,7 +18,7 @@ from copy import copy,deepcopy
 from kivy.animation import Animation
 from main import MyLabel,COLOR_ICON
 from misc import *
-
+import os
 
 
 
@@ -198,7 +198,9 @@ class ProfileScreen(BaseScreen):
 
     def make_profile_img(self,width,do_crop=True,circ_img=None,bw=False,circularize=True):
 
+        
         img_src = f'assets/avatars/{self.app.username}.png'
+        if not os.path.exists(img_src): img_src = 'assets/avatars/marx.png'
         circ_img = circularize_img(img_src,width,do_crop=do_crop,bw=bw,circularize=circularize)
 
         
