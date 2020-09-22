@@ -160,11 +160,21 @@ class LoginScreen(BaseScreen):
         return self.password_field.text
         
     def boot(self,un):
+
+        self.app.stat(
+            'You chose the username '+un
+        )
+
+
+        return
         kommie = Komrade(un,getpass_func=self.getpass_func)
         # self.show_pass_opt()
+        logger.info(f'booted kommie: {kommie}')
         if kommie.exists_locally_as_account():
+            logger.info(f'is account')
             self.login_status.text='You should be able to log into this account.'
             if kommie.privkey:
+                logger.info(f'passkey login succeeded')
                 self.login_status.text=f'Welcome back, Komrade @{un}'
                 self.app.is_logged_in=True
                 self.app.username=kommie.name
@@ -172,6 +182,7 @@ class LoginScreen(BaseScreen):
                 self.remove_widget(self.layout)
                 self.root.change_screen('feed')
             else:
+                logger.info(f'passkey login failed')
                 self.login_status.text='Login failed...'
 
         #   self.layout.add_widget(self.layout_password)

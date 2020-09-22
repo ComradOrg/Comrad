@@ -1,11 +1,11 @@
 # addresses
 KOMRADE_ONION = 'u7spnj3dmwumzoa4.onion'
 KOMRADE_ONION2 = 'rwg4zcnpwshv4laq.onion'
-KOMRADE_URL = KOMRADE_ONION
+KOMRADE_URL = '68.66.241.111'  #KOMRADE_ONION
 
 
-OPERATOR_API_URL = f'http://{KOMRADE_ONION}/op/'
-# OPERATOR_API_URL = f'http://{KOMRADE_URL}/op/'
+# OPERATOR_API_URL = f'http://{KOMRADE_ONION}/op/'
+OPERATOR_API_URL = f'http://{KOMRADE_URL}/op/'
 
 
 # paths

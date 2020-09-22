@@ -17,6 +17,7 @@
 #:import COLOR_BG main.COLOR_BG
 #:import BG_IMG main.BG_IMG
 #:import COLOR_TEXT main.COLOR_TEXT
+#:import COLOR_CARD main.COLOR_CARD
 
 
 ## CLASS DEFS
@@ -98,19 +99,26 @@
     type: "custom"
     size_hint: None,None
     size: ('300dp','300dp')
-    # md_bg_color: 0,0,0,1
+    # md_bg_color: rgb(*COLOR_CARD)
 
     MDBoxLayout:
         id: msg_popup_box_layout
         size_hint:(1,1)
         orientation: 'vertical'
         cols:1
-        md_bg_color: 0,0,0,1
+        md_bg_color: rgb(*COLOR_CARD)
         spacing:'0dp'
         padding:'0dp'
         pos_hint: {'center_x':0.5, 'center_y':0.5}
         # radius:[20,] 
         # border_radius:20
+        border_radius:20
+        canvas:
+            Color:
+                rgba: rgb(*COLOR_CARD_BORDER,a=0.5)
+            Line:
+                width: 1
+                rounded_rectangle: (self.x, self.y, self.width, self.height, 20, 20, 20, 20)
 
 
 
@@ -125,6 +133,52 @@
             font_size: '18dp'
             font_name: 'assets/overpass-mono-regular.otf'
             pos_hint: {'center_x': .5, 'y': 0}
+
+
+<MessagePopupCard>:
+    type: "custom"
+    size_hint: 1,1
+    # size: ('300dp','300dp')
+    # md_bg_color: rgb(*COLOR_CARD)
+    md_bg_color:0,0,0,1
+    size:('600sp','600sp')
+
+    MDBoxLayout:
+        id: msg_popup_box_layout
+        #size_hint:(1,1)
+        orientation: 'vertical'
+        padding: "20dp"
+        size_hint: (1, 1)
+        # adaptive_height: True
+        pos_hint: {"center_x": .5, "center_y": .5}
+        # md_bg_color: rgb(*COLOR_CARD)
+        md_bg_color:0,0,0,0
+        height: self.minimum_height
+        # radius:[20,] 
+        # border_radius:20
+        # canvas:
+        #     Color:
+        #         rgba: rgb(*COLOR_CARD_BORDER,a=0.5)
+        #     Line:
+        #         width: 1
+        #         rounded_rectangle: (self.x, self.y, self.width, self.height, 20, 20, 20, 20)
+
+
+        # MDLabel:
+        #     # size_hint:(None,None)
+        #     id: msg_label
+        #     text: ''
+        #     halign: 'center'
+        #     # valign: 'top'
+        #     theme_text_color: 'Custom'
+        #     text_color: rgb(*COLOR_TEXT)
+        #     font_size: '18dp'
+        #     font_name: 'assets/overpass-mono-regular.otf'
+        #     pos_hint: {'center_x': .5, 'y': 0}
+
+
+
+
 
 
 

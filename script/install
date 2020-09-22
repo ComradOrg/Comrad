@@ -101,8 +101,8 @@ then
         
         #eval "$(pyenv init -)"
         
-        pyenv install 3.7.3
-        pyenv local 3.7.3
+        $HOME/.pyenv/bin/pyenv install 3.7.3
+        
 
     fi
 fi
@@ -117,22 +117,33 @@ echo '
 '
 
 ## the pyenv way
-if command -v pyenv &> /dev/null
+if command -v $HOME/.pyenv/bin/pyenv &> /dev/null
 then
+    # activate right version
+    $HOME/.pyenv/bin/pyenv local 3.7.3
+    
+    # activate right python exec in terminal
+    eval "$($HOME/.pyenv/bin/pyenv init -)"
+    
     cd $path_repo
-    pyenv install --skip-existing
+    
+    echo "Using Python version:"
+    python3 --version
+
+    $HOME/.pyenv/bin/pyenv install --skip-existing
+    
     #VENV="${PWD##*/}.venv"
     VENV="venv"
     VENV=${VENV#-}
-    python -m venv $VENV
+    python3 -m venv $VENV
     . $VENV/bin/activate
-    python -m pip install -U pip setuptools wheel
-    python -m pip install -r requirements.txt
+    python3 -m pip install -U pip setuptools wheel
+    python3 -m pip install -r requirements.txt
 
 else
     cd $path_repo
-    python -m pip install virtualenv
-    python -m virtualenv venv
+    python3 -m pip install virtualenv
+    python3 -m virtualenv venv
     source venv/bin/activate
     pip install -r requirements.txt
 fi

@@ -29,6 +29,29 @@ class BaseScreen(MDScreen):
 
 
 
+# class CardScreen(BaseScreen):
+#     @property
+#     def cards(self):
+#         if not hasattr(self,'_cards'): self._cards=[]
+#         return self._cards
+
+#     def clear_deck(self):
+#         for card in self.cards:
+#             self.ids.post_carousel.remove_widget(card)
+
+#     def add_card(self,data):
+#         card = PostCard(data)
+#         if not hasattr(self,'_cards'): self._cards=[]
+#         self._cards.append(card)
+
+#         self.app.log('card!',data)
+#         self.app.log('ids:',self.ids.keys(), type(self))
+#         self.app.log('card obj?',card)
+#         # self.ids.post_carousel.add_widget(card)
+#         stop
+
+
+
 
 
 

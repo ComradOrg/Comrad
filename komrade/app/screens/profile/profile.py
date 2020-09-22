@@ -1,3 +1,6 @@
+import os,sys; sys.path.append(os.path.abspath(os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__),'..')),'..')))
+from komrade import *
+
 from screens.base import BaseScreen
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.chip import MDChip
@@ -18,7 +21,6 @@ from copy import copy,deepcopy
 from kivy.animation import Animation
 from main import MyLabel,COLOR_ICON
 from misc import *
-import os
 
 
 

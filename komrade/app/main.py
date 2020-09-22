@@ -4,7 +4,7 @@
 from config import *
 import os,sys; sys.path.append(os.path.abspath(os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__),'..')),'..')))
 from komrade import *
-from komrade.api import Api
+
 import logging
 logger=logging.getLogger(__name__)
 
@@ -106,6 +106,7 @@ class MyLayout(MDBoxLayout):
 
 class ProgressPopup(MDDialog): pass
 class MessagePopup(MDDialog): pass
+class MessagePopupCard(MDDialog): pass
 class MyBoxLayout(MDBoxLayout): pass
 class MyLabel(MDLabel): pass
 
@@ -238,6 +239,9 @@ class MainApp(MDApp, Logger):
         logo.text_color=root.rgb(*COLOR_LOGO)
         
         self.root.change_screen_from_uri(self.uri if self.uri else DEFAULT_URI)
+
+
+        
         
         return self.root
 
@@ -367,16 +371,26 @@ class MainApp(MDApp, Logger):
         #stop
 
     def stat(self,msg,komrade_name='Telephone',pause=False,**y):
-        logger.info(msg)
-        # self.open_msg_dialog(msg)
-        self.root.add_card({
-            'author':komrade_name,
-            'to_name':self.komrade.name if self.komrade else '?',
-            'content':str(msg)
-        })
+        from komrade.app.screens.feed.feed import PostCard
+        if not hasattr(self,'msg_dialog') or not self.msg_dialog:
+            self.msg_dialog = MessagePopupCard()
+            # self.msg_dialog.ids.msg_label.text=msg
+
+            self.msg_dialog.card = postcard = PostCard({
+                'author':komrade_name,
+                'author_prefix':'Komrade @',
+                'to_name':'me',
+                'content':msg,
+                'timestamp':time.time(),
+            })
+            postcard.size_hint=(None,None)
+            postcard.size=('600sp','600sp')
+            self.msg_dialog.add_widget(postcard)
+
+            self.msg_dialog.open()
 
     def open_msg_dialog(self,msg):
-        from screens.post.post import MessagePopup,ProgressPopup
+        # from screens.post.post import MessagePopup,ProgressPopup
         if not hasattr(self,'msg_dialog') or not self.msg_dialog:
             self.msg_dialog = MessagePopup()
             self.msg_dialog.ids.msg_label.text=msg
@@ -388,6 +402,7 @@ class MainApp(MDApp, Logger):
 
     def close_msg_dialog(self):
         if hasattr(self,'msg_dialog'):
+            self.msg_dialog.remove_widget(self.msg_dialog.card)
             self.msg_dialog.dismiss()
 
 
