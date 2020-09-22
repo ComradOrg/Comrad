@@ -127,9 +127,13 @@ if command -v $HOME/.pyenv/bin/pyenv &> /dev/null
 then
     $HOME/.pyenv/bin/pyenv install -s
     $HOME/.pyenv/bin/pyenv local
+    eval "($HOME/.pyenv/bin/pyenv init -)"
     VENV="venv"
     VENV=${VENV#-}
-    $HOME/.pyenv/shims/python -m venv $VENV
+
+    echo "Python in use: `which python`"
+
+    python3 python -m venv $VENV
     . $VENV/bin/activate
     python3 -m pip install -U pip setuptools wheel
     python3 -m pip install -r requirements.txt
