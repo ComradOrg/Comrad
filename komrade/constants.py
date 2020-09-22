@@ -177,7 +177,7 @@ MAX_POST_LEN = 1000
 MAX_MSG_LEN = 1000
 
 
-import os
-if not os.environ.get('KOMRADE_SHOW_LOG') or os.environ('KOMRADE_SHOW_LOG')=='0':
+import os,logging
+if not 'KOMRADE_SHOW_LOG' in os.environ or not os.environ['KOMRADE_SHOW_LOG'] or os.environ['KOMRADE_SHOW_LOG']=='0':
     logger = logging.getLogger()
     logger.propagate = False
