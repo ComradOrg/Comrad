@@ -73,6 +73,16 @@ else
 fi
 cd $path_komrade
 
+unameOut="$(uname -s)"
+case "${unameOut}" in
+    Linux*)     machine=Linux;;
+    Darwin*)    machine=Mac;;
+    CYGWIN*)    machine=Cygwin;;
+    MINGW*)     machine=MinGw;;
+    *)          machine="UNKNOWN:${unameOut}"
+esac
+echo ${machine}
+
 
 
 echo '
@@ -80,6 +90,9 @@ echo '
 3) setting up python...
 
 # '
+
+
+ 
 
 # # if ! command -v pyenv &> /dev/null
 # if [ ! -d "$HOME/.pyenv" ]
@@ -125,11 +138,11 @@ echo '
 
 
 
-cd $path_repo
-python3 -m pip install virtualenv
-python3 -m virtualenv venv
-source venv/bin/activate
-python3 -m pip install -r requirements.txt
+# cd $path_repo
+# python3 -m pip install virtualenv
+# python3 -m virtualenv venv
+# source venv/bin/activate
+# python3 -m pip install -r requirements.txt
 
 # if command -v pyenv &> /dev/null    
 # then
@@ -198,25 +211,25 @@ python3 -m pip install -r requirements.txt
 # export PATH="$path_repo/bin:$PATH"
 
 
-echo '
+# echo '
 
-5) adding komrade bin folder to path
+# 5) adding komrade bin folder to path
 
-'
+# '
 
-echo "
+# echo "
 
-# komrade
-export PATH=\"$path_repo/bin:\$PATH\"
+# # komrade
+# export PATH=\"$path_repo/bin:\$PATH\"
 
-" >> ~/.bashrc
-source ~/.bashrc
+# " >> ~/.bashrc
+# source ~/.bashrc
 
-echo "Now run Komrade with:
+# echo "Now run Komrade with:
 
-komrade-cli    [CLI interface -- beta]
-komrade-app    [GUI interface -- alpha]
+# komrade-cli    [CLI interface -- beta]
+# komrade-app    [GUI interface -- alpha]
 
-"
+# "
 
-bash   
+# bash   
