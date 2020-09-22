@@ -26,6 +26,7 @@ if [ -z "$path_komrade" ]
 then
     path_komrade=$path_komrade_default
 fi
+
 if [ ! -d "$path_komrade" ]
 then
     mkdir -p $path_komrade
@@ -106,13 +107,17 @@ then
     chmod +x 
     ./bash miniconda.sh -b -f -p "$path_komrade/lib/miniconda3"
     rm miniconda.sh
-else if [ "$machine" = "Mac" ]
+fi
+
+if [ "$machine" = "Mac" ]
 then
     curl https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-MacOSX-x86_64.sh -o miniconda.sh
     chmod+x
     ./miniconda.sh -b -f -p "$path_komrade/lib/miniconda3"
     rm miniconda.sh
-else if [ "$machine" = "Cygwin" ]
+fi
+
+if [ "$machine" = "Cygwin" ]
 then
     arch="$(uname -m)"
     if [ "$arch" = "x86_64" ]
@@ -125,6 +130,7 @@ then
     ./miniconda.exe -b -f -p "$path_komrade/lib/miniconda3"
     rm miniconda.exe
 fi
+
 pythonexec="$path_komrade/lib/miniconda3/bin/python"
 
 
@@ -154,6 +160,9 @@ echo "
 export PATH=\"$path_repo/bin:\$PATH\"
 
 " >> ~/.bashrc
+
+
+
 export PATH="$path_repo/bin:$PATH"
 
 echo "Now run Komrade with:
