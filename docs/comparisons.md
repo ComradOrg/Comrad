@@ -2,7 +2,7 @@
 
 ## Comparison of their designs
 
-| Other cool thing                              | What is it?       | Kind of like...    | Decentralized? (P2P?)          | Anonymous? (IP hidden?)       | Confidential? (100% E2EE?)         | Data robustness?                      | Identity verification?                  | Requires invitation/server?        |
+| Other cool thing                              | What is it?       | Kind of like...    | Decentralized? (P2P?)          | Anonymous? (IP hidden?)                       | Confidential? (100% E2EE?)                  | Data robustness?                      | Identity verification?                  | Requires invitation/server?        |
 | --------------------------------------------- | ----------------- | ------------------ | ------------------------------ | --------------------------------------------- | ------------------------------------------- | ------------------------------------- | --------------------------------------- | ---------------------------------- |
 | *[Komrade](http://komrade.app)*               | *Social network*  | *Twitter*          | ❌ *No (central server on Tor)* | ✔️ *Yes (everything routed via Tor)*           | ✔️ *Yes (100% E2EE)*                         | ⭕ *Minimal server (deleted ASAP)*     | ✔️ *Yes (central public key repository)* | ✔️ *No (works like twitter)*        |
 | [Secure Scuttlebutt](https://scuttlebutt.nz/) | Social network    | Twitter / Facebook | ✔️ Fully (P2P)                  | ❌ No (P2P reveals IP; friend networks public) | ⭕ Partly (private E2EE, public unencrypted) | ✔️ Distributed across friend networks? | ✔️ Yes? (federated key exchange?)        | ❌ Yes (need initial pub)           |
@@ -16,15 +16,15 @@
 ## Comparison of their features
 
 
-| Other cool thing                              | DM users (E2EE) | Group chat (E2EE) | Post to world | Post to friends/ties | Symmetric ties (friends) | Asymmetric ties (followers) | Like posts | Repost posts |
-| --------------------------------------------- | --------------- | ----------------- | ------------- | -------------------- | -------------------------- | ---------------------------- | ---------- | ------------ |
-| *[Komrade](http://komrade.app)*               | ✔️               | ❌?                | ✔️             | ✔️                    | ✔️                          | ✔️                            | ✔️?         | ❌            |
-| [Secure Scuttlebutt](https://scuttlebutt.nz/) | ✔️               | ❌?                | ❌             | ✔️                    | ✔️                          | ✔️                            | ✔️          | ❌?           |
-| [Diaspora](https://diasporafoundation.org/)   | ❌?              | ❌?                | ❌?            | ✔️                    | ❌                          | ✔️                            | ✔️          | ✔️?           |
-| [Mastodon](https://joinmastodon.org/)         | ❌?              | ❌?                | ❌?            | ✔️                    | ❌                          | ✔️                            | ✔️          | ✔️?           |
-| [Matrix](https://matrix.org/)                 | ✔️               | ✔️                 | ❌?            | ✔️                    | ✔️                          | ❌                            | ❌?         | ❌?           |
-| [Briar Messenger](https://briarproject.org/)  | ✔️               | ✔️                 | ❌?            | ✔️                    | ✔️                          | ❌                            | ❌?         | ❌?           |
-| [Cabal Chat](https://cabal.chat/)             | ?               | ✔️                 | ❌?            | ✔️                    | ❌                          | ❌                            | ❌          | ❌            |
-| [Signal](https://signal.org/)                 | ✔️               | ✔️                 | ❌             | ❌                    | ✔️                          | ❌                            | ❌          | ❌            |
+| Other cool thing                              | DM users (E2EE) | Group chat (E2EE) | Post to world | Post to friends/ties | Symmetric ties (friends) | Asymmetric ties (followers) | Like posts | Repost posts | Edit posts | Delete posts |
+| --------------------------------------------- | --------------- | ----------------- | ------------- | -------------------- | ------------------------ | --------------------------- | ---------- | ------------ | ---------- | ------------ |
+| *[Komrade](http://komrade.app)*               | ✔️               | ❌?                | ✔️             | ✔️                    | ✔️                        | ✔️                           | ✔️?         | ❌            | ❌          | ✔️            |
+| [Secure Scuttlebutt](https://scuttlebutt.nz/) | ✔️               | ❌?                | ❌             | ✔️                    | ✔️                        | ✔️                           | ✔️          | ❌?           | ❌          | ❌            |
+| [Diaspora](https://diasporafoundation.org/)   | ❌?              | ❌?                | ❌?            | ✔️                    | ❌                        | ✔️                           | ✔️          | ✔️?           |
+| [Mastodon](https://joinmastodon.org/)         | ✔️               | ❌?                | ✔️             | ✔️                    | ❌                        | ✔️                           | ✔️          | ✔️?           |
+| [Matrix](https://matrix.org/)                 | ✔️               | ✔️                 | ❌?            | ✔️                    | ✔️                        | ❌                           | ❌?         | ❌?           |
+| [Briar Messenger](https://briarproject.org/)  | ✔️               | ✔️                 | ❌?            | ✔️                    | ✔️                        | ❌                           | ❌?         | ❌?           |
+| [Cabal Chat](https://cabal.chat/)             | ?               | ✔️                 | ❌?            | ✔️                    | ❌                        | ❌                           | ❌          | ❌            |
+| [Signal](https://signal.org/)                 | ✔️               | ✔️                 | ❌             | ❌                    | ✔️                        | ❌                           | ❌          | ❌            |
 
 
