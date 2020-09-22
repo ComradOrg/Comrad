@@ -169,10 +169,10 @@ class CLI(Logger):
             tot=self.komrade.num_msgs
         )
 
-    def clearnet(self):
+    def clearnet(self,_=''):
         os.environ['KOMRADE_USE_CLEARNET'] = '1'
         os.environ['KOMRADE_USE_TOR'] = '0'
-    def tor(self):
+    def tor(self,_=''):
         os.environ['KOMRADE_USE_CLEARNET'] = '0'
         os.environ['KOMRADE_USE_TOR'] = '1'
     

@@ -161,12 +161,12 @@ class LoginScreen(BaseScreen):
         
     def boot(self,un):
 
-        self.app.stat(
-            'You chose the username '+un
-        )
+        # self.app.stat(
+        #     'You chose the username '+un
+        # )
 
 
-        return
+        # return
         kommie = Komrade(un,getpass_func=self.getpass_func)
         # self.show_pass_opt()
         logger.info(f'booted kommie: {kommie}')

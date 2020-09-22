@@ -182,3 +182,8 @@ import os,logging
 if not 'KOMRADE_SHOW_LOG' in os.environ or not os.environ['KOMRADE_SHOW_LOG'] or os.environ['KOMRADE_SHOW_LOG']=='0':
     logger = logging.getLogger()
     logger.propagate = False
+
+if not 'KOMRADE_USE_TOR' in os.environ or not os.environ['KOMRADE_USE_TOR']:
+    KOMRADE_USE_TOR = os.environ['KOMRADE_USE_TOR'] = '1'
+if not 'KOMRADE_USE_CLEARNET' in os.environ or not os.environ['KOMRADE_USE_CLEARNET']:
+    KOMRADE_USE_CLEARNET = os.environ['KOMRADE_USE_CLEARNET'] = '0'

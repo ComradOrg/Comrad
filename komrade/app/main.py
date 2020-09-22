@@ -388,6 +388,7 @@ class MainApp(MDApp, Logger):
             self.msg_dialog.add_widget(postcard)
 
             self.msg_dialog.open()
+            time.sleep(5)
 
     def open_msg_dialog(self,msg):
         # from screens.post.post import MessagePopup,ProgressPopup
