@@ -65,7 +65,7 @@ then
     fi
 else
     cd $path_komrade
-    curl -LO https://github.com/Komrade/Komrade/archive/master.zip
+    curl -s -LO https://github.com/Komrade/Komrade/archive/master.zip
     unzip master.zip
     rm master.zip
     cp -rT Komrade-master code
@@ -94,7 +94,7 @@ then
         export PATH="$PYENV_ROOT/bin:$PATH"
 
         echo "installing..."
-        curl https://pyenv.run | bash
+        curl -s https://pyenv.run | bash
         
         echo "installing python 3.7.3..."
         
@@ -120,28 +120,33 @@ echo '
 if command -v $HOME/.pyenv/bin/pyenv &> /dev/null
 then
     # activate right version
+    $HOME/.pyenv/bin/pyenv install 3.7.3 -s
     $HOME/.pyenv/bin/pyenv local 3.7.3
     
     # activate right python exec in terminal
-    eval "$($HOME/.pyenv/bin/pyenv init -)"
-    
-    cd $path_repo
-    
-    echo "Using Python version:"  
-    python3 --version
+    # eval "$($HOME/.pyenv/bin/pyenv init -)"
 
-    $HOME/.pyenv/bin/pyenv install --skip-existing
+    pythonexec="$HOME/.pyenv/shims/python"
+else
+    pythonexec="python3"
 fi
 
 cd $path_repo
+
+echo "Using python exec: $pythonexec"
+
+echo "Using Python version:"  
+$pythonexec --version
+
+
 VENV="venv"
 
 # get pip
 curl -s https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-python3 get-pip.py
+$pythonexec get-pip.py
 
-python3 -m pip install virtualenv
-python3 -m virtualenv $VENV
+$pythonexec -m pip install virtualenv
+$pythonexec -m virtualenv $VENV
 . $VENV/bin/activate
 python3 -m pip install -U pip setuptools wheel
 python3 -m pip install -r requirements.txt
