@@ -115,43 +115,74 @@ echo '
 4) creating virtual environment...
 
 '
-  
-## get the pyenv python if possible
-if command -v $HOME/.pyenv/bin/pyenv &> /dev/null
-then
-    # activate right version
-    $HOME/.pyenv/bin/pyenv install 3.7.3 -s
-    $HOME/.pyenv/bin/pyenv local 3.7.3
-    
-    # activate right python exec in terminal
-    # eval "$($HOME/.pyenv/bin/pyenv init -)"
 
-    pythonexec="$HOME/.pyenv/shims/python"
-else
-    pythonexec="python3"
-fi
 
+
+
+
+## the pyenv way
 cd $path_repo
 
-echo "Using python exec: $pythonexec"
+if command -v $HOME/.pyenv/bin/pyenv &> /dev/null
+then
+    $HOME/.pyenv/bin/pyenv install -s
+    $HOME/.pyenv/bin/pyenv local
+    VENV="venv"
+    VENV=${VENV#-}
+    $HOME/.pyenv/shims/python -m venv $VENV
+    . $VENV/bin/activate
+    python3 -m pip install -U pip setuptools wheel
+    python3 -m pip install -r requirements.txt
 
-echo "Using Python version:"  
-$pythonexec --version
+else
+    python3 -m pip install virtualenv
+    python3 -m virtualenv venv
+    source venv/bin/activate
+    pip install -r requirements.txt
+fi
 
 
-VENV="venv"
 
-# get pip
-curl -s https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-$pythonexec get-pip.py
 
-$pythonexec -m pip install virtualenv
-$pythonexec -m virtualenv $VENV
-. $VENV/bin/activate
-python3 -m pip install -U pip setuptools wheel
-python3 -m pip install -r requirements.txt
 
-export PATH="$path_repo/bin:$PATH"
+
+  
+# ## get the pyenv python if possible
+# if command -v $HOME/.pyenv/bin/pyenv &> /dev/null
+# then
+#     # activate right version
+#     $HOME/.pyenv/bin/pyenv install 3.7.3 -s
+#     $HOME/.pyenv/bin/pyenv local 3.7.3
+    
+#     # activate right python exec in terminal
+#     eval "$($HOME/.pyenv/bin/pyenv init -)"
+
+#     pythonexec="$HOME/.pyenv/shims/python"
+# else
+#     pythonexec="python3"
+# fi
+
+# cd $path_repo
+
+# echo "Using python exec: $pythonexec"
+
+# echo "Using Python version:"  
+# $pythonexec --version
+
+
+# VENV="venv"
+
+# # get pip
+# curl -s https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+# $pythonexec get-pip.py
+
+# $pythonexec -m pip install virtualenv
+# $pythonexec -m virtualenv $VENV
+# . $VENV/bin/activate
+# python3 -m pip install -U pip setuptools wheel
+# python3 -m pip install -r requirements.txt
+
+# export PATH="$path_repo/bin:$PATH"
 
 
 echo '
@@ -166,3 +197,15 @@ echo "
 export PATH=\"$path_repo/bin:\$PATH\"
 
 " >> ~/.bashrc
+
+
+echo "restarting shell"
+
+bash
+
+echo "Now run Komrade with:
+
+komrade-cli    [CLI interface -- beta]
+komrade-app    [GUI interface -- alpha]
+
+"
