@@ -71,7 +71,7 @@ else
     cp -rT Komrade-master code
     rm -r Komrade-master
 fi
-
+cd $path_komrade
 
 
 
@@ -81,53 +81,40 @@ echo '
 
 # '
 
+# # if ! command -v pyenv &> /dev/null
+# if [ ! -d "$HOME/.pyenv" ]
+# then
+#     echo "pyenv not installed. install?"
+#     read -p "[Y/n] " pyenv_yn
+
+#     if [ "$pyenv_yn" = "n" ]; then
+#         echo "Not installing pyenv."
+#     else
+#         export PYENV_ROOT="$HOME/.pyenv"
+#         export PATH="$PYENV_ROOT/bin:$PATH"
+
+#         echo "installing..."
+#         curl -s https://pyenv.run | bash
+        
+#         echo "installing python 3.7.3..."
+        
+        
+#         #eval "$(pyenv init -)"
+        
+#         #$HOME/.pyenv/bin/pyenv install 3.7.3
+
+#         echo $'\n\n#pyenv config ###\n' >> ~/.bashrc
+#         echo 'export PATH="$HOME/.pyenv/bin:$PATH"' >> ~/.bashrc
+#         echo 'eval "$(pyenv init -)"' >> ~/.bashrc
+#         echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc
+#         echo $'\n###################\n\n' >> ~/.bashrc
+#         source ~/.bashrc
+#     fi
+# fi
 
 
 
 cd $path_komrade
-
-# ### Detect if python 3.7?
-# pyv="$(python3 -c 'import sys; print(sys.version_info[0:2])')"
-# if [ ! "$pyv" = "(3, 7)" ]
-# then
-unameOut="$(uname -s)"
-case "${unameOut}" in
-    Linux*)     machine=Linux;;
-    Darwin*)    machine=Mac;;
-    CYGWIN*)    machine=Cygwin;;
-    MINGW*)     machine=MinGw;;
-    *)          machine="UNKNOWN:${unameOut}"
-esac
-#echo ${machine}
-
-if [ "$machine" = "Linux" ]
-then
-    curl https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-Linux-x86_64.sh -o miniconda.sh
-    chmod +x 
-    ./bash miniconda.sh -b -f -p "$path_komrade/lib/miniconda3"
-    rm miniconda.sh
-else if [ "$machine" = "Mac" ]
-then
-    curl https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-MacOSX-x86_64.sh -o miniconda.sh
-    chmod+x
-    ./miniconda.sh -b -f -p "$path_komrade/lib/miniconda3"
-    rm miniconda.sh
-else if [ "$machine" = "Cygwin" ]
-then
-    arch="$(uname -m)"
-    if [ "$arch" = "x86_64" ]
-    then
-        curl https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-Windows-x86_64.exe -o miniconda.exe
-    else
-        curl https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-Windows-x86.exe -o miniconda.exe
-    fi
-
-    ./miniconda.exe -b -f -p "$path_komrade/lib/miniconda3"
-    rm miniconda.exe
-fi
-pythonexec="$path_komrade/lib/miniconda3/bin/python"
-
-
 echo '
 
 4) creating virtual environment...
@@ -135,12 +122,81 @@ echo '
 '
 
 
-cd $path_komrade
-$pythonexec -m pip install virtualenv
-$pythonexec -m virtualenv venv
-. venv/bin/activate
-echo "Now using python: `which python`"
-python -m pip install -r requirements.txt
+
+
+
+cd $path_repo
+python3 -m pip install virtualenv
+python3 -m virtualenv venv
+source venv/bin/activate
+python3 -m pip install -r requirements.txt
+
+# if command -v pyenv &> /dev/null    
+# then
+#     ## the pyenv way
+#     pyenv install -s
+#     pyenv local
+#     VENV="venv"
+#     VENV=${VENV#-}
+#     echo "Python in use: `which python`"
+#     echo "Python3 in use: `which python3`"
+#     echo "Python in pyenv: `pyenv local`"
+#     pyenv virtualenv venv
+#     # python3 -m venv $VENV
+#     # . $VENV/bin/activate
+#     pyenv activate venv
+#     python -m pip install -U pip setuptools wheel
+#     python -m pip install -r requirements.txt
+# else
+#     python3 -m pip install virtualenv
+#     python3 -m virtualenv venv
+#     source venv/bin/activate
+#     python3 -m pip install -r requirements.txt
+# fi
+
+
+
+
+
+
+  
+# ## get the pyenv python if possible
+# if command -v $HOME/.pyenv/bin/pyenv &> /dev/null
+# then
+#     # activate right version
+#     $HOME/.pyenv/bin/pyenv install 3.7.3 -s
+#     $HOME/.pyenv/bin/pyenv local 3.7.3
+    
+#     # activate right python exec in terminal
+#     eval "$($HOME/.pyenv/bin/pyenv init -)"
+
+#     pythonexec="$HOME/.pyenv/shims/python"
+# else
+#     pythonexec="python3"
+# fi
+
+# cd $path_repo
+
+# echo "Using python exec: $pythonexec"
+
+# echo "Using Python version:"  
+# $pythonexec --version
+
+
+# VENV="venv"
+
+# # get pip
+# curl -s https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+# $pythonexec get-pip.py
+
+# $pythonexec -m pip install virtualenv
+# $pythonexec -m virtualenv $VENV
+# . $VENV/bin/activate
+# python3 -m pip install -U pip setuptools wheel
+# python3 -m pip install -r requirements.txt
+
+# export PATH="$path_repo/bin:$PATH"
+
 
 echo '
 
@@ -154,7 +210,7 @@ echo "
 export PATH=\"$path_repo/bin:\$PATH\"
 
 " >> ~/.bashrc
-export PATH="$path_repo/bin:$PATH"
+source ~/.bashrc
 
 echo "Now run Komrade with:
 
@@ -162,3 +218,5 @@ komrade-cli    [CLI interface -- beta]
 komrade-app    [GUI interface -- alpha]
 
 "
+
+bash   
