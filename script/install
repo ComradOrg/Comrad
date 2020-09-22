@@ -148,6 +148,8 @@ $pythonexec -m pip install virtualenv
 $pythonexec -m virtualenv venv
 . venv/bin/activate
 echo "Now using python: `which python`"
+
+cd $path_repo
 python -m pip install -r requirements.txt
 
 echo '
