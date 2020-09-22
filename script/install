@@ -103,11 +103,11 @@ then
         
         #$HOME/.pyenv/bin/pyenv install 3.7.3
 
-        echo '\n\n#pyenv config ###\n' >> ~/.bashrc
+        echo $'\n\n#pyenv config ###\n' >> ~/.bashrc
         echo 'export PATH="$HOME/.pyenv/bin:$PATH"' >> ~/.bashrc
         echo 'eval "$(pyenv init -)"' >> ~/.bashrc
         echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc
-        echo '\n###################\n\n' >> ~/.bashrc
+        echo $'\n###################\n\n' >> ~/.bashrc
         source ~/.bashrc
     fi
 fi
