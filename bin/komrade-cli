@@ -6,7 +6,9 @@ export KOMRADE_SHOW_LOG=0
 SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 path=`realpath "$SCRIPTPATH/../komrade/cli/cli.py"`
-pathvenv=`realpath "$SCRIPTPATH/../../venv/bin/activate"`
+pathvenv=`realpath "$SCRIPTPATH/../venv/bin/activate"`
+echo $path
+echo $pathvenv
 source $pathvenv
 
 python "$path" $*

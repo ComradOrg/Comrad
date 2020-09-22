@@ -37,7 +37,9 @@ class CLI(Logger):
         'verbose':'show/hide log output',
         'post':'post to world',
         'feed':'fetch posts',
-        'exit':'exit komrade'
+        'exit':'exit komrade',
+        'clearnet':'switch to clearnet',
+        'tor':'switch to tor',
     }
 
     def __init__(self,name='',cmd='',persona=None):
@@ -167,6 +169,13 @@ class CLI(Logger):
             tot=self.komrade.num_msgs
         )
 
+    def clearnet(self):
+        os.environ['KOMRADE_USE_CLEARNET'] = '1'
+        os.environ['KOMRADE_USE_TOR'] = '0'
+    def tor(self):
+        os.environ['KOMRADE_USE_CLEARNET'] = '0'
+        os.environ['KOMRADE_USE_TOR'] = '1'
+    
 
     def help(self,*x,**y):
         clear_screen()

@@ -25,6 +25,19 @@ class TheTelephone(Operator):
         self.log(f'Starting up with callbacks: {self._callbacks}')
 
 
+    @property
+    def api_url(self):
+        #if 'KOMRADE_OPERATOR_API_URL' in os.environ and os.environ['KOMRADE_OPERATOR_API_URL']:
+        #    return os.environ
+        #os.environ['KOMRADE_OPERATOR_API_URL'] = OPERATOR_API_URL_TOR
+        if 'KOMRADE_USE_TOR' in os.environ and os.environ['KOMRADE_USE_TOR']=='1':
+            return OPERATOR_API_URL_TOR
+        elif 'KOMRADE_USE_CLEARNET' in os.environ and os.environ['KOMRADE_USE_CLEARNET']=='1':
+            return OPERATOR_API_URL_CLEARNET
+        else:
+            return OPERATOR_API_URL
+
+
     def send_and_receive(self,msg_d,**y):
         # self.log('send and receive got incoming msg:',msg_d)
         
@@ -48,7 +61,10 @@ class TheTelephone(Operator):
         msg_b64_str_esc = msg_b64_str.replace('/','_')
 
         # dial the operator
-        URL = OPERATOR_API_URL + msg_b64_str_esc + '/'
+        
+
+
+        URL = self.api_url + msg_b64_str_esc + '/'
         self.log("DIALING THE OPERATOR:",URL)
         phonecall=self.komrade_request(URL)
         if phonecall.status_code!=200:
