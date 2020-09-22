@@ -106,7 +106,7 @@ esac
 if [ "$machine" = "Linux" ]
 then
     curl https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-Linux-x86_64.sh -o miniconda.sh
-    chmod +x 
+    chmod +x miniconda.sh
     ./bash miniconda.sh -b -f -p "$path_komrade/lib/miniconda3"
     rm miniconda.sh
 fi
@@ -114,7 +114,7 @@ fi
 if [ "$machine" = "Mac" ]
 then
     curl https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-MacOSX-x86_64.sh -o miniconda.sh
-    chmod+x
+    chmod +x miniconda.sh
     ./miniconda.sh -b -f -p "$path_komrade/lib/miniconda3"
     rm miniconda.sh
 fi
