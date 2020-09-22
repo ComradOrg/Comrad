@@ -1,3 +1,7 @@
+import os,sys; sys.path.append(os.path.abspath(os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__),'..')),'..')))
+from komrade import *
+
+
 from screens.base import ProtectedScreen,BaseScreen
 from plyer import filechooser
 from kivy.uix.button import Button

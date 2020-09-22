@@ -49,12 +49,24 @@ BSEP3=b'##########'
 OPERATOR_NAME = 'Operator'
 TELEPHONE_NAME = 'Telephone'
 WORLD_NAME = 'komrades'
-PATH_APP = os.path.abspath(os.path.dirname(__file__))
+PATH_REPO = os.path.abspath(
+    os.path.join(
+        os.path.dirname(__file__),
+        '..'
+    )
+)
+PATH_GUI = os.path.join(PATH_REPO,'komrade','app')
+PATH_GUI_ASSETS = os.path.join(PATH_GUI,'assets')
+PATH_DEFAULT_AVATAR = os.path.join(PATH_GUI_ASSETS,'avatars','marxbot.png')
+
+
+PATH_REPO = PATH_APP = os.path.abspath(os.path.dirname(__file__))
+# PATH_APP = os.path.join(PATH_REPO,'komrade')
 # PATH_BUILTIN_KEYCHAINS_ENCR = os.path.join(PATH_APP,'.builtin.keychains.encr')
 PATH_BUILTIN_KEYCHAIN = os.path.join(PATH_APP,'.builtin.keys')
 PATH_OMEGA_KEY = os.path.join(PATH_APP,'.omega.key')
 # PATH_BUILTIN_KEYCHAINS_DECR = os.path.join(PATH_APP,'.builtin.keychains.decr')
-
+PATH_GUI = os.path.join(PATH_APP, )
 
 # key names
 

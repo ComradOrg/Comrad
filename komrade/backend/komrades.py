@@ -81,10 +81,11 @@ class KomradeX(Caller):
 
 
     ## Talking with Operator
-    def ring_ring(self,msg,route=None,**y):
+    async def ring_ring(self,msg,route=None,**y):
+        logger.info('got here 2!')
         if type(msg)==dict and not ROUTE_KEYNAME in msg:
             msg[ROUTE_KEYNAME]=route
-        return super().ring_ring(msg,caller=self,**y)
+        return await super().ring_ring(msg,caller=self,**y)
 
 
 
@@ -94,6 +95,9 @@ class KomradeX(Caller):
     ####################################
     ## (1) Logging in and registering ##
     ####################################
+
+    async def log_async(self,*x,**y):
+        return self.log(*x,**y)
 
 
 
@@ -579,7 +583,7 @@ class KomradeX(Caller):
         )
 
     ## Getting updates
-    def get_updates(self,include_posts=True):
+    async def get_updates(self,include_posts=True):
         # get any parameters we need
         # post_ids_read = list(self.inbox_read_db.values)
         if not self.pubkey:
@@ -593,7 +597,7 @@ class KomradeX(Caller):
         }
         self.log('msg to op ->',msg_to_op)
 
-        res = self.ring_ring(
+        res = await self.ring_ring(
             msg_to_op,
             route='get_updates'
         )

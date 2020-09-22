@@ -249,7 +249,7 @@ class Operator(Keymaker):
         return new_msg_obj
 
 
-    def ring_ring(self,msg,to_whom,get_resp_from=None,route=None,caller=None):
+    async def ring_ring(self,msg,to_whom,get_resp_from=None,route=None,caller=None):
         # ring ring
         from komrade.cli.artcode import ART_PHONE_SM1
         import textwrap as tw
@@ -277,8 +277,10 @@ class Operator(Keymaker):
 
         # pass through the telephone wire by the get_resp_from function
         if not get_resp_from: get_resp_from=to_whom.ring_ring
-        resp_msg_obj = get_resp_from(msg_obj.msg_d,caller=caller)
-            #self.log('resp_msg_obj <-',resp_msg_obj)
+        
+        resp_msg_obj = await get_resp_from(msg_obj.msg_d,caller=caller)
+        self.log('resp_msg_obj <-',str(resp_msg_obj))
+        
         if not resp_msg_obj:
             print('!! no response from op !!')
             exit()

@@ -1,3 +1,7 @@
+import os,sys; sys.path.append(os.path.abspath(os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__),'..')),'..')))
+from komrade import *
+
+
 from kivymd.uix.label import MDLabel
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.image import AsyncImage, Image
@@ -13,6 +17,8 @@ from threading import Thread
 import asyncio
 from misc import *
 from kivy.core.window import Window
+import logging
+logger=logging.getLogger(__name__)
 
 
 
@@ -142,10 +148,13 @@ class PostCard(MDCard):
         if self.recipient:
             recip=self.recipient
             recip='@'+recip if recip and recip[0].isalpha() else recip
-            self.author_label.text+='\n[size=14sp]to '+recip+'[/size]'
+            self.author_label.text+=f'\n[size={recip_label_font_size}]to '+recip+'[/size]'
             self.author_label.markup=True
         self.author_label.font_size = author_label_font_size
-        self.author_avatar = author_avatar = PostAuthorAvatar(source=f'assets/avatars/{self.author}.png') #self.img_src)
+        img_src = os.path.join(PATH_GUI_ASSETS, 'avatars', f'{self.author}.png')
+        if not os.path.exists(img_src): 
+            img_src=PATH_DEFAULT_AVATAR
+        self.author_avatar = author_avatar = PostAuthorAvatar(source=img_src) #self.img_src)
         self.author_section_layout.add_widget(author_avatar)
         self.author_section_layout.add_widget(author_label)
         # self.author_section_layout.add_widget(MDSeparator(height='1sp',size_hint=(None,None)))
@@ -242,6 +251,20 @@ class PostCard(MDCard):
 #####
 
 
+class PostCardPopup(PostCard):
+    def __init__(self,*x,msg_dialog=None,**y):
+        super().__init__(*x,**y)
+        self.ok_to_continue=False
+        self.msg_dialog=msg_dialog
+    
+    def on_touch_down(self,touch):
+        # if self.collide_point(*touch.pos):# and not self.ok_to_continue:
+            # logger.info('ouch!!!')
+            # The touch has occurred inside the widgets area. Do stuff!
+        self.ok_to_continue=True
+        if self.msg_dialog: self.msg_dialog.ok_to_continue=True
+        return True
+
 class FeedScreen(BaseScreen):
     posts = ListProperty()
 
@@ -253,19 +276,22 @@ class FeedScreen(BaseScreen):
         
         i=0
         lim=25
-        self.app.komrade.get_updates()
-        posts=self.get_posts()
-        for i,post in enumerate(reversed(posts)):
-            if i>lim: break
-            data = {
-                'author':post.from_name,
-                'to_name':post.to_name,
-                'content':post.msg.get('txt') if type(post.msg)==dict else str(post.msg)
-            }
-            post_obj = PostCard(data)
-            self.posts.append(post_obj)
-            self.ids.post_carousel.add_widget(post_obj)
 
+        async def go():
+            await self.app.komrade.get_updates()
+            posts=self.get_posts()
+            for i,post in enumerate(reversed(posts)):
+                if i>lim: break
+                data = {
+                    'author':post.from_name,
+                    'to_name':post.to_name,
+                    'content':post.msg.get('txt') if type(post.msg)==dict else str(post.msg)
+                }
+                post_obj = PostCard(data)
+                self.posts.append(post_obj)
+                self.ids.post_carousel.add_widget(post_obj)
+
+        asyncio.create_task(go())
     # def on_pre_enter(self):
     #     self.clear_deck()
     #     # for i,x 

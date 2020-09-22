@@ -38,7 +38,7 @@ class TheTelephone(Operator):
             return OPERATOR_API_URL
 
 
-    def send_and_receive(self,msg_d,**y):
+    async def send_and_receive(self,msg_d,**y):
         # self.log('send and receive got incoming msg:',msg_d)
         
         # assert that people can speak only with operator in their first enclosed message!
@@ -66,7 +66,9 @@ class TheTelephone(Operator):
 
         URL = self.api_url + msg_b64_str_esc + '/'
         self.log("DIALING THE OPERATOR:",URL)
-        phonecall=self.komrade_request(URL)
+
+        phonecall=await self.komrade_request_async(URL)
+
         if phonecall.status_code!=200:
             self.log('!! error in request',phonecall.status_code,phonecall.text)
             return
@@ -95,8 +97,8 @@ class TheTelephone(Operator):
         # return self.pronto_pronto(resp_msg_obj)
 
 
-    def ring_ring(self,msg,**y):
-        return super().ring_ring(
+    async def ring_ring(self,msg,**y):
+        return await super().ring_ring(
             msg,
             to_whom=self.op,
             get_resp_from=self.send_and_receive,
@@ -108,6 +110,13 @@ class TheTelephone(Operator):
         if '.onion' in url or not allow_clearnet:
             return self.tor_request(url)
         return requests.get(url,timeout=600)
+
+    async def komrade_request_async(self,url,allow_clearnet=ALLOW_CLEARNET):
+        import requests_async as requests
+        if '.onion' in url or not allow_clearnet:
+            return await self.tor_request_async(url)
+        return await requests.get(url,timeout=600)
+
 
     def tor_request(self,url):
         return self.tor_request_in_python(url)
@@ -123,9 +132,7 @@ class TheTelephone(Operator):
 
     async def tor_request_in_python_async(self,url):
         import requests_async as requests
-        tor = TorClient(
-            callbacks=self._callbacks
-        )
+        tor = TorClient()
         with tor.get_guard() as guard:
             adapter = TorHttpAdapter(guard, 3, retries=RETRIES)
 
@@ -133,7 +140,9 @@ class TheTelephone(Operator):
                 s.headers.update({'User-Agent': 'Mozilla/5.0'})
                 s.mount('http://', adapter)
                 s.mount('https://', adapter)
-                return await s.get(url, timeout=60)
+                r = await s.get(url, timeout=60)
+                self.log('<-- r',r)
+                return r
 
 
     def tor_request_in_python(self,url):

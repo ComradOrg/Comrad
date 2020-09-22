@@ -23,9 +23,11 @@ class LoginButton(MDRectangleFlatButton): pass
 class RegisterButton(MDRectangleFlatButton,Logger):
     def enter(self):
         un=self.parent.parent.parent.username_field.text
+        pw=self.parent.parent.parent.password_field.text
         login_screen = self.parent.parent.parent
 
-        login_screen.boot(un)
+        time.sleep(0.1)
+        asyncio.create_task(login_screen.boot(un,pw))
 
         # logger.info('types',type(self.parent),type(self.parent.parent.parent))
         
@@ -156,21 +158,19 @@ class LoginScreen(BaseScreen):
             )
         self.dialog.open()
 
-    def getpass_func(self,why_msg):
-        return self.password_field.text
+    def getpass_func(self,why_msg,passphrase=None):
+        return self.password_field.text if not passphrase else passphrase
         
-    def boot(self,un):
+    async def boot(self,un,pw=None):
+        name=un
+        from komrade.backend import Komrade
+        kommie = Komrade(un,getpass_func=lambda why: pw)
+        self.log('KOMMIE!?!?',kommie)
 
-        # self.app.stat(
-        #     'You chose the username '+un
-        # )
-
-
-        # return
-        kommie = Komrade(un,getpass_func=self.getpass_func)
-        # self.show_pass_opt()
         logger.info(f'booted kommie: {kommie}')
         if kommie.exists_locally_as_account():
+            await self.app.stat('You have already created this account. Logging you back in...')
+
             logger.info(f'is account')
             self.login_status.text='You should be able to log into this account.'
             if kommie.privkey:
@@ -187,10 +187,15 @@ class LoginScreen(BaseScreen):
 
         #   self.layout.add_widget(self.layout_password)
         elif kommie.exists_locally_as_contact():
-          self.login_status.text='Komrade exists as a contact of yours.'
+            await self.app.stat('This is a contact of yours')
+            self.login_status.text='Komrade exists as a contact of yours.'
         else:
-            self.login_status.text='Komrade not known on this device. Registering...'
-            res = kommie.register(logfunc=self.app.stat)
+            await self.app.stat('Account does not exist on hardware, maybe not on server. Try to register?')
+            # self.login_status.text='Komrade not known on this device. Registering...'
+            
+            ### REGISTER
+            res = await self.register(kommie,logfunc=self.app.stat,passphrase=pw)
+            
             if kommie.privkey:
                 self.login_status.text='Registered'
                 self.app.is_logged_in=True
@@ -200,3 +205,141 @@ class LoginScreen(BaseScreen):
                 self.app.change_screen('feed')
             else:
                 self.login_status.text = 'Sign up failed...'
+        return 1
+
+    
+    async def register(self,kommie,logfunc=None,passphrase=None):
+        if not logfunc: logfunc=self.app.stat
+        name=kommie.name
+
+        # already have it?
+        if kommie.exists_locally_as_account():
+            return {'success':False, 'status':'You have already created this account.'}        
+        if kommie.exists_locally_as_contact():
+            return {'success':False, 'status':'This is already a contact of yours'}
+            
+            
+        await logfunc(f'Hello, this is Komrade @{name}.\n\nI would like to sign up for the socialist network revolution.',pause=True,komrade_name=name)
+        await logfunc(f'Excellent. But to communicate with komrades securely, you must first cut your public & private encryption keys.',pause=True,clear=True)
+
+        # ## 2) Make pub public/private keys
+        from komrade.backend.keymaker import KomradeAsymmetricKey
+        from komrade.cli.artcode import ART_KEY_PAIR
+        keypair = KomradeAsymmetricKey()
+        logger.info('cut keypair!')
+        pubkey,privkey = keypair.pubkey_obj,keypair.privkey_obj
+        await logfunc(f'I have cut for you a private and public asymmetric key pair, using the iron-clad Elliptic curve algorithm:',komrade_name='Keymaker')
+        await logfunc('(1) {pubkey}\n\n(2) {privkey}',clear=True,pause=True,komrade_name='Keymaker')
+
+
+        kommie._keychain['pubkey']=pubkey
+        kommie._keychain['privkey']=privkey
+        
+        from komrade.utils import dict_format
+        self.log('My keychain now looks like:' + dict_format(kommie.keychain()))
+        # return
+
+
+
+        ### PRIVATE KEY
+        await logfunc(f"(2) Your PRIVATE key, on the other hand, must be stored only on your device hardware.",pause=True)
+        
+        await logfunc('''Your private key is so sensitive we'll even encrypt it before storing it.''',pause=True,use_prefix=False)
+        
+        passhash = hasher(passphrase)
+        privkey_decr = KomradeSymmetricKeyWithPassphrase(passhash=passhash)
+        print()
+        
+        await logfunc(f'''Let's immediately run whatever you typed in for your password through a 1-way hashing algorithm (SHA-256), inflating it to (redacted):\n\n{make_key_discreet_str(passhash)}''',pause=True,clear=False)
+
+        privkey_encr = privkey_decr.encrypt(privkey.data)
+        privkey_encr_obj = KomradeEncryptedAsymmetricPrivateKey(privkey_encr)
+        kommie._keychain['privkey_encr']=privkey_encr_obj
+        self.log('My keychain now looks like v2:',dict_format(kommie.keychain()))
+
+        await logfunc('With this inflated password we can encrypt your super-sensitive private key.',pause=True,clear=True)
+
+        await logfunc(f"Your original private key looks like this (redacted):\n\n{privkey}",pause=True,clear=False)
+        
+        await logfunc(f"After we encrypt it with your passworded key, it looks like this (redacted):\n\n{privkey_encr_obj}",pause=True,clear=False)
+
+        await logfunc('Only this encrypted version is stored.',pause=True,clear=True)
+
+
+
+
+        # ### PUBLIC KEY
+        qr_str=kommie.qr_str(pubkey.data_b64)
+        await logfunc(f'(1) You may store your public key both on your device hardware, as well as share it with anyone you wish:\n\n{pubkey.data_b64_s}') #\n\nIt will also be stored as a QR code on your device:\n{qr_str}',pause=True,clear=True)
+        
+        await logfunc('You must also register your username and public key with Komrade @Operator on the remote server',pause=False,clear=False)
+
+        await logfunc('Connecting you to the @Operator...',komrade_name='Telephone')
+
+        ## CALL OP WITH PUBKEY
+        self.app.open_dialog('Calling @Operator...')
+        logger.info('got here!')
+        resp_msg_d = await kommie.ring_ring(
+            {
+                'name':name, 
+                'pubkey': pubkey.data,
+            },
+            route='register_new_user'
+        )
+        self.app.close_dialog()
+        
+        # print()
+        await logfunc(resp_msg_d.get('status'),komrade_name='Operator',pause=True)
+
+        if not resp_msg_d.get('success'):
+            await logfunc('''That's too bad. Cancelling registration for now.''',pause=True,clear=True)
+            return
+
+        # clear_screen()
+        await logfunc('Great. Komrade @Operator now has your name and public key on file (and nothing else!).',pause=True,clear=True)
+
+       
+
+        kommie.name=resp_msg_d.get('name')
+        pubkey_b = resp_msg_d.get('pubkey')
+        assert pubkey_b == pubkey.data
+        uri_id = pubkey.data_b64
+        sec_login = resp_msg_d.get('secret_login')
+        # stop
+        
+        await logfunc(f'''Saving keys to device:''',pause=True)
+        await logfunc(f'''(1) {pubkey}''',pause=True,use_prefix=False)
+        await logfunc(f'''(2) {privkey_encr_obj}''',pause=True,use_prefix=False)
+        await logfunc(f'''(3) [Shared Login Secret with @Operator]\n({make_key_discreet(sec_login)})''',pause=True,use_prefix=False)
+        # print()
+        kommie.crypt_keys.set(name, pubkey_b, prefix='/pubkey/')
+        kommie.crypt_keys.set(uri_id, name, prefix='/name/')
+        kommie.crypt_keys.set(uri_id,sec_login,prefix='/secret_login/')
+
+        # store privkey pieces
+        kommie.crypt_keys.set(uri_id, privkey_encr_obj.data, prefix='/privkey_encr/')
+        # just to show we used a passphrase -->
+        kommie.crypt_keys.set(uri_id, KomradeSymmetricKeyWithPassphrase.__name__, prefix='/privkey_decr/')
+
+
+        # save qr too:
+        _fnfn=kommie.save_uri_as_qrcode(uri_id)
+        await logfunc(f'Also saving public key as QR code to: {_fnfn}.',pause=True,clear=False,use_prefix=False)
+        
+        # done!
+        await logfunc(f'Congratulations. Welcome, {kommie}.',pause=True,clear=True)
+        
+        # last minute: get posts
+        if 'res_posts' in resp_msg_d and resp_msg_d['res_posts'].get('success'):
+            id2post=resp_msg_d.get('res_posts').get('posts',{})
+            if id2post:
+                kommie.log('found starter posts:',list(id2post.keys()))
+            kommie.save_posts(id2post)
+            resp_msg_d['status']+=f'  You\'ve got {len(id2post)} new posts and 0 new messages.'
+        
+
+
+        await logfunc('returning...')
+        return resp_msg_d
+
+    

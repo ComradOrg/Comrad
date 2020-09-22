@@ -140,8 +140,8 @@
     size_hint: 1,1
     # size: ('300dp','300dp')
     # md_bg_color: rgb(*COLOR_CARD)
-    md_bg_color:0,0,0,1
-    size:('600sp','600sp')
+    md_bg_color:0,0,0,0
+    size:('600sp','100sp')
 
     MDBoxLayout:
         id: msg_popup_box_layout
@@ -151,8 +151,8 @@
         size_hint: (1, 1)
         # adaptive_height: True
         pos_hint: {"center_x": .5, "center_y": .5}
-        # md_bg_color: rgb(*COLOR_CARD)
-        md_bg_color:0,0,0,0
+        md_bg_color: rgb(*COLOR_CARD)
+        # md_bg_color:0,0,0,0
         height: self.minimum_height
         # radius:[20,] 
         # border_radius:20

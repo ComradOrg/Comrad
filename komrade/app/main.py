@@ -105,8 +105,36 @@ class MyLayout(MDBoxLayout):
 
 
 class ProgressPopup(MDDialog): pass
-class MessagePopup(MDDialog): pass
-class MessagePopupCard(MDDialog): pass
+
+
+class MessagePopup(MDDialog):
+    pass
+    # def __init__(self,*x,**y):
+    #     super().__init__(*x,**y)
+    #     self.ok_to_continue=False
+    
+    # def on_dismiss(self):
+    #     if not self.ok_to_continue:
+    #         self.ok_to_continue=True
+    #         logger.info('ouch!')
+        
+
+
+    pass
+class MessagePopupCard(MDDialog):
+    def __init__(self,*x,**y):
+        super().__init__(*x,**y)
+        self.ok_to_continue=False
+    
+    def on_dismiss(self):
+        return True
+    def on_touch_down(self,touch):
+        self.ok_to_continue=True
+        logger.info('oof!')
+        # if hasattr(self,'msg_dialog'):
+            # logger.info(str(self.msg_dialog))
+
+
 class MyBoxLayout(MDBoxLayout): pass
 class MyLabel(MDLabel): pass
 
@@ -370,25 +398,45 @@ class MainApp(MDApp, Logger):
         self.dialog.open()
         #stop
 
-    def stat(self,msg,komrade_name='Telephone',pause=False,**y):
-        from komrade.app.screens.feed.feed import PostCard
-        if not hasattr(self,'msg_dialog') or not self.msg_dialog:
-            self.msg_dialog = MessagePopupCard()
-            # self.msg_dialog.ids.msg_label.text=msg
+    async def stat(self,msg,komrade_name='Telephone',pause=False,**y):
+        from komrade.app.screens.feed.feed import PostCard,PostCardPopup
+        if hasattr(self,'msg_dialog') and self.msg_dialog:# and hasattr(self.msg_dialog,'card') and self.msg_dialog.card:
+            self.msg_dialog0=self.msg_dialog
 
-            self.msg_dialog.card = postcard = PostCard({
-                'author':komrade_name,
-                'author_prefix':'Komrade @',
-                'to_name':'me',
-                'content':msg,
-                'timestamp':time.time(),
-            })
-            postcard.size_hint=(None,None)
-            postcard.size=('600sp','600sp')
-            self.msg_dialog.add_widget(postcard)
+        self.msg_dialog = MessagePopupCard()
+        # self.msg_dialog.ids.msg_label.text=msg
 
-            self.msg_dialog.open()
-            time.sleep(5)
+        self.msg_dialog.card = postcard = PostCardPopup({
+            'author':komrade_name,
+            'author_prefix':'@',
+            'to_name':'me',
+            'content':msg,
+            'timestamp':time.time(),
+            'author_label_font_size':'18sp'
+        },
+        msg_dialog=self.msg_dialog)
+        postcard.font_size='16sp'
+        postcard.size_hint=(None,None)
+        postcard.size=('600sp','600sp')
+        postcard.ok_to_continue=False
+        self.msg_dialog.add_widget(postcard)
+
+        self.msg_dialog.open()
+
+        if hasattr(self,'msg_dialog0'):
+            self.msg_dialog0.remove_widget(self.msg_dialog0.card)
+            self.root.remove_widget(self.msg_dialog0)
+            
+        await asyncio.sleep(0.1)
+        while not self.msg_dialog.ok_to_continue:
+            await asyncio.sleep(0.1)
+            # logger.info(str(postcard), postcard.ok_to_continue,'??')
+        # self.msg_dialog.dismiss()
+        # self.msg_dialog.remove_widget(postcard)
+        # self.msg_dialog.card = postcard = self.msg_dialog = None
+        await asyncio.sleep(0.1)
+        return {'success':True, 'status':'Delivered popup message'}
+        
 
     def open_msg_dialog(self,msg):
         # from screens.post.post import MessagePopup,ProgressPopup
