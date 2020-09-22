@@ -127,7 +127,7 @@ then
     
     cd $path_repo
     
-    echo "Using Python version:"
+    echo "Using Python version:"  
     python3 --version
 
     $HOME/.pyenv/bin/pyenv install --skip-existing
