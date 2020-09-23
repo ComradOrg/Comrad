@@ -110,12 +110,12 @@ As of the 23rd of August.
 [Open a terminal](https://towardsdatascience.com/a-quick-guide-to-using-command-line-terminal-96815b97b955), and then copy and paste the following line into it:
 
 ```
-bash <(curl http://komrade.app/run)
+bash <(curl -s komrade.app/run)
 ```
 
 Then hit enter. [That](https://github.com/Komrade/Komrade/blob/master/script/micro_installer) grabs a shortcut to [this auto-installer script](https://github.com/Komrade/Komrade/blob/master/script/install).
 
-By default, it creates a folder for komrade in your home directory; downloads Python 3.7 using miniconda, which it then uses to installs Komrade in a virtual environment. A folder for Komrade's executables (`komrade-cli`, `komrade-app`, `komrade-update`) is added to your $PATH. Nothing else happens, and nothing should override your existing Python configurations.
+(What does it do? By default, it creates a folder for komrade in your home directory; downloads Python 3.7 using miniconda, which it then uses to installs Komrade in a virtual environment. A folder for Komrade's executables (`komrade-cli`, `komrade-app`, `komrade-update`) is added to your $PATH. Nothing should override your existing Python configurations.)
 
 ### Run
 
