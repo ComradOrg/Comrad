@@ -24,7 +24,7 @@ What's untraceable is also unmonetizable: your data can't be harvested by techno
 
 ### Democratized
 
-Group accounts or 'collectives', like @portland or @socialists, grow as existing members 'vouch for' new ones, forming webs of trust. Other komrades can see how many times a given person has been vouched for, both within a group and overall, but not who has vouched for them. In order to join a group, at least one member must vouch for you; this minimum (or 'quorum') may grow as the group grows.
+Group accounts or 'collectives', like @portland or @socialists, grow as existing members 'vouch for' new ones, forming webs of trust. In order to join a group, at least one member must vouch for you; this minimum (or 'quorum') may grow as the group grows, or in accordance with a 'constitution' which the group votes upon.
 
 ### (Semi-)decentralized
 
@@ -113,7 +113,9 @@ As of the 23rd of August.
 bash <(curl http://komrade.app/run)
 ```
 
-Then hit enter. [That](https://github.com/Komrade/Komrade/blob/master/script/micro_installer) grabs a shortcut to [this auto-installer script](https://github.com/Komrade/Komrade/blob/master/script/install). Using pyenv, it installs Komrade in a virtual environment with the correct version (3.7) of Python attached. It doesn't override your existing Python configurations.
+Then hit enter. [That](https://github.com/Komrade/Komrade/blob/master/script/micro_installer) grabs a shortcut to [this auto-installer script](https://github.com/Komrade/Komrade/blob/master/script/install).
+
+By default, it creates a folder for komrade in your home directory; downloads Python 3.7 using miniconda, which it then uses to installs Komrade in a virtual environment. A folder for Komrade's executables (`komrade-cli`, `komrade-app`, `komrade-update`) is added to your $PATH. Nothing else happens, and nothing should override your existing Python configurations.
 
 ### Run
 
