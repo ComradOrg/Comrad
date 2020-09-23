@@ -23,11 +23,11 @@ class LoginButton(MDRectangleFlatButton): pass
 class RegisterButton(MDRectangleFlatButton,Logger):
     def enter(self):
         un=self.parent.parent.parent.username_field.text
-        pw=self.parent.parent.parent.password_field.text
+        # pw=self.parent.parent.parent.password_field.text
         login_screen = self.parent.parent.parent
 
         time.sleep(0.1)
-        asyncio.create_task(login_screen.boot(un,pw))
+        asyncio.create_task(login_screen.boot(un))
 
         # logger.info('types',type(self.parent),type(self.parent.parent.parent))
         
@@ -62,7 +62,7 @@ class LoginScreen(BaseScreen):
         self.label_title.markup=True
         self.label_title.color=rgb(*COLOR_TEXT)
         self.label_title.text='Welcome,'
-        # self.label_title.font_size*=1.5
+        self.label_title.font_size='28sp'
         self.layout.add_widget(get_separator('20sp'))
         self.layout.add_widget(self.label_title)
         self.layout.add_widget(get_separator('30sp'))
@@ -70,7 +70,7 @@ class LoginScreen(BaseScreen):
         
 
         self.layout_username = UsernameLayout()
-        self.label_username = UsernameLabel(text="Komrade")
+        self.label_username = UsernameLabel(text="Komrade @")
 
         self.username_field = UsernameField()
         self.username_field.line_color_focus=rgb(*COLOR_TEXT)
@@ -84,20 +84,20 @@ class LoginScreen(BaseScreen):
         #log(self.username_field)
         # self.username_field.text='hello????'
 
-        self.layout_password = UsernameLayout()
-        self.label_password = UsernameLabel(text='password:')
+        # self.layout_password = UsernameLayout()
+        # self.label_password = UsernameLabel(text='password:')
 
-        self.label_password.font_name='assets/font.otf'
+        # self.label_password.font_name='assets/font.otf'
         self.label_username.font_name='assets/font.otf'
 
-        self.password_field = PasswordField()
-        self.password_field.line_color_focus=rgb(*COLOR_TEXT)
-        self.password_field.line_color_normal=rgb(*COLOR_TEXT,a=0.25)
-        self.password_field.font_name='assets/font.otf'
+        # self.password_field = PasswordField()
+        # self.password_field.line_color_focus=rgb(*COLOR_TEXT)
+        # self.password_field.line_color_normal=rgb(*COLOR_TEXT,a=0.25)
+        # self.password_field.font_name='assets/font.otf'
         
-        self.layout_password.add_widget(self.label_password)
-        self.layout_password.add_widget(self.password_field)
-        self.layout.add_widget(self.layout_password)
+        # self.layout_password.add_widget(self.label_password)
+        # self.layout_password.add_widget(self.password_field)
+        # self.layout.add_widget(self.layout_password)
 
         self.layout_buttons = LoginButtonLayout()
         self.layout.add_widget(get_separator('20sp'))
@@ -117,16 +117,18 @@ class LoginScreen(BaseScreen):
         
         self.layout.add_widget(self.login_status)
 
-        self.label_title.font_size='18sp'
-        self.label_password.font_size='18sp'
-        self.label_username.font_size='20sp'
+        self.label_title.font_size='24sp'
+        # self.label_password.font_size='18sp'
+        self.label_username.font_size='22sp'
         self.login_button.font_size='12sp'
         self.register_button.font_size='9sp'
         self.register_button.text='enter'
-        self.username_field.font_size='20sp'
+        self.username_field.font_size='24sp'
         self.label_username.padding_x=(10,20)
         self.username_field.padding_x=(20,10)
-        self.username_field.padding_y=(25,0)
+        # self.username_field.padding_y=(25,0)
+        self.username_field.pos_hint={'center_y':0.5}
+        self.label_username.halign='right'
         
 
 
@@ -164,22 +166,23 @@ class LoginScreen(BaseScreen):
     async def boot(self,un,pw=None):
         # await self.stat('hello',img_src='/home/ryan/komrade/data/contacts/marxxx.png',komrade_name='Keymaker')
 
-        await self.app.get_input('hello?',get_pass=True)
-        return
+        # await self.app.get_input('hello?',get_pass=True,title='gimme your passwrdd')
+        # await self.app.get_input('hello?',get_pass=False,title='gimme your fav color bitch')
+        # return
 
 
         # return
         name=un
         from komrade.backend import Komrade
-        kommie = Komrade(un,getpass_func=lambda why: pw)
+        kommie = Komrade(un)
         self.log('KOMMIE!?!?',kommie)
 
         logger.info(f'booted kommie: {kommie}')
         if kommie.exists_locally_as_account():
-            await self.app.stat('You have already created this account. Logging you back in...')
-
+            pw=await self.app.get_input('Welcome back.')
+            kommie=Komrade(un,getpass_func=lambda why: pw)
             logger.info(f'is account')
-            self.login_status.text='You should be able to log into this account.'
+            # self.login_status.text='You should be able to log into this account.'
             if kommie.privkey:
                 logger.info(f'passkey login succeeded')
                 self.login_status.text=f'Welcome back, Komrade @{un}'
@@ -201,7 +204,8 @@ class LoginScreen(BaseScreen):
             # self.login_status.text='Komrade not known on this device. Registering...'
             
             ### REGISTER
-            res = await self.register(kommie,logfunc=self.app.stat,passphrase=pw)
+            self.remove_widget(self.layout)
+            res = await self.register(un)
             
             if kommie.privkey:
                 self.login_status.text='Registered'
@@ -215,9 +219,12 @@ class LoginScreen(BaseScreen):
         return 1
 
     
-    async def register(self,kommie,logfunc=None,passphrase=None):
-        if not logfunc: logfunc=self.app.stat
-        name=kommie.name
+    async def register(self,name):
+        async def logfunc(*x,**y):
+            if not 'komrade_name' in y: y['komrade_name']='Keymaker'
+            await self.app.stat(*x,**y)
+        
+        kommie = Komrade(name)
 
         # already have it?
         if kommie.exists_locally_as_account():
@@ -267,6 +274,10 @@ class LoginScreen(BaseScreen):
         ### PRIVATE KEY
         await logfunc(f"(2) Your PRIVATE encryption key, on the other hand, must be stored only on your device hardware. In fact it's so sensitive we'll even encrypt the encryption key itself.",pause=True,use_prefix=False)
         
+        passphrase = await self.app.get_input('Please enter a memorable password.',
+            get_pass=True
+        )
+
         passhash = hasher(passphrase)
         privkey_decr = KomradeSymmetricKeyWithPassphrase(passhash=passhash)
         print()

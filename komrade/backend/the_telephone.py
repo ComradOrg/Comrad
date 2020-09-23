@@ -67,7 +67,13 @@ class TheTelephone(Operator):
         URL = self.api_url + msg_b64_str_esc + '/'
         self.log("DIALING THE OPERATOR:",URL)
 
-        phonecall=await self.komrade_request_async(URL)
+        # phonecall=await self.komrade_request_async(URL)
+        import asyncio
+        loop = asyncio.get_event_loop()
+        texec = ThreadExecutor()
+
+        # phonecall=self.komrade_request(URL)
+        phonecall = await texec(self.komrade_request, URL)
 
         if phonecall.status_code!=200:
             self.log('!! error in request',phonecall.status_code,phonecall.text)
@@ -128,19 +134,19 @@ class TheTelephone(Operator):
 
     def tor_request_in_proxy(self,url):
         with self.get_tor_proxy_session() as s:
-            return s.get(url,timeout=60)
+            return s.get(url,timeout=600)
 
     async def tor_request_in_python_async(self,url):
-        import requests_async as requests
+        import requests_async
         tor = TorClient()
         with tor.get_guard() as guard:
             adapter = TorHttpAdapter(guard, 3, retries=RETRIES)
 
-            async with requests.Session() as s:
+            async with requests_async.Session() as s:
                 s.headers.update({'User-Agent': 'Mozilla/5.0'})
                 s.mount('http://', adapter)
                 s.mount('https://', adapter)
-                r = await s.get(url, timeout=60)
+                r = s.get(url, timeout=600)
                 self.log('<-- r',r)
                 return r
 
@@ -154,7 +160,7 @@ class TheTelephone(Operator):
                 s.headers.update({'User-Agent': 'Mozilla/5.0'})
                 s.mount('http://', adapter)
                 s.mount('https://', adapter)
-                r = s.get(url, timeout=60)
+                r = s.get(url, timeout=600)
                 return r
 
     def get_tor_proxy_session(self):

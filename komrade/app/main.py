@@ -22,7 +22,7 @@ os.environ['KIVY_EVENTLOOP'] = 'asyncio'
 # loop.set_debug(True)
 
 # prefer experimental kivy if possible
-sys.path.insert(0,os.path.join(PATH_KOMRADE_LIB,'KivyMD'))
+# sys.path.insert(0,os.path.join(PATH_KOMRADE_LIB,'KivyMD'))
 import kivymd
 # print(kivymd.__file__)
 # exit()
@@ -103,14 +103,15 @@ class MyLayout(MDBoxLayout):
 
 
 
+from komrade.app.screens.dialog import MDDialog2
 
 
 
 
-class ProgressPopup(MDDialog): pass
+class ProgressPopup(MDDialog2): pass
 
 
-class MessagePopup(MDDialog):
+class MessagePopup(MDDialog2):
     pass
     # def __init__(self,*x,**y):
     #     super().__init__(*x,**y)
@@ -124,9 +125,13 @@ class MessagePopup(MDDialog):
 
 
     pass
-class MessagePopupCard(MDDialog):
+class MessagePopupCard(MDDialog2):
     def __init__(self,*x,**y):
+        # y['color_bg']=rgb(*COLOR_CARD)
+        y['type']='custom'
+        y['overlay_color']=(0,0,0,0)
         super().__init__(*x,**y)
+        # self.color_bg=rgb(*COLOR_CARD)
         self.ok_to_continue=False
     
     #def on_dismiss(self):
@@ -139,7 +144,110 @@ class MessagePopupCard(MDDialog):
             # logger.info(str(self.msg_dialog))
 
 
-class BooleanInputPopupCard(MDDialog):
+
+
+class TextInputPopupCard(MDDialog2):
+    def say(self,x):
+        self.ok_to_continue=True
+        self.response=self.field.text
+        return self.response
+
+
+    def __init__(self,msg,password=False,input_name='',komrade_name='',*x,**y):
+        self.ok_to_continue=False
+        self.response=None
+        title=msg
+        from komrade.app.screens.login.login import UsernameField,PasswordField,UsernameLayout,UsernameLabel
+
+        self.layout=MDBoxLayout()
+        self.layout.orientation='vertical'
+        self.layout.cols=1
+        self.layout.size_hint=('333sp','222sp')
+        # self.layout.md_bg_color=(1,1,0,1)
+        self.layout.adaptive_height=True
+        self.layout.height=self.layout.minimum_height
+        self.layout.spacing='0sp'
+        self.layout.padding='0sp'
+
+        # self.layout.size=('333sp','333sp')
+
+
+
+        self.field_layout=UsernameLayout()
+        self.field = PasswordField() if password else UsernameField()
+        self.field.line_color_focus=rgb(*COLOR_TEXT)
+        self.field.line_color_normal=rgb(*COLOR_TEXT,a=0.25)
+        self.field.font_name=FONT_PATH
+        self.field_label = UsernameLabel(text='password:' if password else input_name)
+        self.field_label.font_name=FONT_PATH
+        if title:
+            self.title_label = UsernameLabel(text=title)
+            self.title_label.halign='center'
+            self.title_label.pos_hint={'center_x':0.5}
+            self.title_label.font_name=FONT_PATH
+            #self.field_layout.add_widget(self.title_label)
+            self.layout.add_widget(self.title_label)
+            
+
+        self.field_layout.add_widget(self.field_label)
+        self.field_layout.add_widget(self.field)
+        self.layout.add_widget(self.field_layout)
+        # do dialog's intro
+        super().__init__(
+            type='custom',
+            text=msg,
+            content_cls=self.layout,
+            buttons=[
+                MDFlatButton(
+                    text="cancel",
+                    text_color=rgb(*COLOR_TEXT),
+                    md_bg_color = (0,0,0,1),
+                    theme_text_color='Custom',
+                    on_release=self.dismiss,
+                    font_name=FONT_PATH
+                ),
+                MDFlatButton(
+                    text="enter",
+                    text_color=rgb(*COLOR_TEXT),
+                    md_bg_color = (0,0,0,1),
+                    theme_text_color='Custom',
+                    on_release=self.say,
+                    font_name=FONT_PATH
+                ),
+            ],
+            color_bg = rgb(*COLOR_CARD)
+        )
+        self.ids.text.text_color=rgb(*COLOR_TEXT)
+        self.ids.text.font_name=FONT_PATH
+        self.size=('333sp','111sp')
+        self.adaptive_height=True
+
+    # wait and show
+    async def open(self,maxwait=666,pulse=0.1):
+        super().open()
+        await asyncio.sleep(pulse)
+        waited=0
+        while not self.ok_to_continue:
+            await asyncio.sleep(pulse)
+            waited+=pulse
+            if waited>maxwait: break
+            # logger.info(f'waiting for {waited} seconds... {self.ok_to_continue} {self.response}')
+        return self.response
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class BooleanInputPopupCard(MDDialog2):
     def say_yes(self,x):
         # logger.info('say_yes got:',str(x))
         self.ok_to_continue=True
@@ -180,11 +288,8 @@ class BooleanInputPopupCard(MDDialog):
             color_bg = rgb(*COLOR_CARD)
         )
 
-        self.md_bg_color='1,1,0,1'
-        #self.ids.spacer_top_box.md_bg_color=(1,1,0,1)
-        #self.ids.spacer_bottom_box.md_bg_color=(1,1,0,1)
-        #self.ids.text.text_color=rgb(*COLOR_TEXT)
-        #self.ids.text.font_name=FONT_PATH
+        self.ids.text.text_color=rgb(*COLOR_TEXT)
+        self.ids.text.font_name=FONT_PATH
 
     # wait and show
     async def open(self,maxwait=666,pulse=0.1):
@@ -197,19 +302,6 @@ class BooleanInputPopupCard(MDDialog):
             if waited>maxwait: break
             # logger.info(f'waiting for {waited} seconds... {self.ok_to_continue} {self.response}')
         return self.response
-
-# class MessageInputPopupCard(MDDialog):
-#     def __init__(self,*x,**y):
-#         super().__init__(*x,**y)
-#         self.ok_to_continue=False
-    
-    # def on_touch_down(self,touch):
-        # self.ok_to_continue=True
-        # logger.info('oof!')
-        # if hasattr(self,'msg_dialog'):
-            # logger.info(str(self.msg_dialog))
-
-
 
 
 class MyBoxLayout(MDBoxLayout): pass
@@ -475,60 +567,29 @@ class MainApp(MDApp, Logger):
         self.dialog.open()
         #stop
 
-    async def get_input(self,msg,komrade_name='Telephone',get_pass=False,**y):
+    async def get_input(self,msg,komrade_name='Telephone',get_pass=False,yesno=False,**y):
         from komrade.app.screens.feed.feed import PostCardInputPopup
         if hasattr(self,'msg_dialog') and self.msg_dialog:# and hasattr(self.msg_dialog,'card') and self.msg_dialog.card:
             self.msg_dialog0=self.msg_dialog
+            self.msg_dialog0.dismiss()
+            self.msg_dialog0=None
         
-        self.msg_dialog = BooleanInputPopupCard(msg)
-
-        # self.msg_dialog.card = postcard = PostCardInputPopup({
-        #     'author':komrade_name,
-        #     'author_prefix':'@',
-        #     'to_name':'me',
-        #     'content':msg,
-        #     'timestamp':time.time(),
-        #     'author_label_font_size':'18sp',
-        #     **y
-        # },
-        # msg_dialog=self.msg_dialog)
-        # postcard.font_size='16sp'
-        # postcard.size_hint=(None,None)
-        # postcard.size=('600sp','600sp')
-        # postcard.ok_to_continue=False
-
-        # if get_pass:
-        #     from komrade.app.screens.login.login import PasswordField
-        #     self.msg_dialog.field = field = PasswordField()
-        #     field.line_color_focus=rgb(*COLOR_TEXT)
-        #     field.line_color_normal=rgb(*COLOR_TEXT,a=0.25)
-        #     field.font_name='assets/font.otf'
-        #     postcard.add_widget(field)
-
-        # self.msg_dialog.add_widget(postcard)
+        if yesno:
+            self.msg_dialog = BooleanInputPopupCard(msg,komrade_name=komrade_name,**y)
+        else:
+            self.msg_dialog = TextInputPopupCard(msg,password=get_pass,komrade_name=komrade_name,**y)
 
         response = await self.msg_dialog.open()
         logger.info(f'get_input got user response {response}')
+        return response
 
-
-        if hasattr(self,'msg_dialog0'):
-            self.msg_dialog0.remove_widget(self.msg_dialog0.card)
-            self.root.remove_widget(self.msg_dialog0)
-            
-        await asyncio.sleep(0.1)
-        while not self.msg_dialog.ok_to_continue:
-            await asyncio.sleep(0.1)
-            # logger.info(str(postcard), postcard.ok_to_continue,'??')
-        # self.msg_dialog.dismiss()
-        # self.msg_dialog.remove_widget(postcard)
-        # self.msg_dialog.card = postcard = self.msg_dialog = None
-        await asyncio.sleep(0.1)
-        return {'success':True, 'status':'Delivered popup message'}
-
+        
     async def stat(self,msg,komrade_name='Telephone',pause=False,get_pass=False,**y):
         from komrade.app.screens.feed.feed import PostCard,PostCardPopup
         if hasattr(self,'msg_dialog') and self.msg_dialog:# and hasattr(self.msg_dialog,'card') and self.msg_dialog.card:
             self.msg_dialog0=self.msg_dialog
+            self.msg_dialog0.dismiss()
+
 
         self.msg_dialog = MessagePopupCard()
         # self.msg_dialog.ids.msg_label.text=msg
@@ -550,10 +611,9 @@ class MainApp(MDApp, Logger):
 
         self.msg_dialog.add_widget(postcard)
 
-        self.msg_dialog.open()
+        self.msg_dialog.open(animation=False)
 
         if hasattr(self,'msg_dialog0'):
-            self.msg_dialog0.remove_widget(self.msg_dialog0.card)
             self.root.remove_widget(self.msg_dialog0)
             
         await asyncio.sleep(0.1)
