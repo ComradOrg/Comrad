@@ -15,6 +15,7 @@ PATH_USER_HOME = os.path.join(os.path.expanduser('~'))
 PATH_KOMRADE = os.path.abspath(os.path.join(os.path.expanduser('~'),'komrade','data'))
 PATH_KOMRADE_KEYS = os.path.join(PATH_KOMRADE,'.keys')
 PATH_KOMRADE_DATA = os.path.join(PATH_KOMRADE,'.data')
+PATH_KOMRADE_LIB = os.path.abspath(os.path.join(os.path.expanduser('~'),'komrade','lib'))
 
 PATH_CRYPT_OP_KEYS = os.path.join(PATH_KOMRADE_KEYS,'.op.db.keys.crypt')
 PATH_CRYPT_OP_DATA = os.path.join(PATH_KOMRADE_DATA,'.op.db.data.crypt')
@@ -199,3 +200,7 @@ if not 'KOMRADE_USE_TOR' in os.environ or not os.environ['KOMRADE_USE_TOR']:
     KOMRADE_USE_TOR = os.environ['KOMRADE_USE_TOR'] = '1'
 if not 'KOMRADE_USE_CLEARNET' in os.environ or not os.environ['KOMRADE_USE_CLEARNET']:
     KOMRADE_USE_CLEARNET = os.environ['KOMRADE_USE_CLEARNET'] = '0'
+
+
+
+FONT_PATH = os.path.join(PATH_GUI_ASSETS,'font.otf')

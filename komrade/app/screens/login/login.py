@@ -164,7 +164,7 @@ class LoginScreen(BaseScreen):
     async def boot(self,un,pw=None):
         # await self.stat('hello',img_src='/home/ryan/komrade/data/contacts/marxxx.png',komrade_name='Keymaker')
 
-        await self.stat('hello?',get_pass=True)
+        await self.app.get_input('hello?',get_pass=True)
         return
 
 

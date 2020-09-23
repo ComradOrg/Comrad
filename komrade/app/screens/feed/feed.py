@@ -268,6 +268,13 @@ class PostCardPopup(PostCard):
         if self.msg_dialog: self.msg_dialog.ok_to_continue=True
         return True
 
+class PostCardInputPopup(PostCardPopup):
+    def on_touch_down(self,touch):
+        pass
+
+
+
+
 class FeedScreen(BaseScreen):
     posts = ListProperty()
 
