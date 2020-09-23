@@ -126,8 +126,9 @@ class MessagePopupCard(MDDialog):
         super().__init__(*x,**y)
         self.ok_to_continue=False
     
-    def on_dismiss(self):
-        return True
+    #def on_dismiss(self):
+    #    return True
+    
     def on_touch_down(self,touch):
         self.ok_to_continue=True
         logger.info('oof!')
@@ -398,7 +399,53 @@ class MainApp(MDApp, Logger):
         self.dialog.open()
         #stop
 
-    async def stat(self,msg,komrade_name='Telephone',pause=False,**y):
+    async def get_input(self,msg,komrade_name='Telephone',get_pass=False):
+        from komrade.app.screens.feed.feed import PostCard,PostCardPopup
+        if hasattr(self,'msg_dialog') and self.msg_dialog:# and hasattr(self.msg_dialog,'card') and self.msg_dialog.card:
+            self.msg_dialog0=self.msg_dialog
+        self.msg_dialog = MessagePopupCard()
+        self.msg_dialog.card = postcard = PostCardPopup({
+            'author':komrade_name,
+            'author_prefix':'@',
+            'to_name':'me',
+            'content':msg,
+            'timestamp':time.time(),
+            'author_label_font_size':'18sp',
+            **y
+        },
+        msg_dialog=self.msg_dialog)
+        postcard.font_size='16sp'
+        postcard.size_hint=(None,None)
+        postcard.size=('600sp','600sp')
+        postcard.ok_to_continue=False
+
+        if get_pass:
+            from komrade.app.screens.login.login import PasswordField
+            field = PasswordField()
+            field.line_color_focus=rgb(*COLOR_TEXT)
+            field.line_color_normal=rgb(*COLOR_TEXT,a=0.25)
+            field.font_name='assets/font.otf'
+            postcard.add_widget(field,1)
+
+        self.msg_dialog.add_widget(postcard)
+
+        self.msg_dialog.open()
+
+        if hasattr(self,'msg_dialog0'):
+            self.msg_dialog0.remove_widget(self.msg_dialog0.card)
+            self.root.remove_widget(self.msg_dialog0)
+            
+        await asyncio.sleep(0.1)
+        while not self.msg_dialog.ok_to_continue:
+            await asyncio.sleep(0.1)
+            # logger.info(str(postcard), postcard.ok_to_continue,'??')
+        # self.msg_dialog.dismiss()
+        # self.msg_dialog.remove_widget(postcard)
+        # self.msg_dialog.card = postcard = self.msg_dialog = None
+        await asyncio.sleep(0.1)
+        return {'success':True, 'status':'Delivered popup message'}
+
+    async def stat(self,msg,komrade_name='Telephone',pause=False,get_pass=False,**y):
         from komrade.app.screens.feed.feed import PostCard,PostCardPopup
         if hasattr(self,'msg_dialog') and self.msg_dialog:# and hasattr(self.msg_dialog,'card') and self.msg_dialog.card:
             self.msg_dialog0=self.msg_dialog
@@ -412,13 +459,15 @@ class MainApp(MDApp, Logger):
             'to_name':'me',
             'content':msg,
             'timestamp':time.time(),
-            'author_label_font_size':'18sp'
+            'author_label_font_size':'18sp',
+            **y
         },
         msg_dialog=self.msg_dialog)
         postcard.font_size='16sp'
         postcard.size_hint=(None,None)
         postcard.size=('600sp','600sp')
         postcard.ok_to_continue=False
+
         self.msg_dialog.add_widget(postcard)
 
         self.msg_dialog.open()

@@ -116,14 +116,17 @@ class PostCard(MDCard):
         if not self.recipient:
             self.recipient=self.app.channel
 
-        self.img_id = data.get('file_id','')
-        self.img_ext = data.get('file_ext','')
-        self.img_src=self.img_id[:3]+'/'+self.img_id[3:]+'.'+self.img_ext if self.img_id else ''
-        self.cache_img_src = os.path.join('cache',self.img_src) if self.img_src else ''
-        self.img_loaded = os.path.exists(self.cache_img_src)
+        # self.img_id = data.get('file_id','')
+        # self.img_ext = data.get('file_ext','')
+        # self.img_src=self.img_id[:3]+'/'+self.img_id[3:]+'.'+self.img_ext if self.img_id else ''
+        # self.cache_img_src = os.path.join('cache',self.img_src) if self.img_src else ''
+        
+        self.cache_img_src = self.img_src = data.get('img_src','')
+        self.img_loaded = self.img_src and os.path.exists(self.img_src)
         self.content = data.get('content','')
         self.timestamp = data.get('timestamp',None)
-        self.bind(minimum_height=self.setter('height'))
+        # self.bind(minimum_height=self.setter('height'))
+
         author_prefix=data.get('author_prefix','@')
         author_label_font_size=data.get('author_label_font_size','24sp')
         recip_label_font_size=data.get('author_label_font_size','14sp')
@@ -151,10 +154,10 @@ class PostCard(MDCard):
             self.author_label.text+=f'\n[size={recip_label_font_size}]to '+recip+'[/size]'
             self.author_label.markup=True
         self.author_label.font_size = author_label_font_size
-        img_src = os.path.join(PATH_GUI_ASSETS, 'avatars', f'{self.author}.png')
-        if not os.path.exists(img_src): 
-            img_src=PATH_DEFAULT_AVATAR
-        self.author_avatar = author_avatar = PostAuthorAvatar(source=img_src) #self.img_src)
+        avatar_img_src = os.path.join(PATH_GUI_ASSETS, 'avatars', f'{self.author}.png')
+        if not os.path.exists(avatar_img_src): 
+            avatar_img_src=PATH_DEFAULT_AVATAR
+        self.author_avatar = author_avatar = PostAuthorAvatar(source=avatar_img_src) #self.img_src)
         self.author_section_layout.add_widget(author_avatar)
         self.author_section_layout.add_widget(author_label)
         # self.author_section_layout.add_widget(MDSeparator(height='1sp',size_hint=(None,None)))

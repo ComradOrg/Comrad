@@ -162,6 +162,13 @@ class LoginScreen(BaseScreen):
         return self.password_field.text if not passphrase else passphrase
         
     async def boot(self,un,pw=None):
+        # await self.stat('hello',img_src='/home/ryan/komrade/data/contacts/marxxx.png',komrade_name='Keymaker')
+
+        await self.stat('hello?',get_pass=True)
+        return
+
+
+        # return
         name=un
         from komrade.backend import Komrade
         kommie = Komrade(un,getpass_func=lambda why: pw)
@@ -190,7 +197,7 @@ class LoginScreen(BaseScreen):
             await self.app.stat('This is a contact of yours')
             self.login_status.text='Komrade exists as a contact of yours.'
         else:
-            await self.app.stat('Account does not exist on hardware, maybe not on server. Try to register?')
+            # await self.app.stat('Account does not exist on hardware, maybe not on server. Try to register?')
             # self.login_status.text='Komrade not known on this device. Registering...'
             
             ### REGISTER
@@ -218,9 +225,10 @@ class LoginScreen(BaseScreen):
         if kommie.exists_locally_as_contact():
             return {'success':False, 'status':'This is already a contact of yours'}
             
-            
-        await logfunc(f'Hello, this is Komrade @{name}.\n\nI would like to sign up for the socialist network revolution.',pause=True,komrade_name=name)
-        await logfunc(f'Excellent. But to communicate with komrades securely, you must first cut your public & private encryption keys.',pause=True,clear=True)
+        # 
+        await logfunc(f'Hello, this is Komrade @{name}. I would like to join the socialist network.',pause=True,komrade_name=name)
+        
+        await logfunc(f'Welcome, Komrade @{name}. To help us communicate safely, I have cut for you a matching pair of encryption keys.',pause=True,clear=True,komrade_name='Keymaker')
 
         # ## 2) Make pub public/private keys
         from komrade.backend.keymaker import KomradeAsymmetricKey
@@ -228,8 +236,22 @@ class LoginScreen(BaseScreen):
         keypair = KomradeAsymmetricKey()
         logger.info('cut keypair!')
         pubkey,privkey = keypair.pubkey_obj,keypair.privkey_obj
-        await logfunc(f'I have cut for you a private and public asymmetric key pair, using the iron-clad Elliptic curve algorithm:',komrade_name='Keymaker')
-        await logfunc('(1) {pubkey}\n\n(2) {privkey}',clear=True,pause=True,komrade_name='Keymaker')
+        uri_id = pubkey.data_b64
+        uri_s = pubkey.data_b64_s
+        fnfn = kommie.save_uri_as_qrcode(uri_id=uri_id,name=name)
+        
+        # await logfunc(f'Here. I have cut for you a private and public asymmetric key pair, using the iron-clad Elliptic curve algorithm:',komrade_name='Keymaker')
+
+        await logfunc(f'The first is your "public key", which you can share with anyone. With it, someone can write you an encrypted message.',komrade_name='Keymaker')
+        
+        await logfunc(f'You can share it by pasting it to someone in a secure message:\n\n{uri_s}',komrade_name='Keymaker')
+        
+        await logfunc(f'You can also share it IRL, phone to phone, as a QR code. This is what it will look like.',img_src=fnfn,komrade_name='Keymaker')
+
+        # await logfunc(f'(1) {pubkey} -- and -- (2) {privkey}',clear=True,pause=True,komrade_name='Keymaker')
+
+        # await logfunc(f'(1) You may store your public key both on your device hardware, as well as share it with anyone you wish: {pubkey.data_b64_s}') #\n\nIt will also be stored as a QR code on your device:\n{qr_str}',pause=True,clear=True)
+        
 
 
         kommie._keychain['pubkey']=pubkey
@@ -241,10 +263,9 @@ class LoginScreen(BaseScreen):
 
 
 
+
         ### PRIVATE KEY
-        await logfunc(f"(2) Your PRIVATE key, on the other hand, must be stored only on your device hardware.",pause=True)
-        
-        await logfunc('''Your private key is so sensitive we'll even encrypt it before storing it.''',pause=True,use_prefix=False)
+        await logfunc(f"(2) Your PRIVATE encryption key, on the other hand, must be stored only on your device hardware. In fact it's so sensitive we'll even encrypt the encryption key itself.",pause=True,use_prefix=False)
         
         passhash = hasher(passphrase)
         privkey_decr = KomradeSymmetricKeyWithPassphrase(passhash=passhash)
@@ -269,8 +290,6 @@ class LoginScreen(BaseScreen):
 
 
         # ### PUBLIC KEY
-        qr_str=kommie.qr_str(pubkey.data_b64)
-        await logfunc(f'(1) You may store your public key both on your device hardware, as well as share it with anyone you wish:\n\n{pubkey.data_b64_s}') #\n\nIt will also be stored as a QR code on your device:\n{qr_str}',pause=True,clear=True)
         
         await logfunc('You must also register your username and public key with Komrade @Operator on the remote server',pause=False,clear=False)
 
