@@ -1,6 +1,6 @@
 # Komrade
 
-Komrade is a socialist network. It seizes the means of digital production.
+Komrade is a socialist network. It seizes the means of digital content production.
 
 ## Why another social network?
 
