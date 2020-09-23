@@ -6,7 +6,7 @@ Komrade is a socialist network. It seizes the means of digital production.
 
 Is a 'socialist network' possible? Although the internet began with anarchic design principles, it quickly consolidated into the hands of a few of the largest corporations in the world. It has effectively recreated the capitalist mode of production within itself: the means of content production (social media platforms) are privatized while the work of production (posting) remains socially distributed. Exploitation inheres in that relation, whether in the industrial factory or the digital platform, because the value you produce is taken from you, concentrated and privatized.
 
-But a digital network can be redesigned. The technology behind these social media platforms is actually quite simple. We can easily build our own social network, one which is secure, insurveillable, and unmonetizable—one which would give people the security they need to communicate about whatever they want, including protesting against capital and the state..
+But a digital network can be redesigned. The technology behind these social media platforms is actually quite simple. We can easily build our own social network, one which is secure, insurveillable, and unmonetizable—one which would give people the security they need to communicate about whatever they want, including protesting against capital and the state.
 
 ## Core principles
 
@@ -38,6 +38,25 @@ Not just non-profit, we're anti-profit.
 
 Information wants to be communist.
 
+## How is this different from other alternative social networks?
+
+See ["Comparison of alternative social networks" on the wiki](https://github.com/Komrade/Komrade/wiki/Comparison-of-alternative-social-networks) for an attempt at a systematic comparison. (And please help edit, if you can! The data there is a little incomplete and probably a little inaccurate.) But here are some imagined differences.
+
+* **Komrade is not (fully) decentralized.** Who's afraid of a little central planning? In contrast to [Secure Scuttlebutt](https://scuttlebutt.nz/) and [Cabal Chat](https://cabal.chat/), which are 100% decentralized, subsisting only through peer-to-peer connections, Komrade sticks with the old, client/server model. Why?
+
+* **Komrade is anonymous.** Because P2P networks almost always expose your IP address: they privilege decentralization over anonymity -- and, potentially, safety. By contrast, lying hidden within the deep web of Tor, accessible only from this application and its built-in Tor client, Komrade will never reveal who is accessing it and its encrypted information. This is important for komrades organizing protests against the surveillance state, and to protect our social media traffic from being harvested and monetized by surveillance capitalism.
+
+* **Komrade is 100% end-to-end encrypted.** Unlike [Mastodon](https://joinmastodon.org/) or [Diaspora](https://diasporafoundation.org/), direct messages between users and within groups remain encrypted 1:1 end-to-end among users. Posts to the public are encrypted to @komrades, a special account which automatically re-encrypts its messages back to any key-registered requester of them.
+
+* **Komrade is (semi-)ephemeral.** Data, like all natural things, should not last forever. Direct messages auto-delete from Komrade's minimalist data storage as soon as they are downloaded. Group messages are sent as direct messages through the "web of trust" of the group membership network. Posts to the world auto-delete from the server in however many days you specify, and clients will auto-delete the message from their hardware at the same time. By contrast, data on both [SSB](https://scuttlebutt.nz/) and [Matrix](https://matrix.org/) is undeletable.
+
+* **Komrade verifies your identity.** Komrade's server, "The Operator", keeps a permanent record of one thing only: every komrade's name and public key, and requires that new komrades choose a unique name. Whenever you send or receive mail, the Operator will make sure that the name and public key on the letter matches what it has on file, verifying the identity of both parties.
+
+* **Komrade is flexible.** Only [Briar Messenger](https://briarproject.org/), to our knowledge, has managed to bring together P2P chat with Tor and heavy encryption. But Briar runs only on Android and requires users to run its background process constantly in order to intercept messages. Because the Operator takes care of sorting the mail, designing clients for Komrade for any device or OS is relatively easy. We have a cross-platform terminal app (beta) and a GUI (alpha) up so far.
+
+* **Komrade is simple.** No invitation or server is needed on startup, unlike [Secure Scuttlebutt](https://scuttlebutt.nz/), [Mastodon](https://joinmastodon.org/) or [Diaspora](https://diasporafoundation.org/). It's basically a Twitter clone, but one where you can also post to a universal feed shared by the entire world (@komrades). That way you can make yourself known, find new contacts, or begin general discussions. And from there you can grow your -- our! -- socialist network. :)
+
+
 ## Social media features
 
 We present a simplified set of social media features drawn from everything that's out there:
@@ -63,10 +82,6 @@ We present a simplified set of social media features drawn from everything that'
 #### Messaging
   * Message securely with encrypted contents (e.g. Signal) ✔
   * Message with untraceable metadata via Tor (new) ✔
-
-### How is this different from? ...
-
-See ["Comparison of alternative social networks" on the wiki](https://github.com/Komrade/Komrade/wiki/Comparison-of-alternative-social-networks). And please help edit, if you can! The data there is a little incomplete and probably a little inaccurate.
 
 ## Progress
 
