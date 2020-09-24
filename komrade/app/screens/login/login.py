@@ -62,7 +62,6 @@ class LoginScreen(BaseScreen):
         self.label_title.markup=True
         self.label_title.color=rgb(*COLOR_TEXT)
         self.label_title.text='Welcome,'
-        self.label_title.font_size='28sp'
         self.layout.add_widget(get_separator('20sp'))
         self.layout.add_widget(self.label_title)
         self.layout.add_widget(get_separator('30sp'))
@@ -169,6 +168,22 @@ class LoginScreen(BaseScreen):
         # await self.app.get_input('hello?',get_pass=True,title='gimme your passwrdd')
         # await self.app.get_input('hello?',get_pass=False,title='gimme your fav color bitch')
         # return
+        # self.remove_widget(self.layout)
+
+
+        # from screens.map import MapWidget,default_places
+        # map = MapWidget()
+        # map.open()
+        # map.add_point(*default_places['Cambridge'],desc='Cambridge')
+        # map.draw()
+        # await asyncio.sleep(1)
+        # map.add_point(*default_places['San Francisco'],desc='San Francisco')
+        # map.draw()
+        # await asyncio.sleep(1)
+        # map.add_point(*default_places['Reykjavik'],desc='Reykjavik')
+        # map.draw()
+        # await asyncio.sleep(1)
+        # return
 
 
         # return
@@ -222,7 +237,7 @@ class LoginScreen(BaseScreen):
     async def register(self,name):
         async def logfunc(*x,**y):
             if not 'komrade_name' in y: y['komrade_name']='Keymaker'
-            await self.app.stat(*x,**y)
+            #await self.app.stat(*x,**y)
         
         kommie = Komrade(name)
 
@@ -251,7 +266,7 @@ class LoginScreen(BaseScreen):
 
         await logfunc(f'The first is your "public key", which you can share with anyone. With it, someone can write you an encrypted message.',komrade_name='Keymaker')
         
-        await logfunc(f'You can share it by pasting it to someone in a secure message:\n\n{uri_s}',komrade_name='Keymaker')
+        await logfunc(f'You can share it by pasting it to someone in a secure message:\n{uri_s}',komrade_name='Keymaker')
         
         await logfunc(f'You can also share it IRL, phone to phone, as a QR code. This is what it will look like.',img_src=fnfn,komrade_name='Keymaker')
 
@@ -272,7 +287,9 @@ class LoginScreen(BaseScreen):
 
 
         ### PRIVATE KEY
-        await logfunc(f"(2) Your PRIVATE encryption key, on the other hand, must be stored only on your device hardware. In fact it's so sensitive we'll even encrypt the encryption key itself.",pause=True,use_prefix=False)
+        await logfunc(f"(2) Your PRIVATE encryption key, on the other hand, must be stored only on your device hardware: {privkey}")
+        
+        await logfunc(f"In fact this private encryption is so sensitive we'll encrypt it itself before storing it on your device -- locking the key itself away with a password.",pause=True,use_prefix=False)
         
         passphrase = await self.app.get_input('Please enter a memorable password.',
             get_pass=True
@@ -282,32 +299,25 @@ class LoginScreen(BaseScreen):
         privkey_decr = KomradeSymmetricKeyWithPassphrase(passhash=passhash)
         print()
         
-        await logfunc(f'''Let's immediately run whatever you typed in for your password through a 1-way hashing algorithm (SHA-256), inflating it to (redacted):\n\n{make_key_discreet_str(passhash)}''',pause=True,clear=False)
+        await logfunc(f'''We immediately whatever you typed through a 1-way hashing algorithm (SHA-256), scrambling it into (redacted):\n{make_key_discreet_str(passhash)}''',pause=True,clear=False)
 
         privkey_encr = privkey_decr.encrypt(privkey.data)
         privkey_encr_obj = KomradeEncryptedAsymmetricPrivateKey(privkey_encr)
         kommie._keychain['privkey_encr']=privkey_encr_obj
         self.log('My keychain now looks like v2:',dict_format(kommie.keychain()))
 
-        await logfunc('With this inflated password we can encrypt your super-sensitive private key.',pause=True,clear=True)
-
-        await logfunc(f"Your original private key looks like this (redacted):\n\n{privkey}",pause=True,clear=False)
+        await logfunc(f'With this scrambled password we can encrypt your super-sensitive private key.')
         
-        await logfunc(f"After we encrypt it with your passworded key, it looks like this (redacted):\n\n{privkey_encr_obj}",pause=True,clear=False)
-
-        await logfunc('Only this encrypted version is stored.',pause=True,clear=True)
-
-
-
+        await logfunc(f'Private key before encryption: {privkey.discreet}',pause=True,clear=False)
+        await logfunc(f'Private key after encryption: {privkey_encr_obj.discreet}',pause=True,clear=False)
 
         # ### PUBLIC KEY
-        
         await logfunc('You must also register your username and public key with Komrade @Operator on the remote server',pause=False,clear=False)
 
         await logfunc('Connecting you to the @Operator...',komrade_name='Telephone')
 
         ## CALL OP WITH PUBKEY
-        self.app.open_dialog('Calling @Operator...')
+        # self.app.open_dialog('Calling @Operator...')
         logger.info('got here!')
         resp_msg_d = await kommie.ring_ring(
             {
@@ -316,7 +326,7 @@ class LoginScreen(BaseScreen):
             },
             route='register_new_user'
         )
-        self.app.close_dialog()
+        # self.app.close_dialog()
         
         # print()
         await logfunc(resp_msg_d.get('status'),komrade_name='Operator',pause=True)

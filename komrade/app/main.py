@@ -124,6 +124,7 @@ class MessagePopup(MDDialog2):
         
 
 
+
     pass
 class MessagePopupCard(MDDialog2):
     def __init__(self,*x,**y):
@@ -134,15 +135,14 @@ class MessagePopupCard(MDDialog2):
         # self.color_bg=rgb(*COLOR_CARD)
         self.ok_to_continue=False
     
-    #def on_dismiss(self):
-    #    return True
+    def on_dismiss(self):
+       return True
     
     def on_touch_down(self,touch):
         self.ok_to_continue=True
         logger.info('oof!')
         # if hasattr(self,'msg_dialog'):
             # logger.info(str(self.msg_dialog))
-
 
 
 
@@ -178,17 +178,23 @@ class TextInputPopupCard(MDDialog2):
         self.field.line_color_focus=rgb(*COLOR_TEXT)
         self.field.line_color_normal=rgb(*COLOR_TEXT,a=0.25)
         self.field.font_name=FONT_PATH
+        self.field.font_size='20sp'
+
         self.field_label = UsernameLabel(text='password:' if password else input_name)
         self.field_label.font_name=FONT_PATH
+        self.field_label.font_size='20sp'
+        
         if title:
             self.title_label = UsernameLabel(text=title)
             self.title_label.halign='center'
+            self.title_label.font_size='20sp'
             self.title_label.pos_hint={'center_x':0.5}
             self.title_label.font_name=FONT_PATH
             #self.field_layout.add_widget(self.title_label)
             self.layout.add_widget(self.title_label)
             
 
+        
         self.field_layout.add_widget(self.field_label)
         self.field_layout.add_widget(self.field)
         self.layout.add_widget(self.field_layout)
@@ -437,8 +443,17 @@ class MainApp(MDApp, Logger):
         
         self.root.change_screen_from_uri(self.uri if self.uri else DEFAULT_URI)
 
+        # build the walker
+        self.walker=MazeWalker(callbacks=self.callbacks)
+        self.torpy_logger = logging.getLogger('torpy')
+        self.torpy_logger.propagate=False
+        self.torpy_logger.addHandler(self.walker)
+        import ipinfo
+        ipinfo_access_token = '90df1baf7c373a'
+        self.ipinfo_handler = ipinfo.getHandler(ipinfo_access_token)
 
-        
+        from komrade.app.screens.map import MapWidget
+        self.map = MapWidget()
         
         return self.root
 
@@ -446,6 +461,29 @@ class MainApp(MDApp, Logger):
     #     kommie = Komrade(username)
     #     if self.exists_locally_as_contact()
 
+    @property
+    def callbacks(self):
+        return {
+            'torpy_guard_node_connect':self.callback_on_hop,
+            'torpy_extend_circuit':self.callback_on_hop,
+        }
+    
+    async def callback_on_hop(self,rtr):
+        if not hasattr(self,'hops'): self.hops=[]
+        if not self.map.opened:
+            self.map.open()
+            # self.map.draw()
+
+        deets = self.ipinfo_handler.getDetails(rtr.ip)
+        self.hops.append((rtr,deets))
+        lat,long=tuple(float(_) for _ in deets.loc.split(','))
+        flag=f'{deets.city}, {deets.country_name} ({rtr.nickname})'
+        
+        self.map.add_point(lat,long,flag)
+        self.map.draw()
+        import asyncio
+        # await asyncio.sleep(2)
+        logger.info('CALLBACK ON HOP: ' + flag)
 
     def load_store(self):
         if not self.store.exists('user'): return
@@ -615,6 +653,8 @@ class MainApp(MDApp, Logger):
 
         if hasattr(self,'msg_dialog0'):
             self.root.remove_widget(self.msg_dialog0)
+            if hasattr(self.msg_dialog0,'card'):
+                self.msg_dialog0.remove_widget(self.msg_dialog0.card)
             
         await asyncio.sleep(0.1)
         while not self.msg_dialog.ok_to_continue:

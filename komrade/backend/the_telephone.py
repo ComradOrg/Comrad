@@ -68,8 +68,8 @@ class TheTelephone(Operator):
         self.log("DIALING THE OPERATOR:",URL)
 
         # phonecall=await self.komrade_request_async(URL)
-        import asyncio
-        loop = asyncio.get_event_loop()
+        # import asyncio
+        # loop = asyncio.get_event_loop()
         texec = ThreadExecutor()
 
         # phonecall=self.komrade_request(URL)
