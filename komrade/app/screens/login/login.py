@@ -193,6 +193,7 @@ class LoginScreen(BaseScreen):
         
         kommie = Komrade(un)
         self.log('KOMMIE!?!?',kommie)
+        self.log('wtf',PATH_CRYPT_CA_KEYS)
 
         logger.info(f'booted kommie: {kommie}')
         if kommie.exists_locally_as_account():
