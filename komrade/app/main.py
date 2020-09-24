@@ -654,6 +654,7 @@ class MainApp(MDApp, Logger):
         if hasattr(self,'msg_dialog') and self.msg_dialog:# and hasattr(self.msg_dialog,'card') and self.msg_dialog.card:
             self.msg_dialog0=self.msg_dialog
             self.msg_dialog0.dismiss()
+            self.msg_dialog0.clear_widgets()
 
 
         self.msg_dialog = MessagePopupCard()
@@ -680,8 +681,6 @@ class MainApp(MDApp, Logger):
 
         if hasattr(self,'msg_dialog0'):
             self.root.remove_widget(self.msg_dialog0)
-            if hasattr(self.msg_dialog0,'card'):
-                self.msg_dialog0.remove_widget(self.msg_dialog0.card)
             
         await asyncio.sleep(0.1)
         while not self.msg_dialog.ok_to_continue:

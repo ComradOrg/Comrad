@@ -189,13 +189,16 @@ class LoginScreen(BaseScreen):
         # return
         name=un
         from komrade.backend import Komrade
+
+        
         kommie = Komrade(un)
         self.log('KOMMIE!?!?',kommie)
 
         logger.info(f'booted kommie: {kommie}')
         if kommie.exists_locally_as_account():
-            pw=await self.app.get_input('Welcome back.')
-            kommie=Komrade(un,getpass_func=lambda why: pw)
+            pw=await self.app.get_input('Welcome back.',get_pass=True)
+            kommie.keychain(passphrase=pw)
+            logger.info(f'updated keychain: {dict_format(kommie.keychain())}')
             logger.info(f'is account')
             # self.login_status.text='You should be able to log into this account.'
             if kommie.privkey:
@@ -237,7 +240,7 @@ class LoginScreen(BaseScreen):
     async def register(self,name):
         async def logfunc(*x,**y):
             if not 'komrade_name' in y: y['komrade_name']='Keymaker'
-            #await self.app.stat(*x,**y)
+            await self.app.stat(*x,**y)
         
         kommie = Komrade(name)
 
@@ -306,10 +309,8 @@ class LoginScreen(BaseScreen):
         kommie._keychain['privkey_encr']=privkey_encr_obj
         self.log('My keychain now looks like v2:',dict_format(kommie.keychain()))
 
-        await logfunc(f'With this scrambled password we can encrypt your super-sensitive private key.')
-        
-        await logfunc(f'Private key before encryption: {privkey.discreet}',pause=True,clear=False)
-        await logfunc(f'Private key after encryption: {privkey_encr_obj.discreet}',pause=True,clear=False)
+        await logfunc(f'With this scrambled password we can encrypt your super-sensitive private key, from this:\n{privkey.discreet}',pause=True,clear=False)
+        await logfunc(f'To this:\n{privkey_encr_obj.discreet}',pause=True,clear=False)
 
         # ### PUBLIC KEY
         await logfunc('You must also register your username and public key with Komrade @Operator on the remote server',pause=False,clear=False)

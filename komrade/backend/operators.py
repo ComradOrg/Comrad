@@ -49,8 +49,8 @@ def Komrade(name=None,pubkey=None,*x,**y):
 
     # print('found!',name,PHONEBOOK[name],PHONEBOOK[name].keychain())
     PHONEBOOK[name] = kommie
-    if kommie.pubkey:
-        PHONEBOOK[kommie.pubkey.data_b64] = kommie
+    pubkey=kommie.find_pubkey(name)
+    if pubkey: PHONEBOOK[pubkey.data_b64] = kommie
 
     return kommie
 
@@ -102,10 +102,12 @@ class Operator(Keymaker):
             getpass_func=getpass_func
         )
 
-        
         # add to phonebook
-        if name: PHONEBOOK[name]=self
-        if self.pubkey: PHONEBOOK[self.pubkey.data_b64]=self
+        if name:
+            PHONEBOOK[name]=self
+            pubkey=self.find_pubkey(name)
+            if pubkey:
+                PHONEBOOK[pubkey.data_b64]=self
         self._inbox_crypt=None
         
 

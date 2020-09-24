@@ -233,13 +233,13 @@ KEYMAKER_DEFAULT_KEY_TYPES = {
 
 
 
-def get_key_obj(keyname,data,key_types=KEYMAKER_DEFAULT_KEY_TYPES,getpass_func=None):
+def get_key_obj(keyname,data,key_types=KEYMAKER_DEFAULT_KEY_TYPES,getpass_func=None,passphrase=None):
     if keyname.endswith('_decr'):
         # print('get_key_obj',keyname,data)#,key_types)
         try:
             data_s = data.decode()
             if data_s in {KEY_TYPE_SYMMETRIC_WITH_PASSPHRASE,KomradeSymmetricKeyWithPassphrase.__name__}:
-                return KomradeSymmetricKeyWithPassphrase(getpass_func=getpass_func)
+                return KomradeSymmetricKeyWithPassphrase(getpass_func=getpass_func,passphrase=passphrase)
         except UnicodeDecodeError:
             return KomradeSymmetricKeyWithoutPassphrase(data)
 
@@ -277,7 +277,7 @@ class Keymaker(Logger):
         # logger.info('Keymaker booted with getpass_func',getpass_func)
 
         # boot keychain
-        self._keychain = self.keychain()
+        # self._keychain = self.keychain()
 
 
     def find_pubkey(self,name=None):
@@ -318,7 +318,7 @@ class Keymaker(Logger):
             keychain[keyname] = get_key_obj(keyname,keyval,getpass_func=self.getpass_func)
         return keychain
 
-    def keychain(self,look_for=KEYMAKER_DEFAULT_ALL_KEY_NAMES):
+    def keychain(self,look_for=KEYMAKER_DEFAULT_ALL_KEY_NAMES,passphrase=None):
         # load existing keychain
         keys = self._keychain
         
@@ -335,10 +335,10 @@ class Keymaker(Logger):
                 if keyname in keys and keys[keyname]: continue
                 key = self.crypt_keys.get(uri,prefix=f'/{keyname}/')
                 # print('found in crypt:',key,'for',keyname)
-                if key: keys[keyname]=get_key_obj(keyname,key,getpass_func=self.getpass_func)
+                if key: keys[keyname]=get_key_obj(keyname,key,getpass_func=self.getpass_func,passphrase=passphrase)
         
         # try to assemble
-        keys = self.assemble(self.assemble(keys))
+        keys = self.assemble(self.assemble(keys,passphrase=passphrase),passphrase=passphrase)
         
         #store to existing set
         self._keychain = {**keys}
@@ -497,7 +497,7 @@ class Keymaker(Logger):
 
         return (uri_id,keys_saved_d,keychain)
 
-    def assemble(self,keychain,key_types=KEYMAKER_DEFAULT_KEY_TYPES,decrypt=True):
+    def assemble(self,keychain,key_types=KEYMAKER_DEFAULT_KEY_TYPES,decrypt=True,passphrase=None):
         encr_keys = [k for k in keychain.keys() if k.endswith('_encr')]
         for encr_key_name in encr_keys:
             decr_key_name = encr_key_name[:-5] + '_decr'
@@ -513,12 +513,12 @@ class Keymaker(Logger):
                     encr_key = keychain.get(encr_key_name)
                     # self.log(f'about to decrypt {encr_key} with {decr_key} and {decr_key.cell}')
                     unencr_key = decr_key.decrypt(encr_key.data)
-                    keychain[unencr_key_name] = get_key_obj(unencr_key_name,unencr_key,getpass_func=self.getpass_func)
+                    keychain[unencr_key_name] = get_key_obj(unencr_key_name,unencr_key,getpass_func=self.getpass_func,passphrase=passphrase)
                 else:
                     # unencr_key = keychain.get(unencr_key_name)
                     # self.log(f'about to encrypt {unencr_key} with {decr_key}')
                     encr_key = decr_key.encrypt(unencr_key.data)
-                    keychain[encr_key_name] = get_key_obj(encr_key_name,encr_key,getpass_func=self.getpass_func)
+                    keychain[encr_key_name] = get_key_obj(encr_key_name,encr_key,getpass_func=self.getpass_func,passphrase=passphrase)
             except ThemisError as e:
                 #exit('Incorrect password.')
                 #self.log('error!!',e,decrypt,decr_key,encr_key,decr_key_name,encr_key_name)
