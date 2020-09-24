@@ -319,14 +319,17 @@ class LoginScreen(BaseScreen):
         ## CALL OP WITH PUBKEY
         # self.app.open_dialog('Calling @Operator...')
         logger.info('got here!')
-        resp_msg_d = await kommie.ring_ring(
+        resp_msg_d = await self.app.ring_ring(
             {
                 'name':name, 
                 'pubkey': pubkey.data,
             },
-            route='register_new_user'
+            route='register_new_user',
+            kommie=kommie
         )
+        
         # self.app.close_dialog()
+        
         
         # print()
         await logfunc(resp_msg_d.get('status'),komrade_name='Operator',pause=True)
@@ -380,6 +383,9 @@ class LoginScreen(BaseScreen):
 
 
         await logfunc('returning...')
+
+        from komrade.app.screens.map import MapWidget
+
         return resp_msg_d
 
     

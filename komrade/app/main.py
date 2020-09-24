@@ -619,7 +619,34 @@ class MainApp(MDApp, Logger):
 
         response = await self.msg_dialog.open()
         logger.info(f'get_input got user response {response}')
+        async def task():
+            await asyncio.sleep(1)
+            self.msg_dialog.dismiss()
+        asyncio.create_task(task())
         return response
+
+    async def ring_ring(self,*x,kommie=None,**y):
+        if not kommie: kommie=self.komrade
+        from komrade.app.screens.map import MapWidget
+        self.map=MapWidget()
+        self.map.open()
+        resp_msg_d = await kommie.ring_ring(*x,**y)
+        logger.info('done with ring_ring! ! !')
+        self.map.dismiss()
+        self.map=None
+        return resp_msg_d
+
+    
+    async def get_updates(self,*x,kommie=None,**y):
+        if not kommie: kommie=self.komrade
+        from komrade.app.screens.map import MapWidget
+        self.map=MapWidget()
+        self.map.open()
+        await kommie.get_updates(*x,**y)
+        logger.info('done with get_updates! ! !')
+        self.map.dismiss()
+        self.map=None
+        
 
         
     async def stat(self,msg,komrade_name='Telephone',pause=False,get_pass=False,**y):
@@ -682,6 +709,11 @@ class MainApp(MDApp, Logger):
         if hasattr(self,'msg_dialog'):
             self.msg_dialog.remove_widget(self.msg_dialog.card)
             self.msg_dialog.dismiss()
+
+
+
+
+
 
 
 

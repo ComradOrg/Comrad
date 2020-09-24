@@ -288,7 +288,7 @@ class FeedScreen(BaseScreen):
         lim=25
 
         async def go():
-            await self.app.komrade.get_updates()
+            await self.app.get_updates()
             posts=self.get_posts()
             for i,post in enumerate(reversed(posts)):
                 if i>lim: break

@@ -29,7 +29,7 @@ class MapWidget(MDDialog2):
     @property
     def projection(self):
         # return ccrs.PlateCarree()
-        return ccrs.LambertConformal()
+        return ccrs.EckertI()
     
     @property
     def figsize(self):
@@ -43,15 +43,15 @@ class MapWidget(MDDialog2):
         # return (width,height)
 
     @property
-    def color_land(self): return rgb(*darksienna3) #darksienna3)
+    def color_land(self): return rgb(*darksienna3,a=0) #darksienna3)
     @property
-    def color_water(self): return rgb(*grullo2)
+    def color_water(self): return rgb(*russiangreen)
     @property
-    def color_label(self): return self.color_land
+    def color_label(self): return rgb(*COLOR_ICON)
     @property
-    def color_marker(self): return rgb(*rossacorsa)
+    def color_marker(self): return rgb(*COLOR_ICON)
     @property
-    def color_line(self): return self.color_marker
+    def color_line(self): return rgb(*COLOR_ICON)
 
     def __init__(self):
         self.last_lat = None
@@ -141,7 +141,7 @@ class MapWidget(MDDialog2):
         odir=f'/home/ryan/komrade/data/maps/'
         if not os.path.exists(odir): os.makedirs(odir)
         ofn=os.path.join(odir,f't_{len(self.points)}.png')
-        plt.gca().invert_yaxis()
+        # plt.gca().invert_yaxis()
         plt.savefig(ofn, format='png',transparent=True,pad_inches=0.1,bbox_inches = 'tight')
 
         # flip?
@@ -186,8 +186,8 @@ class MapWidget(MDDialog2):
             lat,
             '+',
             markersize=25,
-            linewidth=7,
-            color=rgb(*color),
+            linewidth=10,
+            color=self.color_marker,#rgb(*color),
             transform=ccrs.Geodetic(),
         )
 
@@ -196,24 +196,35 @@ class MapWidget(MDDialog2):
             plt.plot(
                 [self.last_long, long],
                 [self.last_lat, lat],
-                color=rgb(*color), #self.color_line,
-                linewidth=7, marker='',
+                color=self.color_line,#rgb(*color), #self.color_line,
+                linewidth=4, marker='',
                 transform=ccrs.Geodetic(),
             )
 
         
-        desc = '\n'.join(desc for lat,long,desc in self.points[-1:])
+        desc = '\n'.join('--> '+desc for lat,long,desc in self.points[-1:])
         #if self.label:
         #    self.img.remove_widget(self.label)
+
+        def makelabel(txt):
+            label=MDLabel(text=txt)
+            label.color=self.color_label #rgb(*color) #self.color_label
+            label.font_name=FONT_PATH
+            label.font_size='20sp'
+            # label.size_hint=(1,1)
+            label.width=Window.size[0]
+            label.height='25sp'
+            label.valign='top'
+            return label
+            
         
-        self.label=label=MDLabel(text=desc)
-        label.color=rgb(*color) #self.color_label
-        label.font_name=FONT_PATH
-        label.font_size='20sp'
-        # label.size_hint=(1,1)
-        label.width=Window.size[0]
-        label.height='25sp'
-        label.valign='top'
+        if len(self.points)==1:
+            intro_label = makelabel(
+                'Routing you through the global maze of Tor ...'
+            )
+            self.label_layout.add_widget(intro_label)
+
+        self.label=label=makelabel(desc)
         # label.height='400sp'
         # label.pos_hint = {'center_y':0.1+(0.1 * len(self.points))}
         # label.pos = (0.5,0)
@@ -238,6 +249,13 @@ class MapWidget(MDDialog2):
         #     if waited>maxwait: break
         #     # logger.info(f'waiting for {waited} seconds... {self.ok_to_continue} {self.response}')
         # return self.response
+
+    def dismiss(self):
+        super().dismiss()
+        if hasattr(self.layout,'img'):
+            self.layout.remove_widget(self.img)
+        if self.layout:
+            self.remove_widget(self.layout)
 
 default_places = {
     'Cambridge':(52.205338,0.121817),
