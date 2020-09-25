@@ -133,8 +133,8 @@ then
     rm miniconda.exe
 fi
 
+condaexec="$path_komrade/lib/miniconda3/bin/conda"
 pythonexec="$path_komrade/lib/miniconda3/bin/python"
-     
 
 echo '
 
@@ -143,13 +143,17 @@ echo '
 '
 
 
-cd $path_komrade
-$pythonexec -m pip install virtualenv
+# cd $path_komrade
+cd $path_repo
+echo "Now using python 1: `which python`"
+$condaexec install -n komenv python=3.7 cartopy pip virtualenv
+$condaexec activate komenv
+echo "Now using python 2: `which python`"
+# $pythonexec -m pip install virtualenv
 $pythonexec -m virtualenv venv
 . venv/bin/activate
-echo "Now using python: `which python`"
+echo "Now using python 3: `which python`"
 
-cd $path_repo
 python -m pip install -r requirements.txt
 
 echo '
