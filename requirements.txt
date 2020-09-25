@@ -39,7 +39,6 @@ pyfiglet==0.8.post1
 Pygments==2.6.1
 pylint==2.6.0
 pypng==0.0.20
-pyproj==2.6.1.post1
 PyQRCode==1.2.1
 PySocks==1.7.1
 pythemis==0.13.0
@@ -52,8 +51,6 @@ requests==2.24.0
 requests-async==0.6.2
 rfc3986==1.4.0
 rpcudp==4.0.1
-Rtree==0.9.4
-Shapely==1.7.1
 simplekv==0.14.1
 six==1.15.0
 sqlitedict==1.6.0
