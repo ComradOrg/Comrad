@@ -151,7 +151,7 @@ echo '
 4) creating virtual environment...
 
 '
-path_venv = "$path_repo/venv"
+path_venv="$path_repo/venv"
 
 # cd $path_komrade
 cd $path_repo
