@@ -151,17 +151,17 @@ echo '
 4) creating virtual environment...
 
 '
-
+path_venv = "$path_repo/venv"
 
 # cd $path_komrade
 cd $path_repo
 echo "Now using python 1: `which python`"
-$condaexec create -n komenv python=3.7 cartopy pip virtualenv
-$condaexec activate komenv
+$condaexec create -p "$path_venv" python=3.7 cartopy pip virtualenv
+$condaexec activate "$path_venv"
 echo "Now using python 2: `which python`"
 # $pythonexec -m pip install virtualenv
-$pythonexec -m virtualenv venv
-. venv/bin/activate
+# $pythonexec -m virtualenv venv
+# . venv/bin/activate
 echo "Now using python 3: `which python`"
 
 python -m pip install -r requirements.txt
