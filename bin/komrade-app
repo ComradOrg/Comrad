@@ -8,11 +8,12 @@ export KOMRADE_SHOW_LOG=0
 
 SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-$SCRIPTPATH/komrade-activate
+source "$SCRIPTPATH/komrade-activate"
+# echo "`which pip`"
 
 path=`realpath "$SCRIPTPATH/../komrade/app/main.py"`
-pathvenv=`realpath "$SCRIPTPATH/../../venv/bin/activate"`
-source $pathvenv
+# pathvenv=`realpath "$SCRIPTPATH/../../venv/bin/activate"`
+# source $pathvenv
 
 python "$path" $*
 

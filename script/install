@@ -141,8 +141,12 @@ then
 fi
 
 
+
 # activate conda
 export PATH="$path_conda/bin:$PATH"
+
+source "$path_conda/etc/profile.d/conda.sh"
+
 condaexec="conda"
 pythonexec="python"
 
@@ -157,7 +161,10 @@ path_venv="$path_repo/venv"
 cd $path_repo
 echo "Now using python 1: `which python`"
 $condaexec create -y -p "$path_venv" python=3.7 cartopy pip virtualenv
-$condaexec activate "$path_venv"
+
+#$condaexec activate "$path_venv"
+
+
 echo "Now using python 2: `which python`"
 # $pythonexec -m pip install virtualenv
 # $pythonexec -m virtualenv venv
