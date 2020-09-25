@@ -89,6 +89,7 @@ echo '
 
 cd $path_komrade
 
+path_conda="$path_komrade/lib/miniconda3"
 # ### Detect if python 3.7?
 # pyv="$(python3 -c 'import sys; print(sys.version_info[0:2])')"
 # if [ ! "$pyv" = "(3, 7)" ]
@@ -107,7 +108,7 @@ if [ "$machine" = "Linux" ]
 then
     curl https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-Linux-x86_64.sh -o miniconda.sh
     chmod +x miniconda.sh
-    ./miniconda.sh -b -f -p "$path_komrade/lib/miniconda3"
+    ./miniconda.sh -b -f -p "$path_conda"
     rm miniconda.sh
 fi
 
@@ -115,7 +116,7 @@ if [ "$machine" = "Mac" ]
 then
     curl https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-MacOSX-x86_64.sh -o miniconda.sh
     chmod +x miniconda.sh
-    ./miniconda.sh -b -f -p "$path_komrade/lib/miniconda3"
+    ./miniconda.sh -b -f -p "$path_conda"
     rm miniconda.sh
 fi
 
@@ -129,12 +130,33 @@ then
         curl https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-Windows-x86.exe -o miniconda.exe
     fi
 
-    ./miniconda.exe -b -f -p "$path_komrade/lib/miniconda3"
+    ./miniconda.exe -b -f -p "$path_conda"
     rm miniconda.exe
 fi
 
-condaexec="$path_komrade/lib/miniconda3/bin/conda"
-pythonexec="$path_komrade/lib/miniconda3/bin/python"
+
+# activate conda
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('$path_conda/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "$path_conda/etc/profile.d/conda.sh" ]; then
+        . "/home/op/komrade/lib/miniconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="$path_conda/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+
+
+
+
+condaexec="$path_conda/bin/conda"
+pythonexec="$path_conda/bin/python"
 
 echo '
 
