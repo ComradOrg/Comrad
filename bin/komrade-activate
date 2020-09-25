@@ -1,10 +1,26 @@
 
 export KOMRADE_SHOW_LOG=0
 
+echo "`which python`"
+
+
+
 SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 pathvenv=`realpath "$SCRIPTPATH/../venv"`
 pathconda=`realpath "$SCRIPTPATH/../../lib/miniconda3"`
 
-export PATH="$pathconda/bin:$PATH"
+echo $SCRIPTPATH
+echo $pathvenv
+echo $pathconda
 
+source $pathconda/etc/profile.d/conda.sh
+
+export PATH="$pathconda/bin:$PATH"
+#echo $PATH
+
+echo "`which conda`"
+conda activate
 conda activate "$pathvenv"
+
+
+#echo "`which python`"
