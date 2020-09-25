@@ -106,18 +106,24 @@ esac
 
 if [ "$machine" = "Linux" ]
 then
-    curl https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-Linux-x86_64.sh -o miniconda.sh
-    chmod +x miniconda.sh
+    if [ ! -f "miniconda.sh" ]
+    then
+        curl https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-Linux-x86_64.sh -o miniconda.sh
+        chmod +x miniconda.sh
+    fi
     ./miniconda.sh -b -f -p "$path_conda"
-    rm miniconda.sh
+    #rm miniconda.sh
 fi
 
 if [ "$machine" = "Mac" ]
 then
-    curl https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-MacOSX-x86_64.sh -o miniconda.sh
-    chmod +x miniconda.sh
+    if [ ! -f "miniconda.sh" ]
+    then
+        curl https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-MacOSX-x86_64.sh -o miniconda.sh
+        chmod +x miniconda.sh
+    fi
     ./miniconda.sh -b -f -p "$path_conda"
-    rm miniconda.sh
+    # rm miniconda.sh
 fi
 
 if [ "$machine" = "Cygwin" ]
@@ -131,32 +137,14 @@ then
     fi
 
     ./miniconda.exe -b -f -p "$path_conda"
-    rm miniconda.exe
+    # rm miniconda.exe
 fi
 
 
 # activate conda
-
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('$path_conda/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "$path_conda/etc/profile.d/conda.sh" ]; then
-        . "/home/op/komrade/lib/miniconda3/etc/profile.d/conda.sh"
-    else
-        export PATH="$path_conda/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
-
-
-
-
-condaexec="$path_conda/bin/conda"
-pythonexec="$path_conda/bin/python"
+export PATH="$path_conda/bin:$PATH"
+condaexec="conda"
+pythonexec="python"
 
 echo '
 
