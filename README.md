@@ -129,23 +129,35 @@ As of the 23rd of August.
 bash <(curl -s komrade.app/run)
 ```
 
-Then hit enter. [That](https://github.com/Komrade/Komrade/blob/master/script/micro_installer) grabs a shortcut to [this auto-installer script](https://github.com/Komrade/Komrade/blob/master/script/install). It will install Komrade in a virtual Python environment into a folder of your choosing.
+Then hit enter. [That](https://github.com/Komrade/Komrade/blob/master/script/micro_installer) grabs a shortcut to [this auto-installer script](https://github.com/Komrade/Komrade/blob/master/script/install). It will install Komrade in a virtual Python environment into a folder of your choosing, although it may only work at the moment if you let it use the default of ```~/komrade.```
 
 ### Run
 
 Install as above.
-
-For the terminal client, run:
-
-```
-komrade-cli
-```
 
 For the mobile/desktop app, run:
 
 ```
 komrade-app
 ```
+
+If that doesn't work, try the following:
+
+```
+source ~/komrade/lib/miniconda3/etc/profile.d/conda.sh
+export PATH="~/komrade/lib/miniconda3/bin:$PATH"
+conda activate ~/komrade/code/venv
+python -m pip install -r ~/komrade/code/requirements.txt
+python ~/komrade/code/komrade/app/main.py
+```
+
+For the terminal client (which may be broken at the moment), run:
+
+```
+komrade-cli
+```
+
+
 
 Or to run the server or Operator (for development only):
 
@@ -158,7 +170,7 @@ komrade-op
 
 ### Frontend
 
-#### Mobile/desktop
+#### Mobile/desktop 
 
 The mobile/desktop app is made with [KivyMD](https://github.com/kivymd/KivyMD), a variant of [Kivy](https://kivy.org/), a cross-platform app development framework in Python. Python is an easy and versatile progamming language to learn, which keeps the code accessible to as many people as possible. Code for the app is in [komrade/app](komrade/app).
 
