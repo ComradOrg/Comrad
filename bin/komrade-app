@@ -8,10 +8,16 @@ export KOMRADE_SHOW_LOG=0
 
 SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-source "$SCRIPTPATH/komrade-activate"
+source "`which komrade-activate`"
+echo "`which komrade-activate`"
 # echo "`which pip`"
+conda info
 
 path=`realpath "$SCRIPTPATH/../komrade/app/main.py"`
+pathreqs=`realpath "$SCRIPTPATH/../requirements.txt"`
+
+python -m pip install -r "$pathreqs"
+
 # pathvenv=`realpath "$SCRIPTPATH/../../venv/bin/activate"`
 # source $pathvenv
 
