@@ -89,6 +89,7 @@ echo '
 
 cd $path_komrade
 
+path_conda="$path_komrade/lib/miniconda3"
 # ### Detect if python 3.7?
 # pyv="$(python3 -c 'import sys; print(sys.version_info[0:2])')"
 # if [ ! "$pyv" = "(3, 7)" ]
@@ -105,18 +106,24 @@ esac
 
 if [ "$machine" = "Linux" ]
 then
-    curl https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-Linux-x86_64.sh -o miniconda.sh
-    chmod +x miniconda.sh
-    ./miniconda.sh -b -f -p "$path_komrade/lib/miniconda3"
-    rm miniconda.sh
+    if [ ! -f "miniconda.sh" ]
+    then
+        curl https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-Linux-x86_64.sh -o miniconda.sh
+        chmod +x miniconda.sh
+    fi
+    ./miniconda.sh -b -f -p "$path_conda"
+    #rm miniconda.sh
 fi
 
 if [ "$machine" = "Mac" ]
 then
-    curl https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-MacOSX-x86_64.sh -o miniconda.sh
-    chmod +x miniconda.sh
-    ./miniconda.sh -b -f -p "$path_komrade/lib/miniconda3"
-    rm miniconda.sh
+    if [ ! -f "miniconda.sh" ]
+    then
+        curl https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-MacOSX-x86_64.sh -o miniconda.sh
+        chmod +x miniconda.sh
+    fi
+    ./miniconda.sh -b -f -p "$path_conda"
+    # rm miniconda.sh
 fi
 
 if [ "$machine" = "Cygwin" ]
@@ -129,27 +136,41 @@ then
         curl https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-Windows-x86.exe -o miniconda.exe
     fi
 
-    ./miniconda.exe -b -f -p "$path_komrade/lib/miniconda3"
-    rm miniconda.exe
+    ./miniconda.exe -b -f -p "$path_conda"
+    # rm miniconda.exe
 fi
 
-pythonexec="$path_komrade/lib/miniconda3/bin/python"
-     
+
+
+# activate conda
+export PATH="$path_conda/bin:$PATH"
+
+source "$path_conda/etc/profile.d/conda.sh"
+
+condaexec="conda"
+pythonexec="python"
 
 echo '
 
 4) creating virtual environment...
 
 '
+path_venv="$path_repo/venv"
 
-
-cd $path_komrade
-$pythonexec -m pip install virtualenv
-$pythonexec -m virtualenv venv
-. venv/bin/activate
-echo "Now using python: `which python`"
-
+# cd $path_komrade
 cd $path_repo
+echo "Now using python 1: `which python`"
+$condaexec create -y -p "$path_venv" python=3.7 cartopy pip virtualenv
+
+#$condaexec activate "$path_venv"
+
+
+echo "Now using python 2: `which python`"
+# $pythonexec -m pip install virtualenv
+# $pythonexec -m virtualenv venv
+# . venv/bin/activate
+echo "Now using python 3: `which python`"
+
 python -m pip install -r requirements.txt
 
 echo '

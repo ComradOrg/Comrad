@@ -21,41 +21,44 @@ os.environ['KIVY_EVENTLOOP'] = 'asyncio'
 # loop = asyncio.get_event_loop()
 # loop.set_debug(True)
 
+# prefer experimental kivy if possible
+# sys.path.insert(0,os.path.join(PATH_KOMRADE_LIB,'KivyMD'))
+import kivymd
+# print(kivymd.__file__)
+# exit()
+
+
 # imports
-from kivy.uix.screenmanager import Screen,ScreenManager
-from kivymd.app import MDApp
-from kivymd.uix.button import MDFillRoundFlatButton, MDIconButton
-from kivymd.uix.toolbar import MDToolbar
-from kivymd.uix.screen import MDScreen
-from kivymd.uix.dialog import MDDialog
-from kivy.lang import Builder
-from kivy.uix.boxlayout import BoxLayout
-from kivymd.theming import ThemeManager
-from kivy.properties import ObjectProperty,ListProperty
-import time,os
-from collections import OrderedDict
-from functools import partial
-from kivy.uix.screenmanager import NoTransition
-from kivymd.uix.label import MDLabel
-from kivy.uix.widget import Widget
-from kivymd.uix.list import OneLineListItem
-from kivymd.uix.card import MDCard, MDSeparator
-from kivymd.uix.boxlayout import MDBoxLayout
-from kivy.uix.gridlayout import GridLayout
-from kivy.metrics import dp
-from kivy.properties import NumericProperty
+from kivy.uix.screenmanager import *
+from kivymd.app import *
+from kivymd.uix.button import *
+from kivymd.uix.toolbar import *
+from kivymd.uix.screen import *
+from kivymd.uix.dialog import *
+from kivy.lang import *
+from kivy.uix.boxlayout import *
+from kivymd.theming import *
+from kivy.properties import *
+from kivymd.uix.label import *
+from kivy.uix.widget import *
+from kivymd.uix.list import *
+from kivymd.uix.card import *
+from kivymd.uix.boxlayout import *
+from kivy.uix.gridlayout import *
+from kivy.metrics import *
+from kivy.properties import *   
 from kivymd.uix.list import * #MDList, ILeftBody, IRightBody, ThreeLineAvatarListItem, TwoLineAvatarListItem, BaseListItem, ImageLeftWidget
-from kivy.uix.image import Image, AsyncImage
+from kivy.uix.image import *
 import requests,json
-from kivy.storage.jsonstore import JsonStore
-from kivy.core.window import Window
-from kivy.core.text import LabelBase
+from kivy.storage.jsonstore import *
+from kivy.core.window import *
+from kivy.core.text import *
 import shutil,sys
-from kivy.uix.image import Image
+from kivy.uix.image import *
 import sys
 sys.path.append("..") # Adds higher directory to python modules path.
 
-from kivy.event import EventDispatcher
+from kivy.event import *
 import threading,asyncio,sys
 
 # raise Exception(str(Window.size))
@@ -100,13 +103,213 @@ class MyLayout(MDBoxLayout):
 
 
 
+from komrade.app.screens.dialog import MDDialog2
 
 
 
 
-class ProgressPopup(MDDialog): pass
-class MessagePopup(MDDialog): pass
-class MessagePopupCard(MDDialog): pass
+class ProgressPopup(MDDialog2): pass
+
+
+class MessagePopup(MDDialog2):
+    pass
+    # def __init__(self,*x,**y):
+    #     super().__init__(*x,**y)
+    #     self.ok_to_continue=False
+    
+    # def on_dismiss(self):
+    #     if not self.ok_to_continue:
+    #         self.ok_to_continue=True
+    #         logger.info('ouch!')
+        
+
+
+
+    pass
+class MessagePopupCard(MDDialog2):
+    def __init__(self,*x,**y):
+        # y['color_bg']=rgb(*COLOR_CARD)
+        y['type']='custom'
+        y['overlay_color']=(0,0,0,0)
+        super().__init__(*x,**y)
+        # self.color_bg=rgb(*COLOR_CARD)
+        self.ok_to_continue=False
+    
+    def on_dismiss(self):
+       return True
+    
+    def on_touch_down(self,touch):
+        self.ok_to_continue=True
+        logger.info('oof!')
+        # if hasattr(self,'msg_dialog'):
+            # logger.info(str(self.msg_dialog))
+
+
+
+class TextInputPopupCard(MDDialog2):
+    def say(self,x):
+        self.ok_to_continue=True
+        self.response=self.field.text
+        return self.response
+
+
+    def __init__(self,msg,password=False,input_name='',komrade_name='',*x,**y):
+        self.ok_to_continue=False
+        self.response=None
+        title=msg
+        from komrade.app.screens.login.login import UsernameField,PasswordField,UsernameLayout,UsernameLabel
+
+        self.layout=MDBoxLayout()
+        self.layout.orientation='vertical'
+        self.layout.cols=1
+        self.layout.size_hint=('333sp','222sp')
+        # self.layout.md_bg_color=(1,1,0,1)
+        self.layout.adaptive_height=True
+        self.layout.height=self.layout.minimum_height
+        self.layout.spacing='0sp'
+        self.layout.padding='0sp'
+
+        # self.layout.size=('333sp','333sp')
+
+
+
+        self.field_layout=UsernameLayout()
+        self.field = PasswordField() if password else UsernameField()
+        self.field.line_color_focus=rgb(*COLOR_TEXT)
+        self.field.line_color_normal=rgb(*COLOR_TEXT,a=0.25)
+        self.field.font_name=FONT_PATH
+        self.field.font_size='20sp'
+
+        self.field_label = UsernameLabel(text='password:' if password else input_name)
+        self.field_label.font_name=FONT_PATH
+        self.field_label.font_size='20sp'
+        
+        if title:
+            self.title_label = UsernameLabel(text=title)
+            self.title_label.halign='center'
+            self.title_label.font_size='20sp'
+            self.title_label.pos_hint={'center_x':0.5}
+            self.title_label.font_name=FONT_PATH
+            #self.field_layout.add_widget(self.title_label)
+            self.layout.add_widget(self.title_label)
+            
+
+        
+        self.field_layout.add_widget(self.field_label)
+        self.field_layout.add_widget(self.field)
+        self.layout.add_widget(self.field_layout)
+        # do dialog's intro
+        super().__init__(
+            type='custom',
+            text=msg,
+            content_cls=self.layout,
+            buttons=[
+                MDFlatButton(
+                    text="cancel",
+                    text_color=rgb(*COLOR_TEXT),
+                    md_bg_color = (0,0,0,1),
+                    theme_text_color='Custom',
+                    on_release=self.dismiss,
+                    font_name=FONT_PATH
+                ),
+                MDFlatButton(
+                    text="enter",
+                    text_color=rgb(*COLOR_TEXT),
+                    md_bg_color = (0,0,0,1),
+                    theme_text_color='Custom',
+                    on_release=self.say,
+                    font_name=FONT_PATH
+                ),
+            ],
+            color_bg = rgb(*COLOR_CARD)
+        )
+        self.ids.text.text_color=rgb(*COLOR_TEXT)
+        self.ids.text.font_name=FONT_PATH
+        self.size=('333sp','111sp')
+        self.adaptive_height=True
+
+    # wait and show
+    async def open(self,maxwait=666,pulse=0.1):
+        super().open()
+        await asyncio.sleep(pulse)
+        waited=0
+        while not self.ok_to_continue:
+            await asyncio.sleep(pulse)
+            waited+=pulse
+            if waited>maxwait: break
+            # logger.info(f'waiting for {waited} seconds... {self.ok_to_continue} {self.response}')
+        return self.response
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class BooleanInputPopupCard(MDDialog2):
+    def say_yes(self,x):
+        # logger.info('say_yes got:',str(x))
+        self.ok_to_continue=True
+        self.response=True
+        return self.response
+    def say_no(self,x):
+        # logger.info('say_no got:',str(x))
+        self.ok_to_continue=True
+        self.response=False
+        return self.response
+    
+    def __init__(self,msg,*x,**y):
+        self.ok_to_continue=False
+        self.response=None
+        
+
+        # do dialog's intro
+        super().__init__(
+            text=msg,
+            buttons=[
+                MDFlatButton(
+                    text="no",
+                    text_color=rgb(*COLOR_TEXT),
+                    md_bg_color = (0,0,0,1),
+                    theme_text_color='Custom',
+                    on_release=self.say_no,
+                    font_name=FONT_PATH
+                ),
+                MDFlatButton(
+                    text="yes",
+                    text_color=rgb(*COLOR_TEXT),
+                    md_bg_color = (0,0,0,1),
+                    theme_text_color='Custom',
+                    on_release=self.say_yes,
+                    font_name=FONT_PATH
+                ),
+            ],
+            color_bg = rgb(*COLOR_CARD)
+        )
+
+        self.ids.text.text_color=rgb(*COLOR_TEXT)
+        self.ids.text.font_name=FONT_PATH
+
+    # wait and show
+    async def open(self,maxwait=666,pulse=0.1):
+        super().open()
+        await asyncio.sleep(pulse)
+        waited=0
+        while not self.ok_to_continue:
+            await asyncio.sleep(pulse)
+            waited+=pulse
+            if waited>maxwait: break
+            # logger.info(f'waiting for {waited} seconds... {self.ok_to_continue} {self.response}')
+        return self.response
+
+
 class MyBoxLayout(MDBoxLayout): pass
 class MyLabel(MDLabel): pass
 
@@ -240,8 +443,17 @@ class MainApp(MDApp, Logger):
         
         self.root.change_screen_from_uri(self.uri if self.uri else DEFAULT_URI)
 
+        # build the walker
+        self.walker=MazeWalker(callbacks=self.callbacks)
+        self.torpy_logger = logging.getLogger('torpy')
+        self.torpy_logger.propagate=False
+        self.torpy_logger.addHandler(self.walker)
+        import ipinfo
+        ipinfo_access_token = '90df1baf7c373a'
+        self.ipinfo_handler = ipinfo.getHandler(ipinfo_access_token)
 
-        
+        from komrade.app.screens.map import MapWidget
+        self.map = MapWidget()
         
         return self.root
 
@@ -249,6 +461,29 @@ class MainApp(MDApp, Logger):
     #     kommie = Komrade(username)
     #     if self.exists_locally_as_contact()
 
+    @property
+    def callbacks(self):
+        return {
+            'torpy_guard_node_connect':self.callback_on_hop,
+            'torpy_extend_circuit':self.callback_on_hop,
+        }
+    
+    async def callback_on_hop(self,rtr):
+        if not hasattr(self,'hops'): self.hops=[]
+        if not self.map.opened:
+            self.map.open()
+            # self.map.draw()
+
+        deets = self.ipinfo_handler.getDetails(rtr.ip)
+        self.hops.append((rtr,deets))
+        lat,long=tuple(float(_) for _ in deets.loc.split(','))
+        flag=f'{deets.city}, {deets.country_name} ({rtr.nickname})'
+        
+        self.map.add_point(lat,long,flag)
+        self.map.draw()
+        import asyncio
+        # await asyncio.sleep(2)
+        logger.info('CALLBACK ON HOP: ' + flag)
 
     def load_store(self):
         if not self.store.exists('user'): return
@@ -370,25 +605,93 @@ class MainApp(MDApp, Logger):
         self.dialog.open()
         #stop
 
-    def stat(self,msg,komrade_name='Telephone',pause=False,**y):
-        from komrade.app.screens.feed.feed import PostCard
-        if not hasattr(self,'msg_dialog') or not self.msg_dialog:
-            self.msg_dialog = MessagePopupCard()
-            # self.msg_dialog.ids.msg_label.text=msg
+    async def get_input(self,msg,komrade_name='Telephone',get_pass=False,yesno=False,**y):
+        from komrade.app.screens.feed.feed import PostCardInputPopup
+        if hasattr(self,'msg_dialog') and self.msg_dialog:# and hasattr(self.msg_dialog,'card') and self.msg_dialog.card:
+            self.msg_dialog0=self.msg_dialog
+            self.msg_dialog0.dismiss()
+            self.msg_dialog0=None
+        
+        if yesno:
+            self.msg_dialog = BooleanInputPopupCard(msg,komrade_name=komrade_name,**y)
+        else:
+            self.msg_dialog = TextInputPopupCard(msg,password=get_pass,komrade_name=komrade_name,**y)
 
-            self.msg_dialog.card = postcard = PostCard({
-                'author':komrade_name,
-                'author_prefix':'Komrade @',
-                'to_name':'me',
-                'content':msg,
-                'timestamp':time.time(),
-            })
-            postcard.size_hint=(None,None)
-            postcard.size=('600sp','600sp')
-            self.msg_dialog.add_widget(postcard)
+        response = await self.msg_dialog.open()
+        logger.info(f'get_input got user response {response}')
+        async def task():
+            await asyncio.sleep(1)
+            self.msg_dialog.dismiss()
+        asyncio.create_task(task())
+        return response
 
-            self.msg_dialog.open()
-            time.sleep(5)
+    async def ring_ring(self,*x,kommie=None,**y):
+        if not kommie: kommie=self.komrade
+        from komrade.app.screens.map import MapWidget
+        self.map=MapWidget()
+        self.map.open()
+        resp_msg_d = await kommie.ring_ring(*x,**y)
+        logger.info('done with ring_ring! ! !')
+        self.map.dismiss()
+        self.map=None
+        return resp_msg_d
+
+    
+    async def get_updates(self,*x,kommie=None,**y):
+        if not kommie: kommie=self.komrade
+        from komrade.app.screens.map import MapWidget
+        self.map=MapWidget()
+        self.map.open()
+        await kommie.get_updates(*x,**y)
+        logger.info('done with get_updates! ! !')
+        self.map.dismiss()
+        self.map=None
+        
+
+        
+    async def stat(self,msg,komrade_name='Telephone',pause=False,get_pass=False,**y):
+        from komrade.app.screens.feed.feed import PostCard,PostCardPopup
+        if hasattr(self,'msg_dialog') and self.msg_dialog:# and hasattr(self.msg_dialog,'card') and self.msg_dialog.card:
+            self.msg_dialog0=self.msg_dialog
+            self.msg_dialog0.dismiss()
+            self.msg_dialog0.clear_widgets()
+
+
+        self.msg_dialog = MessagePopupCard()
+        # self.msg_dialog.ids.msg_label.text=msg
+
+        self.msg_dialog.card = postcard = PostCardPopup({
+            'author':komrade_name,
+            'author_prefix':'@',
+            'to_name':'me',
+            'content':msg,
+            'timestamp':time.time(),
+            'author_label_font_size':'18sp',
+            **y
+        },
+        msg_dialog=self.msg_dialog)
+        postcard.font_size='16sp'
+        postcard.size_hint=(None,None)
+        postcard.size=('600sp','600sp')
+        postcard.ok_to_continue=False
+
+        self.msg_dialog.add_widget(postcard)
+
+        self.msg_dialog.open(animation=False)
+
+        if hasattr(self,'msg_dialog0'):
+            self.root.remove_widget(self.msg_dialog0)
+            
+        await asyncio.sleep(0.1)
+        while not self.msg_dialog.ok_to_continue:
+            await asyncio.sleep(0.1)
+            # logger.info(str(postcard), postcard.ok_to_continue,'??')
+        # self.msg_dialog.dismiss()
+        # self.msg_dialog.remove_widget(postcard)
+        # self.msg_dialog.card = postcard = self.msg_dialog = None
+        await asyncio.sleep(0.1)
+        return {'success':True, 'status':'Delivered popup message'}
+        
 
     def open_msg_dialog(self,msg):
         # from screens.post.post import MessagePopup,ProgressPopup
@@ -405,6 +708,11 @@ class MainApp(MDApp, Logger):
         if hasattr(self,'msg_dialog'):
             self.msg_dialog.remove_widget(self.msg_dialog.card)
             self.msg_dialog.dismiss()
+
+
+
+
+
 
 
 

@@ -49,8 +49,8 @@ def Komrade(name=None,pubkey=None,*x,**y):
 
     # print('found!',name,PHONEBOOK[name],PHONEBOOK[name].keychain())
     PHONEBOOK[name] = kommie
-    if kommie.pubkey:
-        PHONEBOOK[kommie.pubkey.data_b64] = kommie
+    pubkey=kommie.find_pubkey(name)
+    if pubkey: PHONEBOOK[pubkey.data_b64] = kommie
 
     return kommie
 
@@ -102,10 +102,12 @@ class Operator(Keymaker):
             getpass_func=getpass_func
         )
 
-        
         # add to phonebook
-        if name: PHONEBOOK[name]=self
-        if self.pubkey: PHONEBOOK[self.pubkey.data_b64]=self
+        if name:
+            PHONEBOOK[name]=self
+            pubkey=self.find_pubkey(name)
+            if pubkey:
+                PHONEBOOK[pubkey.data_b64]=self
         self._inbox_crypt=None
         
 
@@ -249,7 +251,7 @@ class Operator(Keymaker):
         return new_msg_obj
 
 
-    def ring_ring(self,msg,to_whom,get_resp_from=None,route=None,caller=None):
+    async def ring_ring(self,msg,to_whom,get_resp_from=None,route=None,caller=None):
         # ring ring
         from komrade.cli.artcode import ART_PHONE_SM1
         import textwrap as tw
@@ -277,8 +279,10 @@ class Operator(Keymaker):
 
         # pass through the telephone wire by the get_resp_from function
         if not get_resp_from: get_resp_from=to_whom.ring_ring
-        resp_msg_obj = get_resp_from(msg_obj.msg_d,caller=caller)
-            #self.log('resp_msg_obj <-',resp_msg_obj)
+        
+        resp_msg_obj = await get_resp_from(msg_obj.msg_d,caller=caller)
+        self.log('resp_msg_obj <-',str(resp_msg_obj))
+        
         if not resp_msg_obj:
             print('!! no response from op !!')
             exit()

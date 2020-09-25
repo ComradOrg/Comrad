@@ -3,17 +3,16 @@ Storage for both keys and data
 """
 import os,sys; sys.path.append(os.path.abspath(os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__),'..')),'..')))
 from komrade import *
-# from simplekv.fs import FilesystemStore
-# from simplekv.memory.redisstore import RedisStore
-# import redis
+from simplekv.fs import FilesystemStore
+from simplekv.memory.redisstore import RedisStore
+import redis
 import hashlib,os
 import zlib
 from pythemis.exception import ThemisError
-# from vedis import Vedis
-# from walrus.tusks.rlite import WalrusLite
-import hirlite
 
-LOG_GET_SET = 1
+
+
+LOG_GET_SET = 0
 
 
 
@@ -58,11 +57,8 @@ class Crypt(Logger):
         self.encryptor_func=encryptor_func
         self.decryptor_func=decryptor_func
         
-        # self.store = FilesystemStore(self.fn)
+        self.store = FilesystemStore(self.fn)
         # self.store = RedisStore(redis.StrictRedis())
-        # self.db = Vedis(self.fn)
-        # self.db = WalrusLite(self.fn)
-        self.db = hirlite.Rlite(path=self.fn)
 
 
     def log(self,*x):
@@ -70,7 +66,6 @@ class Crypt(Logger):
             super().log(*x)
         
     def hash(self,binary_data):
-        # return binary_data
         return hasher(binary_data,self.secret)
 
     def force_binary(self,k_b):
@@ -105,9 +100,7 @@ class Crypt(Logger):
         return k_b
 
     def has(self,k,prefix=''):
-        got=self.get(k,prefix=prefix)
-        # self.log('has got',got)
-        return bool(got)
+        return bool(self.get(k,prefix=prefix))
 
 
     def set(self,k,v,prefix='',override=False,encrypt=True):
@@ -120,12 +113,8 @@ class Crypt(Logger):
         v_b=self.package_val(v,encrypt = (self.encrypt_values and encrypt))
         if not override:
             self.log(f'''Crypt.set(\n\t{k_b}\n\n\t{k_b_hash}\n\n\t{v_b}\n)''')
-        
-        #self.store.put(k_b_hash,v_b)
-        #with self.db.transaction():
-            # self.db[k_b_hash]=v_b
-        return self.db.command('set',k_b_hash,v_b)
-        # return True
+        self.store.put(k_b_hash,v_b)
+        return True
 
     def exists(self,k,prefix=''):
         return self.has(k,prefix=prefix)
@@ -140,24 +129,17 @@ class Crypt(Logger):
     def delete(self,k,prefix=''):
         k_b=self.package_key(k,prefix=prefix)
         k_b_hash = self.hash(k_b)
-
-        with self.db.transaction():
-            del self.db[k_b_hash]
-        
-        return True
+        r=self.store.delete(k_b_hash)
+        return r
         
 
     def get(self,k,prefix=''):
         k_b=self.package_key(k,prefix=prefix)
         k_b_hash = self.hash(k_b)
-        # v=self.db.get(k_b_hash)
-        self.log('getting k',k,'with prefix',prefix)
-        self.log('getting k_b',k_b)
-        self.log('getting k_b_hash',k_b_hash)
-        
-        v = self.db.command('get',k_b_hash)
-        self.log('<--',v)
-
+        try:
+            v=self.store.get(k_b_hash)
+        except KeyError:
+            return None
         v_b=self.unpackage_val(v)
         return v_b
 
@@ -182,27 +164,106 @@ class CryptList(Crypt):  # like inbox
             decryptor_func=lambda x: x):
         
         self.crypt=crypt
-        self.db=self.crypt.db
-        self.keyname=self.crypt.package_key(keyname,prefix)
+        self.keyname=keyname
+        self.prefix=prefix
+        self.encryptor_func=encryptor_func
+        self.decryptor_func=decryptor_func
 
+    def __repr__(self):
+        return f"""
+(CryptList)
+val_b_encr = {self.val_b_encr}
+val_b = {self.val_b}
+values = {self.values}
+        """
+    
     @property
-    def values(self): return list(self.l)
+    def val_b_encr(self):
+        res = self.crypt.get(
+            self.keyname,
+            prefix=self.prefix
+        )
+        self.log('res from crypt:',res)
+        return res
+    
+    @property
+    def val_b(self):
+        val_b_encr=self.val_b_encr
+        if not val_b_encr: return None
+        return self.decryptor_func(val_b_encr)
+    
+    @property
+    def values(self):
+        if not hasattr(self,'_values') or not self._values:    
+            val_b=self.val_b
+            if not val_b: return []
+            self._values = pickle.loads(val_b)
+        return self._values
+
+    def prepend(self,x_l):
+        return self.append(x_l,insert=0)
+
+    def append(self,x_l,insert=None):
+        if type(x_l)!=list: x_l=[x_l]
+        val_l = self.values
+        self.log('val_l =',val_l)
+        x_l = [x for x in x_l if not x in set(val_l)]
+        # print('val_l =',val_l)
+        for x in x_l:
+            if insert is not None:
+                val_l.insert(insert,x)
+            else:
+                val_l.append(x)
+            # print('val_l2 =',val_l)
+        return self.set(val_l)
+
+    def set(self,val_l):
+        self._values = val_l
+
+        val_b = pickle.dumps(val_l)
+        val_b_encr = self.encryptor_func(val_b)
+        return self.crypt.set(
+            self.keyname,
+            val_b_encr,
+            prefix=self.prefix,
+            override=True
+        )
+
+    def remove(self,l):
+        if type(l)!=list: l=[l]
+        lset=set(l)
+        values = [x for x in self.values if x not in lset]
+        return self.set(values)
+
+
+
+
+# !!!!
+# @TODO: CAUSING PROBLEMS
+# !!!
+
+class CryptListRedis(Logger):
+    def __init__(self,keyname,prefix='',**y):
+        self.redis = redis.StrictRedis()
+        # self.store = RedisStore(self.redis)
+        self.keyname=b64enc_s(prefix)+b64enc_s(keyname)
+        self.log('loading CryptList',keyname,prefix,self.keyname)
 
     def package_val(self,val):
-        # if type(val)!=bytes: val=val.encode()
+        if type(val)==bytes: val=val.decode()
+        # return b64enc_s(val)
         return val
 
     def unpackage_val(self,val):
-        # if type(val)==str: val=val.encode()
+        if type(val)==str: val=val.encode()
+        # return b64dec(val)
         return val
 
     def append(self,val):
         self.log('<--val',val)
         if type(val)==list: return [self.append(x) for x in val]
         val_x = self.package_val(val)
-        # with self.db.transaction():
-            # res = self.db.lpush(self.keyname,val_x)
-        res = self.db.command('rpush',self.keyname,val_x)
+        res = self.redis.rpush(self.keyname,val_x)
         self.log('-->',res)
         return res
 
@@ -210,15 +271,13 @@ class CryptList(Crypt):  # like inbox
         self.log('<--val',val)
         if type(val)==list: return [self.prepend(x) for x in val]
         val_x = self.package_val(val)
-        res = self.db.command('lpush',self.keyname,val_x)
+        res = self.redis.lpush(self.keyname,val_x)
         self.log('-->',res)
         return res
 
     @property
-    def values(self):
-        l = self.db.command('lrange',self.keyname, '0', '-1')
-        self.log('<-- l',l)
-        if not l: return []
+    def values(self):    
+        l = self.redis.lrange(self.keyname, 0, -1 )
         vals = [self.unpackage_val(x) for x in l]
         self.log('-->',vals)
         return vals
@@ -227,29 +286,22 @@ class CryptList(Crypt):  # like inbox
         self.log('<--',val)
         if type(val)==list: return [self.remove(x) for x in val]
         val_x = self.package_val(val)
-        self.db.command('lrem',self.keyname,'0',val_x)
-
+        res = self.redis.lrem(self.keyname, 0, val_x)
+        self.log('-->',res)
+        return res
 
 
 
 if __name__=='__main__':
-    crypt = Crypt(fn='tes22t.db')
-    print(crypt.set(
-        'testing22',
-        b'wooooooboy',
-        prefix='/test/',
-    ))
+    crypt = Crypt('testt')
 
-    print('got back', crypt.get(
-        'testing22',
-        prefix='/test/'
-    ))
+    from komrade import KomradeSymmetricKeyWithPassphrase
+    key = KomradeSymmetricKeyWithPassphrase()
 
 
-
-    crypt_list = CryptList(
-        keyname='MyInbosdx35',
-        crypt=crypt
+    crypt_list = CryptListRedis(
+        keyname='MyInbox2',
+        # crypt=crypt
     )
 
     print(crypt_list.values)
@@ -258,12 +310,10 @@ if __name__=='__main__':
 
     # print(crypt_list.append('cool thing 1'))
     
-    print(crypt_list.append('Appended'))
+    print(crypt_list.append('#1 baby'))
     print(crypt_list.append('cool thing 0'))
-    print(crypt_list.prepend('Prepended'))
-    print()
-    print()
-    print(crypt_list.remove('cool thing 0'))
-    print()
-    print()
+    print(crypt_list.prepend('#0 baby'))
+
+    # print(crypt_list.remove('cool thing 0'))
+
     print(crypt_list.values)

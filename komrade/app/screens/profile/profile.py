@@ -199,13 +199,11 @@ class ProfileScreen(BaseScreen):
     clock_scheduled=None
 
     def make_profile_img(self,width,do_crop=True,circ_img=None,bw=False,circularize=True):
-
+        img_src = os.path.join(PATH_GUI_ASSETS, 'avatars', f'{self.app.username}.png')
+        if not os.path.exists(img_src): 
+            img_src=PATH_DEFAULT_AVATAR
         
-        img_src = f'assets/avatars/{self.app.username}.png'
-        if not os.path.exists(img_src): img_src = 'assets/avatars/marx.png'
         circ_img = circularize_img(img_src,width,do_crop=do_crop,bw=bw,circularize=circularize)
-
-        
         avatar_layout = LayoutAvatar()
         byte=io.BytesIO(circ_img.read())
 

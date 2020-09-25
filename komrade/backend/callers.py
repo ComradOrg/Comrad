@@ -12,9 +12,9 @@ class Caller(Operator):
     Variant of an Operator which handles local keys and keymaking.
     """
 
-    def ring_ring(self,msg,**y):
+    async def ring_ring(self,msg,**y):
         # stop
-        return super().ring_ring(
+        return await super().ring_ring(
             msg,
             to_whom=self.op,
             get_resp_from=self.phone.ring_ring,

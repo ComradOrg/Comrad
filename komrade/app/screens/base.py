@@ -27,6 +27,8 @@ class BaseScreen(MDScreen):
     def channel(self):
         return self.app.channel
 
+    def stat(self,*x,**y): return self.app.stat(*x,**y)
+
 
 
 # class CardScreen(BaseScreen):

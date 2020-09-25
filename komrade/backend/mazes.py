@@ -28,15 +28,22 @@ class MazeWalker(Handler):
                 # print('! Found router:',record.msg % record.args)
                 # print(router.ip,walk)
                 # print()
-
+                f=None
                 if record.msg.startswith('Connecting to guard node'):
                     f = self._callbacks.get('torpy_guard_node_connect')
-                    if f: f(router)
                 elif record.msg.startswith('Extending the circuit'):
                     f = self._callbacks.get('torpy_extend_circuit')
-                    if f: f(router)
-                
-                
+
+                # import asyncio
+                # if f:
+                    # asyncio.create_task(f(router))
+                    #       
+                if f: 
+                    # texec = ThreadExecutor()
+                    # texec(f, router)
+                    # f(router)
+                    import asyncio
+                    asyncio.run(f(router))
         pass
     
 

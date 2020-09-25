@@ -18,7 +18,7 @@ class KomradeX(Caller):
         # logger.info('booting KomradeX with getpass_func:',getpass_func)
         super().__init__(name=name, callbacks=callbacks, getpass_func=getpass_func)
         self.log(f'Starting up with callbacks: {self._callbacks}')
-        self.boot(create=False)
+        # self.boot(create=False)
         # special?
         if self.name==WORLD_NAME:
             if os.path.exists(PATH_SUPER_SECRET_OP_KEY): 
@@ -33,42 +33,60 @@ class KomradeX(Caller):
 
 
     def boot(self,create=False,ping=False):
-        # Do I already have my keys?
-        # yes? -- login
+        return
 
-        keys = self.keychain()
-        # self.log(f'booting {self}!',dict_format(keys))
+        # # Do I already have my keys?
+        # # yes? -- login
 
-        if keys.get('pubkey') and keys.get('privkey'):
-            # self.log('already booted! @'+self.name)
-            return True
+        # keys = self.keychain()
+        # # self.log(f'booting {self}!',dict_format(keys))
+
+        # if keys.get('pubkey') and keys.get('privkey'):
+        #     # self.log('already booted! @'+self.name)
+        #     return True
         
-        if self.exists_locally_as_account():
-            self.log(f'this account (@{self.name}) can be logged into')
-            return self.login()
+        # if self.exists_locally_as_account():
+        #     self.log(f'this account (@{self.name}) can be logged into')
+        #     return #self.login()
             
 
-        elif self.exists_locally_as_contact():
-            self.log(f'this account (@{self.name}) is a contact')
-            return #pass #???
+        # elif self.exists_locally_as_contact():
+        #     self.log(f'this account (@{self.name}) is a contact')
+        #     return #pass #???
 
-        elif ping and self.exists_on_server():
-            self.log(f'this account exists on server. introduce?')
-            return
+        # elif ping and self.exists_on_server():
+        #     self.log(f'this account exists on server. introduce?')
+        #     return
 
-        elif create:
-            self.log('account is free: register?')
-            return self.register()
+        # elif create:
+        #     self.log('account is free: register?')
+        #     return self.register()
 
 
     def exists_locally(self):
-        return bool(self.pubkey)
+        pubkey=self.find_pubkey()
+        return bool(pubkey)
 
     def exists_locally_as_contact(self):
-        return bool(self.pubkey) and not bool(self.privkey)
+        pubkey=self.find_pubkey()
+        if not pubkey: return False
+        uri=pubkey.data_b64
+        if self.crypt_keys.get(uri,prefix='/privkey_encr/'):
+            return False
+        return True
 
     def exists_locally_as_account(self):
-        return bool(self.pubkey) and bool(self.privkey_encr)
+        #return bool(self.pubkey) and bool(self.privkey_encr)
+        pubkey=self.find_pubkey()
+        self.log('found pubkey:',pubkey)
+        if not pubkey: return False
+        uri=pubkey.data_b64
+        self.log('crypt????',self.crypt_keys.fn)
+        res = self.crypt_keys.get(uri,prefix='/privkey_encr/')
+        if res:
+            self.log('found privkey_encr:',res)
+            return True
+        return False
 
     def exists_on_server(self):
         answer = self.phone.ring_ring({
@@ -81,10 +99,11 @@ class KomradeX(Caller):
 
 
     ## Talking with Operator
-    def ring_ring(self,msg,route=None,**y):
+    async def ring_ring(self,msg,route=None,**y):
+        logger.info('got here 2!')
         if type(msg)==dict and not ROUTE_KEYNAME in msg:
             msg[ROUTE_KEYNAME]=route
-        return super().ring_ring(msg,caller=self,**y)
+        return await super().ring_ring(msg,caller=self,**y)
 
 
 
@@ -94,6 +113,9 @@ class KomradeX(Caller):
     ####################################
     ## (1) Logging in and registering ##
     ####################################
+
+    async def log_async(self,*x,**y):
+        return self.log(*x,**y)
 
 
 
@@ -579,7 +601,7 @@ class KomradeX(Caller):
         )
 
     ## Getting updates
-    def get_updates(self,include_posts=True):
+    async def get_updates(self,include_posts=True):
         # get any parameters we need
         # post_ids_read = list(self.inbox_read_db.values)
         if not self.pubkey:
@@ -593,7 +615,7 @@ class KomradeX(Caller):
         }
         self.log('msg to op ->',msg_to_op)
 
-        res = self.ring_ring(
+        res = await self.ring_ring(
             msg_to_op,
             route='get_updates'
         )

@@ -27,7 +27,7 @@
     pos_hint: {'center_x':0.5, 'center_y':0.5}
     size_hint:0.5,0.5
     padding:'10dp'
-    md_bg_color:0,0,0,1
+    md_bg_color:rgb(*COLOR_BG) #0,0,0,1
     canvas:
         Color:
             rgb: 1,0,0,2
@@ -45,6 +45,14 @@
     font_name: 'assets/font.otf'
     size_hint:1,None
 
+<MapImage>:
+    canvas:
+        Color:
+            rgb: (0, 0, 0, 0)
+        Rectangle:
+            texture: self.texture
+            size: self.width + 20, self.height + 20
+            pos: self.x - 10, self.y - 10
 
 
 
@@ -53,7 +61,7 @@
 <ProgressPopup>:
     type: "custom"
     size_hint: (None, None)
-    size: ('200dp','200dp')
+    size: ('333sp','333sp')
     # md_bg_color: 0,0,0,1
 
     MDBoxLayout:
@@ -135,13 +143,22 @@
             pos_hint: {'center_x': .5, 'y': 0}
 
 
+
+<BooleanInputPopupCard>:
+    type: "custom"
+    size_hint: (None, None)
+    size: ('200dp','200dp')
+    md_bg_color: rgb(*COLOR_TEXT)
+
+
+
 <MessagePopupCard>:
     type: "custom"
     size_hint: 1,1
     # size: ('300dp','300dp')
     # md_bg_color: rgb(*COLOR_CARD)
-    md_bg_color:0,0,0,1
-    size:('600sp','600sp')
+    md_bg_color:0,0,0,0
+    size:('600sp','100sp')
 
     MDBoxLayout:
         id: msg_popup_box_layout
@@ -151,8 +168,8 @@
         size_hint: (1, 1)
         # adaptive_height: True
         pos_hint: {"center_x": .5, "center_y": .5}
-        # md_bg_color: rgb(*COLOR_CARD)
-        md_bg_color:0,0,0,0
+        md_bg_color: rgb(*COLOR_CARD)
+        # md_bg_color:0,0,0,0
         height: self.minimum_height
         # radius:[20,] 
         # border_radius:20
