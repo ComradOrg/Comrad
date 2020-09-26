@@ -182,13 +182,13 @@ Vanilla Python. Code is in [komrade/cli](komrade/cli).
 
 #### API
 
-Plain old object-oriented code in Python. The root entity is a "Keymaker": anyone from @Telephone, to @Operator, to users, to groups, who has a public/private key pair. The database uses a simple file-based key-value store, written in Python ([simplekv](https://github.com/mbr/simplekv)). Code is in [komrade/backend](komrade/backend).
+Plain old object-oriented code in Python. The root entity is a "Keymaker": anyone from @Telephone, to @Operator, to users, to groups, who has a public/private key pair. The database uses a simple file-based key-value store using the Redis protocol: ([rlite](https://github.com/seppo0010/rlite), via its [rlite-py](https://github.com/seppo0010/rlite-py) Python bindings. All code for backend/API is in [komrade/backend](komrade/backend).
 
 #### Cryptography
 
-We are using [Themis](https://github.com/cossacklabs/themis), a high-level cross-platform cryptography library, for all cryptographic functions, rather than handling any primitives ourselves.
+We are using [Themis](https://github.com/cossacklabs/themis), a high-level cross-platform cryptography library, for all cryptographic functions, rather than handling any primitives ourselves. Installing it from packages is tricky, so right now the [auto-installer](#install) builds it from sources.
 
-Code is primarily in:
+Crypto-related code is primarily in:
 
   * [komrade/backend/keymaker.py](komrade/backend/keymaker.py)
 
