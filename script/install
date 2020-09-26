@@ -33,6 +33,13 @@ then
     echo "created $path_komrade"
 fi
 
+path_lib="$path_komrade/lib"
+if [ ! -d "$path_lib" ]
+then
+    mkdir -p $path_lib
+    echo "created $path_lib"
+fi
+
 
 
 echo '
@@ -76,11 +83,29 @@ else
 fi
 
 
+#########################################################
+
+echo '
+
+3) building Themis, cryptography backend...
+
+'
+cd "$path_lib"
+# pwd
+git clone https://github.com/cossacklabs/themis.git
+cd themis
+make
+sudo make install
+
+
+
+##########################################################
+
 
 
 echo '
 
-3) setting up python...
+4) setting up python...
 
 # '
 
@@ -150,9 +175,12 @@ source "$path_conda/etc/profile.d/conda.sh"
 condaexec="conda"
 pythonexec="python"
 
+
+
+
 echo '
 
-4) creating virtual environment...
+5) creating virtual environment...
 
 '
 path_venv="$path_repo/venv"
@@ -175,7 +203,7 @@ python -m pip install -r requirements.txt
 
 echo '
 
-5) adding komrade bin folder to path
+6) adding komrade bin folder to path
 
 '
 
@@ -192,7 +220,14 @@ export PATH="$path_repo/bin:$PATH"
 
 echo "Now run Komrade with:
 
-komrade-cli    [CLI interface -- beta]
 komrade-app    [GUI interface -- alpha]
+
+If that doesn't work, try running this series of comands:
+
+source $path_conda/etc/profile.d/conda.sh
+export PATH=\"$path_conda/bin:$PATH\"
+conda activate $path_venv
+python -m pip install -r $path_repo/requirements.txt
+python $path_repo/komrade/app/main.py
 
 "
