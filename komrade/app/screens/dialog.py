@@ -100,8 +100,15 @@ Builder.load_string(
             origin: self.center
             x: root._scale_x
             y: root._scale_y
+        Color:
+            rgba: root.color_bg #root.theme_cls.bg_dark
+    canvas:
+        Color:
+            rgba: root.color_bg #root.theme_cls.bg_dark
     canvas.after:
         PopMatrix
+        Color:
+            rgba: root.color_bg #root.theme_cls.bg_dark
 
 <MDDialog2>
 

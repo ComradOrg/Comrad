@@ -280,7 +280,7 @@ class TheOperator(Operator):
             'pubkey':pubkey_b,
             'secret_login':shared_secret,
             'name':name,
-            'status':f'Name @{name} was successfully registered.\n\nIt has been permanently linked to the following public key:\n\n{uri_id.decode()}',
+            'status':f'Name @{name} was successfully registered.\nIt has been permanently linked to the following public key:\n{uri_id.decode()}',
             'res_posts':self.get_posts(msg_obj)
         }
         # res_safe = {

@@ -128,11 +128,11 @@ class MessagePopup(MDDialog2):
     pass
 class MessagePopupCard(MDDialog2):
     def __init__(self,*x,**y):
-        # y['color_bg']=rgb(*COLOR_CARD)
+        y['color_bg']=rgb(*COLOR_BG)
         y['type']='custom'
-        y['overlay_color']=(0,0,0,0)
+        y['overlay_color']=rgb(*COLOR_BG)
+        self.color_bg=rgb(*COLOR_BG)
         super().__init__(*x,**y)
-        # self.color_bg=rgb(*COLOR_CARD)
         self.ok_to_continue=False
     
     def on_dismiss(self):
@@ -491,6 +491,41 @@ class MainApp(MDApp, Logger):
         if not userd: return
 
         self.username = userd.get('username','')
+
+
+
+
+    def clear_widget_tree(self,widget_type,widget=None):
+        if not widget: widget=self.root
+        for widg in widget.children:
+            if hasattr(widg,'children') and widg.children:
+                self.clear_widget_tree(widget_type,widget=widg)
+            
+            self.log(widg,type(widg),widget_type,issubclass(type(widg),widget_type))
+            if issubclass(type(widg),widget_type):
+                self.remove_widget(widg)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     
 
 
@@ -658,6 +693,7 @@ class MainApp(MDApp, Logger):
 
 
         self.msg_dialog = MessagePopupCard()
+        # self.root.add_widget(self.msg_dialog)
         # self.msg_dialog.ids.msg_label.text=msg
 
         self.msg_dialog.card = postcard = PostCardPopup({
@@ -687,8 +723,10 @@ class MainApp(MDApp, Logger):
             await asyncio.sleep(0.1)
             # logger.info(str(postcard), postcard.ok_to_continue,'??')
         # self.msg_dialog.dismiss()
-        # self.msg_dialog.remove_widget(postcard)
-        # self.msg_dialog.card = postcard = self.msg_dialog = None
+        self.msg_dialog.remove_widget(postcard)
+        # self.root.remove_widget(self.msg_dialog)
+        # self.root.clear_widgets()
+        self.msg_dialog.card = postcard = self.msg_dialog = None
         await asyncio.sleep(0.1)
         return {'success':True, 'status':'Delivered popup message'}
         
@@ -708,6 +746,7 @@ class MainApp(MDApp, Logger):
         if hasattr(self,'msg_dialog'):
             self.msg_dialog.remove_widget(self.msg_dialog.card)
             self.msg_dialog.dismiss()
+            self.remove_widget(self.msg_dialog)
 
 
 

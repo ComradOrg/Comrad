@@ -208,7 +208,7 @@ class PostCard(MDCard):
         #log('img_src ' + str(bool(self.img_src)))
         if self.img_src: self.add_widget(image_layout)
 
-        def estimate_height(minlen=100,maxlen=300):
+        def estimate_height(minlen=100,maxlen=600):
             num_chars = len(self.content)
             # num_lines = num_chars
             height = num_chars*1.1

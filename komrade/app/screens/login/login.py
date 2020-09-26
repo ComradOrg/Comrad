@@ -256,6 +256,9 @@ class LoginScreen(BaseScreen):
         
         await logfunc(f'Welcome, Komrade @{name}. To help us communicate safely, I have cut for you a matching pair of encryption keys.',pause=True,clear=True,komrade_name='Keymaker')
 
+        self.app.clear_widget_tree(MDDialog)
+        self.app.clear_widget_tree(MDDialog2)
+
         # ## 2) Make pub public/private keys
         from komrade.backend.keymaker import KomradeAsymmetricKey
         from komrade.cli.artcode import ART_KEY_PAIR
@@ -310,8 +313,7 @@ class LoginScreen(BaseScreen):
         kommie._keychain['privkey_encr']=privkey_encr_obj
         self.log('My keychain now looks like v2:',dict_format(kommie.keychain()))
 
-        await logfunc(f'With this scrambled password we can encrypt your super-sensitive private key, from this:\n{privkey.discreet}',pause=True,clear=False)
-        await logfunc(f'To this:\n{privkey_encr_obj.discreet}',pause=True,clear=False)
+        await logfunc(f'With this scrambled password we can encrypt your super-sensitive private key, from this:\n{privkey.discreet}to this:\n{privkey_encr_obj.discreet}',pause=True,clear=False)
 
         # ### PUBLIC KEY
         await logfunc('You must also register your username and public key with Komrade @Operator on the remote server',pause=False,clear=False)
@@ -352,10 +354,9 @@ class LoginScreen(BaseScreen):
         sec_login = resp_msg_d.get('secret_login')
         # stop
         
-        await logfunc(f'''Saving keys to device:''',pause=True)
-        await logfunc(f'''(1) {pubkey}''',pause=True,use_prefix=False)
-        await logfunc(f'''(2) {privkey_encr_obj}''',pause=True,use_prefix=False)
-        await logfunc(f'''(3) [Shared Login Secret with @Operator]\n({make_key_discreet(sec_login)})''',pause=True,use_prefix=False)
+        # await logfunc(f'''Saving keys to device:\n(1) {pubkey}\n(2) {privkey_encr_obj}\n(3) [Shared Login Secret with @Operator]\n({make_key_discreet(sec_login)}''',pause=True)
+        # await logfunc(f'''Saving keys to device''',pause=True)
+
         # print()
         kommie.crypt_keys.set(name, pubkey_b, prefix='/pubkey/')
         kommie.crypt_keys.set(uri_id, name, prefix='/name/')
@@ -369,11 +370,15 @@ class LoginScreen(BaseScreen):
 
         # save qr too:
         _fnfn=kommie.save_uri_as_qrcode(uri_id)
-        await logfunc(f'Also saving public key as QR code to: {_fnfn}.',pause=True,clear=False,use_prefix=False)
+        await logfunc(f'Saving public key, encrypted private key, and login secret to hardware-only database. Also saving public key as QR code to: {_fnfn}.',pause=True,clear=False,use_prefix=False)
         
         # done!
         await logfunc(f'Congratulations. Welcome, {kommie}.',pause=True,clear=True)
         
+        # remove all dialogs!!!!!!!!
+        self.app.clear_widget_tree(MDDialog)
+        self.app.clear_widget_tree(MDDialog2)
+
         # last minute: get posts
         if 'res_posts' in resp_msg_d and resp_msg_d['res_posts'].get('success'):
             id2post=resp_msg_d.get('res_posts').get('posts',{})

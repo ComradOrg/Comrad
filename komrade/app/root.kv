@@ -107,14 +107,14 @@
     type: "custom"
     size_hint: None,None
     size: ('300dp','300dp')
-    # md_bg_color: rgb(*COLOR_CARD)
+    md_bg_color: rgb(*COLOR_BG)
 
     MDBoxLayout:
         id: msg_popup_box_layout
         size_hint:(1,1)
         orientation: 'vertical'
         cols:1
-        md_bg_color: rgb(*COLOR_CARD)
+        md_bg_color: rgb(*COLOR_BG)
         spacing:'0dp'
         padding:'0dp'
         pos_hint: {'center_x':0.5, 'center_y':0.5}
@@ -123,7 +123,7 @@
         border_radius:20
         canvas:
             Color:
-                rgba: rgb(*COLOR_CARD_BORDER,a=0.5)
+                rgba: rgb(*COLOR_BG,a=1)
             Line:
                 width: 1
                 rounded_rectangle: (self.x, self.y, self.width, self.height, 20, 20, 20, 20)
