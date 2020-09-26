@@ -200,7 +200,8 @@ class LoginScreen(BaseScreen):
 
         logger.info(f'booted kommie: {kommie}')
         if kommie.exists_locally_as_account():
-            pw=await self.app.get_input('Welcome back.',get_pass=True)
+            pw='marx'
+            #pw=await self.app.get_input('Welcome back.',get_pass=True)
             kommie.keychain(passphrase=pw)
             logger.info(f'updated keychain: {dict_format(kommie.keychain())}')
             logger.info(f'is account')
@@ -301,7 +302,7 @@ class LoginScreen(BaseScreen):
         
         await logfunc(f"In fact this private encryption is so sensitive we'll encrypt it itself before storing it on your device -- locking the key itself away with a password.",pause=True,use_prefix=False)
         
-        passphrase = None
+        passphrase = 'marx'
         while not passphrase:
             passphrase = await self.app.get_input('Please enter a memorable password.',
                 get_pass=True
