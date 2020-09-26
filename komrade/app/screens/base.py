@@ -4,7 +4,7 @@ from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.label import MDLabel
 from kivy.app import App
 import asyncio
-
+from komrade.app.screens.dialog import MDDialog2
 
 
 ### Layout
@@ -13,7 +13,9 @@ import asyncio
 class BaseScreen(MDScreen):
 
     def on_pre_enter(self):
-        self.clear_widgets()
+        # self.clear_widgets()
+        self.app.clear_widget_tree(MDDialog2)
+        pass
 
     @property
     def root(self):
@@ -31,33 +33,6 @@ class BaseScreen(MDScreen):
         return self.app.channel
 
     def stat(self,*x,**y): return self.app.stat(*x,**y)
-
-
-
-# class CardScreen(BaseScreen):
-#     @property
-#     def cards(self):
-#         if not hasattr(self,'_cards'): self._cards=[]
-#         return self._cards
-
-#     def clear_deck(self):
-#         for card in self.cards:
-#             self.ids.post_carousel.remove_widget(card)
-
-#     def add_card(self,data):
-#         card = PostCard(data)
-#         if not hasattr(self,'_cards'): self._cards=[]
-#         self._cards.append(card)
-
-#         self.app.log('card!',data)
-#         self.app.log('ids:',self.ids.keys(), type(self))
-#         self.app.log('card obj?',card)
-#         # self.ids.post_carousel.add_widget(card)
-#         stop
-
-
-
-
 
 
 

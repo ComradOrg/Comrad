@@ -395,6 +395,11 @@ class LoginScreen(BaseScreen):
         await logfunc('returning...')
 
         from komrade.app.screens.map import MapWidget
+        if self.app.map:
+            self.app.map.dismiss()
+            self.app.map=None
+        self.app.change_screen('feed')
+        
         return resp_msg_d
 
     

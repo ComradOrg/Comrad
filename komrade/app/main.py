@@ -130,7 +130,7 @@ class MessagePopupCard(MDDialog2):
     def __init__(self,*x,**y):
         y['color_bg']=rgb(*COLOR_BG,a=0.5)
         y['type']='custom'
-        y['overlay_color']=rgb(*COLOR_BG,a=0.5)  #rgb(*COLOR_BG)
+        y['overlay_color']=rgb(*COLOR_BG,a=0)  #rgb(*COLOR_BG)
         self.color_bg=rgb(*COLOR_BG)
         super().__init__(*x,**y)
         self.ok_to_continue=False
