@@ -129,23 +129,7 @@ As of the 23rd of August.
 bash <(curl -s komrade.app/run)
 ```
 
-Then hit enter. [That](https://github.com/Komrade/Komrade/blob/master/script/micro_installer) grabs a shortcut to [this auto-installer script](https://github.com/Komrade/Komrade/blob/master/script/install). It will install Komrade in a virtual Python environment into a folder of your choosing, although it may only work at the moment if you let it use the default of ```~/komrade.```
-
-**Update**: For now, you'll need to install Themis, the cryptography library, manually. This will need to be made more convenient for the future, but for now, you can either follow [these official instructions](https://docs.cossacklabs.com/themis/installation/installation-from-packages/), or in a nutshell:
-
-* Linux/Ubuntu: 
-``` 
-echo "deb https://pkgs-ce.cossacklabs.com/stable/ubuntu bionic main" | sudo tee /etc/apt/sources.list.d/cossacklabs.list
-sudo apt update
-sudo apt install libthemis-dev
-```
-* Mac:
-```
-brew tap cossacklabs/tap
-brew install libthemis
-```
-* Windows: follow instructions [here](https://docs.cossacklabs.com/themis/installation/installation-from-packages/#building-in-msys2)
-
+Then hit enter. [That](https://github.com/Komrade/Komrade/blob/master/script/micro_installer) grabs a shortcut to [this auto-installer script](https://github.com/Komrade/Komrade/blob/master/script/install). It will install Komrade in a virtual Python environment into a folder of your choosing (although it may only work at the moment if you let it use the default of ```~/komrade```).
 
 ### Run
 
@@ -157,7 +141,7 @@ For the mobile/desktop app, run:
 komrade-app
 ```
 
-If that doesn't work, try the following:
+If that doesn't work, try pasting the following lines:
 
 ```
 source ~/komrade/lib/miniconda3/etc/profile.d/conda.sh
