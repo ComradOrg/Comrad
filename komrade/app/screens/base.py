@@ -62,9 +62,10 @@ class BaseScreen(MDScreen):
 
 
 
-class ProtectedScreen(BaseScreen): pass
-    # def on_pre_enter(self):
-    #     if not self.channel in self.app.api.keys:
-    #         self.root.change_screen('login')
-    #         return
-        
+class ProtectedScreen(BaseScreen):
+    def on_pre_enter(self):
+        if not hasattr(self.app,'is_logged_in') or not self.app.is_logged_in or not hasattr(self.app,'komrade') or not self.app.komrade:
+            self.root.change_screen('login')
+            self.log('changing screen???')
+            return None
+        return True

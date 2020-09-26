@@ -189,15 +189,12 @@ def update_screen_on_carousel_move(self,dt,width=75):
 
 
 
-
-class ProfileScreen(BaseScreen): 
-    #def on_pre_enter(self):
-    #    global app
-    #    if app.is_logged_in():
-    #        app.root.change_screen('feed')
+from screens.base import ProtectedScreen
+class ProfileScreen(ProtectedScreen): 
     username = None
     clock_scheduled=None
 
+   
     def make_profile_img(self,width,do_crop=True,circ_img=None,bw=False,circularize=True):
         img_src = os.path.join(PATH_GUI_ASSETS, 'avatars', f'{self.app.username}.png')
         if not os.path.exists(img_src): 
@@ -217,10 +214,7 @@ class ProfileScreen(BaseScreen):
         return (circ_img,byte,avatar,avatar_layout) 
 
     def on_pre_enter(self, width=300):
-
-        # query author info
-        #if not self.username: self.username=self.app.username
-        # @TODO
+        if not super().on_pre_enter(): return
 
         if not self.clock_scheduled:
             Clock.schedule_interval(partial(update_screen_on_carousel_move, self), 0.1)

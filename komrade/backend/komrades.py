@@ -498,7 +498,7 @@ class KomradeX(Caller):
     #def post(self,something):
     #    return self.msg(WORLD_NAME,something)
     
-    def post(self,something):
+    async def post(self,something):
         # sign it!
         self.log('something =',something)
 
@@ -541,7 +541,7 @@ class KomradeX(Caller):
         # ).wrap(post_pkg_b)
         # self.log(post_pkg_b_encr4world)
 
-        res_op = self.ring_ring(
+        res_op = await self.ring_ring(
             {
                 'data':post_pkg_b
             },

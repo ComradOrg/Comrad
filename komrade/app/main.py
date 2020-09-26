@@ -470,6 +470,9 @@ class MainApp(MDApp, Logger):
     
     async def callback_on_hop(self,rtr):
         if not hasattr(self,'hops'): self.hops=[]
+        if not hasattr(self,'map') or not self.map:
+            from komrade.app.screens.map import MapWidget
+            self.map=MapWidget()
         if not self.map.opened:
             self.map.open()
             # self.map.draw()

@@ -275,12 +275,12 @@ class PostCardInputPopup(PostCardPopup):
 
 
 
-class FeedScreen(BaseScreen):
+class FeedScreen(ProtectedScreen):
     posts = ListProperty()
 
     def on_pre_enter(self):
+        if not super().on_pre_enter(): return
         if not hasattr(self,'get_posts'): self.get_posts=self.app.komrade.posts
-        super().on_pre_enter()
         for post in self.posts:
             self.ids.post_carousel.remove_widget(post)
         
@@ -302,6 +302,7 @@ class FeedScreen(BaseScreen):
                 self.ids.post_carousel.add_widget(post_obj)
 
         asyncio.create_task(go())
+        return True
     # def on_pre_enter(self):
     #     self.clear_deck()
     #     # for i,x 

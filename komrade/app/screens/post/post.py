@@ -104,7 +104,7 @@ class PostScreen(ProtectedScreen):
 
 
     def on_pre_enter(self):
-        super().on_pre_enter()
+        if not super().on_pre_enter(): return
         self.to_channels = {}
         
         # clear
@@ -323,10 +323,16 @@ class PostScreen(ProtectedScreen):
         async def do_post():
             file_id = self.img_id if hasattr(self,'img_id') else None
             file_ext = self.img_ext if hasattr(self,'img_ext') else None
-            await self.app.post(content=content, channel = channel, file_id=file_id, file_ext=file_ext)
+            #await self.app.post(content=content, channel = channel, file_id=file_id, file_ext=file_ext)
+            # post?
+            await self.app.komrade.post(content)
             import time
             self.close_dialog()
-            self.app.change_screen_from_uri('/inbox/'+channel)
+            if hasattr(self.app,'map') and self.app.map:
+                self.app.map.dismiss()
+                self.app.map=None
+
+            self.app.change_screen('feed')
         
         # self.open_dialog('')
         #Thread(target=do_post).start()

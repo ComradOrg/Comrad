@@ -235,7 +235,8 @@ MyLayout:
         background_palette: 'Red'
         theme_text_color:'Custom'
         background_hue: '500'
-        right_action_items: [['account-circle-outline', partial(root.change_screen, 'profile')],['card-text', partial(root.change_screen, 'feed')],['message-outline', partial(root.change_screen, 'messages')],['pencil-plus-outline', partial(root.change_screen, 'post')],['exit-run', partial(root.change_screen, 'login')]]
+        # right_action_items: [['account-circle-outline', partial(root.change_screen, 'profile')],['card-text', partial(root.change_screen, 'feed')],['message-outline', partial(root.change_screen, 'messages')],['pencil-plus-outline', partial(root.change_screen, 'post')],['exit-run', partial(root.change_screen, 'login')]]
+        right_action_items: [['home', partial(root.change_screen, 'feed')],['message', partial(root.change_screen, 'messages')],['pencil-plus', partial(root.change_screen, 'post')],['account-circle', partial(root.change_screen, 'profile')],['exit-run', partial(root.change_screen, 'login')]]
         #left_action_items: [[f"assets/fist2.png", partial(root.change_screen, 'feed')]]
         
         # ['bell-outline', partial(root.change_screen, 'login')]
