@@ -228,7 +228,8 @@ class CLI(Logger):
     
     def who(self,whom):
         if self.with_required_login():
-            contacts = self.komrade.contacts()
+            contacts_obj = self.komrade.contacts()
+            contacts = [p.name for p in contacts_obj]
             self.print('  ' + '\n  '.join(contacts))
 
 

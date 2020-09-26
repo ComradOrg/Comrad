@@ -13,7 +13,7 @@ from pythemis.exception import ThemisError
 # from walrus.tusks.rlite import WalrusLite
 import hirlite
 
-LOG_GET_SET = 1
+LOG_GET_SET = 0
 
 
 

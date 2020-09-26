@@ -12,6 +12,9 @@ import asyncio
 ### Base screens
 class BaseScreen(MDScreen):
 
+    def on_pre_enter(self):
+        self.clear_widgets()
+
     @property
     def root(self):
         return self.app.root
@@ -64,6 +67,7 @@ class BaseScreen(MDScreen):
 
 class ProtectedScreen(BaseScreen):
     def on_pre_enter(self):
+        super().on_pre_enter()
         if not hasattr(self.app,'is_logged_in') or not self.app.is_logged_in or not hasattr(self.app,'komrade') or not self.app.komrade:
             self.root.change_screen('login')
             self.log('changing screen???')

@@ -164,8 +164,8 @@ class PostScreen(ProtectedScreen):
         # self.post_card.author_section_layout.add_widget(self.tmp_msg,1)
         self.post_card.author_section_layout.add_widget(self.to_whom_btn,1)
         
-        
-        self.to_whom_btn.ids.txt_input.text = '@'
+        from komrade.constants import WORLD_NAME
+        self.to_whom_btn.ids.txt_input.text = '@'+WORLD_NAME
         #self.to_whom_btn.adaptive_height = True
         self.to_whom_btn.ids.txt_input.word_list = ['@'+k for k in self.app.keys if k != self.app.username]
         self.to_whom_btn.ids.txt_input.starting_no = 1

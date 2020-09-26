@@ -367,7 +367,12 @@ class KomradeX(Caller):
 
     def contacts(self):
         # who do I know?
-        return sorted([fn.split('.png')[0] for fn in os.listdir(PATH_QRCODES)])
+        qr_names = sorted([
+            fn.split('.png')[0] for fn in os.listdir(PATH_QRCODES)
+        ])
+        ppl = [Komrade(name) for name in qr_names]
+        ppl = [p for p in ppl if p.exists_locally_as_contact()]
+        return ppl
 
 
     ### MEETING PEOLPE

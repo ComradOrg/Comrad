@@ -185,6 +185,9 @@ class LoginScreen(BaseScreen):
         # await asyncio.sleep(1)
         # return
 
+        # remove login layout for now
+        self.remove_widget(self.layout)
+
 
         # return
         name=un
@@ -208,16 +211,17 @@ class LoginScreen(BaseScreen):
                 self.app.is_logged_in=True
                 self.app.username=kommie.name
                 self.app.komrade=kommie
-                self.remove_widget(self.layout)
                 self.root.change_screen('feed')
             else:
                 logger.info(f'passkey login failed')
                 self.login_status.text='Login failed...'
+    
 
         #   self.layout.add_widget(self.layout_password)
         elif kommie.exists_locally_as_contact():
             await self.app.stat('This is a contact of yours')
             self.login_status.text='Komrade exists as a contact of yours.'
+            self.app.change_screen('login')
         else:
             # await self.app.stat('Account does not exist on hardware, maybe not on server. Try to register?')
             # self.login_status.text='Komrade not known on this device. Registering...'
@@ -235,6 +239,7 @@ class LoginScreen(BaseScreen):
                 self.app.change_screen('feed')
             else:
                 self.login_status.text = 'Sign up failed...'
+                self.app.change_screen('login')
         return 1
 
     
@@ -256,8 +261,6 @@ class LoginScreen(BaseScreen):
         
         await logfunc(f'Welcome, Komrade @{name}. To help us communicate safely, I have cut for you a matching pair of encryption keys.',pause=True,clear=True,komrade_name='Keymaker')
 
-        self.app.clear_widget_tree(MDDialog)
-        self.app.clear_widget_tree(MDDialog2)
 
         # ## 2) Make pub public/private keys
         from komrade.backend.keymaker import KomradeAsymmetricKey
@@ -298,9 +301,12 @@ class LoginScreen(BaseScreen):
         
         await logfunc(f"In fact this private encryption is so sensitive we'll encrypt it itself before storing it on your device -- locking the key itself away with a password.",pause=True,use_prefix=False)
         
-        passphrase = await self.app.get_input('Please enter a memorable password.',
-            get_pass=True
-        )
+        passphrase = None
+        while not passphrase:
+            passphrase = await self.app.get_input('Please enter a memorable password.',
+                get_pass=True
+            )
+
 
         passhash = hasher(passphrase)
         privkey_decr = KomradeSymmetricKeyWithPassphrase(passhash=passhash)
@@ -376,9 +382,6 @@ class LoginScreen(BaseScreen):
         await logfunc(f'Congratulations. Welcome, {kommie}.',pause=True,clear=True)
         
         # remove all dialogs!!!!!!!!
-        self.app.clear_widget_tree(MDDialog)
-        self.app.clear_widget_tree(MDDialog2)
-
         # last minute: get posts
         if 'res_posts' in resp_msg_d and resp_msg_d['res_posts'].get('success'):
             id2post=resp_msg_d.get('res_posts').get('posts',{})
@@ -392,7 +395,6 @@ class LoginScreen(BaseScreen):
         await logfunc('returning...')
 
         from komrade.app.screens.map import MapWidget
-
         return resp_msg_d
 
     

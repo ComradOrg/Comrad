@@ -128,15 +128,17 @@ class MessagePopup(MDDialog2):
     pass
 class MessagePopupCard(MDDialog2):
     def __init__(self,*x,**y):
-        y['color_bg']=rgb(*COLOR_BG)
+        y['color_bg']=rgb(*COLOR_BG,a=0.5)
         y['type']='custom'
-        y['overlay_color']=rgb(*COLOR_BG)
+        y['overlay_color']=rgb(*COLOR_BG,a=0.5)  #rgb(*COLOR_BG)
         self.color_bg=rgb(*COLOR_BG)
         super().__init__(*x,**y)
         self.ok_to_continue=False
+        self.dismissable=False
     
     def on_dismiss(self):
-       return True
+       if not self.dismissable:
+           return True 
     
     def on_touch_down(self,touch):
         self.ok_to_continue=True
@@ -587,8 +589,10 @@ class MainApp(MDApp, Logger):
 
     @property
     def keys(self):
-        return self.komrade.contacts()
-            
+        contacts_obj = self.komrade.contacts()
+        contacts = [p.name for p in contacts_obj]
+        return contacts
+
     async def get_post(self,post_id):
         return self.komrade.read_post()
 
