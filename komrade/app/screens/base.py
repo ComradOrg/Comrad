@@ -4,6 +4,7 @@ from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.label import MDLabel
 from kivy.app import App
 import asyncio
+from kivymd.uix.dialog import MDDialog
 from komrade.app.screens.dialog import MDDialog2
 
 
@@ -14,6 +15,11 @@ class BaseScreen(MDScreen):
 
     def on_pre_enter(self):
         # self.clear_widgets()
+        # if hasattr(self.app,'msg_dialog') and self.app.msg_dialog:
+            
+            # self.root.remove_widget(self.app.msg_dialog)
+        # if hasattr(self.app,'msg_dialog0') and self.app.msg_dialog0: self.root.remove_widget(self.app.msg_dialog0)
+        self.app.clear_widget_tree(MDDialog)
         self.app.clear_widget_tree(MDDialog2)
         pass
 

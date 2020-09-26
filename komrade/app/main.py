@@ -729,7 +729,8 @@ class MainApp(MDApp, Logger):
         while not self.msg_dialog.ok_to_continue:
             await asyncio.sleep(0.1)
             # logger.info(str(postcard), postcard.ok_to_continue,'??')
-        # self.msg_dialog.dismiss()
+        self.msg_dialog.dismissable=True
+        self.msg_dialog.dismiss()
         self.msg_dialog.remove_widget(postcard)
         # self.root.remove_widget(self.msg_dialog)
         # self.root.clear_widgets()
