@@ -138,7 +138,8 @@ class MapWidget(MDDialog2):
 
         # buf = io.BytesIO()
         # plt.ion()
-        odir=f'/home/ryan/komrade/data/maps/'
+        from komrade.constants import PATH_MAPS
+        odir=PATH_MAPS
         if not os.path.exists(odir): os.makedirs(odir)
         ofn=os.path.join(odir,f't_{len(self.points)}.png')
         # plt.gca().invert_yaxis()

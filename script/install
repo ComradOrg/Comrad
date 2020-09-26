@@ -231,7 +231,7 @@ komrade-app    [GUI interface -- alpha]
 If that doesn't work, try running this series of comands:
 
 source $path_conda/etc/profile.d/conda.sh
-export PATH=\"$path_conda/bin:$PATH\"
+export PATH=\"$path_conda/bin:\$PATH\"
 conda activate $path_venv
 python -m pip install -r $path_repo/requirements.txt
 python $path_repo/komrade/app/main.py

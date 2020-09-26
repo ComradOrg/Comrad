@@ -29,7 +29,7 @@ PATH_QRCODES = os.path.join(PATH_KOMRADE,'contacts')
 PATH_SECRETS = PATH_SUPER_SECRETS = os.path.join(PATH_USER_HOME,'.secrets')
 PATH_SUPER_SECRET_OP_KEY = os.path.join(PATH_SUPER_SECRETS,'.komrade.op.key')
 
-
+PATH_MAPS = os.path.join(PATH_KOMRADE,'maps')
 
 PATH_LOG_OUTPUT = os.path.join(PATH_KOMRADE,'logs')
 
