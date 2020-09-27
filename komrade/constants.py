@@ -58,7 +58,7 @@ PATH_REPO = os.path.abspath(
 )
 PATH_GUI = os.path.join(PATH_REPO,'komrade','app')
 PATH_GUI_ASSETS = os.path.join(PATH_GUI,'assets')
-PATH_DEFAULT_AVATAR = os.path.join(PATH_GUI_ASSETS,'avatars','marxbot.png')
+PATH_DEFAULT_AVATAR = os.path.join(PATH_GUI_ASSETS,'avatars','britney2.jpg')
 
 
 PATH_REPO = PATH_APP = os.path.abspath(os.path.dirname(__file__))

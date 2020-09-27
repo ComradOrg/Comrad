@@ -222,6 +222,7 @@ class LoginScreen(BaseScreen):
         elif kommie.exists_locally_as_contact():
             await self.app.stat('This is a contact of yours')
             self.login_status.text='Komrade exists as a contact of yours.'
+            # self.app.change_screen('feed')
             self.app.change_screen('login')
         else:
             # await self.app.stat('Account does not exist on hardware, maybe not on server. Try to register?')
@@ -277,9 +278,10 @@ class LoginScreen(BaseScreen):
 
         await logfunc(f'The first is your "public key", which you can share with anyone. With it, someone can write you an encrypted message.',komrade_name='Keymaker')
         
-        await logfunc(f'You can share it by pasting it to someone in a secure message:\n{uri_s}',komrade_name='Keymaker')
         
-        await logfunc(f'You can also share it IRL, phone to phone, as a QR code. This is what it will look like.',img_src=fnfn,komrade_name='Keymaker')
+
+        # delete qr!
+        os.remove(fnfn)
 
         # await logfunc(f'(1) {pubkey} -- and -- (2) {privkey}',clear=True,pause=True,komrade_name='Keymaker')
 
@@ -298,9 +300,8 @@ class LoginScreen(BaseScreen):
 
 
         ### PRIVATE KEY
-        await logfunc(f"(2) Your PRIVATE encryption key, on the other hand, must be stored only on your device hardware: {privkey}")
         
-        await logfunc(f"In fact this private encryption is so sensitive we'll encrypt it itself before storing it on your device -- locking the key itself away with a password.",pause=True,use_prefix=False)
+        # await logfunc(f"In fact this private encryption is so sensitive we'll encrypt it itself before storing it on your device -- locking the key itself away with a password.",pause=True,use_prefix=False)
         
 
         # @HACK FOR NOW
@@ -315,17 +316,17 @@ class LoginScreen(BaseScreen):
         privkey_decr = KomradeSymmetricKeyWithPassphrase(passhash=passhash)
         print()
         
-        await logfunc(f'''We immediately whatever you typed through a 1-way hashing algorithm (SHA-256), scrambling it into (redacted):\n{make_key_discreet_str(passhash)}''',pause=True,clear=False)
+        # await logfunc(f'''We immediately whatever you typed through a 1-way hashing algorithm (SHA-256), scrambling it into (redacted):\n{make_key_discreet_str(passhash)}''',pause=True,clear=False)
 
         privkey_encr = privkey_decr.encrypt(privkey.data)
         privkey_encr_obj = KomradeEncryptedAsymmetricPrivateKey(privkey_encr)
         kommie._keychain['privkey_encr']=privkey_encr_obj
         self.log('My keychain now looks like v2:',dict_format(kommie.keychain()))
 
-        await logfunc(f'With this scrambled password we can encrypt your super-sensitive private key, from this:\n{privkey.discreet}to this:\n{privkey_encr_obj.discreet}',pause=True,clear=False)
+        # await logfunc(f'With this scrambled password we can encrypt your super-sensitive private key, from this:\n{privkey.discreet}to this:\n{privkey_encr_obj.discreet}',pause=True,clear=False)
 
         # ### PUBLIC KEY
-        await logfunc('You must also register your username and public key with Komrade @Operator on the remote server',pause=False,clear=False)
+        await logfunc('You must now register your username and public key with Komrade @Operator on the remote server.',pause=False,clear=False)
 
         await logfunc('Connecting you to the @Operator...',komrade_name='Telephone')
 
@@ -345,15 +346,23 @@ class LoginScreen(BaseScreen):
         
         
         # print()
-        await logfunc(resp_msg_d.get('status'),komrade_name='Operator',pause=True)
+        await logfunc(resp_msg_d.get('status'),komrade_name='Telephone',pause=True)
 
         if not resp_msg_d.get('success'):
-            await logfunc('''That's too bad. Cancelling registration for now.''',pause=True,clear=True)
+            self.app.komrade=None
+            self.app.is_logged_in=False
+            self.app.username=''
+            
+            # await logfunc('''That's too bad. Cancelling registration for now.''',pause=True,clear=True)
+            
+            # self.app.change_screen('feed')
+            self.app.change_screen('login')
             return
 
         # clear_screen()
         await logfunc('Great. Komrade @Operator now has your name and public key on file (and nothing else!).',pause=True,clear=True)
 
+        
        
 
         kommie.name=resp_msg_d.get('name')
@@ -379,7 +388,13 @@ class LoginScreen(BaseScreen):
 
         # save qr too:
         _fnfn=kommie.save_uri_as_qrcode(uri_id)
-        await logfunc(f'Saving public key, encrypted private key, and login secret to hardware-only database. Also saving public key as QR code to: {_fnfn}.',pause=True,clear=False,use_prefix=False)
+        # await logfunc(f'Saving public key, encrypted private key, and login secret to hardware-only database. Also saving public key as QR code to: {_fnfn}.',pause=True,clear=False,use_prefix=False)
+
+        await logfunc(f'You can share it by pasting it to someone in a secure message:\n{uri_s}',komrade_name='Keymaker')
+        
+        await logfunc(f'You can also share it IRL, phone to phone, as a QR code. It is saved to {fnfn} and looks like this.',img_src=fnfn,komrade_name='Keymaker')
+
+        await logfunc(f"(2) Your PRIVATE encryption key, on the other hand, will be stored encrypted on your device hardware. Do not it this with anyone or across any network whatsoever.")
         
         # done!
         await logfunc(f'Congratulations. Welcome, {kommie}.',pause=True,clear=True)
@@ -395,7 +410,7 @@ class LoginScreen(BaseScreen):
         
 
 
-        await logfunc('returning...')
+        await logfunc('Returning...')
 
         from komrade.app.screens.map import MapWidget
         if self.app.map:

@@ -73,6 +73,7 @@ class KomradeX(Caller):
         uri=pubkey.data_b64
         if self.crypt_keys.get(uri,prefix='/privkey_encr/'):
             return False
+        self.log(pubkey,self.name,'???')
         return True
 
     def exists_locally_as_account(self):

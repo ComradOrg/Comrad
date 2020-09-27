@@ -98,7 +98,26 @@ class MyLayout(MDBoxLayout):
         self.post_id=post_id
         self.change_screen('view')
 
+    def refresh(self,*x,**yy):
+        async def go():    
+            if not hasattr(self.app,'is_logged_in') or not self.app.is_logged_in or not hasattr(self.app,'komrade') or not self.app.komrade:
+                self.change_screen('login')
+                self.app.log('changing screen???')
+                return None
 
+
+            logger.info(f'REFRESH: {self.app.is_logged_in}, {self.app.komrade.name}')
+            stop
+            exit()
+            self.app.log('<--',x,yy)
+            if not hasattr(self.app,'map') or not self.app.map:
+                from komrade.app.screens.map import MapWidget
+                self.app.map=MapWidget()
+            self.app.map.open()
+            await self.app.komrade.get_updates()
+            self.app.map.dismiss()
+            self.app.map=None
+        asyncio.create_task(go())
 
 
 
@@ -614,7 +633,7 @@ class MainApp(MDApp, Logger):
         return await self.get_channel_posts(channel=channel,prefix='outbox')
 
     async def get_my_posts(self):
-        return await self.persona.read_outbox()
+        return await self.komrade.posts()
 
 
 

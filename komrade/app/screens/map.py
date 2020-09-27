@@ -59,6 +59,7 @@ class MapWidget(MDDialog2):
         self.points = []
         self.opened=False
         self.label=None
+        self.intro_label=None
 
         # self.fig = fig = plt.figure(figsize=(20,10))
         plt.rcParams["figure.figsize"] = self.figsize
@@ -167,6 +168,17 @@ class MapWidget(MDDialog2):
         # self.img.width=Window.size[0]
         # self.img.allow_stretch=True
 
+    def makelabel(self,txt):
+        label=MDLabel(text=txt)
+        label.color=self.color_label #rgb(*color) #self.color_label
+        label.font_name=FONT_PATH
+        label.font_size='20sp'
+        # label.size_hint=(1,1)
+        label.width=Window.size[0]
+        label.height='25sp'
+        label.valign='top'
+        return label
+
     def add_point(self,lat,long,desc):
         logger.info(f'adding point? {desc} {lat}, {long}')
         # plt.text(
@@ -207,25 +219,7 @@ class MapWidget(MDDialog2):
         #if self.label:
         #    self.img.remove_widget(self.label)
 
-        def makelabel(txt):
-            label=MDLabel(text=txt)
-            label.color=self.color_label #rgb(*color) #self.color_label
-            label.font_name=FONT_PATH
-            label.font_size='20sp'
-            # label.size_hint=(1,1)
-            label.width=Window.size[0]
-            label.height='25sp'
-            label.valign='top'
-            return label
-            
-        
-        if len(self.points)==1:
-            intro_label = makelabel(
-                'Routing you through the global maze of Tor ...'
-            )
-            self.label_layout.add_widget(intro_label)
-
-        self.label=label=makelabel(desc)
+        self.label=label=self.makelabel(desc)
         # label.height='400sp'
         # label.pos_hint = {'center_y':0.1+(0.1 * len(self.points))}
         # label.pos = (0.5,0)
@@ -240,6 +234,9 @@ class MapWidget(MDDialog2):
     # wait and show
     def open(self,maxwait=666,pulse=0.1):
         self.draw()
+        if not self.intro_label:
+            self.intro_label = self.makelabel('Routing you through the global maze of Tor ...')
+            self.label_layout.add_widget(self.intro_label)
         super().open()
         self.opened=True
         # await asyncio.sleep(pulse)
@@ -253,6 +250,7 @@ class MapWidget(MDDialog2):
 
     def dismiss(self):
         super().dismiss()
+        self.intro_label=None
         if hasattr(self.layout,'img'):
             self.layout.remove_widget(self.img)
         if self.layout:

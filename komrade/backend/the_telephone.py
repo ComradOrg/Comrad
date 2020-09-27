@@ -5,6 +5,7 @@ from komrade.backend import *
 from komrade.backend.phonelines import *
 from komrade.backend.operators import CALLBACKS
 import requests
+from torpy.cell_socket import TorSocketConnectError
 
 
 # def TheTelephone(*x,**y):
@@ -38,7 +39,7 @@ class TheTelephone(Operator):
             return OPERATOR_API_URL
 
 
-    async def send_and_receive(self,msg_d,**y):
+    async def send_and_receive(self,msg_d,n_attempts=3,**y):
         # self.log('send and receive got incoming msg:',msg_d)
         
         # assert that people can speak only with operator in their first enclosed message!
@@ -72,8 +73,15 @@ class TheTelephone(Operator):
         # loop = asyncio.get_event_loop()
         texec = ThreadExecutor()
 
-        # phonecall=self.komrade_request(URL)
-        phonecall = await texec(self.komrade_request, URL)
+        
+        for n_attempt in range(n_attempts):
+            self.log('making first attempt to connect via Tor')
+            try:
+                # phonecall=self.komrade_request(URL)
+                phonecall = await texec(self.komrade_request, URL)
+                break
+            except TorSocketConnectError:
+                pass
 
         if phonecall.status_code!=200:
             self.log('!! error in request',phonecall.status_code,phonecall.text)

@@ -283,9 +283,9 @@ class Operator(Keymaker):
         resp_msg_obj = await get_resp_from(msg_obj.msg_d,caller=caller)
         self.log('resp_msg_obj <-',str(resp_msg_obj))
         
-        if not resp_msg_obj:
-            print('!! no response from op !!')
-            exit()
+        if not resp_msg_obj or type(resp_msg_obj)==dict and not resp_msg_obj.get('success'):
+            return {'status':'I cannot reach the @Operator. Perhaps she has stepped out. Please hang up and try again later.','success':False,'res':resp_msg_obj}
+            # exit()
 
         # decrypt
         if resp_msg_obj.is_encrypted:
