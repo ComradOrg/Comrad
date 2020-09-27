@@ -92,7 +92,7 @@ See ["Comparison of alternative social networks" on the wiki](https://github.com
 
 As of 27 Sep.
 
-<img src="komrade/app/assets/komrade-screen-preview-2020-09-27.gif" alt="GIF animation" />
+<img src="komrade/app/assets/komrade-screen-preview-2020-09-27.gif" alt="GIF animation" width="600" />
 
 
 #### Navigating posts
