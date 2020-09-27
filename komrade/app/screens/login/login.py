@@ -346,7 +346,7 @@ class LoginScreen(BaseScreen):
         
         
         # print()
-        await logfunc(resp_msg_d.get('status'),komrade_name='Telephone',pause=True)
+        await logfunc(resp_msg_d.get('status'),komrade_name='Operator',pause=True)
 
         if not resp_msg_d.get('success'):
             self.app.komrade=None
@@ -410,7 +410,7 @@ class LoginScreen(BaseScreen):
         
 
 
-        await logfunc('Returning...')
+        # await logfunc('Returning...')
 
         from komrade.app.screens.map import MapWidget
         if self.app.map:

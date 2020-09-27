@@ -46,6 +46,13 @@ then
     echo "created $path_lib"
 fi
 
+path_bin="$path_komrade/bin"
+if [ ! -d "$path_bin" ]
+then
+    mkdir -p $path_bin
+    echo "created $path_bin"
+fi
+
 
 
 echo '
@@ -91,18 +98,6 @@ fi
 
 #########################################################
 
-echo '
-
-3) building Themis, cryptography backend...
-
-'
-cd "$path_lib"
-# pwd
-git clone https://github.com/cossacklabs/themis.git
-cd themis
-make
-sudo make install
-
 
 
 ##########################################################
@@ -144,6 +139,30 @@ then
     fi
     ./miniconda.sh -b -f -p "$path_conda"
     #rm miniconda.sh
+
+    ### install themis from source
+
+    if [ ! -f "/usr/local/lib/libthemis.so" ]
+    then
+        if [ ! -f "/usr/lib/libthemis.so" ]
+        then
+            echo '
+
+            3) building Themis, cryptography backend...
+
+            '
+            cd "$path_lib"
+            # pwd
+            git clone https://github.com/cossacklabs/themis.git
+            cd themis
+            make
+            sudo make install
+        fi
+    fi
+
+    ### install zbar library
+    sudo apt install zbar-tools
+
 fi
 
 if [ "$machine" = "Mac" ]
@@ -155,6 +174,17 @@ then
     fi
     ./miniconda.sh -b -f -p "$path_conda"
     # rm miniconda.sh
+
+
+    # brew install 
+    brew tap cossacklabs/tap
+    brew install libthemis
+    
+
+    # install zbar library
+    brew install zbar
+
+
 fi
 
 if [ "$machine" = "Cygwin" ]
@@ -169,6 +199,36 @@ then
 
     ./miniconda.exe -b -f -p "$path_conda"
     # rm miniconda.exe
+
+    ### install themis from source
+    if [ ! -f "/usr/local/lib/libthemis.so" ]
+    then
+        if [ ! -f "/usr/lib/libthemis.so" ]
+        then
+            echo '
+
+            3) building Themis, cryptography backend...
+
+            '
+            cd "$path_lib"
+            # pwd
+            git clone https://github.com/cossacklabs/themis.git
+            cd themis
+            make
+            sudo make install
+        fi
+    fi
+
+    ### install zbar using apt-cyg
+    # installing apt-cyg
+    if ! command -v apt-cyg &> /dev/null
+    then
+        echo "installing apt-cyg"
+        lynx -source https://raw.githubusercontent.com/transcode-open/apt-cyg/master/apt-cyg > apt-cyg
+        install apt-cyg /bin
+    fi
+    # installing zbar
+    apt-cyg install zbar
 fi
 
 
@@ -213,16 +273,56 @@ echo '
 
 '
 
-echo "
+commands_app="
+source $path_conda/etc/profile.d/conda.sh
+export PATH=\"$path_conda/bin:\$PATH\"
+conda activate $path_venv
+python -m pip install -r $path_repo/requirements.txt
+python $path_repo/komrade/app/main.py
+"
 
-# komrade
-export PATH=\"$path_repo/bin:\$PATH\"
 
-" >> ~/.bashrc
+commands_cli="
+source $path_conda/etc/profile.d/conda.sh
+export PATH=\"$path_conda/bin:\$PATH\"
+conda activate $path_venv
+python -m pip install -r $path_repo/requirements.txt
+python $path_repo/komrade/cli/cli.py
+"
 
 
+commands_op="
+source $path_conda/etc/profile.d/conda.sh
+export PATH=\"$path_conda/bin:\$PATH\"
+conda activate $path_venv
+python -m pip install -r $path_repo/requirements.txt
+python $path_repo/komrade/backend/switchboard.py
+"
 
-export PATH="$path_repo/bin:$PATH"
+
+export PATH="$path_bin:$PATH"
+bashline="export PATH=\"$path_bin:\$PATH\"     # komrade installation"
+bashfn="~/.bashrc"
+
+# add to bashrc?
+if grep -Fxq "$bashline" "$bashfn"
+then
+    # code if found
+    echo "setting already in $bashfn: $bashline"
+else
+    # code if not found
+    echo "$bashline" >> "$bashfn"
+fi
+
+
+echo $commands_app > $path_bin/komrade-app
+echo $commands_cli > $path_bin/komrade-cli
+echo $commands_op > $path_bin/komrade-op
+
+chmod +x $path_bin/komrade-app
+chmod +x $path_bin/komrade-cli
+chmod +x $path_bin/komrade-op
+
 
 echo "Now run Komrade with:
 
@@ -230,10 +330,6 @@ komrade-app    [GUI interface -- alpha]
 
 If that doesn't work, try running this series of comands:
 
-source $path_conda/etc/profile.d/conda.sh
-export PATH=\"$path_conda/bin:\$PATH\"
-conda activate $path_venv
-python -m pip install -r $path_repo/requirements.txt
-python $path_repo/komrade/app/main.py
+$commands_app
 
 "
