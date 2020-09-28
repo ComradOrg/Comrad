@@ -6,7 +6,7 @@ from komrade.backend.phonelines import *
 from komrade.backend.operators import CALLBACKS
 import requests
 from torpy.cell_socket import TorSocketConnectError
-
+from requests.exceptions import ConnectionError
 
 # def TheTelephone(*x,**y):
 #     return Komrade(TELEPHONE_NAME,*x,**y)
@@ -80,7 +80,8 @@ class TheTelephone(Operator):
                 # phonecall=self.komrade_request(URL)
                 phonecall = await texec(self.komrade_request, URL)
                 break
-            except TorSocketConnectError:
+            except (TorSocketConnectError,ConnectionError) as e:
+                self.log(f'!! {e} trying again?')
                 pass
 
         if phonecall.status_code!=200:
