@@ -163,8 +163,6 @@ If that doesn't work, try:
 
 If that still doesn't work, try pasting the following lines:
 
- pasting the following lines:
-
 ```
 source ~/komrade/lib/miniconda3/etc/profile.d/conda.sh
 export PATH="~/komrade/lib/miniconda3/bin:$PATH"
