@@ -4,12 +4,18 @@
 # Run the mobile app
 ##
 
-export KOMRADE_SHOW_LOG=0
 
-SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-source "$SCRIPTPATH/komrade-activate"
-path=`realpath "$SCRIPTPATH/../komrade/app/main.py"`
-pathreqs=`realpath "$SCRIPTPATH/../requirements.txt"`
-python -m pip install -r "$pathreqs"
-python "$path" $*
+# funcs (mac doesnt have realpath)
+realpath() {
+    [[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"
+}
 
+path_conda="`realpath ~/komrade/lib/miniconda3`"
+path_venv="`realpath ~/komrade/code/venv`"
+path_repo="`realpath ~/komrade/code`"
+
+source $path_conda/etc/profile.d/conda.sh
+export PATH=\"$path_conda/bin:\$PATH\"
+conda activate $path_venv
+python -m pip install -r $path_repo/requirements.txt
+python $path_repo/komrade/app/main.py

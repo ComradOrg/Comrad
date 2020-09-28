@@ -56,7 +56,7 @@ then
     echo "created $path_lib"
 fi
 
-path_bin="$path_komrade/bin"
+path_bin="$path_komrade/code/bin"
 if [ ! -d "$path_bin" ]
 then
     mkdir -p $path_bin
@@ -294,30 +294,13 @@ echo '
 '
 
 commands_app="
-source $path_conda/etc/profile.d/conda.sh\n
-export PATH=\"$path_conda/bin:\$PATH\"\n
-conda activate $path_venv\n
-python -m pip install -r $path_repo/requirements.txt\n
-python $path_repo/komrade/app/main.py\n
+    source $path_conda/etc/profile.d/conda.sh\n
+    export PATH=\"$path_conda/bin:\$PATH\"\n
+    conda activate $path_venv\n
+    python -m pip install -r $path_repo/requirements.txt\n
+    python $path_repo/komrade/app/main.py\n
 "
 
-
-commands_cli="
-source $path_conda/etc/profile.d/conda.sh\n
-export PATH=\"$path_conda/bin:\$PATH\"\n
-conda activate $path_venv\n
-python -m pip install -r $path_repo/requirements.txt\n
-python $path_repo/komrade/cli/cli.py\n
-"
-
-
-commands_op="
-source $path_conda/etc/profile.d/conda.sh\n
-export PATH=\"$path_conda/bin:\$PATH\"\n
-conda activate $path_venv\n
-python -m pip install -r $path_repo/requirements.txt\n
-python $path_repo/komrade/backend/switchboard.py\n
-"
 
 
 export PATH="$path_bin:$PATH"
@@ -335,16 +318,7 @@ else
 fi
 
 
-echo -e $commands_app > $path_bin/komrade-app
-echo -e $commands_cli > $path_bin/komrade-cli
-echo -e $commands_op > $path_bin/komrade-op
-
-chmod +x $path_bin/komrade-app
-chmod +x $path_bin/komrade-cli
-chmod +x $path_bin/komrade-op
-
-
-echo "Now run Komrade with:
+echo -e "Now run Komrade with:
 
 komrade-app    [GUI interface -- alpha]
 
@@ -353,3 +327,13 @@ If that doesn't work, try running this series of comands:
 $commands_app
 
 "
+
+# run?
+. $path_bin/komrade-app
+
+if [ "$machine" = "Mac" ]
+then
+    cp "$path_bin/Komrade.app" /Applications/
+
+    echo "You may run the app by looking for 'Komrade.app' in your /Applications folder."
+fi
