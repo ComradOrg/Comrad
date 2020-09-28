@@ -126,7 +126,7 @@ As of 23 Aug.
 
 #### On Mac OSX
 
-Download and run [this installer](https://github.com/Komrade/Komrade/raw/master/bin/InstallKomrade.app.zipread).
+Download and run [this installer](https://github.com/Komrade/Komrade/raw/master/bin/InstallKomrade.app.zip).
 
 #### On Linux or Windows
 
