@@ -1,3 +1,0 @@
-#!/bin/bash
-
-bash <(curl -s komrade.app/run)
