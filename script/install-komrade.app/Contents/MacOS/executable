@@ -1,0 +1,335 @@
+#!/bin/bash
+
+# funcs (mac doesnt have realpath)
+realpath() {
+    [[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"
+}
+   
+
+# install pyenv?
+
+echo "
+              #  #   ##   #  #  ###    ##   ###   #### 
+              # #   #  #  ####  #  #  #  #  #  #  #    
+              ##    #  #  ####  ###   #  #  #  #  ###  
+              # #   #  #  #  #  # #   ####  #  #  #    
+              #  #   ##   #  #  #  #  #  #  ###   #### 
+
+
+installing...
+
+"            
+
+echo '
+1) setting up folder...
+
+'
+# install dir?
+echo "Where should komrade live on your device?"
+path_komrade_default="`realpath ~/komrade`"
+read -p "[$path_komrade_default] " path_komrade
+if [ -z "$path_komrade" ]
+then
+    path_komrade=$path_komrade_default
+fi
+
+if [ ! -d "$path_komrade" ]
+then
+    mkdir -p $path_komrade
+    echo "created $path_komrade"
+fi
+
+path_lib="$path_komrade/lib"
+if [ ! -d "$path_lib" ]
+then
+    mkdir -p $path_lib
+    echo "created $path_lib"
+fi
+
+path_bin="$path_komrade/bin"
+if [ ! -d "$path_bin" ]
+then
+    mkdir -p $path_bin
+    echo "created $path_bin"
+fi
+
+
+
+echo '
+
+2) downloading Komrade...
+
+'
+
+path_repo="$path_komrade/code"
+if command -v git &> /dev/null
+then
+    echo "using git..."
+    if [ -d "$path_repo" ]
+    then 
+        cd $path_repo
+        git pull
+    else
+        cd $path_komrade
+        
+        echo "Use HTTPS or SSH for git?"
+        read -p "[HTPS/ssh] " git_method
+        
+        if [ "$git_method" = "ssh" ]
+        then
+            echo "using ssh..."
+            git clone git@github.com:Komrade/Komrade.git
+            git checkout installer
+        else
+            git clone https://github.com/Komrade/Komrade.git
+            git checkout installer
+        fi
+        mv Komrade code
+    fi
+else
+    cd $path_komrade
+    curl -s -LO https://github.com/Komrade/Komrade/archive/installer.zip
+    unzip installer.zip
+    rm installer.zip
+    cp -rT Komrade-installer code
+    rm -r Komrade-installer
+fi
+
+
+#########################################################
+
+
+
+##########################################################
+
+
+
+echo '
+
+4) setting up python...
+
+# '
+
+
+
+
+cd $path_komrade
+
+path_conda="$path_komrade/lib/miniconda3"
+# ### Detect if python 3.7?
+# pyv="$(python3 -c 'import sys; print(sys.version_info[0:2])')"
+# if [ ! "$pyv" = "(3, 7)" ]
+# then
+unameOut="$(uname -s)"
+case "${unameOut}" in
+    Linux*)     machine=Linux;;
+    Darwin*)    machine=Mac;;
+    CYGWIN*)    machine=Cygwin;;
+    MINGW*)     machine=MinGw;;
+    *)          machine="UNKNOWN:${unameOut}"
+esac
+#echo ${machine}
+
+if [ "$machine" = "Linux" ]
+then
+    if [ ! -f "miniconda.sh" ]
+    then
+        curl https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-Linux-x86_64.sh -o miniconda.sh
+        chmod +x miniconda.sh
+    fi
+    ./miniconda.sh -b -f -p "$path_conda"
+    #rm miniconda.sh
+
+    ### install themis from source
+
+    if [ ! -f "/usr/local/lib/libthemis.so" ]
+    then
+        if [ ! -f "/usr/lib/libthemis.so" ]
+        then
+            echo '
+
+            3) building Themis, cryptography backend...
+
+            '
+            cd "$path_lib"
+            # pwd
+            git clone https://github.com/cossacklabs/themis.git
+            cd themis
+            make
+            sudo make install
+        fi
+    fi
+
+    ### install zbar library
+    sudo apt install zbar-tools
+
+fi
+
+if [ "$machine" = "Mac" ]
+then
+    if [ ! -f "miniconda.sh" ]
+    then
+        curl https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-MacOSX-x86_64.sh -o miniconda.sh
+        chmod +x miniconda.sh
+    fi
+    ./miniconda.sh -b -f -p "$path_conda"
+    # rm miniconda.sh
+
+
+    # brew install 
+    brew tap cossacklabs/tap
+    brew install libthemis
+    
+
+    # install zbar library
+    brew install zbar
+
+
+fi
+
+if [ "$machine" = "Cygwin" ]
+then
+    arch="$(uname -m)"
+    if [ "$arch" = "x86_64" ]
+    then
+        curl https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-Windows-x86_64.exe -o miniconda.exe
+    else
+        curl https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-Windows-x86.exe -o miniconda.exe
+    fi
+
+    ./miniconda.exe -b -f -p "$path_conda"
+    # rm miniconda.exe
+
+    ### install themis from source
+    if [ ! -f "/usr/local/lib/libthemis.so" ]
+    then
+        if [ ! -f "/usr/lib/libthemis.so" ]
+        then
+            echo '
+
+            3) building Themis, cryptography backend...
+
+            '
+            cd "$path_lib"
+            # pwd
+            git clone https://github.com/cossacklabs/themis.git
+            cd themis
+            make
+            sudo make install
+        fi
+    fi
+
+    ### install zbar using apt-cyg
+    # installing apt-cyg
+    if ! command -v apt-cyg &> /dev/null
+    then
+        echo "installing apt-cyg"
+        lynx -source https://raw.githubusercontent.com/transcode-open/apt-cyg/master/apt-cyg > apt-cyg
+        install apt-cyg /bin
+    fi
+    # installing zbar
+    apt-cyg install zbar
+fi
+
+
+
+# activate conda
+export PATH="$path_conda/bin:$PATH"
+
+source "$path_conda/etc/profile.d/conda.sh"
+
+condaexec="conda"
+pythonexec="python"
+
+
+
+
+echo '
+
+5) creating virtual environment...
+
+'
+path_venv="$path_repo/venv"
+
+# cd $path_komrade
+cd $path_repo
+echo "Now using python 1: `which python`"
+$condaexec create -y -p "$path_venv" python=3.7 cartopy pip virtualenv
+
+#$condaexec activate "$path_venv"
+
+
+echo "Now using python 2: `which python`"
+# $pythonexec -m pip install virtualenv
+# $pythonexec -m virtualenv venv
+# . venv/bin/activate
+echo "Now using python 3: `which python`"
+
+python -m pip install -r requirements.txt
+
+echo '
+
+6) adding komrade bin folder to path
+
+'
+
+commands_app="
+source $path_conda/etc/profile.d/conda.sh
+export PATH=\"$path_conda/bin:\$PATH\"
+conda activate $path_venv
+python -m pip install -r $path_repo/requirements.txt
+python $path_repo/komrade/app/main.py
+"
+
+
+commands_cli="
+source $path_conda/etc/profile.d/conda.sh
+export PATH=\"$path_conda/bin:\$PATH\"
+conda activate $path_venv
+python -m pip install -r $path_repo/requirements.txt
+python $path_repo/komrade/cli/cli.py
+"
+
+
+commands_op="
+source $path_conda/etc/profile.d/conda.sh
+export PATH=\"$path_conda/bin:\$PATH\"
+conda activate $path_venv
+python -m pip install -r $path_repo/requirements.txt
+python $path_repo/komrade/backend/switchboard.py
+"
+
+
+export PATH="$path_bin:$PATH"
+bashline="export PATH=\"$path_bin:\$PATH\"     # komrade installation"
+bashfn="~/.bashrc"
+
+# add to bashrc?
+if grep -Fxq "$bashline" "$bashfn"
+then
+    # code if found
+    echo "setting already in $bashfn: $bashline"
+else
+    # code if not found
+    echo "$bashline" >> "$bashfn"
+fi
+
+
+echo $commands_app > $path_bin/komrade-app
+echo $commands_cli > $path_bin/komrade-cli
+echo $commands_op > $path_bin/komrade-op
+
+chmod +x $path_bin/komrade-app
+chmod +x $path_bin/komrade-cli
+chmod +x $path_bin/komrade-op
+
+
+echo "Now run Komrade with:
+
+komrade-app    [GUI interface -- alpha]
+
+If that doesn't work, try running this series of comands:
+
+$commands_app
+
+"
