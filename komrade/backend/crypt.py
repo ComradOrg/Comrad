@@ -83,7 +83,8 @@ class Crypt(Logger):
         if not k: return b''
         
         # @DANGEROUS!?!!!!!
-        prefix=f'''{prefix}{'/' if not prefix.endswith('/') else ''}{self.name}/'''
+        name=self.name if self.name else '?'
+        prefix=f'''{prefix}@{name}/'''
         
         k_b = self.force_binary(k)
         k_b2 = self.force_binary(prefix) + k_b
