@@ -124,30 +124,29 @@ As of 23 Aug.
 
 ### Install
 
-#### On Mac OSX
+#### Installing on Mac OSX
 
 Download and run [this installer](https://github.com/Komrade/Komrade/raw/master/script/InstallKomrade.app.zip).
 
-#### On Linux or Windows
+#### Installing on Linux or Windows
 
 Open a terminal in Linux, or a [Cygwin shell](https://cygwin.com/install.html) in Windows, and copy and paste the following line into it:
 
 ```
-bash <(curl -s komrade.app/run)
+bash <(curl -s https://komrade.app/run)
 ```
 
-[That](https://github.com/Komrade/Komrade/blob/master/script/micro_installer) grabs a shortcut to [this auto-installer script](https://github.com/Komrade/Komrade/blob/master/script/install). It will install Komrade in a virtual Python environment in the folder ```komrade``` in your home directory.
-
+[That](https://komrade.app/run)'s a shortcut to [this auto-installer script](https://github.com/Komrade/Komrade/blob/master/script/install). It installs Komrade in a virtual Python environment in the folder ```komrade``` in your home directory.
 
 ### Run
 
-#### Mac OSX
+#### Running on Mac OSX
 
 Install [as above](#on-mac-osx).
 
 Run ```Komrade.app``` in your ```/Applications``` folder.
 
-#### Linux/Windows
+#### Running on Linux or Windows
 
 
 Open a terminal in Linux, or a [Cygwin shell](https://cygwin.com/install.html) in Windows, and type:
