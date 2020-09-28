@@ -188,14 +188,19 @@ then
     ./miniconda.sh -b -f -p "$path_conda"
     # rm miniconda.sh
 
+    if command -v /usr/local/bin/brew &> /dev/null
+    then
+        cd "$path_lib"
+        mkdir homebrew && curl -L https://github.com/Homebrew/brew/tarball/master | tar xz --strip 1 -C homebrew
+    fi
 
     # brew install 
-    brew tap cossacklabs/tap
-    brew install libthemis
+    /usr/local/bin/brew tap cossacklabs/tap
+    /usr/local/bin/brew install libthemis
     
 
     # install zbar library
-    brew install zbar
+    /usr/local/bin/brew install zbar
 
 
 fi
