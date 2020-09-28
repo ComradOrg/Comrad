@@ -54,11 +54,22 @@ class Message(Logger):
 
         # return str(msg)
         msg_s = wrapp(str(msg))
-        hdr='#'*CLI_WIDTH        
+        hdr='#'*CLI_WIDTH
+        from datetime import datetime
+
+        self.log('msg_d',self.msg_d)
+
+        if self.timestamp:
+            dt_object = datetime.fromtimestamp(self.timestamp)
+            timestr = dt_object.strftime("%-d %b %Y %H:%M") 
+        else:
+            timestr = '?'
+        
         return f"""
 {hdr}
 from: @{self.from_name if self.from_name else ''} 
 to:   @{self.to_name if self.to_name else ''}
+on:   {timestr}
 {hdr}
 
 {msg_s}
