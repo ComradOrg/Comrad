@@ -126,11 +126,11 @@ As of 23 Aug.
 
 #### On Mac OSX
 
-Download and run [this installer](https://github.com/Komrade/Komrade/raw/master/bin/InstallKomrade.app.zip).
+Download and run [this installer](https://github.com/Komrade/Komrade/raw/master/script/InstallKomrade.app.zip).
 
 #### On Linux or Windows
 
-* Open a terminal in Linux, or a Cygwin shell in Windows;
+* Open a terminal in Linux, or a [Cygwin shell](https://cygwin.com/install.html) in Windows;
 * Copy and paste the following line into it:
 
 ```
@@ -141,6 +141,8 @@ bash <(curl -s komrade.app/run)
 
 
 ### Run
+
+#### Mac OSX
 
 Install as above.
 
