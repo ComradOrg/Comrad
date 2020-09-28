@@ -274,29 +274,29 @@ echo '
 '
 
 commands_app="
-source $path_conda/etc/profile.d/conda.sh
-export PATH=\"$path_conda/bin:\$PATH\"
-conda activate $path_venv
-python -m pip install -r $path_repo/requirements.txt
-python $path_repo/komrade/app/main.py
+source $path_conda/etc/profile.d/conda.sh\n
+export PATH=\"$path_conda/bin:\$PATH\"\n
+conda activate $path_venv\n
+python -m pip install -r $path_repo/requirements.txt\n
+python $path_repo/komrade/app/main.py\n
 "
 
 
 commands_cli="
-source $path_conda/etc/profile.d/conda.sh
-export PATH=\"$path_conda/bin:\$PATH\"
-conda activate $path_venv
-python -m pip install -r $path_repo/requirements.txt
-python $path_repo/komrade/cli/cli.py
+source $path_conda/etc/profile.d/conda.sh\n
+export PATH=\"$path_conda/bin:\$PATH\"\n
+conda activate $path_venv\n
+python -m pip install -r $path_repo/requirements.txt\n
+python $path_repo/komrade/cli/cli.py\n
 "
 
 
 commands_op="
-source $path_conda/etc/profile.d/conda.sh
-export PATH=\"$path_conda/bin:\$PATH\"
-conda activate $path_venv
-python -m pip install -r $path_repo/requirements.txt
-python $path_repo/komrade/backend/switchboard.py
+source $path_conda/etc/profile.d/conda.sh\n
+export PATH=\"$path_conda/bin:\$PATH\"\n
+conda activate $path_venv\n
+python -m pip install -r $path_repo/requirements.txt\n
+python $path_repo/komrade/backend/switchboard.py\n
 "
 
 

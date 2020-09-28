@@ -107,8 +107,6 @@ class MyLayout(MDBoxLayout):
 
 
             logger.info(f'REFRESH: {self.app.is_logged_in}, {self.app.komrade.name}')
-            stop
-            exit()
             self.app.log('<--',x,yy)
             if not hasattr(self.app,'map') or not self.app.map:
                 from komrade.app.screens.map import MapWidget
