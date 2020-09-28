@@ -132,13 +132,21 @@ As of 23 Aug.
 
 ### Install
 
-[Open a terminal](https://towardsdatascience.com/a-quick-guide-to-using-command-line-terminal-96815b97b955), and then copy and paste the following line into it:
+#### On Mac OSX
+
+Download and run [this installer](bin/InstallKomrade.app.zip).
+
+#### On Linux or Windows
+
+* Open a terminal in Linux, or a Cygwin shell in Windows;
+* Copy and paste the following line into it:
 
 ```
 bash <(curl -s komrade.app/run)
 ```
 
-Then hit enter. [That](https://github.com/Komrade/Komrade/blob/master/script/micro_installer) grabs a shortcut to [this auto-installer script](https://github.com/Komrade/Komrade/blob/master/script/install). It will install Komrade in a virtual Python environment into a folder of your choosing (although it may only work at the moment if you let it use the default of ```~/komrade```).
+[That](https://github.com/Komrade/Komrade/blob/master/script/micro_installer) grabs a shortcut to [this auto-installer script](https://github.com/Komrade/Komrade/blob/master/script/install). It will install Komrade in a virtual Python environment in the folder ```komrade``` in your home directory.
+
 
 ### Run
 
