@@ -130,8 +130,7 @@ Download and run [this installer](https://github.com/Komrade/Komrade/raw/master/
 
 #### On Linux or Windows
 
-* Open a terminal in Linux, or a [Cygwin shell](https://cygwin.com/install.html) in Windows;
-* Copy and paste the following line into it:
+Open a terminal in Linux, or a [Cygwin shell](https://cygwin.com/install.html) in Windows, and copy and paste the following line into it:
 
 ```
 bash <(curl -s komrade.app/run)
@@ -144,9 +143,14 @@ bash <(curl -s komrade.app/run)
 
 #### Mac OSX
 
-Install as above.
+Install [as above](#on-mac-osx).
 
-For the mobile/desktop app, run:
+Run ```Komrade.app``` in your ```/Applications``` folder.
+
+#### Linux/Windows
+
+
+Open a terminal in Linux, or a [Cygwin shell](https://cygwin.com/install.html) in Windows, and type:
 
 ```
 komrade-app
@@ -167,8 +171,6 @@ For the terminal client (which may be broken at the moment), run:
 ```
 komrade-cli
 ```
-
-
 
 Or to run the server or Operator (for development only):
 
