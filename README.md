@@ -97,7 +97,7 @@ As of 27 Sep.
 
 #### Navigating posts
 
-As of the 23rd of August.
+As of 23 Aug.
 
 <img src="komrade/app/assets/komrade-screen-preview-2020-08-23.gif" alt="GIF animation" height="600" />
 
