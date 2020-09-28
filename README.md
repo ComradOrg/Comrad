@@ -92,14 +92,14 @@ See ["Comparison of alternative social networks" on the wiki](https://github.com
 
 As of 27 Sep.
 
-<img src="komrade/app/assets/komrade-screen-preview-2020-09-27.gif" alt="GIF animation" width="600" />
+<img src="komrade/app/assets/komrade-screen-preview-2020-09-27.gif" alt="GIF animation" height="600" />
 
 
 #### Navigating posts
 
 As of the 23rd of August.
 
-<img src="komrade/app/assets/komrade-screen-preview-2020-08-23.gif" alt="GIF animation" />
+<img src="komrade/app/assets/komrade-screen-preview-2020-08-23.gif" alt="GIF animation" height="600" />
 
 ### Animations from terminal app
 
