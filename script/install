@@ -333,7 +333,9 @@ $commands_app
 
 if [ "$machine" = "Mac" ]
 then
-    cp "$path_bin/Komrade.app" /Applications/
+    cd /Applications
+    unzip "$path_bin/Komrade.app.zip"
+    # cp "$path_bin/Komrade.app" /Applications/
 
     echo "You may run the app by looking for 'Komrade.app' in your /Applications folder."
 fi
