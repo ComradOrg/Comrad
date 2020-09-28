@@ -101,6 +101,24 @@ As of 23 Aug.
 
 <img src="komrade/app/assets/komrade-screen-preview-2020-08-23.gif" alt="GIF animation" height="600" />
 
+### Animations from terminal app
+
+#### Connecting through Tor
+
+<img src="komrade/app/assets/komrade-terminal-preview--2020-09-20--tor.gif" alt="GIF animation of Tor connection" />
+
+#### "Meeting" (exchanging public keys)
+
+<img src="komrade/app/assets/komrade-terminal-preview--2020-09-16--meet.gif" alt="GIF animation of meeting process" />
+
+#### Messaging
+
+<img src="komrade/app/assets/komrade-terminal-preview--2020-09-16--msg.gif" alt="GIF animation of messaging" />
+
+### Posting
+
+<img src="komrade/app/assets/komrade-terminal-preview--2020-09-19--posting.gif" alt="GIF animation of posting" />
+
 
 ## Usage
 
