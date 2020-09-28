@@ -530,11 +530,11 @@ class KomradeX(Caller):
         ).wrap(something_b_signed)
         self.log(something_b_signed_encr4world)
         
-        
         post_pkg_d = {
             'post':something_b_signed_encr4world,
             'post_from':self.uri,
-            'post_from_name':self.name
+            'post_from_name':self.name,
+            'post_timestamp':time.time(),
         }
         self.log('post_pkg_d =',post_pkg_d)
 

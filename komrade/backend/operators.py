@@ -140,7 +140,7 @@ class Operator(Keymaker):
         return OPERATOR
 
 
-    def compose_msg_to(self,msg,another,incl_from_name=True,incl_to_name=True):
+    def compose_msg_to(self,msg,another):
         if not self.privkey or not self.pubkey:
             raise KomradeException('I appear not yet to have an encryption keypair.',self,self.name,self.pubkey,self.privkey,self.keychain())
         if not another.name or not another.pubkey:
@@ -153,14 +153,13 @@ class Operator(Keymaker):
 
         msg_d = {
             'from':frompub,
-            # 'from_name':self.name,
+            'from_name':self.name,
             'to':topub,
-            # 'to_name':another.name,
-            'msg':msg
+            'to_name':another.name,
+            'msg':msg,
+            'timestamp':time.time()
         }
-        if incl_from_name: msg_d['from_name']=self.name
-        if incl_to_name: msg_d['to_name']=another.name
-        # self.log(f'I am {self} packaging a message to {another}: {msg_d}')
+        self.log(f'I am {self} packaging a message to {another}: {msg_d}')
         from komrade.backend.messages import Message
         
         msg_obj = Message(msg_d)

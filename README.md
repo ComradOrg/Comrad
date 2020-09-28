@@ -90,14 +90,10 @@ See ["Comparison of alternative social networks" on the wiki](https://github.com
 
 #### Registering and connecting through Tor
 
-As of 27 Sep.
-
 <img src="komrade/app/assets/komrade-screen-preview-2020-09-27.gif" alt="GIF animation" height="600" />
 
 
 #### Navigating posts
-
-As of 23 Aug.
 
 <img src="komrade/app/assets/komrade-screen-preview-2020-08-23.gif" alt="GIF animation" height="600" />
 
