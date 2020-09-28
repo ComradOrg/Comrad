@@ -142,7 +142,7 @@ bash <(curl -s https://komrade.app/run)
 
 #### Running on Mac OSX
 
-Install [as above](#on-mac-osx).
+Install [as above](#installing-on-mac-osx).
 
 Run ```Komrade.app``` in your ```/Applications``` folder.
 
