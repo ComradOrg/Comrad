@@ -57,11 +57,11 @@ then
 fi
 
 path_bin="$path_komrade/code/bin"
-if [ ! -d "$path_bin" ]
-then
-    mkdir -p $path_bin
-    echo "created $path_bin"
-fi
+# if [ ! -d "$path_bin" ]
+# then
+#     mkdir -p $path_bin
+#     echo "created $path_bin"
+# fi
 
 
 
