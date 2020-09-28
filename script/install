@@ -55,7 +55,7 @@ then
     mkdir -p $path_lib
     echo "created $path_lib"
 fi
-
+   
 path_bin="$path_komrade/code/bin"
 # if [ ! -d "$path_bin" ]
 # then
