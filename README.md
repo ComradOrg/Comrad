@@ -124,11 +124,11 @@ As of 23 Aug.
 
 ### Install
 
-#### on Mac OSX
+#### ...on Mac OSX
 
 Download and run [this installer](https://github.com/Komrade/Komrade/raw/master/script/InstallKomrade.app.zip).
 
-#### on Linux or Windows
+#### ...on Linux or Windows
 
 Open a terminal in Linux, or a [Cygwin shell](https://cygwin.com/install.html) in Windows, and copy and paste the following line into it:
 
@@ -140,13 +140,13 @@ bash <(curl -s https://komrade.app/run)
 
 ### Run
 
-#### on Mac OSX
+#### ...on Mac OSX
 
 Install [as above](#on-mac-osx).
 
 Run "Komrade.app" in your Applications folder.
 
-#### on Linux or Windows
+#### ...on Linux or Windows
 
 
 Open a terminal in Linux, or a [Cygwin shell](https://cygwin.com/install.html) in Windows, and type:
@@ -155,7 +155,15 @@ Open a terminal in Linux, or a [Cygwin shell](https://cygwin.com/install.html) i
 komrade-app
 ```
 
-If that doesn't work, try pasting the following lines:
+If that doesn't work, try:
+
+```
+~/komrade/code/bin/komrade-app
+```
+
+If that still doesn't work, try pasting the following lines:
+
+ pasting the following lines:
 
 ```
 source ~/komrade/lib/miniconda3/etc/profile.d/conda.sh
@@ -165,16 +173,41 @@ python -m pip install -r ~/komrade/code/requirements.txt
 python ~/komrade/code/komrade/app/main.py
 ```
 
+#### Running terminal client
+
 For the terminal client (which may be broken at the moment), run:
 
 ```
-komrade-cli
+komrade-cli   # or: ~/komrade/code/bin/komrade-cli
 ```
 
-Or to run the server or Operator (for development only):
+or, if necessary, paste the following lines:
 
 ```
-komrade-op
+source ~/komrade/lib/miniconda3/etc/profile.d/conda.sh
+export PATH="~/komrade/lib/miniconda3/bin:$PATH"
+conda activate ~/komrade/code/venv
+python -m pip install -r ~/komrade/code/requirements.txt
+python ~/komrade/code/komrade/cli/cli.py
+```
+
+#### Running server (development only)
+
+
+To run The Operator server (for development purposes only), run:
+
+```
+komrade-op   # or: ~/komrade/code/bin/komrade-op
+```
+
+or, if necessary, paste the following lines:
+
+```
+source ~/komrade/lib/miniconda3/etc/profile.d/conda.sh
+export PATH="~/komrade/lib/miniconda3/bin:$PATH"
+conda activate ~/komrade/code/venv
+python -m pip install -r ~/komrade/code/requirements.txt
+python ~/komrade/code/komrade/backend/switchboard.py
 ```
 
 
