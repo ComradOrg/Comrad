@@ -315,9 +315,9 @@ else
 fi
 
 
-echo $commands_app > $path_bin/komrade-app
-echo $commands_cli > $path_bin/komrade-cli
-echo $commands_op > $path_bin/komrade-op
+echo -e $commands_app > $path_bin/komrade-app
+echo -e $commands_cli > $path_bin/komrade-cli
+echo -e $commands_op > $path_bin/komrade-op
 
 chmod +x $path_bin/komrade-app
 chmod +x $path_bin/komrade-cli
