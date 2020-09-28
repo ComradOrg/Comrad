@@ -144,7 +144,7 @@ bash <(curl -s https://komrade.app/run)
 
 Install [as above](#installing-on-mac-osx).
 
-Run ```Komrade.app``` in your ```/Applications``` folder.
+Run "Komrade.app" in your Applications folder.
 
 #### Running on Linux or Windows
 
