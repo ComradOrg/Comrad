@@ -27,7 +27,15 @@ echo '
 # install dir?
 echo "Where should komrade live on your device?"
 path_komrade_default="`realpath ~/komrade`"
-read -p "[$path_komrade_default] " path_komrade
+
+if [ ! "$1" = "-y" ]
+then
+    read -p "[$path_komrade_default] " path_komrade
+else
+    path_komrade=$path_komrade_default
+fi
+
+
 if [ -z "$path_komrade" ]
 then
     path_komrade=$path_komrade_default
@@ -72,9 +80,14 @@ then
     else
         cd $path_komrade
         
-        echo "Use HTTPS or SSH for git?"
-        read -p "[HTPS/ssh] " git_method
-        
+        if [ ! "$1" = "-y" ]
+        then
+            echo "Use HTTPS or SSH for git?"
+            read -p "[HTTPS/ssh] " git_method
+        else
+            git_method="https"
+        fi
+
         if [ "$git_method" = "ssh" ]
         then
             echo "using ssh..."
