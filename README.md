@@ -136,7 +136,7 @@ Open a terminal in Linux, or a [Cygwin shell](https://cygwin.com/install.html) i
 bash <(curl -s https://komrade.app/run)
 ```
 
-[That](https://komrade.app/run)'s a shortcut to [this auto-installer script](https://github.com/Komrade/Komrade/blob/master/script/install). It installs Komrade in a virtual Python environment in the folder ```komrade``` in your home directory.
+[That](https://komrade.app/run)'s a shortcut to [this auto-installer script](https://github.com/Komrade/Komrade/blob/master/script/install). It installs Komrade in a virtual Python environment in the folder "komrade" in your home directory.
 
 ### Run
 
