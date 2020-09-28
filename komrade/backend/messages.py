@@ -23,6 +23,7 @@ class Message(Logger):
         self.from_name=msg_d.get('from_name') if not from_whom else from_whom.name
         self.from_pubkey=msg_d.get('from') if not from_whom else from_whom.uri
         self.msg=msg_d.get('msg') if not msg else msg
+        self.timestamp=msg_d.get('timestamp',time.time())
         self._route=msg_d.get(ROUTE_KEYNAME)
         self._is_encrypted=None
 
@@ -32,7 +33,8 @@ class Message(Logger):
             'to':self.to_pubkey,
             'to_name':self.to_name,
             'from':self.from_pubkey,
-            'from_name':self.from_name
+            'from_name':self.from_name,
+            'timestamp':self.timestamp,
         }
 
     def __repr__(self):
@@ -90,7 +92,8 @@ to:   @{self.to_name if self.to_name else ''}
                 'to':self.msg_d.get('from'),
                 'from_name':self.msg_d.get('to_name'),
                 'to_name':self.msg_d.get('from_name'),
-                'msg':new_msg if new_msg else self.msg_d.get('msg')
+                'msg':new_msg if new_msg else self.msg_d.get('msg'),
+                'timestamp':time.time(),
             }
         )
 

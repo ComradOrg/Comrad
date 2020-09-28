@@ -316,40 +316,6 @@ class TheOperator(Operator):
         # self.log('Operator returning result:',dict_format(res,tab=2))
 
 
-
-
-    def mass_deliver_msg(self,post_msg_d,contacts):
-        def do_mass_deliver_msg(contact,post_msg_d=post_msg_d):
-            self.log(f'<- delivering to {contact} the post: {post_msg_d}')
-            msg_from_op = Message(
-                {  # op -> komrade
-
-                    'to':post_msg_d.get('to'),
-                    'to_name':post_msg_d.get('from'),
-                    'from':self.uri,
-                    'from_name':self.name,
-                    'msg':post_msg_d.get             
-                }
-            )
-            self.log(f'prepared msg for {contact}: {msg_from_op.msg}')
-
-            # encrypt
-            msg_from_op.encrypt()
-            self.log('encrypted to:',msg_from_op.msg)
-
-            # actually deliver
-            res=self.actually_deliver_msg(msg_from_op)
-            self.log('delivery res =',res)
-
-        for contact in contacts:
-            do_mass_deliver_msg(contact)
-
-        return {
-            'success':True,
-            'status':f'Delivered post to {len(contacts)}.',
-        }
-
-
     def validate_msg(self,msg_d):
         from komrade.backend.messages import is_valid_msg_d
         if not is_valid_msg_d(msg_d): return False
@@ -561,6 +527,7 @@ class TheOperator(Operator):
             self.log('post_pkg_d',post_pkg_d)
             from_uri = post_pkg_d.get('post_from')
             from_name = post_pkg_d.get('post_from_name')
+            post_timestamp = post_pkg_d.get('post_timestamp')
             post_b_signed_encr4world = post_pkg_d.get('post')
             # if not from_uri or not from_name or b64enc(self.find_pubkey(from_name))!=from_uri or not post_b_signed_encr4world:
             #     return {
@@ -579,7 +546,8 @@ class TheOperator(Operator):
             post_pkg_d2 = {
                 'post':post_b_signed,
                 'post_from':from_uri,
-                'post_from_name':from_name
+                'post_from_name':from_name,
+                'post_timestamp':post_timestamp
             }
             post_pkg_b2 = pickle.dumps(post_pkg_d2)
             post_pkg_b2_encr_op2kom = SMessage(

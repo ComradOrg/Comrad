@@ -488,6 +488,7 @@ class KomradeX(Caller):
                 'to':someone.pubkey.data_b64,
                 'to_name':someone.name,
                 'msg':direct_msg_data,
+                'timestamp':time.time()
             }
             
         }
@@ -743,6 +744,7 @@ class KomradeX(Caller):
         post_signed_b = msg_from_op.get('post')
         post_from_uri = msg_from_op.get('post_from')
         post_from_name = msg_from_op.get('post_from_name')
+        post_timestamp = msg_from_op.get('post_timestamp')
 
         # verify!
         try:
@@ -761,7 +763,8 @@ class KomradeX(Caller):
             {
                 'from':post_from_uri,'from_name':post_from_name,
                 'to':Komrade(WORLD_NAME).uri, 'to_name':WORLD_NAME,
-                'msg':post_data
+                'msg':post_data,
+                'timestamp':post_timestamp
             }
         )
         self.log('post obj?',post_obj)
