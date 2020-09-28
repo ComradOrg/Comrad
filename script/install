@@ -4,6 +4,8 @@
 realpath() {
     [[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"
 }
+
+echo "$1 $2 $3"
    
 
 # install pyenv?
@@ -28,7 +30,7 @@ echo '
 echo "Where should komrade live on your device?"
 path_komrade_default="`realpath ~/komrade`"
 
-if [ ! "$1" = "-y" ]
+if [ "$1" = "-n" ]
 then
     read -p "[$path_komrade_default] " path_komrade
 else
@@ -80,7 +82,7 @@ then
     else
         cd $path_komrade
         
-        if [ ! "$1" = "-y" ]
+        if [ "$1" = "-n" ]
         then
             echo "Use HTTPS or SSH for git?"
             read -p "[HTTPS/ssh] " git_method
