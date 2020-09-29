@@ -170,11 +170,11 @@ class CLI(Logger):
         )
 
     def clearnet(self,_=''):
-        os.environ['KOMRADE_USE_CLEARNET'] = '1'
-        os.environ['KOMRADE_USE_TOR'] = '0'
+        os.environ['COMRAD_USE_CLEARNET'] = '1'
+        os.environ['COMRAD_USE_TOR'] = '0'
     def tor(self,_=''):
-        os.environ['KOMRADE_USE_CLEARNET'] = '0'
-        os.environ['KOMRADE_USE_TOR'] = '1'
+        os.environ['COMRAD_USE_CLEARNET'] = '0'
+        os.environ['COMRAD_USE_TOR'] = '1'
     
 
     def help(self,*x,**y):

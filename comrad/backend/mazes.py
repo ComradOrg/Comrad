@@ -127,7 +127,7 @@ class MazeWalker(Handler):
 
 
 def test_torpy():
-    hostname = KOMRADE_ONION
+    hostname = COMRAD_ONION
     from torpy import TorClient
 
     tor = TorClient()

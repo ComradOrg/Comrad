@@ -119,16 +119,16 @@ class Logger(object):
 
     @property
     def off(self):
-        x=os.environ.get('KOMRADE_SHOW_LOG')
+        x=os.environ.get('COMRAD_SHOW_LOG')
         if x is not None:
             x=x.strip().lower()
             return x in {'n','0','false'}
         return not SHOW_LOG
 
     def hide_log(self):
-        os.environ['KOMRADE_SHOW_LOG']='0'
+        os.environ['COMRAD_SHOW_LOG']='0'
     def show_log(self):
-        os.environ['KOMRADE_SHOW_LOG']='1'
+        os.environ['COMRAD_SHOW_LOG']='1'
     def toggle_log(self):
         self.show_log() if self.off else self.hide_log()
 

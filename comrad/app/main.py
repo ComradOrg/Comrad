@@ -22,7 +22,7 @@ os.environ['KIVY_EVENTLOOP'] = 'asyncio'
 # loop.set_debug(True)
 
 # prefer experimental kivy if possible
-# sys.path.insert(0,os.path.join(PATH_KOMRADE_LIB,'KivyMD'))
+# sys.path.insert(0,os.path.join(PATH_COMRAD_LIB,'KivyMD'))
 import kivymd
 # print(kivymd.__file__)
 # exit()

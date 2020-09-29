@@ -28,12 +28,12 @@ class TheTelephone(Operator):
 
     @property
     def api_url(self):
-        #if 'KOMRADE_OPERATOR_API_URL' in os.environ and os.environ['KOMRADE_OPERATOR_API_URL']:
+        #if 'COMRAD_OPERATOR_API_URL' in os.environ and os.environ['COMRAD_OPERATOR_API_URL']:
         #    return os.environ
-        #os.environ['KOMRADE_OPERATOR_API_URL'] = OPERATOR_API_URL_TOR
-        if 'KOMRADE_USE_TOR' in os.environ and os.environ['KOMRADE_USE_TOR']=='1':
+        #os.environ['COMRAD_OPERATOR_API_URL'] = OPERATOR_API_URL_TOR
+        if 'COMRAD_USE_TOR' in os.environ and os.environ['COMRAD_USE_TOR']=='1':
             return OPERATOR_API_URL_TOR
-        elif 'KOMRADE_USE_CLEARNET' in os.environ and os.environ['KOMRADE_USE_CLEARNET']=='1':
+        elif 'COMRAD_USE_CLEARNET' in os.environ and os.environ['COMRAD_USE_CLEARNET']=='1':
             return OPERATOR_API_URL_CLEARNET
         else:
             return OPERATOR_API_URL

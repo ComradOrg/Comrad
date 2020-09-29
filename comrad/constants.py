@@ -1,40 +1,40 @@
 # addresses
-KOMRADE_ONION = 'u7spnj3dmwumzoa4.onion'
-KOMRADE_ONION2 = 'rwg4zcnpwshv4laq.onion'
-KOMRADE_URL = '68.66.241.111'  #KOMRADE_ONION
+COMRAD_ONION = 'u7spnj3dmwumzoa4.onion'
+COMRAD_ONION2 = 'rwg4zcnpwshv4laq.onion'
+COMRAD_URL = '68.66.241.111'  #COMRAD_ONION
 
 
-OPERATOR_API_URL_TOR = f'http://{KOMRADE_ONION}/op/'
-OPERATOR_API_URL_CLEARNET = f'http://{KOMRADE_URL}/op/'
+OPERATOR_API_URL_TOR = f'http://{COMRAD_ONION}/op/'
+OPERATOR_API_URL_CLEARNET = f'http://{COMRAD_URL}/op/'
 
 OPERATOR_API_URL = OPERATOR_API_URL_TOR
 
 # paths
 import os
 PATH_USER_HOME = os.path.join(os.path.expanduser('~'))
-PATH_KOMRADE = os.path.abspath(os.path.join(os.path.expanduser('~'),'comrad','data'))
-PATH_KOMRADE_KEYS = os.path.join(PATH_KOMRADE,'.keys')
-PATH_KOMRADE_DATA = os.path.join(PATH_KOMRADE,'.data')
-PATH_KOMRADE_LIB = os.path.abspath(os.path.join(os.path.expanduser('~'),'comrad','lib'))
+PATH_COMRAD = os.path.abspath(os.path.join(os.path.expanduser('~'),'comrad','data'))
+PATH_COMRAD_KEYS = os.path.join(PATH_COMRAD,'.keys')
+PATH_COMRAD_DATA = os.path.join(PATH_COMRAD,'.data')
+PATH_COMRAD_LIB = os.path.abspath(os.path.join(os.path.expanduser('~'),'comrad','lib'))
 
-PATH_CRYPT_OP_KEYS = os.path.join(PATH_KOMRADE_KEYS,'.op.db.keys.crypt')
-PATH_CRYPT_OP_DATA = os.path.join(PATH_KOMRADE_DATA,'.op.db.data.crypt')
+PATH_CRYPT_OP_KEYS = os.path.join(PATH_COMRAD_KEYS,'.op.db.keys.crypt')
+PATH_CRYPT_OP_DATA = os.path.join(PATH_COMRAD_DATA,'.op.db.data.crypt')
 
-# PATH_CRYPT_CA_KEYS = os.path.join(PATH_KOMRADE_KEYS,'.ca.db.keys.crypt')
-# PATH_CRYPT_CA_DATA = os.path.join(PATH_KOMRADE_DATA,'.ca.db.data.encr')
+# PATH_CRYPT_CA_KEYS = os.path.join(PATH_COMRAD_KEYS,'.ca.db.keys.crypt')
+# PATH_CRYPT_CA_DATA = os.path.join(PATH_COMRAD_DATA,'.ca.db.data.encr')
 PATH_CRYPT_CA_KEYS = PATH_CRYPT_OP_KEYS
 PATH_CRYPT_CA_DATA = PATH_CRYPT_OP_DATA
-PATH_QRCODES = os.path.join(PATH_KOMRADE,'contacts')
-# PATH_SECRETS = os.path.join(PATH_KOMRADE,'.secrets')
+PATH_QRCODES = os.path.join(PATH_COMRAD,'contacts')
+# PATH_SECRETS = os.path.join(PATH_COMRAD,'.secrets')
 PATH_SECRETS = PATH_SUPER_SECRETS = os.path.join(PATH_USER_HOME,'.secrets')
 PATH_SUPER_SECRET_OP_KEY = os.path.join(PATH_SUPER_SECRETS,'.comrad.op.key')
 
-PATH_MAPS = os.path.join(PATH_KOMRADE,'maps')
+PATH_MAPS = os.path.join(PATH_COMRAD,'maps')
 
-PATH_LOG_OUTPUT = os.path.join(PATH_KOMRADE,'logs')
+PATH_LOG_OUTPUT = os.path.join(PATH_COMRAD,'logs')
 
 
-for x in [PATH_KOMRADE,PATH_KOMRADE_DATA,PATH_KOMRADE_KEYS,PATH_QRCODES,PATH_SECRETS,PATH_SUPER_SECRETS,PATH_LOG_OUTPUT]:
+for x in [PATH_COMRAD,PATH_COMRAD_DATA,PATH_COMRAD_KEYS,PATH_QRCODES,PATH_SECRETS,PATH_SUPER_SECRETS,PATH_LOG_OUTPUT]:
     if not os.path.exists(x):
         os.makedirs(x)
 
@@ -144,10 +144,10 @@ TELEPHONE = None
 
 
 PATH_OPERATOR_WEB_KEYS_FILE = f'/home/ryan/www/website-comrad/pub'
-PATH_OPERATOR_WEB_KEYS_URL = f'http://{KOMRADE_URL}/pub'
+PATH_OPERATOR_WEB_KEYS_URL = f'http://{COMRAD_URL}/pub'
 # PATH_OPERATOR_WEB_CONTACTS_DIR = '/home/ryan/www/website-comrad/.contacts'
-# PATH_OPERATOR_WEB_CONTACT_OP_URL = f'http://{KOMRADE_URL}/.contacts/TheOperator.png'
-# PATH_OPERATOR_WEB_CONTACT_PH_URL = f'http://{KOMRADE_URL}/.contacts/TheTelephone.png'
+# PATH_OPERATOR_WEB_CONTACT_OP_URL = f'http://{COMRAD_URL}/.contacts/TheOperator.png'
+# PATH_OPERATOR_WEB_CONTACT_PH_URL = f'http://{COMRAD_URL}/.contacts/TheTelephone.png'
 
 
 # dangerous! leave on only if absolutely necessary for initial dev
@@ -181,7 +181,7 @@ CLEAR_LOGGER = 0
 
 SAVE_LOGS = 1
 
-CLI_TITLE = 'KOMRADE'
+CLI_TITLE = 'COMRAD'
 CLI_FONT = 'clr5x6'#'colossal'
 CLI_WIDTH = STATUS_LINE_WIDTH = 60
 CLI_HEIGHT = 30
@@ -192,14 +192,14 @@ MAX_MSG_LEN = 1000
 
 
 import os,logging
-if not 'KOMRADE_SHOW_LOG' in os.environ or not os.environ['KOMRADE_SHOW_LOG'] or os.environ['KOMRADE_SHOW_LOG']=='0':
+if not 'COMRAD_SHOW_LOG' in os.environ or not os.environ['COMRAD_SHOW_LOG'] or os.environ['COMRAD_SHOW_LOG']=='0':
     logger = logging.getLogger()
     logger.propagate = False
 
-if not 'KOMRADE_USE_TOR' in os.environ or not os.environ['KOMRADE_USE_TOR']:
-    KOMRADE_USE_TOR = os.environ['KOMRADE_USE_TOR'] = '1'
-if not 'KOMRADE_USE_CLEARNET' in os.environ or not os.environ['KOMRADE_USE_CLEARNET']:
-    KOMRADE_USE_CLEARNET = os.environ['KOMRADE_USE_CLEARNET'] = '0'
+if not 'COMRAD_USE_TOR' in os.environ or not os.environ['COMRAD_USE_TOR']:
+    COMRAD_USE_TOR = os.environ['COMRAD_USE_TOR'] = '1'
+if not 'COMRAD_USE_CLEARNET' in os.environ or not os.environ['COMRAD_USE_CLEARNET']:
+    COMRAD_USE_CLEARNET = os.environ['COMRAD_USE_CLEARNET'] = '0'
 
 
 
