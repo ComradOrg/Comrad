@@ -478,7 +478,7 @@ class MainApp(MDApp, Logger):
         return self.root
 
     # def boot(self,username):
-    #     kommie = Comrad(username)
+    #     commie = Comrad(username)
     #     if self.exists_locally_as_contact()
 
     @property
@@ -688,24 +688,24 @@ class MainApp(MDApp, Logger):
         asyncio.create_task(task())
         return response
 
-    async def ring_ring(self,*x,kommie=None,**y):
-        if not kommie: kommie=self.comrad
+    async def ring_ring(self,*x,commie=None,**y):
+        if not commie: commie=self.comrad
         from comrad.app.screens.map import MapWidget
         self.map=MapWidget()
         self.map.open()
-        resp_msg_d = await kommie.ring_ring(*x,**y)
+        resp_msg_d = await commie.ring_ring(*x,**y)
         logger.info('done with ring_ring! ! !')
         self.map.dismiss()
         self.map=None
         return resp_msg_d
 
     
-    async def get_updates(self,*x,kommie=None,**y):
-        if not kommie: kommie=self.comrad
+    async def get_updates(self,*x,commie=None,**y):
+        if not commie: commie=self.comrad
         from comrad.app.screens.map import MapWidget
         self.map=MapWidget()
         self.map.open()
-        await kommie.get_updates(*x,**y)
+        await commie.get_updates(*x,**y)
         logger.info('done with get_updates! ! !')
         self.map.dismiss()
         self.map=None
@@ -723,11 +723,11 @@ class MainApp(MDApp, Logger):
         self.msg_dialog = MessagePopupCard()
         # self.root.add_widget(self.msg_dialog)
         # self.msg_dialog.ids.msg_label.text=msg
-
+        nm = '?' if not self.comrad else self.comrad.name
         self.msg_dialog.card = postcard = PostCardPopup({
             'author':comrad_name,
             'author_prefix':'Comrad @',
-            'to_name':'me',
+            'to_name':nm,
             'content':msg,
             'timestamp':time.time(),
             'author_label_font_size':'18sp',

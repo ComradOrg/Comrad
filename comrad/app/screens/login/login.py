@@ -194,24 +194,24 @@ class LoginScreen(BaseScreen):
         from comrad.backend import Comrad
 
         
-        kommie = Comrad(un)
-        self.log('KOMMIE!?!?',kommie)
+        commie = Comrad(un)
+        self.log('KOMMIE!?!?',commie)
         self.log('wtf',PATH_CRYPT_CA_KEYS)
 
-        logger.info(f'booted kommie: {kommie}')
-        if kommie.exists_locally_as_account():
+        logger.info(f'booted commie: {commie}')
+        if commie.exists_locally_as_account():
             pw='marx' # @HACK FOR NOW
             #pw=await self.app.get_input('Welcome back.',get_pass=True)
-            kommie.keychain(passphrase=pw)
-            logger.info(f'updated keychain: {dict_format(kommie.keychain())}')
+            commie.keychain(passphrase=pw)
+            logger.info(f'updated keychain: {dict_format(commie.keychain())}')
             logger.info(f'is account')
             # self.login_status.text='You should be able to log into this account.'
-            if kommie.privkey:
+            if commie.privkey:
                 logger.info(f'passkey login succeeded')
                 self.login_status.text=f'Welcome back, Comrad @{un}'
                 self.app.is_logged_in=True
-                self.app.username=kommie.name
-                self.app.comrad=kommie
+                self.app.username=commie.name
+                self.app.comrad=commie
                 self.root.change_screen('feed')
             else:
                 logger.info(f'passkey login failed')
@@ -219,7 +219,7 @@ class LoginScreen(BaseScreen):
     
 
         #   self.layout.add_widget(self.layout_password)
-        elif kommie.exists_locally_as_contact():
+        elif commie.exists_locally_as_contact():
             await self.app.stat('This is a contact of yours')
             self.login_status.text='Comrad exists as a contact of yours.'
             # self.app.change_screen('feed')
@@ -232,11 +232,11 @@ class LoginScreen(BaseScreen):
             self.remove_widget(self.layout)
             res = await self.register(un)
             
-            if kommie.privkey:
+            if commie.privkey:
                 self.login_status.text='Registered'
                 self.app.is_logged_in=True
-                self.app.username=kommie.name
-                self.app.comrad=kommie
+                self.app.username=commie.name
+                self.app.comrad=commie
                 self.remove_widget(self.layout)
                 self.app.change_screen('feed')
             else:
@@ -250,12 +250,13 @@ class LoginScreen(BaseScreen):
             if not 'comrad_name' in y: y['comrad_name']='Keymaker'
             await self.app.stat(*x,**y)
         
-        kommie = Comrad(name)
+        commie = Comrad(name)
+        self.app.comrad = commie
 
         # already have it?
-        if kommie.exists_locally_as_account():
+        if commie.exists_locally_as_account():
             return {'success':False, 'status':'You have already created this account.'}        
-        if kommie.exists_locally_as_contact():
+        if commie.exists_locally_as_contact():
             return {'success':False, 'status':'This is already a contact of yours'}
             
         # 
@@ -272,7 +273,7 @@ class LoginScreen(BaseScreen):
         pubkey,privkey = keypair.pubkey_obj,keypair.privkey_obj
         uri_id = pubkey.data_b64
         uri_s = pubkey.data_b64_s
-        fnfn = kommie.save_uri_as_qrcode(uri_id=uri_id,name=name)
+        fnfn = commie.save_uri_as_qrcode(uri_id=uri_id,name=name)
         
         # await logfunc(f'Here. I have cut for you a private and public asymmetric key pair, using the iron-clad Elliptic curve algorithm:',comrad_name='Keymaker')
 
@@ -289,11 +290,11 @@ class LoginScreen(BaseScreen):
         
 
 
-        kommie._keychain['pubkey']=pubkey
-        kommie._keychain['privkey']=privkey
+        commie._keychain['pubkey']=pubkey
+        commie._keychain['privkey']=privkey
         
         from comrad.utils import dict_format
-        self.log('My keychain now looks like:' + dict_format(kommie.keychain()))
+        self.log('My keychain now looks like:' + dict_format(commie.keychain()))
         # return
 
 
@@ -320,8 +321,8 @@ class LoginScreen(BaseScreen):
 
         privkey_encr = privkey_decr.encrypt(privkey.data)
         privkey_encr_obj = ComradEncryptedAsymmetricPrivateKey(privkey_encr)
-        kommie._keychain['privkey_encr']=privkey_encr_obj
-        self.log('My keychain now looks like v2:',dict_format(kommie.keychain()))
+        commie._keychain['privkey_encr']=privkey_encr_obj
+        self.log('My keychain now looks like v2:',dict_format(commie.keychain()))
 
         # await logfunc(f'With this scrambled password we can encrypt your super-sensitive private key, from this:\n{privkey.discreet}to this:\n{privkey_encr_obj.discreet}',pause=True,clear=False)
 
@@ -339,7 +340,7 @@ class LoginScreen(BaseScreen):
                 'pubkey': pubkey.data,
             },
             route='register_new_user',
-            kommie=kommie
+            commie=commie
         )
         
         # self.app.close_dialog()
@@ -365,7 +366,7 @@ class LoginScreen(BaseScreen):
         
        
 
-        kommie.name=resp_msg_d.get('name')
+        commie.name=resp_msg_d.get('name')
         pubkey_b = resp_msg_d.get('pubkey')
         assert pubkey_b == pubkey.data
         uri_id = pubkey.data_b64
@@ -376,18 +377,18 @@ class LoginScreen(BaseScreen):
         # await logfunc(f'''Saving keys to device''',pause=True)
 
         # print()
-        kommie.crypt_keys.set(name, pubkey_b, prefix='/pubkey/')
-        kommie.crypt_keys.set(uri_id, name, prefix='/name/')
-        kommie.crypt_keys.set(uri_id,sec_login,prefix='/secret_login/')
+        commie.crypt_keys.set(name, pubkey_b, prefix='/pubkey/')
+        commie.crypt_keys.set(uri_id, name, prefix='/name/')
+        commie.crypt_keys.set(uri_id,sec_login,prefix='/secret_login/')
 
         # store privkey pieces
-        kommie.crypt_keys.set(uri_id, privkey_encr_obj.data, prefix='/privkey_encr/')
+        commie.crypt_keys.set(uri_id, privkey_encr_obj.data, prefix='/privkey_encr/')
         # just to show we used a passphrase -->
-        kommie.crypt_keys.set(uri_id, ComradSymmetricKeyWithPassphrase.__name__, prefix='/privkey_decr/')
+        commie.crypt_keys.set(uri_id, ComradSymmetricKeyWithPassphrase.__name__, prefix='/privkey_decr/')
 
 
         # save qr too:
-        _fnfn=kommie.save_uri_as_qrcode(uri_id)
+        _fnfn=commie.save_uri_as_qrcode(uri_id)
         # await logfunc(f'Saving public key, encrypted private key, and login secret to hardware-only database. Also saving public key as QR code to: {_fnfn}.',pause=True,clear=False,use_prefix=False)
 
         await logfunc(f'You can share it by pasting it to someone in a secure message:\n{uri_s}',comrad_name='Keymaker')
@@ -397,15 +398,15 @@ class LoginScreen(BaseScreen):
         await logfunc(f"(2) Your PRIVATE encryption key, on the other hand, will be stored encrypted on your device hardware. Do not it this with anyone or across any network whatsoever.")
         
         # done!
-        await logfunc(f'Congratulations. Welcome, {kommie}.',pause=True,clear=True)
+        await logfunc(f'Congratulations. Welcome, {commie}.',pause=True,clear=True)
         
         # remove all dialogs!!!!!!!!
         # last minute: get posts
         if 'res_posts' in resp_msg_d and resp_msg_d['res_posts'].get('success'):
             id2post=resp_msg_d.get('res_posts').get('posts',{})
             if id2post:
-                kommie.log('found starter posts:',list(id2post.keys()))
-            kommie.save_posts(id2post)
+                commie.log('found starter posts:',list(id2post.keys()))
+            commie.save_posts(id2post)
             resp_msg_d['status']+=f'  You\'ve got {len(id2post)} new posts and 0 new messages.'
         
 

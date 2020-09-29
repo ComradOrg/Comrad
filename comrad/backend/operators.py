@@ -36,23 +36,23 @@ def Comrad(name=None,pubkey=None,*x,**y):
     # print(f'finding Comrad {name} / {pubkey} for the first time!')
     # operator?
     if name==OPERATOR_NAME:
-        kommie = TheOperator(callbacks=callbacks) #(*x,**y)
+        commie = TheOperator(callbacks=callbacks) #(*x,**y)
     if name==TELEPHONE_NAME:
-        kommie = TheTelephone(callbacks=callbacks) #(*x,**y)
+        commie = TheTelephone(callbacks=callbacks) #(*x,**y)
     else:
-        # print('booting new kommie')
-        kommie = ComradX(name,*x,**y)
+        # print('booting new commie')
+        commie = ComradX(name,*x,**y)
     
     
     
 
 
     # print('found!',name,PHONEBOOK[name],PHONEBOOK[name].keychain())
-    PHONEBOOK[name] = kommie
-    pubkey=kommie.find_pubkey(name)
-    if pubkey: PHONEBOOK[pubkey.data_b64] = kommie
+    PHONEBOOK[name] = commie
+    pubkey=commie.find_pubkey(name)
+    if pubkey: PHONEBOOK[pubkey.data_b64] = commie
 
-    return kommie
+    return commie
 
 
 
