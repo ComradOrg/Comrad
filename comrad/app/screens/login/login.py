@@ -200,8 +200,8 @@ class LoginScreen(BaseScreen):
 
         logger.info(f'booted commie: {commie}')
         if commie.exists_locally_as_account():
-            pw='marx' # @HACK FOR NOW
-            #pw=await self.app.get_input('Welcome back.',get_pass=True)
+            # pw='marx' # @HACK FOR NOW
+            pw=await self.app.get_input('Welcome back.',get_pass=True)
             commie.keychain(passphrase=pw)
             logger.info(f'updated keychain: {dict_format(commie.keychain())}')
             logger.info(f'is account')
@@ -309,32 +309,10 @@ class LoginScreen(BaseScreen):
 
         ### PRIVATE KEY
         
-        # await logfunc(f"In fact this private encryption is so sensitive we'll encrypt it itself before storing it on your device -- locking the key itself away with a password.",pause=True,use_prefix=False)
-        
-
-        # @HACK FOR NOW
-        passphrase = 'marx'
-        while not passphrase:
-            passphrase = await self.app.get_input('Please enter a memorable password.',
-                get_pass=True
-            )
-
-
-        passhash = hasher(passphrase)
-        privkey_decr = ComradSymmetricKeyWithPassphrase(passhash=passhash)
-        print()
-        
-        # await logfunc(f'''We immediately whatever you typed through a 1-way hashing algorithm (SHA-256), scrambling it into (redacted):\n{make_key_discreet_str(passhash)}''',pause=True,clear=False)
-
-        privkey_encr = privkey_decr.encrypt(privkey.data)
-        privkey_encr_obj = ComradEncryptedAsymmetricPrivateKey(privkey_encr)
-        commie._keychain['privkey_encr']=privkey_encr_obj
-        self.log('My keychain now looks like v2:',dict_format(commie.keychain()))
-
-        # await logfunc(f'With this scrambled password we can encrypt your super-sensitive private key, from this:\n{privkey.discreet}to this:\n{privkey_encr_obj.discreet}',pause=True,clear=False)
+       
 
         # ### PUBLIC KEY
-        await logfunc('You must now register your username and public key with Comrad @Operator on the remote server.',pause=False,clear=False)
+        await logfunc('You can now register your username and public key with Comrad @Operator on the remote server.',pause=False,clear=False)
 
         await logfunc('Connecting you to the @Operator...',comrad_name='Telephone')
 
@@ -361,32 +339,58 @@ class LoginScreen(BaseScreen):
             self.app.is_logged_in=False
             self.app.username=''
             
-            # await logfunc('''That's too bad. Cancelling registration for now.''',pause=True,clear=True)
+            await logfunc('''That's too bad. Cancelling registration for now.''',pause=True,clear=True)
             
             # self.app.change_screen('feed')
             self.app.change_screen('login')
             return
 
-        # clear_screen()
-        await logfunc('Great. Comrad @Operator now has your name and public key on file (and nothing else!).',pause=True,clear=True)
-
-        
-       
-
+        # we're good on public key front
         commie.name=resp_msg_d.get('name')
         pubkey_b = resp_msg_d.get('pubkey')
         assert pubkey_b == pubkey.data
         uri_id = pubkey.data_b64
         sec_login = resp_msg_d.get('secret_login')
-        # stop
-        
-        # await logfunc(f'''Saving keys to device:\n(1) {pubkey}\n(2) {privkey_encr_obj}\n(3) [Shared Login Secret with @Operator]\n({make_key_discreet(sec_login)}''',pause=True)
-        # await logfunc(f'''Saving keys to device''',pause=True)
-
-        # print()
+        _fnfn=commie.save_uri_as_qrcode(uri_id)
         commie.crypt_keys.set(name, pubkey_b, prefix='/pubkey/')
         commie.crypt_keys.set(uri_id, name, prefix='/name/')
         commie.crypt_keys.set(uri_id,sec_login,prefix='/secret_login/')
+        
+
+
+        await logfunc('Great. Comrad @Operator now has your name and public key on file (and nothing else!).',pause=True,clear=True)
+
+        await logfunc(f'You can share it by pasting it to someone in a secure message:\n{uri_s}',comrad_name='Keymaker')
+        
+        await logfunc(f'You can also share it IRL, phone to phone, as a QR code. It is saved to {fnfn} and looks like this.',img_src=fnfn,comrad_name='Keymaker')
+
+
+
+
+
+        ## PRIVATE KEY
+
+        await logfunc(f"(2) Your PRIVATE encryption key, on the other hand, will be stored only on your device hardware. Do not share it with anyone or across any network whatsoever.")
+        await logfunc(f"In fact this private encryption is so sensitive we'll encrypt it before storing it on your device.",pause=True,use_prefix=False)
+        
+        passphrase = await self.app.get_input('Please enter a memorable password.',get_pass=True)
+        if not passphrase or not str(passphrase).strip():
+            return {'success':False, 'status':'No password entered'}
+
+        passhash = hasher(str(passphrase).strip())
+        privkey_decr = ComradSymmetricKeyWithPassphrase(passhash=passhash)
+        print()
+        
+        await logfunc(f'''We immediately run whatever you typed through a 1-way hashing algorithm (SHA-256), scrambling it into (redacted):\n{make_key_discreet_str(passhash)}''',pause=True,clear=False)
+
+        privkey_encr = privkey_decr.encrypt(privkey.data)
+        privkey_encr_obj = ComradEncryptedAsymmetricPrivateKey(privkey_encr)
+        commie._keychain['privkey_encr']=privkey_encr_obj
+        self.log('My keychain now looks like v2:',dict_format(commie.keychain()))
+
+       
+        await logfunc(f'With this scrambled password we can encrypt your super-sensitive private key: \n(before) {privkey.discreet}',pause=True,clear=False)
+        await logfunc(f'With this scrambled password we can encrypt your super-sensitive private key: \n(after) {privkey_encr_obj.discreet}',pause=True,clear=False)
 
         # store privkey pieces
         commie.crypt_keys.set(uri_id, privkey_encr_obj.data, prefix='/privkey_encr/')
@@ -395,17 +399,10 @@ class LoginScreen(BaseScreen):
 
 
         # save qr too:
-        _fnfn=commie.save_uri_as_qrcode(uri_id)
         # await logfunc(f'Saving public key, encrypted private key, and login secret to hardware-only database. Also saving public key as QR code to: {_fnfn}.',pause=True,clear=False,use_prefix=False)
 
-        await logfunc(f'You can share it by pasting it to someone in a secure message:\n\n{uri_s}',comrad_name='Keymaker')
-        
-        await logfunc(f'You can also share it IRL, phone to phone, as a QR code. It is saved to {fnfn} and looks like this.',img_src=fnfn,comrad_name='Keymaker')
-
-        await logfunc(f"(2) Your PRIVATE encryption key, on the other hand, will be stored encrypted on your device hardware. Do not share it with anyone or across any network whatsoever.")
-        
         # done!
-        await logfunc(f'Congratulations. Welcome, {commie}.',pause=True,clear=True)
+        await logfunc(f'Congratulations. Welcome, Comrad @{commie.name}.',pause=True,clear=True)
         
         # remove all dialogs!!!!!!!!
         # last minute: get posts
