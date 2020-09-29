@@ -456,9 +456,10 @@ class KomradeX(Caller):
 
 
 
-
-    
     def msg(self,someone,something):
+        return asyncio.run(self.msg_async(someone,something))
+    
+    def msg_async(self,someone,something):
         # find or boot
         someone = Komrade(someone)
         self.log(f'found {someone}')
@@ -496,7 +497,7 @@ class KomradeX(Caller):
         self.log('going to send msg to op?',msg_to_op)
         
         # dial operator
-        res=self.ring_ring(
+        res=await self.ring_ring(
             msg_to_op,
             route='deliver_msg'
         )
@@ -557,7 +558,7 @@ class KomradeX(Caller):
             {
                 'data':post_pkg_b
             },
-            route='post_async'
+            route='post'
         )
         self.log('post res from Op <-',res_op)
         return res_op

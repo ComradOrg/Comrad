@@ -430,7 +430,7 @@ class TheOperator(Operator):
         return res
 
 
-    def post(self,msg_to_op):
+    def deliver_post(self,msg_to_op):
         # This
         self.log('<--',msg_to_op.msg_d)
         world = Komrade(WORLD_NAME)
