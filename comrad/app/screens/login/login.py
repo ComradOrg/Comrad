@@ -208,6 +208,13 @@ class LoginScreen(BaseScreen):
             # self.login_status.text='You should be able to log into this account.'
             if commie.privkey:
                 logger.info(f'passkey login succeeded')
+                
+                # get new data
+                res = await commie.get_updates()
+                if not res.get('res_login',{}).get('success'):
+                    return {'success':False,'res_refresh':refresh}
+                 
+                # otherwise, ok
                 self.login_status.text=f'Welcome back, Comrad @{un}'
                 self.app.is_logged_in=True
                 self.app.username=commie.name
@@ -395,7 +402,7 @@ class LoginScreen(BaseScreen):
         
         await logfunc(f'You can also share it IRL, phone to phone, as a QR code. It is saved to {fnfn} and looks like this.',img_src=fnfn,comrad_name='Keymaker')
 
-        await logfunc(f"(2) Your PRIVATE encryption key, on the other hand, will be stored encrypted on your device hardware. Do not it this with anyone or across any network whatsoever.")
+        await logfunc(f"(2) Your PRIVATE encryption key, on the other hand, will be stored encrypted on your device hardware. Do not share it with anyone or across any network whatsoever.")
         
         # done!
         await logfunc(f'Congratulations. Welcome, {commie}.',pause=True,clear=True)

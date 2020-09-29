@@ -52,6 +52,8 @@ class MapWidget(MDDialog2):
     def color_marker(self): return rgb(*COLOR_ICON)
     @property
     def color_line(self): return rgb(*COLOR_ICON)
+    @property
+    def color_line_dark(self): return rgb(*grullo2)
 
     def __init__(self):
         self.last_lat = None
@@ -193,20 +195,23 @@ class MapWidget(MDDialog2):
         color = random.choice(ALL_COLORS)
         self.points+=[(lat,long,desc)]
         
-        # point
-        plt.plot(
-            long,
-            lat,
-            '+',
-            markersize=25,
-            linewidth=10,
-            color=self.color_marker,#rgb(*color),
-            transform=ccrs.Geodetic(),
-        )
+        # # point
+        # plt.plot(
+        #     long,
+        #     lat,
+        #     '+',
+        #     markersize=25,
+        #     linewidth=10,
+        #     color=self.color_marker,#rgb(*color),
+        #     transform=ccrs.Geodetic(),
+        # )
 
         # line
         if self.last_lat and self.last_long:
             # if self.ax.lines: self.ax.lines.pop(0)
+            for line in self.ax.lines:
+                line.set_color(self.color_line_dark)
+            
             plt.plot(
                 [self.last_long, long],
                 [self.last_lat, lat],
@@ -234,6 +239,7 @@ class MapWidget(MDDialog2):
 
     # wait and show
     def open(self,maxwait=666,pulse=0.1):
+        self.ax.lines=[]
         self.draw()
         if not self.intro_label:
             self.intro_label = self.makelabel('Comrad @Tor: Routing you through the global maze of the deep web ...')

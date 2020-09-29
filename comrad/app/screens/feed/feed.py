@@ -127,7 +127,7 @@ class PostCard(MDCard):
         self.timestamp = data.get('timestamp',None)
         # self.bind(minimum_height=self.setter('height'))
 
-        author_prefix=data.get('author_prefix','@')
+        author_prefix=data.get('author_prefix','Comrad @')
         author_label_font_size=data.get('author_label_font_size','24sp')
         recip_label_font_size=data.get('author_label_font_size','14sp')
         
