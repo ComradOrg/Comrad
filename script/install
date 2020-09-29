@@ -305,7 +305,7 @@ commands_app="
 
 export PATH="$path_bin:$PATH"
 bashline="export PATH=\"$path_bin:\$PATH\"     # comrad installation"
-bashfn="~/.bashrc"
+bashfn="`realpath ~/.bashrc`"
 
 # add to bashrc?
 if grep -Fxq "$bashline" "$bashfn"
