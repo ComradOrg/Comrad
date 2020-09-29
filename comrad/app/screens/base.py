@@ -19,8 +19,8 @@ class BaseScreen(MDScreen):
             
             # self.root.remove_widget(self.app.msg_dialog)
         # if hasattr(self.app,'msg_dialog0') and self.app.msg_dialog0: self.root.remove_widget(self.app.msg_dialog0)
-        self.app.clear_widget_tree(MDDialog)
-        self.app.clear_widget_tree(MDDialog2)
+        # self.app.clear_widget_tree(MDDialog)
+        # self.app.clear_widget_tree(MDDialog2)
         pass
 
     @property

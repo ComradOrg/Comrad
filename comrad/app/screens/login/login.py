@@ -398,7 +398,7 @@ class LoginScreen(BaseScreen):
         _fnfn=commie.save_uri_as_qrcode(uri_id)
         # await logfunc(f'Saving public key, encrypted private key, and login secret to hardware-only database. Also saving public key as QR code to: {_fnfn}.',pause=True,clear=False,use_prefix=False)
 
-        await logfunc(f'You can share it by pasting it to someone in a secure message:\n{uri_s}',comrad_name='Keymaker')
+        await logfunc(f'You can share it by pasting it to someone in a secure message:\n\n{uri_s}',comrad_name='Keymaker')
         
         await logfunc(f'You can also share it IRL, phone to phone, as a QR code. It is saved to {fnfn} and looks like this.',img_src=fnfn,comrad_name='Keymaker')
 
