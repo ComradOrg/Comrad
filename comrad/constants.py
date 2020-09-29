@@ -1,7 +1,7 @@
 # addresses
-COMRAD_ONION = 'u7spnj3dmwumzoa4.onion'
+COMRAD_ONION = 'comradxfmyuf2ntu.onion' #u7spnj3dmwumzoa4.onion'
 COMRAD_ONION2 = 'rwg4zcnpwshv4laq.onion'
-COMRAD_URL = '68.66.241.111'  #COMRAD_ONION
+COMRAD_URL = 'komrade.dev'  #COMRAD_ONION
 
 
 OPERATOR_API_URL_TOR = f'http://{COMRAD_ONION}/op/'
