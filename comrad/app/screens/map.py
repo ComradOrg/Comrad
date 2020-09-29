@@ -98,8 +98,8 @@ class MapWidget(MDDialog2):
         self.label_layout.cols=1
         self.label_layout.row_default_height='25sp'
         self.label_layout.row_force_default='25sp'
-        self.label_layout.rows=5
-        self.label_layout.pos_hint={'y':0}
+        self.label_layout.rows=10
+        self.label_layout.pos_hint={'y':1}
         self.label_layout.size_hint=(None,None)
         self.label_layout.width=Window.size[0]
         self.label_layout.height='300sp'

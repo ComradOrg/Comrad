@@ -124,13 +124,13 @@ class TheTelephone(Operator):
     def comrad_request(self,url,allow_clearnet = ALLOW_CLEARNET):
         if '.onion' in url or not allow_clearnet:
             return self.tor_request(url)
-        return requests.get(url,timeout=600)
+        return requests.get(url,timeout=60)
 
     async def comrad_request_async(self,url,allow_clearnet=ALLOW_CLEARNET):
         import requests_async as requests
         if '.onion' in url or not allow_clearnet:
             return await self.tor_request_async(url)
-        return await requests.get(url,timeout=600)
+        return await requests.get(url,timeout=60)
 
 
     def tor_request(self,url):

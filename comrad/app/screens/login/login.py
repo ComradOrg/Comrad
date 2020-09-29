@@ -210,9 +210,9 @@ class LoginScreen(BaseScreen):
                 logger.info(f'passkey login succeeded')
                 
                 # get new data
-                res = await commie.get_updates()
-                if not res.get('res_login',{}).get('success'):
-                    return {'success':False,'res_refresh':refresh}
+                # res = await commie.get_updates()
+                # if not res.get('res_login',{}).get('success'):
+                #     return {'success':False,'res_refresh':refresh}
                  
                 # otherwise, ok
                 self.login_status.text=f'Welcome back, Comrad @{un}'
