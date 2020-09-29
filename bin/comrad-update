@@ -1,8 +1,15 @@
-SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+#!/bin/bash
 
+# funcs (mac doesnt have realpath)
+realpath() {
+    [[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"
+}
+
+
+path_repo="`realpath ~/comrad/code`"
 wd=`pwd`
-path=`realpath "$SCRIPTPATH/.."`
-cd $path
+
+cd $path_repo
 git pull
 git add .
 git commit -m 'comrad update!'

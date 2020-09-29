@@ -1,3 +1,11 @@
+#!/bin/bash
+
+# funcs (mac doesnt have realpath)
+realpath() {
+    [[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"
+}
+
+
 path_conda="`realpath ~/comrad/lib/miniconda3`"
 path_venv="`realpath ~/comrad/code/venv`"
 path_repo="`realpath ~/comrad/code`"

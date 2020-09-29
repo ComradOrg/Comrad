@@ -1,8 +1,11 @@
-SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+#!/bin/bash
 
-wd=`pwd`
-path=`realpath "$SCRIPTPATH/../../data"`
-echo "Removing $path. You will permanently lose your users and contacts. Proceed? "
+# funcs (mac doesnt have realpath)
+realpath() {
+    [[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"
+}
+pathdata="`realpath ~/comrad/data`"
+echo "Removing $pathdata. You will permanently lose your users and contacts. Proceed? "
 
 read -p "[y/N] " y_n
 
@@ -11,7 +14,5 @@ echo $y_n
 if [ ! "$y_n" = "y" ]; then
     echo "Cancelling"
 else
-    rm -r $path
-    #echo "Reregistering..."
-    #comrad-cli /register
+    rm -r $pathdata
 fi

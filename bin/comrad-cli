@@ -1,6 +1,4 @@
-##
-# Run the command line app
-##
+#!/bin/bash
 
 # funcs (mac doesnt have realpath)
 realpath() {
