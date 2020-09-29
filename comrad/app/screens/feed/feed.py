@@ -150,7 +150,8 @@ class PostCard(MDCard):
         self.author_label.font_name='assets/overpass-mono-semibold.otf'
         if self.recipient:
             recip=self.recipient
-            recip=author_prefix+recip #(recip if recip and recip[0].isalpha() else recip[1:])
+            recip='@'+recip if not recip.startswith('@') else recip #(recip if recip and recip[0].isalpha() else recip[1:])
+            # recip=author_prefix+recip #(recip if recip and recip[0].isalpha() else recip[1:])
             self.author_label.text+=f'\n[size={recip_label_font_size}]to '+recip+'[/size]'
             self.author_label.markup=True
         self.author_label.font_size = author_label_font_size

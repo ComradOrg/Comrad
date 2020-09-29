@@ -236,7 +236,7 @@ class MapWidget(MDDialog2):
     def open(self,maxwait=666,pulse=0.1):
         self.draw()
         if not self.intro_label:
-            self.intro_label = self.makelabel('Routing you through the global maze of Tor ...')
+            self.intro_label = self.makelabel('Comrad @Tor: Routing you through the global maze of the deep web ...')
             self.label_layout.add_widget(self.intro_label)
         super().open()
         self.opened=True
