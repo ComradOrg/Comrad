@@ -143,9 +143,8 @@ TELEPHONE = None
 
 
 
-PATH_OPERATOR_WEB_KEYS_FILE = f'/home/ryan/www/website-comrad/pub'
+PATH_OPERATOR_WEB_KEYS_FILE = f'/home/ryan/www/website-komrade/pub'
 PATH_OPERATOR_WEB_KEYS_URL = f'http://{COMRAD_URL}/pub'
-# PATH_OPERATOR_WEB_CONTACTS_DIR = '/home/ryan/www/website-comrad/.contacts'
 # PATH_OPERATOR_WEB_CONTACT_OP_URL = f'http://{COMRAD_URL}/.contacts/TheOperator.png'
 # PATH_OPERATOR_WEB_CONTACT_PH_URL = f'http://{COMRAD_URL}/.contacts/TheTelephone.png'
 
