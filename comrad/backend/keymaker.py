@@ -476,7 +476,7 @@ class Keymaker(Logger):
         keys_saved_d={}
         for keyname in keys_to_save:
             if not '_' in keyname and keyname!='pubkey':
-                self.log('there is no private property in a socialist network! all keys must be split between comrads',keyname)
+                self.log('there is no private property in a socialist network! all keys must be split between comrades',keyname)
             if keyname in keychain:
                 # uri = uri_id
                 uri = uri_id if keyname!='pubkey' else name

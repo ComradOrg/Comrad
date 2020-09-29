@@ -45,7 +45,7 @@ class TheTelephone(Operator):
         # assert that people can speak only with operator in their first enclosed message!
         # if so, dropping the "to"
         if msg_d['to'] != self.op.pubkey.data:
-            raise ComradException('Comrads must communicate securely with Operator first.')
+            raise ComradException('Comrades must communicate securely with Operator first.')
         # opp = Operator(pubkey=msg_d['to'])
         # self.log('got opp:',opp.pubkey.data == msg_d['to'], self.op.pubkey.data == msg_d['to'])
 

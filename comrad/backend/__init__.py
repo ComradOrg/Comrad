@@ -15,7 +15,7 @@ from .callers import *
 
 from .phonelines import *
 from .messages import *
-from .comrads import *
+from .comrades import *
 
 ## define default entities
 OPERATOR = None

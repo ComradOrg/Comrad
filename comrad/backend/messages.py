@@ -113,12 +113,12 @@ on:   {timestr}
 
     @property
     def from_whom(self):
-        # from comrad.backend.comrads import Comrad
+        # from comrad.backend.comrades import Comrad
         return Comrad(self.from_name, pubkey=self.from_pubkey)
 
     @property
     def to_whom(self):
-        # from comrad.backend.comrads import Comrad
+        # from comrad.backend.comrades import Comrad
         return Comrad(self.to_name, pubkey=self.to_pubkey)
     
 

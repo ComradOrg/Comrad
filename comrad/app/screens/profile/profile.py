@@ -276,7 +276,7 @@ class ProfileScreen(ProtectedScreen):
         ## Followers
         self.follower_layout = FollowerLayout()
         # self.author_followers = AuthorFollowers(label='13 followers',icon='account-arrow-left')
-        self.author_following = AuthorFollowing(label='13 comrads',icon='account-multiple')
+        self.author_following = AuthorFollowing(label='13 comrades',icon='account-multiple')
 
 
         ## add to layout

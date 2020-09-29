@@ -49,7 +49,7 @@ BSEP3=b'##########'
 
 OPERATOR_NAME = 'Operator'
 TELEPHONE_NAME = 'Telephone'
-WORLD_NAME = 'comrads'
+WORLD_NAME = 'Comrades'
 PATH_REPO = os.path.abspath(
     os.path.join(
         os.path.dirname(__file__),

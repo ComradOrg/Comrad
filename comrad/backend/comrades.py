@@ -154,7 +154,7 @@ class ComradX(Caller):
             # do_pause()
         
         # clear_screen()
-        logfunc(f'Excellent. But to communicate with comrads securely, you must first cut your public & private encryption keys.',pause=True,clear=True)
+        logfunc(f'Excellent. But to communicate with comrades securely, you must first cut your public & private encryption keys.',pause=True,clear=True)
         # do_pause()
         ## 2) Make pub public/private keys
         keypair = ComradAsymmetricKey()

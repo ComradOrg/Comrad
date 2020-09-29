@@ -67,19 +67,19 @@ We present a simplified set of social media features drawn from everything that'
 
 ## How is this different from ...?
 
-See ["Comparison of alternative social networks" on the wiki](https://github.com/Comrad/Comrad/wiki/Comparison-of-alternative-social-networks) for an attempt at a systematic comparison. (And please help edit, if you can! The data there is a little incomplete and probably a little inaccurate.) But here are some imagined differences:
+See ["Comparison of alternative social networks" on the wiki](https://github.com/ComradOrg/Comrad/wiki/Comparison-of-alternative-social-networks) for an attempt at a systematic comparison. (And please help edit, if you can! The data there is a little incomplete and probably a little inaccurate.) But here are some imagined differences:
 
 * **It's not (fully) decentralized.** Who's afraid of a little central planning? In contrast to [Secure Scuttlebutt](https://scuttlebutt.nz/) and [Cabal Chat](https://cabal.chat/), which are 100% decentralized, subsisting only through peer-to-peer connections, Comrad sticks with the old, client/server model. Why?
 
-* **It *is* anonymous.** Because P2P networks almost always expose your IP address: they privilege decentralization over anonymity -- and, potentially, safety. By contrast, lying hidden within the deep web of Tor, accessible only from this application and its built-in Tor client, Comrad will never reveal who is accessing it and its encrypted information. This is important for comrads organizing protests against the surveillance state, and to protect our social media traffic from being harvested and monetized by surveillance capitalism.
+* **It *is* anonymous.** Because P2P networks almost always expose your IP address: they privilege decentralization over anonymity -- and, potentially, safety. By contrast, lying hidden within the deep web of Tor, accessible only from this application and its built-in Tor client, Comrad will never reveal who is accessing it and its encrypted information. This is important for comrades organizing protests against the surveillance state, and to protect our social media traffic from being harvested and monetized by surveillance capitalism.
 
-* **It's 100% end-to-end encrypted.** Unlike [Mastodon](https://joinmastodon.org/) or [Diaspora](https://diasporafoundation.org/), direct messages between users and within groups remain encrypted 1:1 end-to-end among users. Posts to the public are encrypted to @comrads, a special account which automatically re-encrypts its messages back to any key-registered requester of them.
+* **It's 100% end-to-end encrypted.** Unlike [Mastodon](https://joinmastodon.org/) or [Diaspora](https://diasporafoundation.org/), direct messages between users and within groups remain encrypted 1:1 end-to-end among users. Posts to the public are encrypted to @Comrades, a special account which automatically re-encrypts its messages back to any key-registered requester of them.
 
-* **It verifies identities.** Comrad's server, "The Operator", keeps a permanent record of one thing only: every comrad's name and public key, and requires that new comrads choose a unique name. Whenever you send or receive mail, the Operator will make sure that the name and public key on the letter matches what it has on file, verifying the identity of both parties.  
+* **It verifies identities.** Comrad's server, "The Operator", keeps a permanent record of one thing only: every comrad's name and public key, and requires that new comrades choose a unique name. Whenever you send or receive mail, the Operator will make sure that the name and public key on the letter matches what it has on file, verifying the identity of both parties.  
 
 * **It's (semi-)ephemeral.** Data, like all natural things, should not last forever. Direct messages auto-delete from the server as soon as they are downloaded. Group messages are sent as direct messages through the "web of trust" of the group membership network. Posts to the world auto-delete in however many days you specify. By contrast, data on both [SSB](https://scuttlebutt.nz/) and [Matrix](https://matrix.org/) is undeletable.
 
-* **It's easy to use.** No invitation or server is needed on startup, unlike [SSB](https://scuttlebutt.nz/), [Mastodon](https://joinmastodon.org/), [Diaspora](https://diasporafoundation.org/), or [Briar](https://briarproject.org/). It's basically a Twitter clone, but one where you can also post to a universal feed shared by the entire world (@comrads), so that you can make yourself known, participate in general discussions, find new contacts, and organize new groups.
+* **It's easy to use.** No invitation or server is needed on startup, unlike [SSB](https://scuttlebutt.nz/), [Mastodon](https://joinmastodon.org/), [Diaspora](https://diasporafoundation.org/), or [Briar](https://briarproject.org/). It's basically a Twitter clone, but one where you can also post to a universal feed shared by the entire world (@Comrades), so that you can make yourself known, participate in general discussions, find new contacts, and organize new groups.
 
 
 
@@ -122,7 +122,7 @@ See ["Comparison of alternative social networks" on the wiki](https://github.com
 
 #### ...on Mac OSX
 
-Download and run [this installer](https://github.com/Comrad/Comrad/raw/master/script/InstallComrad.app.zip).
+Download and run [this installer](https://github.com/ComradOrg/Comrad/raw/master/script/InstallComrad.app.zip).
 
 #### ...on Linux or Windows
 
@@ -132,7 +132,7 @@ Open a terminal in Linux, or a [Cygwin shell](https://cygwin.com/install.html) i
 bash <(curl -s https://comrad.app/run)
 ```
 
-[That](https://comrad.app/run)'s a shortcut to [this auto-installer script](https://github.com/Comrad/Comrad/blob/master/script/install). It installs Comrad in a virtual Python environment in the folder "comrad" in your home directory.
+[That](https://comrad.app/run)'s a shortcut to [this auto-installer script](https://github.com/ComradOrg/Comrad/blob/master/script/install). It installs Comrad in a virtual Python environment in the folder "comrad" in your home directory.
 
 ### Run
 
@@ -231,7 +231,7 @@ Crypto-related code is primarily in:
 
   * [comrad/backend/keymaker.py](comrad/backend/keymaker.py)
 
-  * [comrad/backend/comrads.py](comrad/backend/comrads.py)
+  * [comrad/backend/comrades.py](comrad/backend/comrades.py)
 
   * [comrad/backend/phonelines.py](comrad/backend/phonelines.py)
 

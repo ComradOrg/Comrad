@@ -26,7 +26,7 @@ CLI_HEIGHT = get_terminal_size().lines-1
 class CLI(Logger):
     ROUTES = {
         'help':'seek help',
-        'register':'join the comrads',
+        'register':'join the comrades',
         'login':'log back in', 
         'meet':'meet a comrad',
         'who':'show contacts or info',

@@ -726,7 +726,7 @@ class MainApp(MDApp, Logger):
 
         self.msg_dialog.card = postcard = PostCardPopup({
             'author':comrad_name,
-            'author_prefix':'@',
+            'author_prefix':'Comrad @',
             'to_name':'me',
             'content':msg,
             'timestamp':time.time(),

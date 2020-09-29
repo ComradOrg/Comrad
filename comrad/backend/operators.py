@@ -18,7 +18,7 @@ def Comrad(name=None,pubkey=None,*x,**y):
 
     from comrad.backend.the_operator import TheOperator
     from comrad.backend.the_telephone import TheTelephone
-    from comrad.backend.comrads import ComradX
+    from comrad.backend.comrades import ComradX
     global PHONEBOOK
     # already have?
 
@@ -224,7 +224,7 @@ class Operator(Keymaker):
 
         # time to turn around and encrypt
         # @unsure?``
-        # from comrad.backend.comrads import Comrad
+        # from comrad.backend.comrades import Comrad
         # if self != self.phone and type(self)!=Comrad:
         #     # if client, let the request rest
         #     return msg_obj

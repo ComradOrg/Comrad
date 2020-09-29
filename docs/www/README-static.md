@@ -30,7 +30,7 @@
 ## Create encryption keys
 
 ```
-@Keymaker:       Excellent. But to communicate with comrads
+@Keymaker:       Excellent. But to communicate with comrades
                  securely, you must first cut your public &
                  private encryption keys.
 
@@ -134,14 +134,14 @@ __________________     __     __            ____ _______________________________
 
 
 
-## Post to all @comrads
+## Post to all @Comrades
 
-Posts are end-to-encrypted between the @Operator (server) and you: by request, messages to @comrads are decrypted by that account on the server, and then re-encrypted on the fly back to the requester.
+Posts are end-to-encrypted between the @Operator (server) and you: by request, messages to @Comrades are decrypted by that account on the server, and then re-encrypted on the fly back to the requester.
 
 ```
 ############################################################
 from: @marxxx 
-to:   @comrads
+to:   @Comrades
 ############################################################
 
 Nature builds no machines, ... These are products of human
