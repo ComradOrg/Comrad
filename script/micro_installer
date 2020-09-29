@@ -1,13 +1,13 @@
 #!/bin/bash
 #
-# Usage: bash <(curl http://komrade.app/run)
+# Usage: bash <(curl http://comrad.app/run)
 #
-# Also at: https://github.com/Komrade/Komrade/blob/master/script/micro_installer
+# Also at: https://github.com/Comrad/Comrad/blob/master/script/micro_installer
 #
-# For more info, visit: https://github.com/Komrade/Komrade#install
+# For more info, visit: https://github.com/Comrad/Comrad#install
 #
 ##
 
 
-bash <(curl -s https://raw.githubusercontent.com/Komrade/Komrade/master/script/install)
+bash <(curl -s https://raw.githubusercontent.com/Comrad/Comrad/master/script/install)
 

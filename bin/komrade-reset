@@ -13,5 +13,5 @@ if [ ! "$y_n" = "y" ]; then
 else
     rm -r $path
     #echo "Reregistering..."
-    #komrade-cli /register
+    #comrad-cli /register
 fi

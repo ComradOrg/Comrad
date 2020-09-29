@@ -1,5 +1,5 @@
 
-# Komrade
+# Comrad
 
 ## Sign up
 
@@ -12,7 +12,7 @@
                                                                                     
                                                                                     
                         /login [name]    -->     log back in                        
-                        /register [name] -->     new komrade                        
+                        /register [name] -->     new comrad                        
                         /help            -->     seek help                          
                         /exit            -->     exit app                           
                                                                                     
@@ -21,7 +21,7 @@
 @?: /register marxzuckerburg
 
 
-@marxzuckerburg: Hello, this is Komrade @marxzuckerburg.
+@marxzuckerburg: Hello, this is Comrad @marxzuckerburg.
 
                  I would like to sign up for the socialist
                  network revolution.
@@ -30,7 +30,7 @@
 ## Create encryption keys
 
 ```
-@Keymaker:       Excellent. But to communicate with komrades
+@Keymaker:       Excellent. But to communicate with comrads
                  securely, you must first cut your public &
                  private encryption keys.
 
@@ -134,14 +134,14 @@ __________________     __     __            ____ _______________________________
 
 
 
-## Post to all @komrades
+## Post to all @comrads
 
-Posts are end-to-encrypted between the @Operator (server) and you: by request, messages to @komrades are decrypted by that account on the server, and then re-encrypted on the fly back to the requester.
+Posts are end-to-encrypted between the @Operator (server) and you: by request, messages to @comrads are decrypted by that account on the server, and then re-encrypted on the fly back to the requester.
 
 ```
 ############################################################
 from: @marxxx 
-to:   @komrades
+to:   @comrads
 ############################################################
 
 Nature builds no machines, ... These are products of human

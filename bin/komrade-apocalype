@@ -14,8 +14,8 @@ if [ ! "$y_n" = "y" ]; then
 else
     rm -r $path
     #echo "Reregistering..."
-    #komrade-cli /register
+    #comrad-cli /register
     cd $path_code
-    python -c "from komrade import *; create_phonelines()"
-    komrade-update
+    python -c "from comrad import *; create_phonelines()"
+    comrad-update
 fi

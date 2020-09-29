@@ -1,0 +1,185 @@
+#:import LoginScreen screens.login.login.LoginScreen
+#:import LoginBoxLayout screens.login.login.LoginBoxLayout
+#:import UsernameField screens.login.login.UsernameField
+#:import PasswordField screens.login.login.PasswordField
+#:import LoginButtonLayout screens.login.login.LoginButtonLayout
+#:import LoginButton screens.login.login.LoginButton
+#:import RegisterButton screens.login.login.RegisterButton
+#:import LoginStatus screens.login.login.LoginStatus
+#:import rgb main.rgb
+#:import COLOR_TEXT main.COLOR_TEXT
+#:import COLOR_CARD main.COLOR_CARD
+#:import COLOR_CARD_BORDER main.COLOR_CARD_BORDER
+#:import COLOR_ACCENT main.COLOR_ACCENT
+
+<LoginBoxLayout>:
+    id: loginbox
+    orientation:'vertical'
+    cols:1
+    size_hint:None,None
+    width: '333sp'
+    pos_hint: {'center_x':0.5,'center_y':0.5}
+    md_bg_color: rgb(*COLOR_CARD)
+    radius:[20,] 
+    border_radius:20
+    spacing:'10dp'
+    padding:'25dp'
+    adaptive_height: True
+    # canvas:
+    #     Color:
+    #         rgba: rgb(*COLOR_CARD_BORDER)
+    #     Line:
+    #         width: 1
+    #         rounded_rectangle: (self.x, self.y, self.width, self.height, 20, 20, 20, 20)
+
+ 
+
+<UsernameLayout>:
+    cols:2
+    orientation:'horizontal'
+    adaptive_height: True
+    size_hint:1,None
+    # pos_hint:{'right':0.9}
+    # spacing:'100sp'
+    # md_bg_color:1,1,0,1
+
+<WelcomeLabel>:
+    # text: 'Enter, Comrad'
+    halign: 'center'
+    size_hint_x: 1
+    theme_text_color: 'Custom'
+    color: rgb(*COLOR_ACCENT)
+    adaptive_width: True
+    # size_hint:0.333,None
+    # md_bg_color:rgb(*COLOR_TEXT)
+    # pos_hint: {'y':1}
+    halign:'center'
+    
+    
+<UsernameLabel>:
+    theme_text_color: 'Custom'
+    text_color: rgb(*COLOR_TEXT)
+    width:'150sp'
+    # adaptive_width: True
+    size_hint:None,None
+    # md_bg_color:rgb(*COLOR_TEXT)
+    # pos_hint: {'y':1}
+    halign:'center'
+
+    
+
+
+<UsernameField>:
+    id: username
+    text: ""
+    hint_text: "username"
+    required: True
+    write_tab: False
+    multiline: False
+    helper_text_mode: "on_error"
+    color_mode: 'custom'
+    line_color_focus: rgb(*COLOR_TEXT)
+    line_color_normal: rgb(*COLOR_TEXT)
+    current_hint_text_color: rgb(*COLOR_TEXT)
+    error_color:rgb(*COLOR_TEXT)
+    # pos_hint: {'center_x':0.5,'y':0.2}
+    size_hint:0.666,None
+    # font_size:'2dp'
+
+
+
+<PasswordField>:
+    id: password
+    text: ""
+    password: True
+    hint_text: "password"
+    required: True
+    write_tab: False
+    multiline: False
+    helper_text_mode: "on_error"
+    color_mode: 'custom'
+    line_color_focus: rgb(*COLOR_TEXT)
+    line_color_normal: rgb(*COLOR_TEXT)
+    current_hint_text_color: rgb(*COLOR_TEXT)
+    text_color: rgb(*COLOR_TEXT)
+    pos_hint: {'center_x':0.5,'y':0.2}
+    size_hint:0.666,None
+
+<LoginButtonLayout>:
+    id: buttonbox
+    orientation:'horizontal'
+    cols: 2
+    # size_hint_y: None
+    adaptive_width: True
+    height: '56dp'
+    spacing: '25dp'
+    padding: '10dp'
+    # md_bg_color:1,1,0,1
+    size_hint:None,None
+    pos_hint: {'center_x': .5}#, 'bottom':1}
+
+<PasswordPopup>:
+    id: passpopup
+    type: "custom"
+    size: ('300dp','300dp')
+
+    MDBoxLayout:
+        id: msg_popup_box_layout
+        size_hint:(None,None)
+        orientation: 'vertical'
+        cols:1
+        md_bg_color: rgb(*COLOR_CARD)
+        spacing:'0dp'
+        padding:'0dp'
+        pos_hint: {'center_x':0.5, 'center_y':0.5}
+        radius:[20,] 
+        border_radius:20
+        canvas:
+            Color:
+                rgba: rgb(*COLOR_CARD_BORDER,a=0.5)
+            Line:
+                width: 1
+                rounded_rectangle: (self.x, self.y, self.width, self.height, 20, 20, 20, 20)
+
+    
+    
+
+<RegisterButton>:
+    text: ""
+    on_release: self.enter()
+    theme_text_color: "Custom"
+    text_color: rgb(*COLOR_TEXT)
+    md_bg_color: 0,0,0,1
+    # font_size:'24sp'
+    # size_hint:1,None
+
+<LoginButton>:
+    text: ""
+    on_release: self.login()
+    theme_text_color: "Custom"
+    text_color: rgb(*COLOR_TEXT)
+    md_bg_color: 0,0,0,1
+    # font_size:'24sp'
+    # size_hint:1,None
+
+<LoginStatus>:
+    id: login_status
+    text:""
+    theme_text_color: 'Error'
+    size_hint:1,1
+    halign:'center'
+    pos_hint:{'center_x':.5, 'center_y':0.5}
+    
+
+
+<LoginScreen>:
+    name: "login"
+    id: login_screen
+
+    # LoginBoxLayout:
+    #     UsernameField:
+    #     PasswordField:
+    #     LoginButtonLayout:
+    #         LoginButton:
+    #         RegisterButton:
+    #     LoginStatus:

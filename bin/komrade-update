@@ -5,6 +5,6 @@ path=`realpath "$SCRIPTPATH/.."`
 cd $path
 git pull
 git add .
-git commit -m 'komrade update!'
+git commit -m 'comrad update!'
 git push
 cd $wd

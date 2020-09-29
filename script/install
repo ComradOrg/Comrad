@@ -27,36 +27,36 @@ echo '
 
 '
 # install dir?
-echo "Where should komrade live on your device?"
-path_komrade_default="`realpath ~/komrade`"
+echo "Where should comrad live on your device?"
+path_comrad_default="`realpath ~/comrad`"
 
 if [ "$1" = "-n" ]
 then
-    read -p "[$path_komrade_default] " path_komrade
+    read -p "[$path_comrad_default] " path_comrad
 else
-    path_komrade=$path_komrade_default
+    path_comrad=$path_comrad_default
 fi
 
 
-if [ -z "$path_komrade" ]
+if [ -z "$path_comrad" ]
 then
-    path_komrade=$path_komrade_default
+    path_comrad=$path_comrad_default
 fi
 
-if [ ! -d "$path_komrade" ]
+if [ ! -d "$path_comrad" ]
 then
-    mkdir -p $path_komrade
-    echo "created $path_komrade"
+    mkdir -p $path_comrad
+    echo "created $path_comrad"
 fi
 
-path_lib="$path_komrade/lib"
+path_lib="$path_comrad/lib"
 if [ ! -d "$path_lib" ]
 then
     mkdir -p $path_lib
     echo "created $path_lib"
 fi
    
-path_bin="$path_komrade/code/bin"
+path_bin="$path_comrad/code/bin"
 # if [ ! -d "$path_bin" ]
 # then
 #     mkdir -p $path_bin
@@ -67,11 +67,11 @@ path_bin="$path_komrade/code/bin"
 
 echo '
 
-2) downloading Komrade...
+2) downloading Comrad...
 
 '
 
-path_repo="$path_komrade/code"
+path_repo="$path_comrad/code"
 if command -v git &> /dev/null
 then
     echo "using git..."
@@ -80,7 +80,7 @@ then
         cd $path_repo
         git pull
     else
-        cd $path_komrade
+        cd $path_comrad
         
         if [ "$1" = "-n" ]
         then
@@ -99,15 +99,15 @@ then
             git clone https://github.com/Komrade/Komrade.git
             git checkout installer
         fi
-        mv Komrade code
+        mv Comrad code
     fi
 else
-    cd $path_komrade
+    cd $path_comrad
     curl -s -LO https://github.com/Komrade/Komrade/archive/installer.zip
     unzip installer.zip
     rm installer.zip
-    cp -rT Komrade-installer code
-    rm -r Komrade-installer
+    cp -rT Comrad-installer code
+    rm -r Comrad-installer
 fi
 
 
@@ -128,9 +128,9 @@ echo '
 
 
 
-cd $path_komrade
+cd $path_comrad
 
-path_conda="$path_komrade/lib/miniconda3"
+path_conda="$path_comrad/lib/miniconda3"
 # ### Detect if python 3.7?
 # pyv="$(python3 -c 'import sys; print(sys.version_info[0:2])')"
 # if [ ! "$pyv" = "(3, 7)" ]
@@ -271,7 +271,7 @@ echo '
 '
 path_venv="$path_repo/venv"
 
-# cd $path_komrade
+# cd $path_comrad
 cd $path_repo
 echo "Now using python 1: `which python`"
 $condaexec create -y -p "$path_venv" python=3.7 cartopy pip virtualenv
@@ -289,7 +289,7 @@ python -m pip install -r requirements.txt
 
 echo '
 
-6) adding komrade bin folder to path
+6) adding comrad bin folder to path
 
 '
 
@@ -298,13 +298,13 @@ commands_app="
     export PATH=\"$path_conda/bin:\$PATH\"\n
     conda activate $path_venv\n
     python -m pip install -r $path_repo/requirements.txt\n
-    python $path_repo/komrade/app/main.py\n
+    python $path_repo/comrad/app/main.py\n
 "
 
 
 
 export PATH="$path_bin:$PATH"
-bashline="export PATH=\"$path_bin:\$PATH\"     # komrade installation"
+bashline="export PATH=\"$path_bin:\$PATH\"     # comrad installation"
 bashfn="~/.bashrc"
 
 # add to bashrc?
@@ -318,9 +318,9 @@ else
 fi
 
 
-echo -e "Now run Komrade with:
+echo -e "Now run Comrad with:
 
-komrade-app    [GUI interface -- alpha]
+comrad-app    [GUI interface -- alpha]
 
 If that doesn't work, try running this series of comands:
 
@@ -332,19 +332,19 @@ $commands_app
 if [ "$machine" = "Mac" ]
 then
     cd /Applications
-    unzip "$path_bin/Komrade.app.zip"
-    # cp "$path_bin/Komrade.app" /Applications/
+    unzip "$path_bin/Comrad.app.zip"
+    # cp "$path_bin/Comrad.app" /Applications/
 
-    echo "You may run the app by looking for 'Komrade.app' in your /Applications folder."
+    echo "You may run the app by looking for 'Comrad.app' in your /Applications folder."
 fi
 
 # run?
-. $path_bin/komrade-app
+. $path_bin/comrad-app
 
 
 
 
 if [ "$machine" = "Mac" ]
 then
-    echo "You may run the app by looking for 'Komrade.app' in your /Applications folder."
+    echo "You may run the app by looking for 'Comrad.app' in your /Applications folder."
 fi
