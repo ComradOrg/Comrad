@@ -459,7 +459,7 @@ class KomradeX(Caller):
     def msg(self,someone,something):
         return asyncio.run(self.msg_async(someone,something))
     
-    def msg_async(self,someone,something):
+    async def msg_async(self,someone,something):
         # find or boot
         someone = Komrade(someone)
         self.log(f'found {someone}')
