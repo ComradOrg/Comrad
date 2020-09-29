@@ -93,17 +93,17 @@ then
         if [ "$git_method" = "ssh" ]
         then
             echo "using ssh..."
-            git clone git@github.com:ComradCollective/Comrad.git
+            git clone git@github.com:ComradOrg/Comrad.git
             git checkout installer
         else
-            git clone https://github.com/ComradCollective/Comrad.git
+            git clone https://github.com/ComradOrg/Comrad.git
             git checkout installer
         fi
         mv Comrad code
     fi
 else
     cd $path_comrad
-    curl -s -LO https://github.com/ComradCollective/Comrad/archive/installer.zip
+    curl -s -LO https://github.com/ComradOrg/Comrad/archive/installer.zip
     unzip installer.zip
     rm installer.zip
     cp -rT Comrad-installer code
