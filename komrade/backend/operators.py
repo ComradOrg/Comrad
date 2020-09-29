@@ -64,7 +64,7 @@ class Operator(Keymaker):
         'login',
         'deliver_msg',
         'introduce',
-        'post',
+        'post_async',
         'get_updates'
     ]
 

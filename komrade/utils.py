@@ -40,7 +40,7 @@ def logger(name=__name__):
 
 LOG = logger().info
 
-def log(*x,off=False):
+def log(*x,off=False,**y):
     global LOG
     #if not LOG: LOG=logger().debug
     if not LOG: LOG=print
@@ -132,7 +132,7 @@ class Logger(object):
     def toggle_log(self):
         self.show_log() if self.off else self.hide_log()
 
-    def log(self,*x,pause=PAUSE_LOGGER,clear=CLEAR_LOGGER):
+    def log(self,*x,pause=PAUSE_LOGGER,clear=CLEAR_LOGGER,**y):
         curframe = inspect.currentframe()
         calframe = inspect.getouterframes(curframe, 2)
         mytype = type(self).__name__

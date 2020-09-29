@@ -31,7 +31,7 @@ class BaseScreen(MDScreen):
     def app(self):
         return App.get_running_app()
 
-    def log(self,*x):
+    def log(self,*x,**y):
         return self.app.log(*x)
 
     @property

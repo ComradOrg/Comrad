@@ -4,7 +4,7 @@ from komrade.backend import *
 from komrade.backend.keymaker import *
 from komrade.backend.messages import Message
 
-import logging
+import logging,asyncio
 logger = logging.getLogger(__name__)
 
 
@@ -107,8 +107,9 @@ class KomradeX(Caller):
         return await super().ring_ring(msg,caller=self,**y)
 
 
-
-
+    def refresh(self,include_posts=True):
+        res = asyncio.run(self.get_updates(include_posts=include_posts))
+        return {'res':res, 'success':res.get('success'), 'status':res.get('status','')}
 
 
     ####################################
@@ -179,13 +180,13 @@ class KomradeX(Caller):
             # time.sleep(1)
 
         ## CALL OP WITH PUBKEY
-        resp_msg_d = self.ring_ring(
+        resp_msg_d = asyncio.run(self.ring_ring(
             {
                 'name':name, 
                 'pubkey': pubkey.data,
             },
             route='register_new_user'
-        )
+        ))
         # print()
         clear_screen()
         logfunc(resp_msg_d.get('status')+ART_OLDPHONE4,komrade_name='Operator',pause=True)
@@ -505,7 +506,11 @@ class KomradeX(Caller):
     #def post(self,something):
     #    return self.msg(WORLD_NAME,something)
     
-    async def post(self,something):
+    def post(self,something):
+        return asyncio.run(self.post_async(something))
+
+
+    async def post_async(self,something):
         # sign it!
         self.log('something =',something)
 
@@ -552,7 +557,7 @@ class KomradeX(Caller):
             {
                 'data':post_pkg_b
             },
-            route='post'
+            route='post_async'
         )
         self.log('post res from Op <-',res_op)
         return res_op

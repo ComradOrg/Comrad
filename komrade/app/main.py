@@ -503,9 +503,8 @@ class MainApp(MDApp, Logger):
         
         self.map.add_point(lat,long,flag)
         self.map.draw()
-        import asyncio
         # await asyncio.sleep(2)
-        logger.info('CALLBACK ON HOP: ' + flag)
+        # logger.info('CALLBACK ON HOP: ' + flag)
 
     def load_store(self):
         if not self.store.exists('user'): return

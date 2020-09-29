@@ -1,26 +1,9 @@
+path_conda="`realpath ~/komrade/lib/miniconda3`"
+path_venv="`realpath ~/komrade/code/venv`"
+path_repo="`realpath ~/komrade/code`"
 
-export KOMRADE_SHOW_LOG=0
+source $path_conda/etc/profile.d/conda.sh
+export PATH="$path_conda/bin:$PATH"
+conda activate $path_venv
+python -m pip install -r $path_repo/requirements.txt
 
-echo "`which python`"
-
-
-
-SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-pathvenv=`realpath "$SCRIPTPATH/../venv"`
-pathconda=`realpath "$SCRIPTPATH/../../lib/miniconda3"`
-
-echo $SCRIPTPATH
-echo $pathvenv
-echo $pathconda
-
-source $pathconda/etc/profile.d/conda.sh
-
-export PATH="$pathconda/bin:$PATH"
-#echo $PATH
-
-echo "`which conda`"
-conda activate
-conda activate "$pathvenv"
-
-
-#echo "`which python`"

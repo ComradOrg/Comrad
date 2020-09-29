@@ -106,7 +106,7 @@ class PostScrollView(ScrollView): pass
 class PostCard(MDCard):
     @property
     def app(self): return App.get_running_app()
-    def log(self,*x): self.app.log(*x)
+    def log(self,*x,**y): self.app.log(*x)
 
     def __init__(self, data):
         super().__init__()

@@ -65,7 +65,7 @@ class Crypt(Logger):
         self.db = hirlite.Rlite(path=self.fn)
 
 
-    def log(self,*x):
+    def log(self,*x,**y):
         if LOG_GET_SET:
             super().log(*x)
         
