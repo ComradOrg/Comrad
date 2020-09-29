@@ -29,7 +29,11 @@ class MapWidget(MDDialog2):
     @property
     def projection(self):
         # return ccrs.PlateCarree()
-        return ccrs.EckertI()
+        # return ccrs.EckertI()
+        # return ccrs.EquidistantConic()
+        # return ccrs.LambertConformal(central_longitude=0)#,central_latitude=0)
+        # return ccrs.LambertConformal(central_longitude=0)#,central_latitude=0)
+        return ccrs.AlbersEqualArea()
     
     @property
     def figsize(self):
@@ -51,9 +55,9 @@ class MapWidget(MDDialog2):
     @property
     def color_marker(self): return rgb(*COLOR_ICON)
     @property
-    def color_line(self): return rgb(*COLOR_ICON)
+    def color_line(self): return rgb(*rufusred) # COLOR_ICON)
     @property
-    def color_line_dark(self): return rgb(*grullo2)
+    def color_line_dark(self): return rgb(*COLOR_ICON)
 
     def __init__(self):
         self.last_lat = None
@@ -145,7 +149,7 @@ class MapWidget(MDDialog2):
         odir=PATH_MAPS
         if not os.path.exists(odir): os.makedirs(odir)
         ofn=os.path.join(odir,f't_{len(self.points)}.png')
-        # plt.gca().invert_yaxis()
+        plt.gca().invert_yaxis()
         plt.savefig(ofn, format='png',transparent=True,pad_inches=0.1,bbox_inches = 'tight')
 
         # flip?
