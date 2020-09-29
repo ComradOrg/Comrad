@@ -206,7 +206,7 @@ class MapWidget(MDDialog2):
 
         # line
         if self.last_lat and self.last_long:
-            self.ax.lines = []
+            # if self.ax.lines: self.ax.lines.pop(0)
             plt.plot(
                 [self.last_long, long],
                 [self.last_lat, lat],
