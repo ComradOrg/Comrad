@@ -1,21 +1,13 @@
+
+
 SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-wd=`pwd`
-path=`realpath "$SCRIPTPATH/../../data"`
-path_code=`realpath "$SCRIPTPATH/../../code"`
-echo "Removing $path. You will permanently lose your users and contacts, including the prime entities of Operator, Telephone, and World. Proceed? "
+source "SCRIPTPATH/komrade-activate"
+source "`which komrade-activate`"
 
-read -p "[y/N] " y_n
+cd $SCRIPTPATH
+cd ..
 
-echo $y_n
+python -c "from comrad import *; create_phonelines()"
 
-if [ ! "$y_n" = "y" ]; then
-    echo "Cancelling"
-else
-    rm -r $path
-    #echo "Reregistering..."
-    #comrad-cli /register
-    cd $path_code
-    python -c "from comrad import *; create_phonelines()"
-    comrad-update
-fi
+$SCRIPTPATH/comrad-update
