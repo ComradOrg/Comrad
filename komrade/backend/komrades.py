@@ -558,7 +558,7 @@ class KomradeX(Caller):
             {
                 'data':post_pkg_b
             },
-            route='post'
+            route='deliver_post'
         )
         self.log('post res from Op <-',res_op)
         return res_op
@@ -779,6 +779,8 @@ class KomradeX(Caller):
             'success':True,
             'post':post_obj
         }
+
+    def msgs(self,*x,**y): return self.messages(*x,**y)
 
     def messages(self,
             unread=None,
