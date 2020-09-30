@@ -1,6 +1,6 @@
 # Comrad
 
-Comrad is a 'socialist network': encrypted, insurveillable, unmontizeable, and self-governing. Take back the internet from Big Tech and sieze the means of digital production!
+Comrad is a social*ist* network: encrypted, insurveillable, unmontizeable, and self-governing. Meet fellow comrades, communicate confidentially, organize groups securely, discuss freely -- and help take back the internet from Big Tech. Sieze the means of digital production!
 
 ## Why another social network?
 
@@ -30,13 +30,14 @@ Group accounts or 'collectives', like @portland or @socialists, grow as existing
 
 Data is deleted as soon as possible from Comrad. Comrad's "Operator" simply sorts and holds the mail temporarily: as soon as users log in to download their mail, the messages are deleted from the server and network forever.
 
+### Open-source
+
+Information wants to be communist.
+
 ### Anti-profit
 
 Not just non-profit, we're anti-profit.
 
-### Open-source
-
-Information wants to be communist.
 
 ## Social media features
 
