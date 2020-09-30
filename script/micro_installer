@@ -2,12 +2,12 @@
 #
 # Usage: bash <(curl http://comrad.app/run)
 #
-# Also at: https://github.com/Comrad/Comrad/blob/master/script/micro_installer
+# Also at: https://github.com/ComradOrg/Comrad/blob/master/script/micro_installer
 #
-# For more info, visit: https://github.com/Comrad/Comrad#install
+# For more info, visit: https://github.com/ComradOrg/Comrad#install
 #
 ##
 
 
-bash <(curl -s https://raw.githubusercontent.com/Comrad/Comrad/master/script/install)
+bash <(curl -s https://raw.githubusercontent.com/ComradOrg/Comrad/master/script/install)
 
