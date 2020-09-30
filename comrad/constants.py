@@ -395,3 +395,13 @@ COLOR_ACTIVE = russiangreen
 
 ALL_COLORS = list({v for (k,v) in globals().items() if type(v)==tuple and len(v)==3})
 
+
+
+SCREEN_TO_ICON = {
+    'feed':'home-outline',
+    'messages':'message-outline',
+    'post':'pencil-plus-outline',
+    'profile':'account-circle-outline',
+    'refresh':'refresh',
+    'login':'exit-run'
+}

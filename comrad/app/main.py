@@ -75,6 +75,8 @@ class MyLayout(MDBoxLayout):
     scr_mngr = ObjectProperty(None)
     post_id = ObjectProperty()
 
+    def log(self,*x,**y): return self.app.log(*x,**y)
+
     @property
     def app(self):
         if not hasattr(self,'_app'):
@@ -87,6 +89,21 @@ class MyLayout(MDBoxLayout):
 
     def change_screen(self, screen, *args):
         self.scr_mngr.current = screen
+        self.app.screen = screen
+
+        # toolbar
+        toolbar=self.ids.toolbar
+        action_items = toolbar.ids.right_actions.children
+        for item in action_items:
+            # this the screen?
+            self.log('ITEM!!',item, item.icon)
+            if item.icon == SCREEN_TO_ICON[screen]:
+                item.text_color=rgb(*COLOR_ACCENT)
+            else:
+                item.text_color=rgb(*COLOR_ICON)
+        pass
+
+
 
     def change_screen_from_uri(self,uri,*args):
         self.app.uri=uri
@@ -413,6 +430,7 @@ class MainApp(MDApp, Logger):
     login_expiry = 60 * 60 * 24 * 7  # once a week
     texture = ObjectProperty()
     uri='/do/login'
+    screen='login'
 
     def rgb(self,*_): return rgb(*_)
 
@@ -461,7 +479,10 @@ class MainApp(MDApp, Logger):
         logo.pos_hint={'center_y':0.43}
         logo.text_color=root.rgb(*COLOR_LOGO)
         
-        self.root.change_screen_from_uri(self.uri if self.uri else DEFAULT_URI)
+        action_items = toolbar.ids.right_actions.children
+
+
+        
 
         # build the walker
         self.walker=MazeWalker(callbacks=self.callbacks)
@@ -475,6 +496,15 @@ class MainApp(MDApp, Logger):
         from comrad.app.screens.map import MapWidget
         self.map = MapWidget()
         
+        self.change_screen(self.screen)
+
+        for item in action_items:
+            if item.icon == SCREEN_TO_ICON['login']:
+                item.text_color=rgb(*COLOR_ACCENT)
+            else:
+                item.text_color=rgb(*COLOR_ICON)
+        
+
         return self.root
 
     # def boot(self,username):

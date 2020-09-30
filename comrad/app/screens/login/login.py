@@ -52,6 +52,7 @@ class LoginScreen(BaseScreen):
     def on_pre_enter(self):
         #log(self.ids)
         #log('hello?')
+        super().on_pre_enter()
         self.dialog=None
         self.pass_added=False
         self.layout = LoginBoxLayout()
