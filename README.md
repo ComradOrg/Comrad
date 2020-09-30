@@ -44,27 +44,27 @@ Not just non-profit, we're anti-profit.
 We present a simplified set of social media features drawn from everything that's out there:
 
 #### Profile
-  * Curate a profile with photo and posts (e.g. Twitter)
-  * Show profile to world (e.g. Twitter)
-  * Show profile only to those you trust (e.g. Facebook)
-  * Show profile only to your local area (e.g. Nextdoor)
+  * Curate a profile with photo and posts (~Twitter)
+  * Show profile to world (~Twitter)
+  * Show profile only to those you trust (~Facebook)
+  * Show profile only to your local area (~Nextdoor)
 
 #### Posting
   * Post up to 1 image and/or 1000 characters
-  * Post to the entire world (e.g. Twitter) ✔
-  * Post to those you trust (e.g. Facebook)
-  * Post to your surrounding area by a distance radius (e.g. Nextdoor)
-  * Anonymously up-vote or down-vote posts (e.g. Reddit)
+  * Post to the entire world (~Twitter) ✔
+  * Post to those you trust (~Facebook)
+  * Post to self-moderating groups (~Facebook)
+  * Anonymously up-vote or down-vote posts (~Reddit)
+  * Post with encrypted data over untraceable connection (~new?) ✔
 
 #### Organizing
-  * Host events and invite others (e.g. Facebook)
-  * Host events like protests anonymously (new)
-  * Anonymously pin on a map sites of danger, like police (e.g. Waze)
+  * Host events and invite others (~Facebook)
+  * Host events like protests anonymously (~new?)
+  * Anonymously pin on a map sites of danger, like police (~Waze)
 
 #### Messaging
-  * Message securely with encrypted contents (e.g. Signal) ✔
-  * Message with untraceable metadata via Tor (new) ✔
-
+  * Message securely with encrypted contents (~Signal) ✔
+  * Message over untraceable connection (~[Briar](https://briarproject.org/)/new?) ✔
 
 ## How is this different from ...?
 
