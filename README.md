@@ -1,6 +1,6 @@
 # Comrad
 
-Comrad is a social*ist* network: encrypted, insurveillable, unmontizeable, and self-governing. Meet fellow comrades and message them securely, organize safely into groups, plan demonstrations secretly and spontaneously – and help fight back against the police state and surveillance capitalism, both online and off.
+Comrad is a social*ist* network: encrypted, insurveillable, unmontizeable, and self-governing. Meet fellow comrades and message them securely, organize safely into self-moderated groups, plan demonstrations secretly and spontaneously – and help fight back against the police state and surveillance capitalism, both online and off.
 
 ## Why another social network?
 
