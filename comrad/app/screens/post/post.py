@@ -313,7 +313,6 @@ class PostScreen(ProtectedScreen):
 
         if recipient.startswith('@'): recipient=recipient[1:]
         self.recipient = recipient
-        channel = recipient
 
         # log('?????????????????'+self.media_uid)
         # if not hasattr(self,'img_id') and self.upload_button.selection:
@@ -325,7 +324,13 @@ class PostScreen(ProtectedScreen):
             file_ext = self.img_ext if hasattr(self,'img_ext') else None
             #await self.app.post(content=content, channel = channel, file_id=file_id, file_ext=file_ext)
             # post?
-            await self.app.comrad.post_async(content)
+            
+            res = await self.app.comrad.post_async(content)
+            self.log('GOT BACK RES:',res)
+            if res.get('res_posts',{}).get('success'):
+                id2post=res.get('res_posts',{}).get('posts',{})
+                self.app.comrad.save_posts(id2post)
+
             import time
             self.close_dialog()
             if hasattr(self.app,'map') and self.app.map:
