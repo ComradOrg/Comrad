@@ -140,7 +140,7 @@ class MapWidget(MDDialog2):
         from matplotlib import transforms
         from PIL import Image as pImage
         from PIL import ImageOps
-        tr = transforms.Affine2D().rotate_deg(90)
+        # tr = transforms.Affine2D().rotate_deg(90)
 
 
         # buf = io.BytesIO()
