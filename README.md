@@ -1,6 +1,6 @@
 # Comrad
 
-Comrad is a socialist network. It seizes the means of digital production.
+Comrad is a 'socialist network': encrypted, insurveillable, unmontizeable, and self-governing. Take back the internet from Big Tech and sieze the means of digital production!
 
 ## Why another social network?
 
