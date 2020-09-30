@@ -468,7 +468,10 @@ class TheOperator(Operator):
             'status':'Saved message successfully',
             'success':True,
             'post_id':post_id,
-            'msg_saved':attached_msg
+            'msg_saved':attached_msg,
+
+            # last minute post grab?
+            'res_posts':self.get_posts(msg_to_op)
         }
         self.log('res =',res)
         return res
