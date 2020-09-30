@@ -264,10 +264,10 @@ class ProfileScreen(ProtectedScreen):
         # self.author_desc.halign='left'
 
         ## Pronouns
-        self.author_pronouns = AuthorPronouns(label='he/him',icon='gender-transgender')
+        self.author_pronouns = AuthorPronouns(label='they/them',icon='gender-transgender')
 
         ## AUTHOR PLACE
-        self.author_place = AuthorPlace(label='Earth',icon='map-marker-outline')
+        self.author_place = AuthorPlace(label='Deterritorialized',icon='map-marker-outline')
 
         ## Website
         self.author_website = AuthorWebsite(label='website.org', icon='link-variant')
@@ -309,18 +309,23 @@ class ProfileScreen(ProtectedScreen):
         asyncio.create_task(self.add_author_posts())
 
     async def add_author_posts(self):
-        # add posts
         lim=25
-        posts=await self.app.get_my_posts()
-        self.log('POSTS!?',posts)
-        # stop
+        
+        posts=self.app.comrad.sent_posts()
+
         for i,post in enumerate(posts):
             if i>lim: break
-            
-            post_obj = PostCard(post)
-            self.log(post)
+            data = {
+                'author':post.from_name,
+                'to_name':post.to_name,
+                'content':post.msg.get('txt') if type(post.msg)==dict else str(post.msg),
+                'timestamp':post.timestamp
+            }
+            post_obj = PostCard(data)
+            self.log('sent post!',post)
             self.posts.append(post_obj)
             self.carousel.add_widget(post_obj)
+
 
     # def on_touch_move(self, ent):
     #     if self.carousel.index:

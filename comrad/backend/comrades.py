@@ -199,7 +199,7 @@ class ComradX(Caller):
         # clear_screen()
         logfunc('Great. Comrad @Operator now has your name and public key on file (and nothing else!).',pause=True,clear=True)
 
-        logfunc(f"(2) Your PRIVATE key, on the other hand, must be stored only on your device hardware.",pause=True)
+        logfunc(f"Your PRIVATE key, on the other hand, must be stored only on your device hardware.",pause=True)
         logfunc('''Your private key is so sensitive we'll even encrypt it before storing it.''',pause=True,use_prefix=False)
 
         
@@ -502,6 +502,13 @@ class ComradX(Caller):
             route='deliver_msg'
         )
         self.log('-->',res)
+        # if successful
+        if res.get('success'):
+            # add to outbox
+            post_id = res.get('post_id')
+            if post_id:
+                self.add_to_msg_outbox(post_id)
+        
         return res
 
     #def post(self,something):
@@ -560,8 +567,35 @@ class ComradX(Caller):
             },
             route='deliver_post'
         )
+
         self.log('post res from Op <-',res_op)
+        # if successful
+        if res_op.get('success'):
+            # add to outbox
+            post_id = res_op.get('post_id')
+            if post_id:
+                self.add_to_post_outbox(post_id)
+
+            # any posts to save right now?
+            if res_op.get('res_posts',{}).get('success'):
+                id2post=res_op.get('res_posts',{}).get('posts',{})
+                if id2post:
+                    self.save_posts(id2post)
+            
+        # stop
         return res_op
+
+    def add_to_post_outbox(self,post_id):
+        outbox = self.get_inbox_crypt(prefix='/outbox/post/')
+        outbox.prepend(post_id)
+        self.log('added to outbox:',post_id,outbox.values)
+        return {'success':True,'status':'Added {post_id} to outbox for posts.'}
+
+    def add_to_msg_outbox(self,post_id):
+        outbox = self.get_inbox_crypt(prefix='/outbox/msg/')
+        outbox.prepend(post_id)
+        self.log('added to outbox for msgs:',post_id,outbox.values)
+        return {'success':True,'status':'Added {post_id} to outbox for messages.'}
 
     
     @property
@@ -612,7 +646,7 @@ class ComradX(Caller):
             inbox_prefix='/inbox/',
             post_prefix='/post/'
         )
-
+    
     ## Getting updates
     async def get_updates(self,include_posts=True):
         # get any parameters we need
@@ -689,12 +723,16 @@ class ComradX(Caller):
         return len(self.messages())
 
     
+    def sent_posts(self):
+        return self.posts(inbox_prefix='/outbox/post/')
     
-    
+    def sent_messages(self):
+        return self.messages(inbox_prefix='/outbox/msg/')
+
     def posts(self,
             unread=None,
-            inbox_prefix='/inbox/'):
-        inbox_prefix='/feed/'
+            inbox_prefix='/feed/'):
+
         inbox=self.get_inbox_crypt(prefix=inbox_prefix).values
         read=self.get_inbox_crypt(prefix=inbox_prefix+'read/').values
         self.log('post index<-',inbox)

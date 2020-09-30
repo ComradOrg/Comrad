@@ -371,7 +371,7 @@ class LoginScreen(BaseScreen):
 
         ## PRIVATE KEY
 
-        await logfunc(f"(2) Your PRIVATE encryption key, on the other hand, will be stored only on your device hardware. Do not share it with anyone or across any network whatsoever.")
+        await logfunc(f"Your PRIVATE encryption key, on the other hand, will be stored only on your device hardware. Do not share it with anyone or across any network whatsoever.")
         await logfunc(f"In fact this private encryption is so sensitive we'll encrypt it before storing it on your device.",pause=True,use_prefix=False)
         
         passphrase = await self.app.get_input('Please enter a memorable password.',get_pass=True)

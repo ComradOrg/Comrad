@@ -327,9 +327,7 @@ class PostScreen(ProtectedScreen):
             
             res = await self.app.comrad.post_async(content)
             self.log('GOT BACK RES:',res)
-            if res.get('res_posts',{}).get('success'):
-                id2post=res.get('res_posts',{}).get('posts',{})
-                self.app.comrad.save_posts(id2post)
+            
 
             import time
             self.close_dialog()
