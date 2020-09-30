@@ -298,12 +298,13 @@ class FeedScreen(ProtectedScreen):
             # await self.app.get_updates()
             
             posts=self.get_posts()
-            for i,post in enumerate(reversed(posts)):
+            for i,post in enumerate(posts):
                 if i>lim: break
                 data = {
                     'author':post.from_name,
                     'to_name':post.to_name,
-                    'content':post.msg.get('txt') if type(post.msg)==dict else str(post.msg)
+                    'content':post.msg.get('txt') if type(post.msg)==dict else str(post.msg),
+                    'timestamp':post.timestamp
                 }
                 post_obj = PostCard(data)
                 self.posts.append(post_obj)
