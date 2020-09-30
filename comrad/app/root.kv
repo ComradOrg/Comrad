@@ -4,6 +4,7 @@
 #:include screens/messages/messages.kv
 #:include screens/notifications/notifications.kv
 #:include screens/profile/profile.kv
+#:include screens/refresh/refresh.kv
 
 
 
@@ -238,7 +239,7 @@ MyLayout:
         theme_text_color:'Custom'
         background_hue: '500'
         # right_action_items: [['account-circle-outline', partial(root.change_screen, 'profile')],['card-text', partial(root.change_screen, 'feed')],['message-outline', partial(root.change_screen, 'messages')],['pencil-plus-outline', partial(root.change_screen, 'post')],['exit-run', partial(root.change_screen, 'login')]]
-        right_action_items: [[SCREEN_TO_ICON['feed'], partial(root.change_screen, 'feed')],[SCREEN_TO_ICON['messages'], partial(root.change_screen, 'messages')],[SCREEN_TO_ICON['post'], partial(root.change_screen, 'post')],[SCREEN_TO_ICON['profile'], partial(root.change_screen, 'profile')],[SCREEN_TO_ICON['refresh'], partial(root.change_sreen, 'refresh')],[SCREEN_TO_ICON['login'], partial(root.change_screen, 'login')]]
+        right_action_items: [[SCREEN_TO_ICON['feed'], partial(root.change_screen, 'feed')],[SCREEN_TO_ICON['messages'], partial(root.change_screen, 'messages')],[SCREEN_TO_ICON['post'], partial(root.change_screen, 'post')],[SCREEN_TO_ICON['profile'], partial(root.change_screen, 'profile')],[SCREEN_TO_ICON['refresh'], partial(root.change_screen, 'refresh')],[SCREEN_TO_ICON['login'], partial(root.change_screen, 'login')]]
         #left_action_items: [[f"assets/fist2.png", partial(root.change_screen, 'feed')]]
         
         # ['bell-outline', partial(root.change_screen, 'login')]
@@ -274,3 +275,6 @@ MyLayout:
 
         ProfileScreen:
             id: profile_screen
+
+        RefreshScreen:
+            id: refresh_screen

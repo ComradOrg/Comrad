@@ -89,7 +89,8 @@ class MyLayout(MDBoxLayout):
 
     def change_screen(self, screen, *args):
         self.scr_mngr.current = screen
-        self.app.screen = screen
+        self.app.last_screen = self.app.screen
+        self.app.screen = self.screen = screen
 
         # toolbar
         toolbar=self.ids.toolbar
@@ -116,24 +117,24 @@ class MyLayout(MDBoxLayout):
         self.post_id=post_id
         self.change_screen('view')
 
-    def refresh(self,*x,**yy):
-        async def go():    
-            if not hasattr(self.app,'is_logged_in') or not self.app.is_logged_in or not hasattr(self.app,'comrad') or not self.app.comrad:
-                self.change_screen('login')
-                self.app.log('changing screen???')
-                return None
+    # def refresh(self,*x,**yy):
+    #     async def go():    
+    #         if not hasattr(self.app,'is_logged_in') or not self.app.is_logged_in or not hasattr(self.app,'comrad') or not self.app.comrad:
+    #             self.change_screen('login')
+    #             self.app.log('changing screen???')
+    #             return None
 
 
-            logger.info(f'REFRESH: {self.app.is_logged_in}, {self.app.comrad.name}')
-            self.app.log('<--',x,yy)
-            if not hasattr(self.app,'map') or not self.app.map:
-                from comrad.app.screens.map import MapWidget
-                self.app.map=MapWidget()
-            self.app.map.open()
-            await self.app.comrad.get_updates()
-            self.app.map.dismiss()
-            self.app.map=None
-        asyncio.create_task(go())
+    #         logger.info(f'REFRESH: {self.app.is_logged_in}, {self.app.comrad.name}')
+    #         self.app.log('<--',x,yy)
+    #         if not hasattr(self.app,'map') or not self.app.map:
+    #             from comrad.app.screens.map import MapWidget
+    #             self.app.map=MapWidget()
+    #         self.app.map.open()
+    #         await self.app.comrad.get_updates()
+    #         self.app.map.dismiss()
+    #         self.app.map=None
+    #     asyncio.create_task(go())
 
 
 
@@ -431,11 +432,11 @@ class MainApp(MDApp, Logger):
     texture = ObjectProperty()
     uri='/do/login'
     screen='login'
+    last_screen=None
 
     def rgb(self,*_): return rgb(*_)
 
     def change_screen(self, screen, *args):
-        self.screen=screen
         self.root.change_screen(screen,*args)
 
     def get_username(self): return self._name
