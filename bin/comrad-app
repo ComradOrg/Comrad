@@ -14,6 +14,14 @@ path_conda="`realpath ~/comrad/lib/miniconda3`"
 path_venv="`realpath ~/comrad/code/venv`"
 path_repo="`realpath ~/comrad/code`"
 
+# update?
+path_repo_git="$path_repo/.git"
+if [ -d "$path_repo_git" ]
+then
+    pushd $path_repo && git pull
+fi
+
+
 source $path_conda/etc/profile.d/conda.sh
 export PATH=\"$path_conda/bin:\$PATH\"
 conda activate $path_venv
