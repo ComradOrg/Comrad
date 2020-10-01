@@ -149,7 +149,7 @@ class MapWidget(MDDialog2):
         odir=PATH_MAPS
         if not os.path.exists(odir): os.makedirs(odir)
         ofn=os.path.join(odir,f't_{len(self.points)}.png')
-        plt.gca().invert_yaxis()
+        # plt.gca().invert_yaxis()
         plt.savefig(ofn, format='png',transparent=True,pad_inches=0.1,bbox_inches = 'tight')
 
         # flip?

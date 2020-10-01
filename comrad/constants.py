@@ -32,15 +32,18 @@ PATH_SUPER_SECRET_OP_KEY = os.path.join(PATH_SUPER_SECRETS,'.comrad.op.key')
 PATH_MAPS = os.path.join(PATH_COMRAD,'maps')
 
 PATH_LOG_OUTPUT = os.path.join(PATH_COMRAD,'logs')
+PATH_AVATARS = os.path.join(PATH_COMRAD,'avatars')
 
 
-for x in [PATH_COMRAD,PATH_COMRAD_DATA,PATH_COMRAD_KEYS,PATH_QRCODES,PATH_SECRETS,PATH_SUPER_SECRETS,PATH_LOG_OUTPUT]:
+for x in [PATH_COMRAD,PATH_COMRAD_DATA,PATH_COMRAD_KEYS,PATH_QRCODES,PATH_SECRETS,PATH_SUPER_SECRETS,PATH_LOG_OUTPUT,PATH_AVATARS]:
     if not os.path.exists(x):
         os.makedirs(x)
 
 CRYPT_USE_SECRET = True
 PATH_CRYPT_SECRET = os.path.join(PATH_SECRETS,'.salt')
 PATH_CRYPT_SECRET_KEY = os.path.join(PATH_SECRETS,'.key')
+AVATAR_WIDTH=300
+
 
 # etc
 BSEP=b'||||||||||'
@@ -59,7 +62,6 @@ PATH_REPO = os.path.abspath(
 PATH_GUI = os.path.join(PATH_REPO,'comrad','app')
 PATH_GUI_ASSETS = os.path.join(PATH_GUI,'assets')
 PATH_DEFAULT_AVATAR = os.path.join(PATH_GUI_ASSETS,'avatars','britney2.jpg')
-
 
 PATH_REPO = PATH_APP = os.path.abspath(os.path.dirname(__file__))
 # PATH_APP = os.path.join(PATH_REPO,'comrad')
@@ -83,7 +85,7 @@ KEYNAMES = [
 
 OPERATOR_INTERCEPT_MESSAGE = "If you'd like to make a call, please hang up and try again. If you need help, hang up, and then dial your operator."
 
-
+ALLOWED_IMG_EXT = {'png','jpg','jpeg','gif'}
 
 # KEYMAKER_DEFAULT_KEYS_TO_SAVE = ['pubkey_encr', 'privkey_encr', 'adminkey_encr']
 # KEYMAKER_DEFAULT_KEYS_TO_RETURN =  ['pubkey_decr_encr', 'privkey_decr_encr', 'adminkey_decr_encr']

@@ -21,7 +21,7 @@ from copy import copy,deepcopy
 from kivy.animation import Animation
 from main import MyLabel,COLOR_ICON
 from misc import *
-
+import shutil
 
 
 class ProfileAvatar(Image):
@@ -60,8 +60,15 @@ class ProfileAvatar(Image):
         self.handle_selection(path)
 
     def handle_selection(self, selection):
-        self.selection = selection
-        raise Exception(selection)
+        if selection and type(selection)==list:
+            fnfn = selection[0]
+            _,ext=os.path.splitext(fnfn)
+            if ext[1:] in ALLOWED_IMG_EXT:
+                #avatar_fnfn = os.path.join(PATH_AVATAR,self.com)
+                self.parent.parent.parent.parent.parent.change_avatar(fnfn)
+
+
+
 
 class LayoutAvatar(MDBoxLayout): pass
 
@@ -113,7 +120,7 @@ def circularize_img(img_fn, width, im=None, do_crop=True,bw=False,resize=True,ci
     log=App.get_running_app().log
 
     #if not im: 
-    im = Image.open(img_fn)
+    im = Image.open(img_fn).convert('RGB')
     log('??',im)
     
     
@@ -222,7 +229,9 @@ class ProfileScreen(ProtectedScreen):
 
    
     def make_profile_img(self,width,do_crop=True,circ_img=None,bw=False,circularize=True):
-        img_src = os.path.join(PATH_GUI_ASSETS, 'avatars', f'{self.app.username}.png')
+        img_src = os.path.join(PATH_AVATARS, f'{self.app.comrad.name}.png')
+        if not os.path.exists(img_src):
+            img_src = os.path.join(PATH_GUI_ASSETS, 'avatars', f'{self.app.username}.png')
         if not os.path.exists(img_src): 
             img_src=PATH_DEFAULT_AVATAR
         
@@ -237,9 +246,26 @@ class ProfileScreen(ProtectedScreen):
         avatar_layout.height=dp(width)
         avatar_layout.width=dp(width)
         avatar_layout.add_widget(avatar)
-        return (circ_img,byte,avatar,avatar_layout) 
+        return (circ_img,byte,avatar,avatar_layout)
 
-    def on_pre_enter(self, width=300):
+    def change_avatar(self,fnfn,width=AVATAR_WIDTH):
+        # raise Exception(f'Got filename! {fnfn}')
+        if not os.path.exists(fnfn): return
+        ext=os.path.splitext(fnfn)[1]
+        ofnfn=os.path.join(PATH_AVATARS,self.app.comrad.name+ext)
+        shutil.copyfile(fnfn,ofnfn)
+
+        # re-get circular image
+        # self.avatar_layout.remove_widget(self.avatar)
+        # self.on_pre_enter()
+        self.page_layout.remove_widget(self.avatar_layout)
+        self.avatar_img, self.avatar_img_bytes, self.avatar, self.avatar_layout = \
+            self.make_profile_img(width)
+        self.avatar.screen = self
+        self.page_layout.add_widget(self.avatar_layout,1)
+        # self.avatar_layout.add_widget(self.avatar)
+
+    def on_pre_enter(self, width=AVATAR_WIDTH):
         if not super().on_pre_enter(): return
 
         if not self.clock_scheduled:
