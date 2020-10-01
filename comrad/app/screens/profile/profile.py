@@ -21,7 +21,6 @@ from copy import copy,deepcopy
 from kivy.animation import Animation
 from main import MyLabel,COLOR_ICON
 from misc import *
-from plyer import filechooser
 
 
 
@@ -35,10 +34,31 @@ class ProfileAvatar(Image):
                 anim = Animation(opacity=1, duration=0.1)
                 anim.start(start)
             else:
-                filechooser.open_file(
-                    on_selection=self.handle_selection,
-                    desktop_override='gnome'
-                )
+                self.choose()
+
+    def choose(self):
+        try:
+            self.choose_native()
+        except (NotImplementedError,TypeError,OSError) as e:
+            self.choose_nonnative()
+
+    def choose_native(self):
+        from plyer import filechooser
+        filechooser.open_file(on_selection=self.handle_selection)
+
+    def choose_nonnative(self):
+        import wx
+        app = wx.App(None)
+        wildcard = "PNG Files (*.png)|*.png|JPEG Files (*.jpg/*.jpeg)|*.jpg;*.jpeg|GIF Files (*.gif)|*.gif"
+        style = wx.FD_OPEN | wx.FD_FILE_MUST_EXIST
+        dialog = wx.FileDialog(None, 'Select Data File',wildcard=wildcard,style=style)
+        if dialog.ShowModal() == wx.ID_OK:
+            path = dialog.GetPath()
+        else:
+            path = None
+        dialog.Destroy()
+        self.handle_selection(path)
+
     def handle_selection(self, selection):
         self.selection = selection
         raise Exception(selection)
