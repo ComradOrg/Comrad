@@ -183,9 +183,8 @@ class MessagePopupCard(MDDialog2):
             # logger.info(str(self.msg_dialog))
 
 
-
 class TextInputPopupCard(MDDialog2):
-    def say(self,x):
+    def say(self,x=None):
         self.ok_to_continue=True
         self.response=self.field.text
         return self.response
@@ -196,6 +195,14 @@ class TextInputPopupCard(MDDialog2):
         self.response=None
         title=msg
         from comrad.app.screens.login.login import UsernameField,PasswordField,UsernameLayout,UsernameLabel
+
+        class TextInputPopupCardField(UsernameField):
+            def on_text_validate(self):
+                self.has_had_text = True
+                self._set_text_len_error()
+
+                # custom
+                self.card.say()
 
         self.layout=MDBoxLayout()
         self.layout.orientation='vertical'
@@ -212,11 +219,18 @@ class TextInputPopupCard(MDDialog2):
 
 
         self.field_layout=UsernameLayout()
-        self.field = PasswordField() if password else UsernameField()
+        # self.field = PasswordField() if password else UsernameField()
+        self.field = TextInputPopupCardField()
+        self.field.card=self
+        self.field.password=True
         self.field.line_color_focus=rgb(*COLOR_TEXT)
-        self.field.line_color_normal=rgb(*COLOR_TEXT,a=0.25)
+        self.field.line_color_normal=rgb(*COLOR_TEXT)
         self.field.font_name=FONT_PATH
         self.field.font_size='20sp'
+        self.field.pos_hint={'center_y':0.5}
+
+        
+
 
         self.field_label = UsernameLabel(text='password:' if password else input_name)
         self.field_label.font_name=FONT_PATH

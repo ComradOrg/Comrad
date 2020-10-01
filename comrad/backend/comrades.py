@@ -742,7 +742,7 @@ class ComradX(Caller):
             inbox = [x for x in inbox if not x in set(read)]
 
         posts=[]
-        for post_id in inbox:
+        for post_id in reversed(inbox):
             self.log('???',post_id,inbox_prefix)
             try:
                 res_post = self.read_post(post_id)

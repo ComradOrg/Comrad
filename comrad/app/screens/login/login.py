@@ -15,9 +15,529 @@ from kivy.app import *
 import logging
 logger = logging.getLogger(__name__)
 
+import sys
+
+from kivy.animation import Animation
+from kivy.lang import Builder
+from kivy.metrics import dp, sp
+from kivy.properties import (
+    BooleanProperty,
+    ListProperty,
+    NumericProperty,
+    ObjectProperty,
+    OptionProperty,
+    StringProperty,
+)
+from kivy.uix.label import Label
+from kivy.uix.textinput import TextInput
+
+from kivymd.font_definitions import theme_font_styles
+from kivymd.material_resources import DEVICE_TYPE
+from kivymd.theming import ThemableBehavior
+from kivymd.uix.label import MDIcon
+
+
+
+
+
+
+
+
 class LoginBoxLayout(MDBoxLayout): pass
 class LoginButtonLayout(MDBoxLayout): pass
-class UsernameField(MDTextField): pass
+# # class UsernameField(MDTextField): pass
+#     def __init__(self,*x,**y):
+#         super().__init__(*x,**y)
+#         self.focus=True
+#     def on_text_validate(self):
+#         reg_button=self.parent.parent.parent.register_button
+#         reg_button.enter()
+
+
+
+class UsernameField(ThemableBehavior, TextInput):
+    helper_text = StringProperty("This field is required")
+    """
+    Text for ``helper_text`` mode.
+    :attr:`helper_text` is an :class:`~kivy.properties.StringProperty`
+    and defaults to `'This field is required'`.
+    """
+
+    helper_text_mode = OptionProperty(
+        "none", options=["none", "on_error", "persistent", "on_focus"]
+    )
+    """
+    Helper text mode. Available options are: `'on_error'`, `'persistent'`,
+    `'on_focus'`.
+    :attr:`helper_text_mode` is an :class:`~kivy.properties.OptionProperty`
+    and defaults to `'none'`.
+    """
+
+    max_text_length = NumericProperty(None)
+    """
+    Maximum allowed value of characters in a text field.
+    :attr:`max_text_length` is an :class:`~kivy.properties.NumericProperty`
+    and defaults to `None`.
+    """
+
+    required = BooleanProperty(False)
+    """
+    Required text. If True then the text field requires text.
+    :attr:`required` is an :class:`~kivy.properties.BooleanProperty`
+    and defaults to `False`.
+    """
+
+    color_mode = OptionProperty(
+        "primary", options=["primary", "accent", "custom"]
+    )
+    """
+    Color text mode. Available options are: `'primary'`, `'accent'`,
+    `'custom'`.
+    :attr:`color_mode` is an :class:`~kivy.properties.OptionProperty`
+    and defaults to `'primary'`.
+    """
+
+    mode = OptionProperty("line", options=["rectangle", "fill"])
+    """
+    Text field mode. Available options are: `'line'`, `'rectangle'`, `'fill'`.
+    :attr:`mode` is an :class:`~kivy.properties.OptionProperty`
+    and defaults to `'line'`.
+    """
+
+    line_color_normal = ListProperty()
+    """
+    Line color normal in ``rgba`` format.
+    :attr:`line_color_normal` is an :class:`~kivy.properties.ListProperty`
+    and defaults to `[]`.
+    """
+
+    line_color_focus = ListProperty()
+    """
+    Line color focus in ``rgba`` format.
+    :attr:`line_color_focus` is an :class:`~kivy.properties.ListProperty`
+    and defaults to `[]`.
+    """
+
+    error_color = ListProperty()
+    """
+    Error color in ``rgba`` format for ``required = True``.
+    :attr:`error_color` is an :class:`~kivy.properties.ListProperty`
+    and defaults to `[]`.
+    """
+
+    fill_color = ListProperty((0, 0, 0, 0))
+    """
+    The background color of the fill in rgba format when the ``mode`` parameter
+    is "fill".
+    :attr:`fill_color` is an :class:`~kivy.properties.ListProperty`
+    and defaults to `(0, 0, 0, 0)`.
+    """
+
+    active_line = BooleanProperty(True)
+    """
+    Show active line or not.
+    :attr:`active_line` is an :class:`~kivy.properties.BooleanProperty`
+    and defaults to `True`.
+    """
+
+    error = BooleanProperty(False)
+    """
+    If True, then the text field goes into ``error`` mode.
+    :attr:`error` is an :class:`~kivy.properties.BooleanProperty`
+    and defaults to `False`.
+    """
+
+    current_hint_text_color = ListProperty()
+    """
+    ``hint_text`` text color.
+    :attr:`current_hint_text_color` is an :class:`~kivy.properties.ListProperty`
+    and defaults to `[]`.
+    """
+
+    icon_right = StringProperty()
+    """Right icon.
+    :attr:`icon_right` is an :class:`~kivy.properties.StringProperty`
+    and defaults to `''`.
+    """
+
+    icon_right_color = ListProperty((0, 0, 0, 1))
+    """Color of right icon in ``rgba`` format.
+    :attr:`icon_right_color` is an :class:`~kivy.properties.ListProperty`
+    and defaults to `(0, 0, 0, 1)`.
+    """
+
+    _text_len_error = BooleanProperty(False)
+    _hint_lbl_font_size = NumericProperty("16sp")
+    _line_blank_space_right_point = NumericProperty(0)
+    _line_blank_space_left_point = NumericProperty(0)
+    _hint_y = NumericProperty("38dp")
+    _line_width = NumericProperty(0)
+    _current_line_color = ListProperty((0, 0, 0, 0))
+    _current_error_color = ListProperty((0, 0, 0, 0))
+    _current_hint_text_color = ListProperty((0, 0, 0, 0))
+    _current_right_lbl_color = ListProperty((0, 0, 0, 0))
+
+    _msg_lbl = None
+    _right_msg_lbl = None
+    _hint_lbl = None
+    _lbl_icon_right = None
+
+    def __init__(self, **kwargs):
+        self.set_objects_labels()
+        super().__init__(**kwargs)
+        # Sets default colors.
+        self.line_color_normal = self.theme_cls.divider_color
+        self.line_color_focus = self.theme_cls.primary_color
+        self.error_color = self.theme_cls.error_color
+        self._current_hint_text_color = self.theme_cls.disabled_hint_text_color
+        self._current_line_color = self.theme_cls.primary_color
+
+        self.bind(
+            helper_text=self._set_msg,
+            hint_text=self._set_hint,
+            _hint_lbl_font_size=self._hint_lbl.setter("font_size"),
+            helper_text_mode=self._set_message_mode,
+            max_text_length=self._set_max_text_length,
+            text=self.on_text,
+        )
+        self.theme_cls.bind(
+            primary_color=self._update_primary_color,
+            theme_style=self._update_theme_style,
+            accent_color=self._update_accent_color,
+        )
+        self.has_had_text = False
+        self.focus=True
+
+    def set_objects_labels(self):
+        """Creates labels objects for the parameters
+        `helper_text`,`hint_text`, etc."""
+
+        # Label object for `helper_text` parameter.
+        self._msg_lbl = TextfieldLabel(
+            font_style="Caption",
+            halign="left",
+            valign="middle",
+            text=self.helper_text,
+            field=self,
+        )
+        # Label object for `max_text_length` parameter.
+        self._right_msg_lbl = TextfieldLabel(
+            font_style="Caption",
+            halign="right",
+            valign="middle",
+            text="",
+            field=self,
+        )
+        # Label object for `hint_text` parameter.
+        self._hint_lbl = TextfieldLabel(
+            font_style="Subtitle1", halign="left", valign="middle", field=self
+        )
+        # MDIcon object for the icon on the right.
+        self._lbl_icon_right = MDIcon(theme_text_color="Custom")
+
+    def on_icon_right(self, instance, value):
+        self._lbl_icon_right.icon = value
+
+    def on_icon_right_color(self, instance, value):
+        self._lbl_icon_right.text_color = value
+
+    def on_width(self, instance, width):
+        """Called when the application window is resized."""
+
+        if (
+            any((self.focus, self.error, self._text_len_error))
+            and instance is not None
+        ):
+            # Bottom line width when active focus.
+            self._line_width = width
+        self._msg_lbl.width = self.width
+        self._right_msg_lbl.width = self.width
+
+    def on_focus(self, *args):
+        disabled_hint_text_color = self.theme_cls.disabled_hint_text_color
+        Animation.cancel_all(
+            self, "_line_width", "_hint_y", "_hint_lbl_font_size"
+        )
+        self._set_text_len_error()
+
+        if self.focus:
+            self._line_blank_space_right_point = (
+                self._get_line_blank_space_right_point()
+            )
+            _fill_color = self.fill_color
+            _fill_color[3] = self.fill_color[3] - 0.1
+            if not self._get_has_error():
+                Animation(
+                    _line_blank_space_right_point=self._line_blank_space_right_point,
+                    _line_blank_space_left_point=self._hint_lbl.x - dp(5),
+                    _current_hint_text_color=self.line_color_focus,
+                    fill_color=_fill_color,
+                    duration=0.2,
+                    t="out_quad",
+                ).start(self)
+            self.has_had_text = True
+            Animation.cancel_all(
+                self, "_line_width", "_hint_y", "_hint_lbl_font_size"
+            )
+            if not self.text:
+                self._anim_lbl_font_size(dp(14), sp(12))
+            Animation(_line_width=self.width, duration=0.2, t="out_quad").start(
+                self
+            )
+            if self._get_has_error():
+                self._anim_current_error_color(self.error_color)
+                if self.helper_text_mode == "on_error" and (
+                    self.error or self._text_len_error
+                ):
+                    self._anim_current_error_color(self.error_color)
+                elif (
+                    self.helper_text_mode == "on_error"
+                    and not self.error
+                    and not self._text_len_error
+                ):
+                    self._anim_current_error_color((0, 0, 0, 0))
+                elif self.helper_text_mode in ("persistent", "on_focus"):
+                    self._anim_current_error_color(disabled_hint_text_color)
+            else:
+                self._anim_current_right_lbl_color(disabled_hint_text_color)
+                Animation(
+                    duration=0.2, _current_hint_text_color=self.line_color_focus
+                ).start(self)
+                if self.helper_text_mode == "on_error":
+                    self._anim_current_error_color((0, 0, 0, 0))
+                if self.helper_text_mode in ("persistent", "on_focus"):
+                    self._anim_current_error_color(disabled_hint_text_color)
+        else:
+            _fill_color = self.fill_color
+            _fill_color[3] = self.fill_color[3] + 0.1
+            Animation(fill_color=_fill_color, duration=0.2, t="out_quad").start(
+                self
+            )
+            if not self.text:
+                self._anim_lbl_font_size(dp(38), sp(16))
+                Animation(
+                    _line_blank_space_right_point=0,
+                    _line_blank_space_left_point=0,
+                    duration=0.2,
+                    t="out_quad",
+                ).start(self)
+            if self._get_has_error():
+                self._anim_get_has_error_color(self.error_color)
+                if self.helper_text_mode == "on_error" and (
+                    self.error or self._text_len_error
+                ):
+                    self._anim_current_error_color(self.error_color)
+                elif (
+                    self.helper_text_mode == "on_error"
+                    and not self.error
+                    and not self._text_len_error
+                ):
+                    self._anim_current_error_color((0, 0, 0, 0))
+                elif self.helper_text_mode == "persistent":
+                    self._anim_current_error_color(disabled_hint_text_color)
+                elif self.helper_text_mode == "on_focus":
+                    self._anim_current_error_color((0, 0, 0, 0))
+            else:
+                Animation(duration=0.2, color=(1, 1, 1, 1)).start(
+                    self._hint_lbl
+                )
+                self._anim_get_has_error_color()
+                if self.helper_text_mode == "on_error":
+                    self._anim_current_error_color((0, 0, 0, 0))
+                elif self.helper_text_mode == "persistent":
+                    self._anim_current_error_color(disabled_hint_text_color)
+                elif self.helper_text_mode == "on_focus":
+                    self._anim_current_error_color((0, 0, 0, 0))
+                Animation(_line_width=0, duration=0.2, t="out_quad").start(self)
+
+    def on_text(self, instance, text):
+        if len(text) > 0:
+            self.has_had_text = True
+        if self.max_text_length is not None:
+            self._right_msg_lbl.text = f"{len(text)}/{self.max_text_length}"
+        self._set_text_len_error()
+        if self.error or self._text_len_error:
+            if self.focus:
+                self._anim_current_line_color(self.error_color)
+                if self.helper_text_mode == "on_error" and (
+                    self.error or self._text_len_error
+                ):
+                    self._anim_current_error_color(self.error_color)
+                if self._text_len_error:
+                    self._anim_current_right_lbl_color(self.error_color)
+        else:
+            if self.focus:
+                self._anim_current_right_lbl_color(
+                    self.theme_cls.disabled_hint_text_color
+                )
+                self._anim_current_line_color(self.line_color_focus)
+                if self.helper_text_mode == "on_error":
+                    self._anim_current_error_color((0, 0, 0, 0))
+        if len(self.text) != 0 and not self.focus:
+            self._hint_y = dp(14)
+            self._hint_lbl_font_size = sp(12)
+
+    def on_text_validate(self):
+        self.has_had_text = True
+        self._set_text_len_error()
+
+        # custom
+        reg_button=self.parent.parent.parent.register_button
+        reg_button.enter()
+
+    def on_color_mode(self, instance, mode):
+        if mode == "primary":
+            self._update_primary_color()
+        elif mode == "accent":
+            self._update_accent_color()
+        elif mode == "custom":
+            self._update_colors(self.line_color_focus)
+
+    def on_line_color_focus(self, *args):
+        if self.color_mode == "custom":
+            self._update_colors(self.line_color_focus)
+
+    def on__hint_text(self, instance, value):
+        pass
+
+    def _anim_get_has_error_color(self, color=None):
+        # https://github.com/HeaTTheatR/KivyMD-data/raw/master/gallery/kivymddoc/_get_has_error.png
+        if not color:
+            line_color = self.line_color_focus
+            hint_text_color = self.theme_cls.disabled_hint_text_color
+            right_lbl_color = (0, 0, 0, 0)
+        else:
+            line_color = color
+            hint_text_color = color
+            right_lbl_color = color
+        Animation(
+            duration=0.2,
+            _current_line_color=line_color,
+            _current_hint_text_color=hint_text_color,
+            _current_right_lbl_color=right_lbl_color,
+        ).start(self)
+
+    def _anim_current_line_color(self, color):
+        # https://github.com/HeaTTheatR/KivyMD-data/raw/master/gallery/kivymddoc/_anim_current_line_color.gif
+        Animation(
+            duration=0.2,
+            _current_hint_text_color=color,
+            _current_line_color=color,
+        ).start(self)
+
+    def _anim_lbl_font_size(self, hint_y, font_size):
+        Animation(
+            _hint_y=hint_y,
+            _hint_lbl_font_size=font_size,
+            duration=0.2,
+            t="out_quad",
+        ).start(self)
+
+    def _anim_current_right_lbl_color(self, color, duration=0.2):
+        # https://github.com/HeaTTheatR/KivyMD-data/raw/master/gallery/kivymddoc/_anim_current_right_lbl_color.png
+        Animation(duration=duration, _current_right_lbl_color=color).start(self)
+
+    def _anim_current_error_color(self, color, duration=0.2):
+        # https://github.com/HeaTTheatR/KivyMD-data/raw/master/gallery/kivymddoc/_anim_current_error_color_to_disabled_color.gif
+        # https://github.com/HeaTTheatR/KivyMD-data/raw/master/gallery/kivymddoc/_anim_current_error_color_to_fade.gif
+        Animation(duration=duration, _current_error_color=color).start(self)
+
+    def _update_colors(self, color):
+        self.line_color_focus = color
+        if not self.error and not self._text_len_error:
+            self._current_line_color = color
+            if self.focus:
+                self._current_line_color = color
+
+    def _update_accent_color(self, *args):
+        if self.color_mode == "accent":
+            self._update_colors(self.theme_cls.accent_color)
+
+    def _update_primary_color(self, *args):
+        if self.color_mode == "primary":
+            self._update_colors(self.theme_cls.primary_color)
+
+    def _update_theme_style(self, *args):
+        self.line_color_normal = self.theme_cls.divider_color
+        if not any([self.error, self._text_len_error]):
+            if not self.focus:
+                self._current_hint_text_color = (
+                    self.theme_cls.disabled_hint_text_color
+                )
+                self._current_right_lbl_color = (
+                    self.theme_cls.disabled_hint_text_color
+                )
+                if self.helper_text_mode == "persistent":
+                    self._current_error_color = (
+                        self.theme_cls.disabled_hint_text_color
+                    )
+
+    def _get_has_error(self):
+        if self.error or all(
+            [
+                self.max_text_length is not None
+                and len(self.text) > self.max_text_length
+            ]
+        ):
+            has_error = True
+        else:
+            if all((self.required, len(self.text) == 0, self.has_had_text)):
+                has_error = True
+            else:
+                has_error = False
+        return has_error
+
+    def _get_line_blank_space_right_point(self):
+        # https://github.com/HeaTTheatR/KivyMD-data/raw/master/gallery/kivymddoc/_line_blank_space_right_point.png
+        return (
+            self._hint_lbl.texture_size[0]
+            - self._hint_lbl.texture_size[0] / 100 * dp(18)
+            if DEVICE_TYPE == "desktop"
+            else dp(10)
+        )
+
+    def _get_max_text_length(self):
+        """Returns the maximum number of characters that can be entered in a
+        text field."""
+
+        return (
+            sys.maxsize
+            if self.max_text_length is None
+            else self.max_text_length
+        )
+
+    def _set_text_len_error(self):
+        if len(self.text) > self._get_max_text_length() or all(
+            (self.required, len(self.text) == 0, self.has_had_text)
+        ):
+            self._text_len_error = True
+        else:
+            self._text_len_error = False
+
+    def _set_hint(self, instance, text):
+        self._hint_lbl.text = text
+
+    def _set_msg(self, instance, text):
+        self._msg_lbl.text = text
+        self.helper_text = text
+
+    def _set_message_mode(self, instance, text):
+        self.helper_text_mode = text
+        if self.helper_text_mode == "persistent":
+            self._anim_current_error_color(
+                self.theme_cls.disabled_hint_text_color, 0.1
+            )
+
+    def _set_max_text_length(self, instance, length):
+        self.max_text_length = length
+        self._right_msg_lbl.text = f"{len(self.text)}/{length}"
+
+    def _refresh_hint_text(self):
+        pass
+
+
+
+    
 class PasswordField(MDTextField): pass
 class LoginButton(MDRectangleFlatButton): pass
 class RegisterButton(MDRectangleFlatButton,Logger):
@@ -74,8 +594,9 @@ class LoginScreen(BaseScreen):
 
         self.username_field = UsernameField()
         self.username_field.line_color_focus=rgb(*COLOR_TEXT)
-        self.username_field.line_color_normal=rgb(*COLOR_TEXT,a=0.25)
+        self.username_field.line_color_normal=rgb(*COLOR_TEXT)
         self.username_field.font_name='assets/font.otf'
+        self.username_field.width='10dp'
 
         self.layout_username.add_widget(self.label_username)
         self.layout_username.add_widget(self.username_field)
@@ -125,7 +646,7 @@ class LoginScreen(BaseScreen):
         self.register_button.text='enter'
         self.username_field.font_size='24sp'
         self.label_username.padding_x=(10,20)
-        self.username_field.padding_x=(20,10)
+        # self.username_field.padding_x=(20,10)
         # self.username_field.padding_y=(25,0)
         self.username_field.pos_hint={'center_y':0.5}
         self.label_username.halign='right'
@@ -427,3 +948,28 @@ class LoginScreen(BaseScreen):
         return resp_msg_d
 
     
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class TextfieldLabel(ThemableBehavior, Label):
+    font_style = OptionProperty("Body1", options=theme_font_styles)
+    # <kivymd.uix.textfield.MDTextField object>
+    field = ObjectProperty()
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.font_size = sp(self.theme_cls.font_styles[self.font_style][1])
