@@ -287,6 +287,17 @@ echo "Now using python 3: `which python`"
 
 python -m pip install -r requirements.txt
 
+
+
+if [ "$machine" = "Mac" ]
+then
+    python -m pip install git+https://github.com/kivy/pyobjus
+else
+    $condaexec install wxpython
+fi
+
+
+
 echo '
 
 6) adding comrad bin folder to path
