@@ -582,7 +582,7 @@ class LoginScreen(BaseScreen):
         self.label_title.bold=True
         self.label_title.markup=True
         self.label_title.color=rgb(*COLOR_TEXT)
-        self.label_title.text='Welcome,'
+        self.label_title.text='Welcome!'
         self.layout.add_widget(get_separator('20sp'))
         self.layout.add_widget(self.label_title)
         self.layout.add_widget(get_separator('30sp'))
