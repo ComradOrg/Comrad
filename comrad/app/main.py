@@ -833,7 +833,7 @@ if __name__ == '__main__':
     loop = asyncio.get_event_loop()
     try:
         loop.run_until_complete(MainApp().app_func())
-    except TypeError:
+    except AssertionError:
         print('\n\nGoodbye.\n')
         pass
     loop.close()

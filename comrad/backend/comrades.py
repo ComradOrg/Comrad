@@ -742,7 +742,7 @@ class ComradX(Caller):
             inbox = [x for x in inbox if not x in set(read)]
 
         posts=[]
-        for post_id in reversed(inbox):
+        for post_id in inbox:
             self.log('???',post_id,inbox_prefix)
             try:
                 res_post = self.read_post(post_id)
@@ -755,6 +755,10 @@ class ComradX(Caller):
                 post.post_id=post_id
                 post.inbox_prefix=inbox_prefix
                 posts.append(post)
+
+        # sort by timestamp!
+        posts.sort(key=lambda post: -post.timestamp)
+                
         return posts
 
     def read_post(self,post_id,post_encr=None,post_prefix='/post/'):

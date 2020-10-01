@@ -21,21 +21,27 @@ from copy import copy,deepcopy
 from kivy.animation import Animation
 from main import MyLabel,COLOR_ICON
 from misc import *
+from plyer import filechooser
 
 
 
 class ProfileAvatar(Image):
     def on_touch_down(self, touch):
-        if self.screen.carousel.index and self.collide_point(*touch.pos) and self.screen.carousel.slides:
-            start = self.screen.carousel.slides[0]
-            start.opacity=0
-            self.screen.carousel.index=0
-            anim = Animation(opacity=1, duration=0.1)
-            anim.start(start)
-            # start = self.screen.carousel.slides[0]
-            # log('????',start)
-            # self.screen.carousel.load_slide(start)
-            # self.screen.carousel.load_next()
+        if self.collide_point(*touch.pos):
+            if self.screen.carousel.index and self.screen.carousel.slides:
+                start = self.screen.carousel.slides[0]
+                start.opacity=0
+                self.screen.carousel.index=0
+                anim = Animation(opacity=1, duration=0.1)
+                anim.start(start)
+            else:
+                filechooser.open_file(
+                    on_selection=self.handle_selection,
+                    desktop_override='gnome'
+                )
+    def handle_selection(self, selection):
+        self.selection = selection
+        raise Exception(selection)
 
 class LayoutAvatar(MDBoxLayout): pass
 
