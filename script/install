@@ -309,7 +309,8 @@ echo "Now using python (t2): `which python`"
 # . venv/bin/activate
 echo "Now using python (t3): `which python`"
 
-python -m pip install --only-binary :all: -r requirements.txt
+python -m pip install --only-binary :all: hirlite 
+python -m pip install -r requirements.txt
 
 
 
