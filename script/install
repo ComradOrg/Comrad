@@ -94,10 +94,10 @@ then
         then
             echo "using ssh..."
             git clone git@github.com:ComradOrg/Comrad.git
-            git checkout installer
+            #git checkout installer
         else
             git clone https://github.com/ComradOrg/Comrad.git
-            git checkout installer
+            #git checkout installer
         fi
         mv Comrad code
     fi
