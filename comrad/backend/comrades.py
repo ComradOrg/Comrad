@@ -66,6 +66,7 @@ class ComradX(Caller):
 
     def exists_locally(self,name=None):
         pubkey=self.find_pubkey(name=name)
+        self.log(f'I am {self.name}, looking for {name}, and found pubkey {pubkey} (mine is {self.pubkey})')
         return bool(pubkey)
 
     def exists_locally_as_contact(self,name=None):

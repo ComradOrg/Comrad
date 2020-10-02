@@ -216,8 +216,14 @@ then
 
 fi
 
-if [ "$machine" = "Cygwin" ] || [ "$machine" = "MinGw" ]
+if [ "$machine" = "MinGw" ]
 then
+
+    # make sure packages installed
+    pacman -S mingw-w64-x86_64-zbar curl wget unzip gcc make openssl-devel
+
+
+
     arch="$(uname -m)"
     if [ "$arch" = "x86_64" ]
     then
@@ -230,10 +236,13 @@ then
     # rm miniconda.exe
     # cmd "miniconda.exe /InstallationType=JustMe /RegisterPython=0 /S /D=$path_conda"
 
+
     path_conda_windows="${path_conda//\//\\}"
     wincmd="miniconda.exe /S /D=C:\\msys64$path_conda_windows"
     echo "executing! $wincmd"
     cmd //c "$wincmd"
+
+    
     
 
     ### install themis from source
