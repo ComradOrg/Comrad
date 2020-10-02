@@ -215,24 +215,17 @@ fi
 
 if [ "$machine" = "Cygwin" ] || [ "$machine" = "MinGw" ]
 then
-    # arch="$(uname -m)"
-    # if [ "$arch" = "x86_64" ]
-    # then
-    #     curl https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-Windows-x86_64.exe -o miniconda.exe
-    # else
-    #     curl https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-Windows-x86.exe -o miniconda.exe
-    # fi
+    arch="$(uname -m)"
+    if [ "$arch" = "x86_64" ]
+    then
+        curl https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-Windows-x86_64.exe -o miniconda.exe
+    else
+        curl https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-Windows-x86.exe -o miniconda.exe
+    fi
 
     # ./miniconda.exe -b -f -p "$path_conda"
-    # # rm miniconda.exe
-
-    if [ ! -f "miniconda.sh" ]
-    then
-        curl https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-Linux-x86_64.sh -o miniconda.sh
-        chmod +x miniconda.sh
-    fi
-    ./miniconda.sh -b -f -p "$path_conda"
-
+    # rm miniconda.exe
+    cmd "miniconda.exe /InstallationType=JustMe /RegisterPython=0 /S /D=$path_conda"
 
     ### install themis from source
     if [ ! -f "/usr/local/lib/libthemis.so" ]
