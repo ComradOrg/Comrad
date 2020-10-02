@@ -308,7 +308,7 @@ class ProfileScreen(ProtectedScreen):
 
 
         # desc from us
-        self.log('do I know where ')
+        self.log(f'do I know where {self.app.username} lives?')
         if not self.app.comrad.exists_locally(self.app.username):
             author_desc=f'Comrad @{self.app.username} is not a contact of yours.'
             self.author_desc = AuthorDesc(text=author_desc)

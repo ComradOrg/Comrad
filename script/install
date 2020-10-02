@@ -143,7 +143,9 @@ case "${unameOut}" in
     MINGW*)     machine=MinGw;;
     *)          machine="UNKNOWN:${unameOut}"
 esac
-#echo ${machine}
+# echo ${machine}
+
+echo "Machine $machine detected."
 
 if [ "$machine" = "Linux" ]
 then
