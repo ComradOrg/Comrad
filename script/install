@@ -145,7 +145,7 @@ case "${unameOut}" in
 esac
 # echo ${machine}
 
-echo "Machine $machine detected."
+echo "Machine $machine detected."    
 
 if [ "$machine" = "Linux" ]
 then
