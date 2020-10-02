@@ -12,5 +12,7 @@ path_repo="`realpath ~/comrad/code`"
 source $path_conda/etc/profile.d/conda.sh
 export PATH="$path_conda/bin:$PATH"
 conda activate $path_venv
-python -m pip install -r $path_repo/requirements.txt
-python $path_repo/comrad/cli/cli.py
+python -m pip install -r $path_repo/requirements.txt -q
+
+export COMRAD_SHOW_LOG=0
+python $path_repo/comrad/cli/cli.py $*

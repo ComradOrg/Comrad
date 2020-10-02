@@ -43,7 +43,10 @@ class MazeWalker(Handler):
                     # texec(f, router)
                     # f(router)
                     import asyncio
-                    asyncio.run(f(router))
+                    try:
+                        asyncio.run(f(router))
+                    except ValueError:
+                        f(router)
         pass
     
 

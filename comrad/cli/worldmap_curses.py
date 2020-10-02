@@ -251,6 +251,7 @@ class Map(Logger):
     def endwin(self):
         # time.sleep(1)
         curses.endwin()
+        self.hops=[]
 
 
     def do_print_map(self,places):

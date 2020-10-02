@@ -1,7 +1,7 @@
 import os,sys; sys.path.append(os.path.abspath(os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__),'..')),'..')))
 from comrad import *
 from comrad.backend import *
-import art
+import art,asyncio
 import textwrap as tw
 import readline,logging
 readline.set_completer_delims('\t')
@@ -16,6 +16,7 @@ logging.getLogger('urllib3').propagate=False
 logging.getLogger('shapely').propagate=False
 logging.getLogger('pyproj').propagate=False
 logging.getLogger('rtree').propagate=False
+logging.getLogger('asyncio').setLevel(logging.WARNING)
 
 torpy_logger.propagate=False
 from shutil import get_terminal_size
@@ -110,6 +111,11 @@ class CLI(Logger):
                 self.stat('Message not sent.',str(e),'\n')
 
     def stat(self,*msgs,use_prefix=True,prefix=None,comrad_name=None,pause=False,clear=False,min_prefix_len=12,**kwargs):
+        if hasattr(self,'_mapscr') and self._mapscr:
+            self._mapscr.endwin()
+            self._mapscr=None
+            self.hops = []
+        
         if not prefix:
             if not comrad_name: comrad_name='Telephone'
             # prefix='Comrad @'+comrad_name+': '
@@ -122,6 +128,7 @@ class CLI(Logger):
             min_prefix_len=min_prefix_len if use_prefix and prefix else 0
         )
         print(total_msg)
+        # print()
         if pause: do_pause()
         if clear: clear_screen()
 
@@ -255,17 +262,20 @@ class CLI(Logger):
             # mapscr.stdscr.getch()
 
             deets = self.ipinfo_handler.getDetails(rtr.ip)
-            self.hops.append((rtr,deets))
-            places = [
-                (_deets.city,tuple(float(_) for _ in _deets.loc.split(',')))
-                for (_rtr,_deets) in [(rtr,deets)]
-            ]
+
+            if rtr.ip not in {hop[0].ip for hop in self.hops}:
+                    
+                self.hops.append((rtr,deets))
+                places = [
+                    (_deets.city,tuple(float(_) for _ in _deets.loc.split(',')))
+                    for (_rtr,_deets) in [(rtr,deets)]
+                ]
 
 
-            msg = ['@Tor: Hiding your IP by hopping it around the globe:'] + [f'{_deets.city}, {_deets.country_name} ({_rtr.nickname})' for _rtr,_deets in self.hops
-            ]
-            mapscr.run_print_map(places,msg=msg)
-            
+                msg = ['@Tor: Hiding your IP by hopping it around the globe:'] + [f'{_deets.city}, {_deets.country_name} ({_rtr.nickname})' for _rtr,_deets in self.hops
+                ]
+                mapscr.run_print_map(places,msg=msg)
+                
             
             # self.stat(
             #     msg,
@@ -308,8 +318,29 @@ class CLI(Logger):
         # self.print(self,name,self.name,self.comrad,self.loggedin)
         if not name: name=input('name: ')
         if not name: return
-        self.comrad=Comrad(name,callbacks=self.callbacks)
-        return self.refresh()
+        self.comrad=commie=Comrad(name,callbacks=self.callbacks)
+
+        if commie.exists_locally_as_account():
+            from getpass import getpass
+            # pw=getpass(f'\n@Telephone: Welcome back. Your password please?\n@{name}: ')
+            pw=getpass(f'password: ')
+            commie.keychain(passphrase=pw)
+            self.log(f'updated keychain: {dict_format(commie.keychain())}')
+            self.log(f'is account')
+            # self.login_status.text='You should be able to log into this account.'
+            if commie.privkey:
+                self.log(f'passkey login succeeded')                
+                self.stat(f'Welcome back, Comrad @{commie.name}')
+                self.loggedin=True
+                self.name=commie.name
+                self.help()
+            else:
+                logger.info(f'passkey login failed')
+                self.stat('Login failed...')
+        else:
+            self.stat('This is not an account of yours.')
+
+        # return self.refresh()
         # res = self.comrad.login()
         # return self.do_login(res)
 
@@ -352,7 +383,7 @@ class CLI(Logger):
                 self.stat('Meet whom?')
                 return
             name_or_pubkey = datl[0]
-            res = self.comrad.meet(name_or_pubkey,returning=returning)
+            res = asyncio.run(self.comrad.meet(name_or_pubkey,returning=returning))
             status=res.get('status')
             self.stat(status)
 
@@ -404,13 +435,16 @@ class CLI(Logger):
         ## get updates
         # this does login, msgs, and posts in one req
         time.sleep(0.25)
-        res = self.comrad.get_updates()
+        if not self.comrad:
+            self.stat('You must login first.')
+
+        res = self.comrad.refresh()
         #print(res.get('success'))
         if not res.get('success'):
             self.stat(res.get('status'),comrad_name='')
             return
 
-        self.stat('@Telephone: Patching you through to the @Operator. One moment please...')
+        # self.stat('Patching you through to the @Operator. One moment please...')
         if hasattr(self,'_mapscr') and self._mapscr:
             #stop
             msg=self._mapscr.msg + ['???, ??? (@Operator)']
@@ -422,9 +456,9 @@ class CLI(Logger):
         self.log('<-- get_updates',res)
         
         # check logged in
-        res_login=res.get('res_login',{})
-        if not self.do_login(res_login): return
-        self.stat('',res['status'],comrad_name='Operator',**statd)
+        # res_login=res.get('res_login',{})
+        # if not self.do_login(res_login): return
+        # self.stat('',res['status'],comrad_name='Operator',**statd)
 
         return res
 
@@ -475,7 +509,7 @@ class CLI(Logger):
     def prompt_msg(self,msg):
         clear_screen()
         print(msg)
-        self.stat('Type "r" to reply to this message, "d" to delete it, or hit Enter to continue.',use_prefix=False)
+        self.stat('Type "r" to reply to this message, "d" to delete it, hit Enter to continue, or type "q" to return to main menu.',use_prefix=False)
         do = input(f'\n{self.comrad}: ')
         do=do.strip().lower()
         if do=='d':
@@ -489,6 +523,8 @@ class CLI(Logger):
         elif do=='r':
             # self.print('@todo: replying...')
             return self.dm(msg.from_name)
+        elif do=='q':
+            raise EOFError
         else:
             # seen this msg!
             self.comrad.seen_msg(msg)

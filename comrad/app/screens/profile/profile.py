@@ -33,7 +33,7 @@ class ProfileAvatar(Image):
                 self.screen.carousel.index=0
                 anim = Animation(opacity=1, duration=0.1)
                 anim.start(start)
-            else:
+            elif self.screen.app.username == self.screen.app.comrad.name:
                 self.choose()
 
     def choose(self):
@@ -307,37 +307,48 @@ class ProfileScreen(ProtectedScreen):
         # self.author_info_layout.add_widget(self.author_name)
 
 
-        ## AUTHOR DESCRIPTION
-        self.author_desc = AuthorDesc(text='... etc ...')
-        self.author_desc.font_name='assets/font.otf'
-        self.author_desc.font_size='18sp'
-        # self.author_desc.halign='left'
+        # desc from us
+        if not self.app.comrad.exists_locally(self.app.username):
+            author_desc=f'Comrad @{self.app.username} is not a contact of yours.'
+            self.author_desc = AuthorDesc(text=author_desc)
+            self.author_desc.font_name='assets/font.otf'
+            self.author_desc.font_size='18sp'
+            self.author_info_layout.add_widget(self.author_desc)
 
-        ## Pronouns
-        self.author_pronouns = AuthorPronouns(label='they/them',icon='gender-transgender')
+        # this is a contact
+        else:
+            ## AUTHOR DESCRIPTION
+            author_desc=f'... etc ...'
+            self.author_desc = AuthorDesc(text=author_desc)
+            self.author_desc.font_name='assets/font.otf'
+            self.author_desc.font_size='18sp'
+            # self.author_desc.halign='left'
 
-        ## AUTHOR PLACE
-        self.author_place = AuthorPlace(label='Deterritorialized',icon='map-marker-outline')
+            ## Pronouns
+            self.author_pronouns = AuthorPronouns(label='they/them',icon='gender-transgender')
 
-        ## Website
-        self.author_website = AuthorWebsite(label='website.org', icon='link-variant')
+            ## AUTHOR PLACE
+            self.author_place = AuthorPlace(label='Deterritorialized',icon='map-marker-outline')
 
-
-        ## Followers
-        self.follower_layout = FollowerLayout()
-        # self.author_followers = AuthorFollowers(label='13 followers',icon='account-arrow-left')
-        self.author_following = AuthorFollowing(label='13 comrades',icon='account-multiple')
+            ## Website
+            self.author_website = AuthorWebsite(label='website.org', icon='link-variant')
 
 
-        ## add to layout
-        self.author_info_layout.add_widget(self.author_desc)
-        self.author_info_layout.add_widget(self.author_pronouns)
-        self.author_info_layout.add_widget(self.author_place)
-        # self.author_info_layout.add_widget(self.author_website)
-               
-        self.follower_layout.add_widget(self.author_following)
-        # self.follower_layout.add_widget(self.author_followers) 
-        self.author_info_layout.add_widget(self.follower_layout)
+            ## Followers
+            self.follower_layout = FollowerLayout()
+            # self.author_followers = AuthorFollowers(label='13 followers',icon='account-arrow-left')
+            self.author_following = AuthorFollowing(label='13 comrades',icon='account-multiple')
+
+
+            ## add to layout
+            self.author_info_layout.add_widget(self.author_desc)
+            self.author_info_layout.add_widget(self.author_pronouns)
+            self.author_info_layout.add_widget(self.author_place)
+            # self.author_info_layout.add_widget(self.author_website)
+                
+            self.follower_layout.add_widget(self.author_following)
+            # self.follower_layout.add_widget(self.author_followers) 
+            self.author_info_layout.add_widget(self.follower_layout)
 
         # class AuthorPlace(MDLabel): pass
         # class AuthorWebsite(MDLabel): pass

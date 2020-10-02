@@ -69,9 +69,9 @@ class PostAuthorLabel(MDLabel):
         # '''
     def on_touch_down(self, touch):
         if self.collide_point(*touch.pos):
-            username=self.text.strip().split()[1][1:]
+            # username=self.text.strip().split()[1][1:]
             app=App.get_running_app()
-            app.view_profile(username)
+            app.view_profile(self.username)
             return True
 
     pass
@@ -86,7 +86,8 @@ class PostTimestampLabel(MDLabel):
 class PostAuthorAvatar(AsyncImage):
     def on_touch_down(self, touch):
         if self.collide_point(*touch.pos):
-            print('wiiiiimg')
+            app=App.get_running_app()
+            app.view_profile(self.username)
             return True
         # stop
     pass
@@ -147,13 +148,15 @@ class PostCard(MDCard):
             self.author_label.text+=f'\n[size={recip_label_font_size}]to '+recip+'[/size]'
             self.author_label.markup=True
         self.author_label.font_size = author_label_font_size
-        
+        self.author_label.username=self.author
+
         avatar_img_src = os.path.join(PATH_AVATARS, f'{self.author}.png')
         if not os.path.exists(avatar_img_src):
             avatar_img_src = os.path.join(PATH_GUI_ASSETS, 'avatars', f'{self.author}.png')
         if not os.path.exists(avatar_img_src): 
             avatar_img_src=PATH_DEFAULT_AVATAR
         self.author_avatar = author_avatar = PostAuthorAvatar(source=avatar_img_src) #self.img_src)
+        self.author_avatar.username=self.author
         self.author_section_layout.add_widget(author_avatar)
         self.author_section_layout.add_widget(author_label)
         # self.author_section_layout.add_widget(MDSeparator(height='1sp',size_hint=(None,None)))

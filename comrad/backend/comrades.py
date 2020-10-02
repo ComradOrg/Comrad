@@ -64,12 +64,12 @@ class ComradX(Caller):
         #     return self.register()
 
 
-    def exists_locally(self):
-        pubkey=self.find_pubkey()
+    def exists_locally(self,name=None):
+        pubkey=self.find_pubkey(name=name)
         return bool(pubkey)
 
-    def exists_locally_as_contact(self):
-        pubkey=self.find_pubkey()
+    def exists_locally_as_contact(self,name=None):
+        pubkey=self.find_pubkey(name=name)
         if not pubkey: return False
         uri=pubkey.data_b64
         if self.crypt_keys.get(uri,prefix='/privkey_encr/'):
@@ -77,9 +77,9 @@ class ComradX(Caller):
         self.log(pubkey,self.name,'???')
         return True
 
-    def exists_locally_as_account(self):
+    def exists_locally_as_account(self,name=None):
         #return bool(self.pubkey) and bool(self.privkey_encr)
-        pubkey=self.find_pubkey()
+        pubkey=self.find_pubkey(name=name)
         # self.log('found pubkey:',pubkey)
         if not pubkey: return False
         uri=pubkey.data_b64
@@ -102,7 +102,7 @@ class ComradX(Caller):
 
     ## Talking with Operator
     async def ring_ring(self,msg,route=None,**y):
-        logger.info('got here 2!')
+        # logger.info('got here 2!')
         if type(msg)==dict and not ROUTE_KEYNAME in msg:
             msg[ROUTE_KEYNAME]=route
         return await super().ring_ring(msg,caller=self,**y)
@@ -379,7 +379,7 @@ class ComradX(Caller):
 
 
     ### MEETING PEOLPE
-    def meet(self,name=None,pubkey=None,returning=False):
+    async def meet(self,name=None,pubkey=None,returning=False):
         if not name and not pubkey:
             return {'success':False,'status':'Meet whom?'}
         
@@ -406,7 +406,7 @@ class ComradX(Caller):
         }
         self.log('msg_to_op',msg_to_op)
 
-        res = self.ring_ring(
+        res = await self.ring_ring(
             msg_to_op,
             route='introduce'
         )
