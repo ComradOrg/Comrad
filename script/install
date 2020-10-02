@@ -278,17 +278,17 @@ path_venv="$path_repo/venv"
 
 # cd $path_comrad
 cd $path_repo
-echo "Now using python 1: `which python`"
-$condaexec create -y -p "$path_venv" python=3.7 cartopy pip virtualenv
+echo "Now using python (t1): `which python`"
+$condaexec create -y -p "$path_venv" python=3.7 cartopy pip virtualenv rtree
 
 #$condaexec activate "$path_venv"
 
 
-echo "Now using python 2: `which python`"
+echo "Now using python (t2): `which python`"
 # $pythonexec -m pip install virtualenv
 # $pythonexec -m virtualenv venv
 # . venv/bin/activate
-echo "Now using python 3: `which python`"
+echo "Now using python (t3): `which python`"
 
 python -m pip install -r requirements.txt
 
