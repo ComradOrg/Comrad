@@ -225,7 +225,12 @@ then
 
     # ./miniconda.exe -b -f -p "$path_conda"
     # rm miniconda.exe
-    cmd "miniconda.exe /InstallationType=JustMe /RegisterPython=0 /S /D=$path_conda"
+    # cmd "miniconda.exe /InstallationType=JustMe /RegisterPython=0 /S /D=$path_conda"
+
+    path_conda_windows="${path_conda/\//\\}"
+    wincmd="miniconda.exe /S /D=C:\\msys64$path_conda_windows"
+    echo "executing! $wincmd"
+    cmd //c "$wincmd"
 
     ### install themis from source
     if [ ! -f "/usr/local/lib/libthemis.so" ]
