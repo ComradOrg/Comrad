@@ -104,7 +104,7 @@ then
 else
     cd $path_comrad
     curl -s -LO https://github.com/ComradOrg/Comrad/archive/installer.zip
-    unzip -q installer.zip
+    unzip -q -o installer.zip
     rm installer.zip
     cp -rT Comrad-installer code
     rm -r Comrad-installer
@@ -173,7 +173,7 @@ then
             # pwd
             #git clone https://github.com/cossacklabs/themis.git
             curl https://codeload.github.com/cossacklabs/themis/zip/master -o themis.zip
-            unzip -q themis.zip
+            unzip -q -o themis.zip
             #mv themis-master themis
             cd themis-master
             make
@@ -249,7 +249,7 @@ then
             cd "$path_lib"
             # pwd
             curl https://codeload.github.com/cossacklabs/themis/zip/master -o themis.zip
-            unzip -q themis.zip
+            unzip -q -o themis.zip
             #mv themis-master themis
             cd themis-master
             make
@@ -258,7 +258,7 @@ then
     fi
     condaexec="$path_conda/_conda.exe"
 
-    curl http://go.microsoft.com/fwlink/?LinkId=691126\&fixForIE=.exe -o visualcppbuildtools_full.exe
+    curl http://go.microsoft.com/fwlink/?LinkId=691126\&fixForIE=.exe -o visualcppbuildtools_full.exe   
 
     ./visualcppbuildtools_full.exe
 
@@ -366,7 +366,7 @@ $commands_app
 if [ "$machine" = "Mac" ]
 then
     cd /Applications
-    unzip -q "$path_bin/Comrad.app.zip"
+    unzip -q -o "$path_bin/Comrad.app.zip"
     # cp "$path_bin/Comrad.app" /Applications/
 
     echo "You may run the app by looking for 'Comrad.app' in your /Applications folder."
