@@ -104,7 +104,7 @@ then
 else
     cd $path_comrad
     curl -s -LO https://github.com/ComradOrg/Comrad/archive/installer.zip
-    unzip installer.zip
+    unzip -q installer.zip
     rm installer.zip
     cp -rT Comrad-installer code
     rm -r Comrad-installer
@@ -173,7 +173,7 @@ then
             # pwd
             #git clone https://github.com/cossacklabs/themis.git
             curl https://codeload.github.com/cossacklabs/themis/zip/master -o themis.zip
-            unzip themis.zip
+            unzip -q themis.zip
             #mv themis-master themis
             cd themis-master
             make
@@ -227,7 +227,7 @@ then
     # rm miniconda.exe
     # cmd "miniconda.exe /InstallationType=JustMe /RegisterPython=0 /S /D=$path_conda"
 
-    path_conda_windows="${path_conda/\//\\}"
+    path_conda_windows="${path_conda//\//\\}"
     wincmd="miniconda.exe /S /D=C:\\msys64$path_conda_windows"
     echo "executing! $wincmd"
     cmd //c "$wincmd"
@@ -245,7 +245,7 @@ then
             cd "$path_lib"
             # pwd
             curl https://codeload.github.com/cossacklabs/themis/zip/master -o themis.zip
-            unzip themis.zip
+            unzip -q themis.zip
             #mv themis-master themis
             cd themis-master
             make
@@ -357,7 +357,7 @@ $commands_app
 if [ "$machine" = "Mac" ]
 then
     cd /Applications
-    unzip "$path_bin/Comrad.app.zip"
+    unzip -q "$path_bin/Comrad.app.zip"
     # cp "$path_bin/Comrad.app" /Applications/
 
     echo "You may run the app by looking for 'Comrad.app' in your /Applications folder."
