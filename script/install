@@ -184,6 +184,8 @@ then
     ### install zbar library
     sudo apt install zbar-tools
 
+    condaexec="conda"
+
 fi
 
 if [ "$machine" = "Mac" ]
@@ -210,6 +212,7 @@ then
     # install zbar library
     /usr/local/bin/brew install zbar
 
+    condaexec="conda"
 
 fi
 
@@ -231,6 +234,7 @@ then
     wincmd="miniconda.exe /S /D=C:\\msys64$path_conda_windows"
     echo "executing! $wincmd"
     cmd //c "$wincmd"
+    
 
     ### install themis from source
     if [ ! -f "/usr/local/lib/libthemis.so" ]
@@ -252,6 +256,8 @@ then
             make install
         fi
     fi
+    condaexec="$path_conda/_conda.exe"
+
 
     ### install zbar using apt-cyg
     # installing apt-cyg
@@ -265,14 +271,14 @@ then
     # apt-cyg install zbar
 fi
 
-
+echo "path_conda = $path_conda"
 
 # activate conda
 export PATH="$path_conda/bin:$PATH"
 
 source "$path_conda/etc/profile.d/conda.sh"
 
-condaexec="conda"
+
 pythonexec="python"
 
 
