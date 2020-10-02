@@ -79,13 +79,13 @@ class ComradX(Caller):
     def exists_locally_as_account(self):
         #return bool(self.pubkey) and bool(self.privkey_encr)
         pubkey=self.find_pubkey()
-        self.log('found pubkey:',pubkey)
+        # self.log('found pubkey:',pubkey)
         if not pubkey: return False
         uri=pubkey.data_b64
-        self.log('crypt????',self.crypt_keys.fn)
+        # self.log('crypt????',self.crypt_keys.fn)
         res = self.crypt_keys.get(uri,prefix='/privkey_encr/')
         if res:
-            self.log('found privkey_encr:',res)
+            # self.log('found privkey_encr:',res)
             return True
         return False
 
@@ -94,7 +94,7 @@ class ComradX(Caller):
             '_route':'does_username_exist',
             'name':self.name
         })
-        self.log('answer??',answer)
+        # self.log('answer??',answer)
         return answer
 
 
@@ -507,7 +507,10 @@ class ComradX(Caller):
             # add to outbox
             post_id = res.get('post_id')
             if post_id:
-                self.add_to_msg_outbox(post_id)
+                self.add_to_msg_outbox(
+                    post_id,
+                    username=self.name
+                )
         
         return res
 
@@ -574,7 +577,10 @@ class ComradX(Caller):
             # add to outbox
             post_id = res_op.get('post_id')
             if post_id:
-                self.add_to_post_outbox(post_id)
+                self.add_to_post_outbox(
+                    post_id,
+                    username=self.name
+                )
 
             # any posts to save right now?
             if res_op.get('res_posts',{}).get('success'):
@@ -585,17 +591,19 @@ class ComradX(Caller):
         # stop
         return res_op
 
-    def add_to_post_outbox(self,post_id):
-        outbox = self.get_inbox_crypt(prefix='/outbox/post/')
+    def add_to_post_outbox(self,post_id,username='',prefix='/outbox/post/'):
+        if username: prefix+=username+'/'
+        outbox = self.get_inbox_crypt(prefix=prefix)
         outbox.prepend(post_id)
-        self.log('added to outbox:',post_id,outbox.values)
-        return {'success':True,'status':'Added {post_id} to outbox for posts.'}
+        self.log('added to outbox:',post_id,prefix,username,outbox.values)
+        return {'success':True,'status':f'Added {post_id} to {prefix} for posts.'}
 
-    def add_to_msg_outbox(self,post_id):
-        outbox = self.get_inbox_crypt(prefix='/outbox/msg/')
-        outbox.prepend(post_id)
-        self.log('added to outbox for msgs:',post_id,outbox.values)
-        return {'success':True,'status':'Added {post_id} to outbox for messages.'}
+    def add_to_msg_outbox(self,post_id,username='',prefix='/outbox/msg/'):
+        return self.add_to_post_outbox(
+            post_id=post_id,
+            username=username,
+            prefix=prefix
+        )
 
     
     @property
@@ -630,6 +638,16 @@ class ComradX(Caller):
                 prefix=f'{post_prefix}{self.name}/',
                 override=True
             )
+
+
+        ## add to outbox
+        post_ids = list(id2post.keys())
+        for post in self.posts(post_ids=post_ids):
+            self.log('adding post to outbox!',post) 
+            self.add_to_post_outbox(
+                    post_id,
+                    username=post.from_name
+                )
             
         res = {
             'success':True,
@@ -723,33 +741,45 @@ class ComradX(Caller):
         return len(self.messages())
 
     
-    def sent_posts(self):
-        return self.posts(inbox_prefix='/outbox/post/')
-    
-    def sent_messages(self):
-        return self.messages(inbox_prefix='/outbox/msg/')
+    def sent_posts(self,username='',prefix='/outbox/post/'):
+        if username: prefix+=username+'/'
+        posts = self.posts(inbox_prefix=prefix)
+        self.log(f'got {len(posts)} at prefix {prefix}')
+        return posts
 
+
+    def sent_messages(self,username='',prefix='/outbox/msg/'):
+        if username: prefix+=username+'/'
+        return self.messages(inbox_prefix=prefix)
+        
     def posts(self,
             unread=None,
-            inbox_prefix='/feed/'):
+            inbox_prefix='/feed/',
+            post_ids=[]):
 
-        inbox=self.get_inbox_crypt(prefix=inbox_prefix).values
-        read=self.get_inbox_crypt(prefix=inbox_prefix+'read/').values
-        self.log('post index<-',inbox)
-        self.log('post index read<-',read)
+        if not post_ids:
+            inbox=self.get_inbox_crypt(prefix=inbox_prefix).values
+            read=self.get_inbox_crypt(prefix=inbox_prefix+'read/').values
+            self.log('post index<-',inbox_prefix,inbox)
+            # self.log('post index read<-',read)
 
-        if unread:
-            inbox = [x for x in inbox if not x in set(read)]
+            if unread:
+                inbox = [x for x in inbox if not x in set(read)]
+        else:
+            inbox=post_ids
 
         posts=[]
+        done=set()
         for post_id in inbox:
-            self.log('???',post_id,inbox_prefix)
+            if post_id in done: continue
+            done|={post_id}
+            # self.log('???',post_id,inbox_prefix)
             try:
                 res_post = self.read_post(post_id)
             except ThemisError as e:
                 self.log('!! ',e)
                 continue
-            self.log('got post:',res_post)
+            # self.log('got post:',res_post)
             if res_post.get('success') and res_post.get('post'):
                 post=res_post.get('post')
                 post.post_id=post_id
@@ -758,7 +788,7 @@ class ComradX(Caller):
 
         # sort by timestamp!
         posts.sort(key=lambda post: -post.timestamp)
-                
+
         return posts
 
     def read_post(self,post_id,post_encr=None,post_prefix='/post/'):
@@ -768,17 +798,17 @@ class ComradX(Caller):
                 post_id,
                 prefix=f'{post_prefix}{self.name}/',
             )
-        self.log('found encrypted post store:',post_encr)
+        # self.log('found encrypted post store:',post_encr)
     
         # first from op to me?
         try:
             msg_from_op_b_encr = post_encr
-            self.log('!?!?',self.name,self.uri,post_id,'\n',self.privkey)
+            # self.log('!?!?',self.name,self.uri,post_id,'\n',self.privkey)
             msg_from_op_b = SMessage(
                 self.privkey.data,
                 self.op.pubkey.data
             ).unwrap(msg_from_op_b_encr)
-            self.log('decrypted??',msg_from_op_b)
+            # self.log('decrypted??',msg_from_op_b)
         except (ThemisError,TypeError) as e:
             self.log(f'!!!!! {e} !!!!!')
             return {
@@ -788,7 +818,7 @@ class ComradX(Caller):
 
         # decoded?
         msg_from_op = pickle.loads(msg_from_op_b)
-        self.log('decoded?',msg_from_op)
+        # self.log('decoded?',msg_from_op)
         post_signed_b = msg_from_op.get('post')
         post_from_uri = msg_from_op.get('post_from')
         post_from_name = msg_from_op.get('post_from_name')
@@ -815,7 +845,7 @@ class ComradX(Caller):
                 'timestamp':post_timestamp
             }
         )
-        self.log('post obj?',post_obj)
+        # self.log('post obj?',post_obj)
         post_obj.post_id = post_id
         return {
             'success':True,
@@ -826,25 +856,32 @@ class ComradX(Caller):
 
     def messages(self,
             unread=None,
-            inbox_prefix='/inbox/'):
+            inbox_prefix='/inbox/',
+            post_ids=[]):
         # meta inbox
-        self.log('<--',inbox_prefix,'???')
+        if not post_ids:
+            self.log('<--',inbox_prefix,'???')
 
-        inbox_db=self.get_inbox_crypt(prefix=inbox_prefix)
-        read_db=self.get_inbox_crypt(prefix=inbox_prefix+'read/')
+            inbox_db=self.get_inbox_crypt(prefix=inbox_prefix)
+            read_db=self.get_inbox_crypt(prefix=inbox_prefix+'read/')
 
-        inbox = inbox_db.values
-        read = read_db.values
-        self.log('<- inbox',inbox)
-        self.log('<- read',read)
+            inbox = inbox_db.values
+            read = read_db.values
+            self.log('<- inbox',inbox)
+            self.log('<- read',read)
 
-        # filter?
-        if unread:
-            inbox = [x for x in inbox if not x in set(read)]
+            # filter?
+            if unread:
+                inbox = [x for x in inbox if not x in set(read)]
+        else:
+            inbox=post_ids
         
         # decrypt and read all posts
         msgs=[]
+        done=set()
         for post_id in inbox:
+            if post_id in done: continue
+            done|={post_id}
             # self.log('???',post_id,inbox_prefix)
             res_msg = self.read_msg(post_id)
             # self.log('got msg:',res_msg)

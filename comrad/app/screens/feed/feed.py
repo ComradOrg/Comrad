@@ -155,7 +155,10 @@ class PostCard(MDCard):
             self.author_label.text+=f'\n[size={recip_label_font_size}]to '+recip+'[/size]'
             self.author_label.markup=True
         self.author_label.font_size = author_label_font_size
-        avatar_img_src = os.path.join(PATH_GUI_ASSETS, 'avatars', f'{self.author}.png')
+        
+        avatar_img_src = os.path.join(PATH_AVATARS, f'{self.author}.png')
+        if not os.path.exists(avatar_img_src):
+            avatar_img_src = os.path.join(PATH_GUI_ASSETS, 'avatars', f'{self.author}.png')
         if not os.path.exists(avatar_img_src): 
             avatar_img_src=PATH_DEFAULT_AVATAR
         self.author_avatar = author_avatar = PostAuthorAvatar(source=avatar_img_src) #self.img_src)

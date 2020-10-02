@@ -67,9 +67,6 @@ class ProfileAvatar(Image):
                 #avatar_fnfn = os.path.join(PATH_AVATAR,self.com)
                 self.parent.parent.parent.parent.parent.change_avatar(fnfn)
 
-
-
-
 class LayoutAvatar(MDBoxLayout): pass
 
 class AuthorInfoLayout(MDBoxLayout): pass
@@ -79,8 +76,6 @@ class LayoutCover(MDBoxLayout):
     pass
 
 class CoverImage(Image): pass
-
-
 
 def binarize_image(image, threshold=200):
     """Binarize an image."""
@@ -229,7 +224,7 @@ class ProfileScreen(ProtectedScreen):
 
    
     def make_profile_img(self,width,do_crop=True,circ_img=None,bw=False,circularize=True):
-        img_src = os.path.join(PATH_AVATARS, f'{self.app.comrad.name}.png')
+        img_src = os.path.join(PATH_AVATARS, f'{self.app.username}.png')
         if not os.path.exists(img_src):
             img_src = os.path.join(PATH_GUI_ASSETS, 'avatars', f'{self.app.username}.png')
         if not os.path.exists(img_src): 
@@ -252,7 +247,7 @@ class ProfileScreen(ProtectedScreen):
         # raise Exception(f'Got filename! {fnfn}')
         if not os.path.exists(fnfn): return
         ext=os.path.splitext(fnfn)[1]
-        ofnfn=os.path.join(PATH_AVATARS,self.app.comrad.name+ext)
+        ofnfn=os.path.join(PATH_AVATARS,self.app.username+ext)
         shutil.copyfile(fnfn,ofnfn)
 
         # re-get circular image
@@ -365,7 +360,12 @@ class ProfileScreen(ProtectedScreen):
     async def add_author_posts(self):
         lim=25
         
-        posts=self.app.comrad.sent_posts()
+        self.log('USERNAME:',self.app.username)
+
+        posts=self.app.comrad.sent_posts(
+            username=self.app.username
+        )
+        self.log('OUTBOX:',len(posts),'posts')
 
         for i,post in enumerate(posts):
             if i>lim: break

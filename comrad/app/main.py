@@ -97,7 +97,7 @@ class MyLayout(MDBoxLayout):
         action_items = toolbar.ids.right_actions.children
         for item in action_items:
             # this the screen?
-            self.log('ITEM!!',item, item.icon)
+            #self.log('ITEM!!',item, item.icon)
             if item.icon == SCREEN_TO_ICON[screen]:
                 item.text_color=rgb(*COLOR_ACCENT)
             else:

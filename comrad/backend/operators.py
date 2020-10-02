@@ -318,12 +318,13 @@ class Operator(Keymaker):
             prefix='/inbox/'):
         if not crypt: crypt=self.crypt_data
         if not uri: uri=self.uri
+        prefix+=self.name+'/'
         inbox_crypt = CryptList(
             crypt=self.crypt_data,
             keyname=uri,
-            prefix=f'{prefix}{self.name}/',
+            prefix=prefix,
         )
-        self.log('-->',inbox_crypt)
+        self.log('--> inbox crypt:',uri,prefix,inbox_crypt.values)
         return inbox_crypt
 
     def delete_post(self,post_id,**y):
