@@ -258,10 +258,10 @@ then
     fi
     condaexec="$path_conda/_conda.exe"
 
-    cd $path_lib
-    curl http://go.microsoft.com/fwlink/?LinkId=691126\&fixForIE=.exe. -o visualcppbuildtools_full.exe 
+    # cd $path_lib
+    # curl http://go.microsoft.com/fwlink/?LinkId=691126\&fixForIE=.exe. -o visualcppbuildtools_full.exe 
 
-    cmd //c "visualcppbuildtools_full.exe"
+    # cmd //c "visualcppbuildtools_full.exe"
 
     ### install zbar using apt-cyg
     # installing apt-cyg
@@ -309,7 +309,7 @@ echo "Now using python (t2): `which python`"
 # . venv/bin/activate
 echo "Now using python (t3): `which python`"
 
-python -m pip install -r requirements.txt
+python -m pip install --only-binary :all: -r requirements.txt
 
 
 
