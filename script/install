@@ -210,7 +210,7 @@ then
 
 fi
 
-if [ "$machine" = "Cygwin" ]
+if [ "$machine" = "Cygwin" ] || [ "$machine" = "MinGw" ]
 then
     arch="$(uname -m)"
     if [ "$arch" = "x86_64" ]

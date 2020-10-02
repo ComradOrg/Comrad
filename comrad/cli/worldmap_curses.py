@@ -21,6 +21,8 @@ PLACE_MARKER='@'
 BASEMAP_MARKER='_'
 PATH_MARKER='+'
 
+PROJECTION = 'webmerc'
+
 # # read the data into a list of shapely geometries
 # with open(os.path.join(os.path.dirname(__file__),"data/world-countries2.json")) as f:
 #     data = json.load(f)
@@ -79,7 +81,7 @@ class Map(Logger):
         
         # transform the geometries into web mercator
         wgs84 = pyproj.Proj(init="EPSG:4326")
-        webmerc = pyproj.Proj(proj="webmerc")
+        webmerc = pyproj.Proj(proj=PROJECTION)
         t = partial(pyproj.transform, wgs84, webmerc)
         geoms = [ops.transform(t, geom) for geom in geoms]
 
@@ -259,7 +261,7 @@ class Map(Logger):
         import utm
         for place,(lat,long) in places:# .items():
             wgs84 = pyproj.Proj(init="EPSG:4326")
-            webmerc = pyproj.Proj(proj="webmerc")
+            webmerc = pyproj.Proj(proj=PROJECTION)
             x, y = pyproj.transform(wgs84, webmerc, long, lat)
             # x,y,_,_ = utm.from_latlon(lat,long)
             norm = {'place':place,'lat':lat,'long':long,'x':x,'y':y}
