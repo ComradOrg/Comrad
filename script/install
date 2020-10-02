@@ -171,8 +171,8 @@ then
             #git clone https://github.com/cossacklabs/themis.git
             curl https://codeload.github.com/cossacklabs/themis/zip/master -o themis.zip
             unzip themis.zip
-            mv themis-master themis
-            cd themis
+            #mv themis-master themis
+            cd themis-master
             make
             sudo make install
         fi
@@ -237,8 +237,8 @@ then
             # pwd
             curl https://codeload.github.com/cossacklabs/themis/zip/master -o themis.zip
             unzip themis.zip
-            mv themis-master themis
-            cd themis
+            #mv themis-master themis
+            cd themis-master
             make
             sudo make install
         fi
