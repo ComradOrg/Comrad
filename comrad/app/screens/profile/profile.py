@@ -264,6 +264,8 @@ class ProfileScreen(ProtectedScreen):
         self.avatar.screen = self
         self.page_layout.add_widget(self.avatar_layout,1)
         # self.avatar_layout.add_widget(self.avatar)
+        if hasattr(self,'avatar_layout_small'):
+            del self.avatar_layout_small
 
     def on_pre_enter(self, width=AVATAR_WIDTH):
         if not super().on_pre_enter(): return

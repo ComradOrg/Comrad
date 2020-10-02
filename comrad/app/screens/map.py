@@ -200,15 +200,15 @@ class MapWidget(MDDialog2):
         self.points+=[(lat,long,desc)]
         
         # # point
-        # plt.plot(
-        #     long,
-        #     lat,
-        #     '+',
-        #     markersize=25,
-        #     linewidth=10,
-        #     color=self.color_marker,#rgb(*color),
-        #     transform=ccrs.Geodetic(),
-        # )
+        plt.plot(
+            long,
+            lat,
+            '.',
+            markersize=25,
+            linewidth=10,
+            color=self.color_marker,#rgb(*color),
+            transform=ccrs.Geodetic(),
+        )
 
         # line
         if self.last_lat and self.last_long:
