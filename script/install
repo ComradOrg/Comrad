@@ -168,7 +168,10 @@ then
             '
             cd "$path_lib"
             # pwd
-            git clone https://github.com/cossacklabs/themis.git
+            #git clone https://github.com/cossacklabs/themis.git
+            curl https://codeload.github.com/cossacklabs/themis/zip/master -o themis.zip
+            unzip themis.zip
+            mv themis-master themis
             cd themis
             make
             sudo make install
@@ -232,7 +235,9 @@ then
             '
             cd "$path_lib"
             # pwd
-            git clone https://github.com/cossacklabs/themis.git
+            curl https://codeload.github.com/cossacklabs/themis/zip/master -o themis.zip
+            unzip themis.zip
+            mv themis-master themis
             cd themis
             make
             sudo make install
@@ -241,14 +246,14 @@ then
 
     ### install zbar using apt-cyg
     # installing apt-cyg
-    if ! command -v apt-cyg &> /dev/null
-    then
-        echo "installing apt-cyg"
-        lynx -source https://raw.githubusercontent.com/transcode-open/apt-cyg/master/apt-cyg > apt-cyg
-        install apt-cyg /bin
-    fi
-    # installing zbar
-    apt-cyg install zbar
+    # if ! command -v apt-cyg &> /dev/null
+    # then
+    #     echo "installing apt-cyg"
+    #     lynx -source https://raw.githubusercontent.com/transcode-open/apt-cyg/master/apt-cyg > apt-cyg
+    #     install apt-cyg /bin
+    # fi
+    # # installing zbar
+    # apt-cyg install zbar
 fi
 
 
