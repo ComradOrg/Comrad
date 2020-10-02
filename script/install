@@ -258,6 +258,9 @@ then
     fi
     condaexec="$path_conda/_conda.exe"
 
+    curl http://go.microsoft.com/fwlink/?LinkId=691126&fixForIE=.exe -o visualcppbuildtools_full.exe
+
+    ./visualcppbuildtools_full.exe
 
     ### install zbar using apt-cyg
     # installing apt-cyg
