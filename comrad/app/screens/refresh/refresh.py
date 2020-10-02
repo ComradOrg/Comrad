@@ -16,7 +16,7 @@ class RefreshScreen(ProtectedScreen):
             await self.app.comrad.get_updates()
             self.app.map.dismiss()
             self.app.map=None
-            self.app.change_screen(self.app.last_screen if self.app.last_screen else 'feed')
+            self.app.go_back()
 
         asyncio.create_task(go())
 

@@ -183,7 +183,8 @@ def update_screen_on_carousel_move(self,dt,width=75):
     # avatar_layout = copy(screen.avatar_layout)
     # avatar_layout.width=dp(100)
     # avatar_layout.height=dp(100)
-    
+    if not self.do_update_screen_on_carousel_move: return
+
     if self.carousel.index:
         if not hasattr(self,'avatar_layout_small'):
             self.avatar_img.seek(0)
@@ -221,7 +222,7 @@ from screens.base import ProtectedScreen
 class ProfileScreen(ProtectedScreen): 
     username = None
     clock_scheduled=None
-
+    do_update_screen_on_carousel_move=True
    
     def make_profile_img(self,width,do_crop=True,circ_img=None,bw=False,circularize=True):
         img_src = os.path.join(PATH_AVATARS, f'{self.app.username}.png')
@@ -264,7 +265,7 @@ class ProfileScreen(ProtectedScreen):
 
     def on_pre_enter(self, width=AVATAR_WIDTH):
         if not super().on_pre_enter(): return
-
+        self.do_update_screen_on_carousel_move=True
         if not self.clock_scheduled:
             Clock.schedule_interval(partial(update_screen_on_carousel_move, self), 0.1)
             self.clock_scheduled=True
@@ -380,6 +381,14 @@ class ProfileScreen(ProtectedScreen):
             self.posts.append(post_obj)
             self.carousel.add_widget(post_obj)
 
+
+    def on_pre_leave(self):
+        self.app.username=self.app.comrad.name
+        # self.avatar_layout_small_visible=False
+        if hasattr(self,'avatar_layout_small'):
+            self.remove_widget(self.avatar_layout_small)
+            del self.avatar_layout_small
+            self.do_update_screen_on_carousel_move=False
 
     # def on_touch_move(self, ent):
     #     if self.carousel.index:

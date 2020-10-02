@@ -37,7 +37,8 @@ class PostContent(MDLabel):
         self.font_name='assets/overpass-mono-regular.otf'
     #pass
 
-class PostAuthorLayout(MDBoxLayout): pass
+class PostAuthorLayout(MDBoxLayout):
+    pass
 
 class PostImageLayout(MDBoxLayout): pass
 
@@ -50,43 +51,28 @@ class PostAuthorLabel(MDLabel):
         self.font_name='assets/overpass-mono-regular.otf'
         #self.to_changeable=False
 
+    # def on_touch_down(self,*x,**y):
+    #     print('weeeeeee')
+    #     stop
+
+    #def on_touch_down(self, touch):
+        # '''Receive a touch down event.
+        # :Parameters:
+        #     `touch`: :class:`~kivy.input.motionevent.MotionEvent` class
+        #         Touch received. The touch is in parent coordinates. See
+        #         :mod:`~kivy.uix.relativelayout` for a discussion on
+        #         coordinate systems.
+        # :Returns: bool
+        #     If True, the dispatching of the touch event will stop.
+        #     If False, the event will continue to be dispatched to the rest
+        #     of the widget tree.
+        # '''
     def on_touch_down(self, touch):
-        '''Receive a touch down event.
-        :Parameters:
-            `touch`: :class:`~kivy.input.motionevent.MotionEvent` class
-                Touch received. The touch is in parent coordinates. See
-                :mod:`~kivy.uix.relativelayout` for a discussion on
-                coordinate systems.
-        :Returns: bool
-            If True, the dispatching of the touch event will stop.
-            If False, the event will continue to be dispatched to the rest
-            of the widget tree.
-        '''
-        #if not self.to_changeable: return
-        # try:
-        #     self.parent.parent.author_dialog.open()
-        #     #for item in self.parent.parent.author_dialog.items:
-        #     #    raise Exception([item.disabled, item.text])
-        # except AttributeError:
-        #     pass
-        try:
-            self.parent.parent.parent.open_author_option()
-        except AttributeError:
-            pass
-
-        #raise Exception(self.text)
-        # self.text = '!!!'
-        
-        #self.parent.parent.recipient
-        #return
-        #raise Exception(self.parent.parent.recipient)
-
-
-        if self.disabled and self.collide_point(*touch.pos):
+        if self.collide_point(*touch.pos):
+            username=self.text.strip().split()[1][1:]
+            app=App.get_running_app()
+            app.view_profile(username)
             return True
-        for child in self.children[:]:
-            if child.dispatch('on_touch_down', touch):
-                return True
 
     pass
 
@@ -97,7 +83,13 @@ class PostTimestampLabel(MDLabel):
         self.bind(texture_size=self.setter('size'))
         self.font_name='assets/overpass-mono-regular.otf'
 
-class PostAuthorAvatar(AsyncImage): pass
+class PostAuthorAvatar(AsyncImage):
+    def on_touch_down(self, touch):
+        if self.collide_point(*touch.pos):
+            print('wiiiiimg')
+            return True
+        # stop
+    pass
 
 class PostLayout(MDBoxLayout): pass
 
@@ -281,10 +273,16 @@ class PostCardInputPopup(PostCardPopup):
 
 class FeedScreen(ProtectedScreen):
     posts = ListProperty()
+    updated = None
 
     def on_pre_enter(self):
         if not super().on_pre_enter(): return
+        if self.updated:
+            if not self.app.comrad.updated or self.updated>=self.app.comrad.updated:
+                self.log('NOT UPDATING!')
+                return
         # self.root.clear_widgets()
+        self.log('UPDATING!')
         if self.app.map:
             self.app.map.dismiss()
             self.root.remove_widget(self.app.map)
@@ -312,6 +310,7 @@ class FeedScreen(ProtectedScreen):
                 post_obj = PostCard(data)
                 self.posts.append(post_obj)
                 self.ids.post_carousel.add_widget(post_obj)
+                self.updated = time.time()
 
         asyncio.create_task(go())
         return True

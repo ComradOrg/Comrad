@@ -93,7 +93,9 @@ class PostScreen(ProtectedScreen):
             self.post_card.add_widget(self.to_whom_btn,1)
             self.to_whom_btn.height='100dp'
             self.to_whom_btn.size_hint_y=None
-        except kivy.uix.widget.WidgetException:
+            self.log('wtf?????')
+        except kivy.uix.widget.WidgetException as e:
+            self.log('wtf ',e)
             return
     
     def close_author_option(self):

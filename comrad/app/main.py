@@ -89,7 +89,7 @@ class MyLayout(MDBoxLayout):
 
     def change_screen(self, screen, *args):
         self.scr_mngr.current = screen
-        self.app.last_screen = self.app.screen
+        self.app.screen_hist.append(self.app.screen)
         self.app.screen = self.screen = screen
 
         # toolbar
@@ -446,7 +446,69 @@ class MainApp(MDApp, Logger):
     texture = ObjectProperty()
     uri='/do/login'
     screen='login'
-    last_screen=None
+    screen_hist=[]
+    screen_names = [
+        'feed',
+        'messages',
+        'post',
+        'profile',
+        # 'refresh',
+        # 'login'
+    ]
+
+    def go_back(self):
+        self.change_screen(
+            self.screen_hist.pop() if self.screen_hist else 'feed'
+        )
+
+    def _on_keyboard_down(self, instance, keyboard, keycode, text, modifiers):
+        # self.log(f'keyboard:{keyboard}\nkeycode: {keycode}\ntext: {text}\ninstance: {instance}\nmodifiers:\n{modifiers}\n\n')
+        
+        ## arrows
+        # ctrl left
+        modifiers=set(modifiers)
+        
+        # enter? continue
+        if keycode==40:
+            if hasattr(self,'msg_dialog') and self.msg_dialog:
+                self.msg_dialog.ok_to_continue=True
+
+        # left
+        if keycode == 80 and 'ctrl' in modifiers:
+            # go back
+            self.go_back()
+        # down
+        elif keycode==81 and 'ctrl' in modifiers:
+            screen_index=self.screen_names.index(self.screen)
+            new_screen = self.screen_names[screen_index - 1]
+            
+            self.change_screen(new_screen)
+        # up
+        elif keycode==82 and 'ctrl' in modifiers:
+            screen_index=self.screen_names.index(self.screen)
+            try:
+                new_screen = self.screen_names[screen_index +1]
+            except IndexError:
+                new_screen = self.screen_names[0]
+
+            self.change_screen(new_screen)
+        
+        
+        ## keys
+        elif text=='f' and 'ctrl' in modifiers:
+            self.change_screen('feed')
+        elif text=='m' and 'ctrl' in modifiers:
+            self.change_screen('messages')
+        elif text=='c' and 'ctrl' in modifiers:
+            self.change_screen('post')
+        elif text=='p' and 'ctrl' in modifiers:
+            self.change_screen('profile')
+        elif text=='r' and 'ctrl' in modifiers:
+            self.change_screen('refresh')
+        elif text=='e' and 'ctrl' in modifiers:
+            self.change_screen('login')
+        
+
 
     def rgb(self,*_): return rgb(*_)
 
@@ -469,10 +531,9 @@ class MainApp(MDApp, Logger):
         super().__init__(**kwargs)
         self.event_loop_worker = None
         self.loop=asyncio.get_event_loop()
-        
-        # connect to API
         self.comrad=None
         self._name=''
+        Window.bind(on_key_down=self._on_keyboard_down)
 
 
     def build(self):
@@ -577,8 +638,10 @@ class MainApp(MDApp, Logger):
                 self.remove_widget(widg)
 
 
-
-
+    def view_profile(self,username):
+        self.username=username
+        self.change_screen('profile')
+        # self.username=self.comrad.name
 
 
 

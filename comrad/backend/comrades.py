@@ -16,6 +16,7 @@ class ComradX(Caller):
 
     def __init__(self, name=None, pubkey=None, callbacks={}, getpass_func=None):
         # logger.info('booting ComradX with getpass_func:',getpass_func)
+        self.updated=None
         super().__init__(name=name, callbacks=callbacks, getpass_func=getpass_func)
         self.log(f'Starting up with callbacks: {self._callbacks}')
         # self.boot(create=False)
@@ -645,7 +646,7 @@ class ComradX(Caller):
         for post in self.posts(post_ids=post_ids):
             self.log('adding post to outbox!',post) 
             self.add_to_post_outbox(
-                    post_id,
+                    post.post_id,
                     username=post.from_name
                 )
             
@@ -722,6 +723,7 @@ class ComradX(Caller):
         _num=self.num_unread_msgs
         res['status']=f'''You have {_nup} unseen post{'s' if _nup!=1 else ''} and {_num} unread msg{'s' if _num!=1 else ''}.'''
         
+        self.updated=time.time()
         return res
     
     @property
