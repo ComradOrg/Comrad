@@ -309,7 +309,7 @@ cd $path_repo
 echo "Now using python (t1): `which python`"
 $condaexec create -y -p "$path_venv" python=3.7 cartopy pip virtualenv rtree
 
-#$condaexec activate "$path_venv"
+$condaexec activate "$path_venv"
 
 
 echo "Now using python (t2): `which python`"
