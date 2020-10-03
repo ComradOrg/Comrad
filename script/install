@@ -265,7 +265,7 @@ then
             make install
         fi
     fi
-    condaexec="$path_conda/_conda.exe"
+    # condaexec="$path_conda/_conda.exe"
 
     # cd $path_lib
     # curl http://go.microsoft.com/fwlink/?LinkId=691126\&fixForIE=.exe. -o visualcppbuildtools_full.exe 
@@ -289,15 +289,15 @@ echo "path_conda = $path_conda"
 # activate conda
 export PATH="$path_conda/bin:$PATH"
 
-$condaexec init bash
-source "`realpath ~/.bashrc`"
+# $condaexec init bash
+# source "`realpath ~/.bashrc`"
 
 source "$path_conda/etc/profile.d/conda.sh"
 
-
+condaexec="conda"
 pythonexec="python"
 
-
+$condaexec
 
 
 echo '
