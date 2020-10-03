@@ -248,8 +248,11 @@ class ProfileScreen(ProtectedScreen):
         # raise Exception(f'Got filename! {fnfn}')
         if not os.path.exists(fnfn): return
         ext=os.path.splitext(fnfn)[1]
-        ofnfn=os.path.join(PATH_AVATARS,self.app.username+ext)
-        shutil.copyfile(fnfn,ofnfn)
+        ofnfn=os.path.join(PATH_AVATARS,self.app.username+'.png')
+        # shutil.copyfile(fnfn,ofnfn)
+        from PIL import Image as pImage
+        im = pImage.open(fnfn)
+        im.save(ofnfn)
 
         # re-get circular image
         # self.avatar_layout.remove_widget(self.avatar)
