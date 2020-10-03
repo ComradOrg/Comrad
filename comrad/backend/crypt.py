@@ -142,7 +142,7 @@ class Crypt(Logger):
         k_b=self.package_key(k,prefix=prefix)
         k_b_hash = self.hash(k_b)
 
-        v = self.db.command('get',k_b_hash)
+        v = self.db.command('del',k_b_hash)
         self.log('<--',v)
         
         return v
