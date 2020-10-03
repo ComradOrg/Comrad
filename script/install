@@ -289,6 +289,9 @@ echo "path_conda = $path_conda"
 # activate conda
 export PATH="$path_conda/bin:$PATH"
 
+$condaexec init bash
+source "`realpath ~/.bashrc`"
+
 source "$path_conda/etc/profile.d/conda.sh"
 
 
