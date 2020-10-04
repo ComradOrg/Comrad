@@ -343,6 +343,9 @@ git clone https://github.com/seppo0010/rlite-py.git
 cd rlite-py
 python setup.py install
 
+
+
+cd $path_repo
 if [ "$machine" = "MinGw" ]
 then
     #python -m pip install --only-binary :all: hirlite
