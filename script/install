@@ -338,9 +338,14 @@ echo "Now using python (t2): `which python`"
 echo "Now using python (t3): `which python`"
 
 
+cd $path_lib
+git clone https://github.com/seppo0010/rlite-py.git
+cd rlite-py
+python setup.py install
+
 if [ "$machine" = "MinGw" ]
 then
-    python -m pip install --only-binary :all: hirlite
+    #python -m pip install --only-binary :all: hirlite
     # env CC=/usr/bin/gcc python -m pip install -r requirements.txt
     python -m pip install -r requirements.txt
 else
@@ -353,7 +358,6 @@ then
 else
     $condaexec install wxpython
 fi
-
 
 
 echo '
