@@ -40,5 +40,5 @@ then
     pushd $path_repo && git pull
 fi
 
-python -m pip install -r $path_repo/requirements.txt
+python -m pip install -r $path_repo/requirements.txt -q
 python $path_repo/comrad/app/main.py

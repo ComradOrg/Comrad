@@ -313,7 +313,7 @@ if [ "$machine" = "Mac" ]
 then
     echo "Installing Mac native GUI bridge"
     python -m pip install git+https://github.com/kivy/pyobjus
-else
+fi
 
 
 #######################################
