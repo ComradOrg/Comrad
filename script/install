@@ -244,7 +244,8 @@ then
     echo "executing! $wincmd"
     cmd //c "$wincmd"
 
-    export PATH="$path_conda/Library/bin:$path_conda/Scripts:$path_conda:$PATH"
+    export PATH="$path_conda/Library/bin:$path_conda:$PATH"
+    # export PATH="$path_conda/Library/bin:$path_conda/Scripts:$path_conda:$PATH"
 
 
     ## looks like we really do need visual studi c++ tools?
