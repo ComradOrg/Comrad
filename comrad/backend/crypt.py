@@ -11,7 +11,6 @@ import zlib
 from pythemis.exception import ThemisError
 # from vedis import Vedis
 # from walrus.tusks.rlite import WalrusLite
-import hirlite
 
 LOG_GET_SET = 0
 
@@ -62,6 +61,7 @@ class Crypt(Logger):
         # self.store = RedisStore(redis.StrictRedis())
         # self.db = Vedis(self.fn)
         # self.db = WalrusLite(self.fn)
+        import hirlite
         self.db = hirlite.Rlite(path=self.fn)
 
 
