@@ -182,7 +182,7 @@ then
     fi
 
     ### install zbar library
-    sudo apt install zbar-tools
+    # sudo apt install zbar-tools
 
     condaexec="conda"
 
@@ -210,7 +210,7 @@ then
     
 
     # install zbar library
-    /usr/local/bin/brew install zbar
+    # /usr/local/bin/brew install zbar
 
     condaexec="conda"
 
@@ -220,7 +220,8 @@ if [ "$machine" = "MinGw" ]
 then
 
     # make sure packages installed
-    pacman -S mingw-w64-x86_64-zbar curl wget unzip gcc make openssl-devel
+    # pacman -S mingw-w64-x86_64-zbar curl wget unzip gcc make openssl-devel
+    pacman -S curl wget unzip gcc make openssl-devel
 
 
 
@@ -308,7 +309,12 @@ path_venv="$path_repo/venv"
 # cd $path_comrad
 cd $path_repo
 echo "Now using python (t1): `which python`"
-$condaexec create -y -p "$path_venv" python=3.7 cartopy pip virtualenv rtree
+
+
+$condaexec create -y -p "$path_venv" python=3.7 cartopy pip virtualenv rtree pyzbar
+
+
+
 
 source "$path_conda/etc/profile.d/conda.sh"
 cd $path_venv
@@ -323,10 +329,10 @@ $condaexec activate "$path_venv"
 $condaexec
 
 
-if [ "$machine" = "MinGw" ]
-then
-    $condaexec install libpython m2w64-toolchain -c msys2
-fi
+# if [ "$machine" = "MinGw" ]
+# then
+#     $condaexec install libpython m2w64-toolchain -c msys2
+# fi
 
 
 
