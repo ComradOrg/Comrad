@@ -225,7 +225,7 @@ then
 
 
     if [ ! -f "miniconda.exe" ]
-    then
+    then  
         arch="$(uname -m)"
         if [ "$arch" = "x86_64" ]
         then
