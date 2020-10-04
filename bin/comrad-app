@@ -17,7 +17,7 @@ esac
 realpath() {
     [[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"
 }
-
+path_conda="`realpath ~/comrad/lib`"
 path_conda="`realpath ~/comrad/lib/miniconda3`"
 path_venv="`realpath ~/comrad/code/venv`"
 path_repo="`realpath ~/comrad/code`"
@@ -25,6 +25,8 @@ path_repo="`realpath ~/comrad/code`"
 source $path_conda/etc/profile.d/conda.sh
 export PATH="$path_conda/Library/bin:$path_conda/Scripts:$path_conda:$PATH"
 export PATH="$path_conda/bin:$PATH"
+export PATH="$path_lib/themis-master/build:/usr/local/bin:$PATH"
+
 
 if [ "$machine" = "MinGw" ]
 then
@@ -39,6 +41,10 @@ if [ -d "$path_repo_git" ]
 then
     pushd $path_repo && git pull
 fi
+
+
+
+
 
 python -m pip install -r $path_repo/requirements.txt -q
 python $path_repo/comrad/app/main.py
