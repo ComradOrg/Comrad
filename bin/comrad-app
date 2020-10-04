@@ -3,7 +3,15 @@
 ##
 # Run the mobile app
 ##
-
+unameOut="$(uname -s)"
+case "${unameOut}" in
+    Linux*)     machine=Linux;;
+    Darwin*)    machine=Mac;;
+    CYGWIN*)    machine=Cygwin;;
+    MINGW*)     machine=MinGw;;
+    MSYS*)      machine=MinGw;;
+    *)          machine="UNKNOWN:${unameOut}"
+esac
 
 # funcs (mac doesnt have realpath)
 realpath() {
@@ -17,6 +25,12 @@ path_repo="`realpath ~/comrad/code`"
 source $path_conda/etc/profile.d/conda.sh
 export PATH="$path_conda/Library/bin:$path_conda/Scripts:$path_conda:$PATH"
 export PATH="$path_conda/bin:$PATH"
+
+if [ "$machine" = "MinGw" ]
+then
+    cmd //c call "$path_conda/Scripts/activate"
+fi
+
 conda activate $path_venv
 
 # update?

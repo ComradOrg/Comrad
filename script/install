@@ -305,6 +305,10 @@ export PATH="$path_conda/bin:$PATH"
 # source "`realpath ~/.bashrc`"
 
 source "$path_conda/etc/profile.d/conda.sh"
+if [ "$machine" = "MinGw" ]
+then
+    cmd //c call "$path_conda/Scripts/activate"
+fi 
 
 # condaexec="conda"
 pythonexec="python"
@@ -326,8 +330,17 @@ echo "Now using python (t1): `which python`"
 $condaexec create -y -p "$path_venv" python=3.7 cartopy pip virtualenv rtree
 
 source "$path_conda/etc/profile.d/conda.sh"
+cd $path_venv
+if [ "$machine" = "MinGw" ]
+then
+    cmd //c call "$path_conda/Scripts/activate"
+fi
 
 $condaexec activate "$path_venv"
+
+
+$condaexec
+
 
 if [ "$machine" = "MinGw" ]
 then
@@ -433,6 +446,9 @@ then
 
     echo "You may run the app by looking for 'Comrad.app' in your /Applications folder."
 fi
+
+
+
 
 # run?
 . $path_bin/comrad-app
