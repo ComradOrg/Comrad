@@ -1,3 +1,6 @@
 from .artcode import *
-from .tab_completer import *
+try:
+    from .tab_completer import *
+except ModuleNotFoundError:
+    pass
 from .cli import *
