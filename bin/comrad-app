@@ -15,6 +15,7 @@ path_venv="`realpath ~/comrad/code/venv`"
 path_repo="`realpath ~/comrad/code`"
 
 source $path_conda/etc/profile.d/conda.sh
+export PATH="$path_conda/Library/bin:$path_conda/Scripts:$path_conda:$PATH"
 export PATH="$path_conda/bin:$PATH"
 conda activate $path_venv
 

@@ -224,14 +224,15 @@ then
 
 
 
-    arch="$(uname -m)"
-    if [ "$arch" = "x86_64" ]
-    then
-        curl https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-Windows-x86_64.exe -o miniconda.exe
-    else
-        curl https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-Windows-x86.exe -o miniconda.exe
+    if [ ! -f "miniconda.exe" ]
+        arch="$(uname -m)"
+        if [ "$arch" = "x86_64" ]
+        then
+            curl https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-Windows-x86_64.exe -o miniconda.exe
+        else
+            curl https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-Windows-x86.exe -o miniconda.exe
+        fi
     fi
-
     # ./miniconda.exe -b -f -p "$path_conda"
     # rm miniconda.exe
     # cmd "miniconda.exe /InstallationType=JustMe /RegisterPython=0 /S /D=$path_conda"
@@ -329,7 +330,8 @@ echo "Now using python (t3): `which python`"
 
 if [ "$machine" = "MinGw" ]
 then
-    env CC=/usr/bin/gcc python -m pip install -r requirements.txt
+    # env CC=/usr/bin/gcc python -m pip install -r requirements.txt
+    python -m pip install --only-binary :all: -r requirements.txt
 else
     python -m pip install -r requirements.txt
 fi
