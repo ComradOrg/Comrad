@@ -277,7 +277,7 @@ then
             make install
         fi
     fi
-    condaexec="$path_conda/condabin/conda.bat"
+    condaexec="conda" #$path_conda/condabin/conda.bat"
 
     # cd $path_lib
     # curl http://go.microsoft.com/fwlink/?LinkId=691126\&fixForIE=.exe. -o visualcppbuildtools_full.exe 
