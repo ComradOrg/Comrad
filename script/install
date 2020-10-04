@@ -257,26 +257,7 @@ then
     # fi
 
 
-    ### install themis from source
-    if [ ! -f "/usr/local/lib/libthemis.so" ]
-    then
-        if [ ! -f "/usr/lib/libthemis.so" ]
-        then
-            echo '
-
-            3) building Themis, cryptography backend...
-
-            '
-            cd "$path_lib"
-            # pwd
-            curl https://codeload.github.com/cossacklabs/themis/zip/master -o themis.zip
-            unzip -q -o themis.zip
-            #mv themis-master themis
-            cd themis-master
-            make
-            make install
-        fi
-    fi
+    
     condaexec="conda" #$path_conda/condabin/conda.bat"
 
     # cd $path_lib
@@ -356,8 +337,29 @@ make
 make install
 sudo make install
 
+### install themis from source
+if [ "$machine" = "MinGw" ]
+then
+    if [ ! -f "/usr/local/lib/libthemis.so" ]
+    then
+        if [ ! -f "/usr/lib/libthemis.so" ]
+        then
+            echo '
 
+            Building Themis, cryptography backend...
 
+            '
+            cd "$path_lib"
+            # pwd
+            curl https://codeload.github.com/cossacklabs/themis/zip/master -o themis.zip
+            unzip -q -o themis.zip
+            #mv themis-master themis
+            cd themis-master
+            make
+            make install
+        fi
+    fi
+fi
 
 echo "Now using python (t2): `which python`"
 # $pythonexec -m pip install virtualenv
