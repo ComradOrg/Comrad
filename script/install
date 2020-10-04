@@ -331,8 +331,9 @@ echo "Now using python (t3): `which python`"
 
 if [ "$machine" = "MinGw" ]
 then
+    python -m pip install --only-binary :all: hirlite
     # env CC=/usr/bin/gcc python -m pip install -r requirements.txt
-    python -m pip install --only-binary :all: -r requirements.txt
+    python -m pip install -r requirements.txt
 else
     python -m pip install -r requirements.txt
 fi
