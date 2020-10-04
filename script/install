@@ -6,6 +6,16 @@ realpath() {
 }
 
 echo "$1 $2 $3"
+
+unameOut="$(uname -s)"
+case "${unameOut}" in
+    Linux*)     machine=Linux;;
+    Darwin*)    machine=Mac;;
+    CYGWIN*)    machine=Cygwin;;
+    MINGW*)     machine=MinGw;;
+    MSYS*)      machine=MinGw;;
+    *)          machine="UNKNOWN:${unameOut}"
+esac
    
 
 # install pyenv?
@@ -22,8 +32,17 @@ installing...
 
 "            
 
+
+
+
+
+###
+# Create paths
+######
+
+
 echo '
-1) setting up folder...
+1) setting up folders...
 
 '
 # install dir?
@@ -56,7 +75,9 @@ then
     echo "created $path_lib"
 fi
    
-path_bin="$path_comrad/code/bin"
+
+path_repo="$path_comrad/code"
+path_bin="$path_repo/bin"
 # if [ ! -d "$path_bin" ]
 # then
 #     mkdir -p $path_bin
@@ -65,110 +86,256 @@ path_bin="$path_comrad/code/bin"
 
 
 
+
+
+
+
+echo '
+2) configuring OS environment...
+
+'
+
+echo "Machine $machine detected."    
+
+
+
+
+#### 
+# Package manager setups
+# 
+
+# windows
+if [ "$machine" = "MinGw" ]
+then
+    echo "Installing base development packages"
+    pacman -S curl wget unzip gcc make openssl-devel git
+fi
+
+# mac
+if [ "$machine" = "Mac" ]
+then
+    if ! command -v brew &> /dev/null
+    then
+        echo "Installing homebrew..."
+        cd "$path_lib"
+        mkdir homebrew && curl -L https://github.com/Homebrew/brew/tarball/master | tar xz --strip 1 -C homebrew
+    fi
+
+    if ! command -v git &> /dev/null
+    then
+        echo "Installing git with brew..."
+        brew install git
+    fi
+fi
+
+# linux
+if [ "$machine" = "Linux" ]
+then
+    if ! command -v git &> /dev/null
+    then
+        echo "Installing git with apt..."
+        sudo apt install git
+    fi
+fi
+
+
+
+
+
+
+
+
+
+
+### Downloading via git!
+
 echo '
 
 2) downloading Comrad...
 
 '
-
-path_repo="$path_comrad/code"
-if command -v git &> /dev/null
-then
-    echo "using git..."
-    if [ -d "$path_repo" ]
-    then 
-        cd $path_repo
-        git pull
-    else
-        cd $path_comrad
-        
-        if [ "$1" = "-n" ]
-        then
-            echo "Use HTTPS or SSH for git?"
-            read -p "[HTTPS/ssh] " git_method
-        else
-            git_method="https"
-        fi
-
-        if [ "$git_method" = "ssh" ]
-        then
-            echo "using ssh..."
-            git clone git@github.com:ComradOrg/Comrad.git
-            #git checkout installer
-        else
-            git clone https://github.com/ComradOrg/Comrad.git
-            #git checkout installer
-        fi
-        mv Comrad code
-    fi
+# if exists, pull
+if [ -d "$path_repo" ]
+then 
+    cd $path_repo
+    git pull
 else
     cd $path_comrad
-    curl -s -LO https://github.com/ComradOrg/Comrad/archive/installer.zip
-    unzip -q -o installer.zip
-    rm installer.zip
-    cp -rT Comrad-installer code
-    rm -r Comrad-installer
+    git clone https://github.com/ComradOrg/Comrad.git
+    mv Comrad code
 fi
 
 
-#########################################################
 
-
-
-##########################################################
 
 
 
 echo '
 
-4) setting up python...
+4) setting up python miniconda...
 
 # '
 
 
 
+#################
+##  MINICONDA  ##
+#################
+
 
 cd $path_comrad
-
 path_conda="$path_comrad/lib/miniconda3"
-# ### Detect if python 3.7?
-# pyv="$(python3 -c 'import sys; print(sys.version_info[0:2])')"
-# if [ ! "$pyv" = "(3, 7)" ]
-# then
-unameOut="$(uname -s)"
-case "${unameOut}" in
-    Linux*)     machine=Linux;;
-    Darwin*)    machine=Mac;;
-    CYGWIN*)    machine=Cygwin;;
-    MINGW*)     machine=MinGw;;
-    MSYS*)      machine=MinGw;;
-    *)          machine="UNKNOWN:${unameOut}"
-esac
-# echo ${machine}
 
-echo "Machine $machine detected."    
 
 if [ "$machine" = "Linux" ]
 then
     if [ ! -f "miniconda.sh" ]
     then
+        echo "downloading miniconda..."
         curl https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-Linux-x86_64.sh -o miniconda.sh
         chmod +x miniconda.sh
     fi
     ./miniconda.sh -b -f -p "$path_conda"
     #rm miniconda.sh
+    export PATH="$path_conda/bin:$PATH"
+fi
 
-    ### install themis from source
+# mac
 
+if [ "$machine" = "Mac" ]
+then
+    if [ ! -f "miniconda.sh" ]
+    then
+        echo "downloading miniconda..."
+        curl https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-MacOSX-x86_64.sh -o miniconda.sh
+        chmod +x miniconda.sh
+    fi
+    ./miniconda.sh -b -f -p "$path_conda"
+    export PATH="$path_conda/bin:$PATH"
+fi
+
+
+# windows
+if [ "$machine" = "MinGw" ]
+then
+    if [ ! -f "miniconda.exe" ]
+    then  
+        echo "downloading miniconda..."
+        arch="$(uname -m)"
+        if [ "$arch" = "x86_64" ]
+        then
+            curl https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-Windows-x86_64.exe -o miniconda.exe
+        else
+            curl https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-Windows-x86.exe -o miniconda.exe
+        fi
+    fi
+    path_conda_windows="${path_conda//\//\\}"
+    wincmd="miniconda.exe /S /D=C:\\msys64$path_conda_windows"
+    echo "installing conda: $wincmd"
+    cmd //c "$wincmd"
+    export PATH="$path_conda/condabin:$path_conda/Library/bin:$path_conda:$PATH"
+fi
+
+echo "path_conda = $path_conda"
+echo "conda exec is `which conda`"
+source "$path_conda/etc/profile.d/conda.sh"
+echo "conda exec is `which conda`"
+
+#$condaexec
+
+
+
+
+
+############################################################
+
+
+echo '
+
+5) creating virtual environment...
+
+'
+path_venv="$path_repo/venv"
+echo "Now using python (t1): `which python`"
+
+conda config --add channels conda-forge
+conda create -y -p "$path_venv" python=3.7 cartopy pip virtualenv rtree pyzbar wxpython
+# source "$path_conda/etc/profile.d/conda.sh"
+
+conda activate "$path_venv"
+
+echo "Now using python (t2): `which python`"
+python -m pip install -U setuptools
+
+
+
+
+###########################################################
+
+echo '
+
+Install python requirements
+
+'
+
+cd $path_repo
+python -m pip install -r requirements.txt
+
+
+
+
+
+
+#############################################################
+
+echo '
+Installing other requirements
+
+Rlite, hardware based redis database
+
+'
+
+cd $path_lib
+git clone https://github.com/seppo0010/rlite.git
+cd rlite
+make
+make all
+
+
+
+exit 1
+
+
+
+#########################################################################
+
+if [ "$machine" = "Mac" ]
+then
+    echo "Installing Mac native GUI bridge"
+    python -m pip install git+https://github.com/kivy/pyobjus
+else
+
+
+#######################################
+
+echo '
+
+Themis, cryptography backend...
+
+'
+
+
+if [ "$machine" = "Mac" ]
+then
+    echo 'installing themis with brew'
+    /usr/local/bin/brew tap cossacklabs/tap
+    /usr/local/bin/brew install libthemis
+else
     if [ ! -f "/usr/local/lib/libthemis.so" ]
     then
         if [ ! -f "/usr/lib/libthemis.so" ]
         then
-            echo '
-
-            3) building Themis, cryptography backend...
-
-            '
+            echo 'building themis'
             cd "$path_lib"
             # pwd
             #git clone https://github.com/cossacklabs/themis.git
@@ -180,233 +347,21 @@ then
             sudo make install
         fi
     fi
-
-    ### install zbar library
-    # sudo apt install zbar-tools
-
-    condaexec="conda"
-
 fi
 
-if [ "$machine" = "Mac" ]
-then
-    if [ ! -f "miniconda.sh" ]
-    then
-        curl https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-MacOSX-x86_64.sh -o miniconda.sh
-        chmod +x miniconda.sh
-    fi
-    ./miniconda.sh -b -f -p "$path_conda"
-    # rm miniconda.sh
-
-    if command -v /usr/local/bin/brew &> /dev/null
-    then
-        cd "$path_lib"
-        mkdir homebrew && curl -L https://github.com/Homebrew/brew/tarball/master | tar xz --strip 1 -C homebrew
-    fi
-
-    # brew install 
-    /usr/local/bin/brew tap cossacklabs/tap
-    /usr/local/bin/brew install libthemis
-    
-
-    # install zbar library
-    # /usr/local/bin/brew install zbar
-
-    condaexec="conda"
-
-fi
-
-if [ "$machine" = "MinGw" ]
-then
-
-    # make sure packages installed
-    # pacman -S mingw-w64-x86_64-zbar curl wget unzip gcc make openssl-devel
-    pacman -S curl wget unzip gcc make openssl-devel
 
 
 
-    if [ ! -f "miniconda.exe" ]
-    then  
-        arch="$(uname -m)"
-        if [ "$arch" = "x86_64" ]
-        then
-            curl https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-Windows-x86_64.exe -o miniconda.exe
-        else
-            curl https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-Windows-x86.exe -o miniconda.exe
-        fi
-    fi
-    # ./miniconda.exe -b -f -p "$path_conda"
-    # rm miniconda.exe
-    # cmd "miniconda.exe /InstallationType=JustMe /RegisterPython=0 /S /D=$path_conda"
+
+exit 1
 
 
-    path_conda_windows="${path_conda//\//\\}"
-    wincmd="miniconda.exe /S /D=C:\\msys64$path_conda_windows"
-    echo "executing! $wincmd"
-    cmd //c "$wincmd"
-
-    export PATH="$path_conda/condabin:$path_conda/Library/bin:$path_conda:$PATH"
-    # export PATH="$path_conda/Library/bin:$path_conda/Scripts:$path_conda:$PATH"
-
-
-    ## looks like we really do need visual studi c++ tools?
-    # cd $path_lib
-    # if [ ! -f "vs_BuildTools.exe" ]
-    # then
-    #     wget https://download.visualstudio.microsoft.com/download/pr/e8bc3741-cb70-42aa-9b4e-2bd497de85dd/c180e363efb5c653acd515349e76c4bd5f60526478d5f71d0907294210978d9f/vs_BuildTools.exe
-    #     cmd //c vs_BuildTools.exe
-    # fi
-
-
-    
-    condaexec="conda" #$path_conda/condabin/conda.bat"
-
-    # cd $path_lib
-    # curl http://go.microsoft.com/fwlink/?LinkId=691126\&fixForIE=.exe. -o visualcppbuildtools_full.exe 
-    # wget -O visualcppbuildtools_full.exe http://go.microsoft.com/fwlink/?LinkId=691126\&fixForIE=.exe.
-    # cmd //c "visualcppbuildtools_full.exe"
-
-    ### install zbar using apt-cyg
-    # installing apt-cyg
-    # if ! command -v apt-cyg &> /dev/null
-    # then
-    #     echo "installing apt-cyg"
-    #     lynx -source https://raw.githubusercontent.com/transcode-open/apt-cyg/master/apt-cyg > apt-cyg
-    #     install apt-cyg /bin
-    # fi
-    # # installing zbar
-    # apt-cyg install zbar
-fi
-
-echo "path_conda = $path_conda"
-
-# activate conda
-export PATH="$path_conda/bin:$PATH"
-
-# $condaexec init bash
-# source "`realpath ~/.bashrc`"
-
-source "$path_conda/etc/profile.d/conda.sh"
-if [ "$machine" = "MinGw" ]
-then
-    cmd //c call "$path_conda/Scripts/activate"
-fi 
-
-# condaexec="conda"
-pythonexec="python"
-
-$condaexec
 
 
 
 echo '
 
-5) creating virtual environment...
-
-'
-path_venv="$path_repo/venv"
-
-# cd $path_comrad
-cd $path_repo
-echo "Now using python (t1): `which python`"
-
-
-$condaexec create -y -p "$path_venv" python=3.7 cartopy pip virtualenv rtree pyzbar
-
-
-
-
-source "$path_conda/etc/profile.d/conda.sh"
-cd $path_venv
-if [ "$machine" = "MinGw" ]
-then
-    cmd //c call "$path_conda/Scripts/activate"
-fi
-
-$condaexec activate "$path_venv"
-
-
-$condaexec
-
-
-# if [ "$machine" = "MinGw" ]
-# then
-#     $condaexec install libpython m2w64-toolchain -c msys2
-# fi
-
-
-
-cd $path_lib
-git clone https://github.com/seppo0010/rlite.git
-cd rlite
-make
-make install
-sudo make install
-
-### install themis from source
-if [ "$machine" = "MinGw" ]
-then
-    if [ ! -f "/usr/local/lib/libthemis.so" ]
-    then
-        if [ ! -f "/usr/lib/libthemis.so" ]
-        then
-            echo '
-
-            Building Themis, cryptography backend...
-
-            '
-            cd "$path_lib"
-            # pwd
-            curl https://codeload.github.com/cossacklabs/themis/zip/master -o themis.zip
-            unzip -q -o themis.zip
-            #mv themis-master themis
-            cd themis-master
-            make
-            make install
-        fi
-    fi
-fi
-
-echo "Now using python (t2): `which python`"
-# $pythonexec -m pip install virtualenv
-# $pythonexec -m virtualenv venv
-# . venv/bin/activate
-echo "Now using python (t3): `which python`"
-python -m pip install -U setuptools
-
-# cd $path_lib
-# git clone https://github.com/seppo0010/rlite-py.git
-# cd rlite-py
-# python setup.py install
-
-
-
-
-
-
-
-
-cd $path_repo
-if [ "$machine" = "MinGw" ]
-then
-    #python -m pip install --only-binary :all: hirlite
-    # env CC=/usr/bin/gcc python -m pip install -r requirements.txt
-    python -m pip install -r requirements.txt
-else
-    python -m pip install -r requirements.txt
-fi
-
-if [ "$machine" = "Mac" ]
-then
-    python -m pip install git+https://github.com/kivy/pyobjus
-else
-    $condaexec install wxpython
-fi
-
-
-echo '
-
-6) adding comrad bin folder to path
+Completing...
 
 '
 
@@ -450,10 +405,18 @@ if [ "$machine" = "Mac" ]
 then
     cd /Applications
     unzip -q -o "$path_bin/Comrad.app.zip"
-    # cp "$path_bin/Comrad.app" /Applications/
-
     echo "You may run the app by looking for 'Comrad.app' in your /Applications folder."
 fi
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -461,10 +424,3 @@ fi
 # run?
 . $path_bin/comrad-app
 
-
-
-
-if [ "$machine" = "Mac" ]
-then
-    echo "You may run the app by looking for 'Comrad.app' in your /Applications folder."
-fi
