@@ -244,7 +244,7 @@ then
     echo "executing! $wincmd"
     cmd //c "$wincmd"
 
-    export PATH="$path_conda/Library/bin:$path_conda:$PATH"
+    export PATH="$path_conda/condabin:$path_conda/Library/bin:$path_conda:$PATH"
     # export PATH="$path_conda/Library/bin:$path_conda/Scripts:$path_conda:$PATH"
 
 
@@ -277,7 +277,7 @@ then
             make install
         fi
     fi
-    # condaexec="$path_conda/_conda.exe"
+    condaexec="$path_conda/condabin/conda.bat"
 
     # cd $path_lib
     # curl http://go.microsoft.com/fwlink/?LinkId=691126\&fixForIE=.exe. -o visualcppbuildtools_full.exe 
@@ -306,18 +306,10 @@ export PATH="$path_conda/bin:$PATH"
 
 source "$path_conda/etc/profile.d/conda.sh"
 
-condaexec="conda"
+# condaexec="conda"
 pythonexec="python"
 
 $condaexec
-
-
-cd $path_lib
-git clone https://github.com/seppo0010/rlite.git
-cd rlite
-make
-make install
-sudo make install
 
 
 
@@ -343,6 +335,17 @@ then
 fi
 
 
+
+cd $path_lib
+git clone https://github.com/seppo0010/rlite.git
+cd rlite
+make
+make install
+sudo make install
+
+
+
+
 echo "Now using python (t2): `which python`"
 # $pythonexec -m pip install virtualenv
 # $pythonexec -m virtualenv venv
@@ -354,6 +357,11 @@ python -m pip install -U setuptools
 # git clone https://github.com/seppo0010/rlite-py.git
 # cd rlite-py
 # python setup.py install
+
+
+
+
+
 
 
 
