@@ -305,6 +305,15 @@ pythonexec="python"
 $condaexec
 
 
+cd $path_lib
+git clone https://github.com/seppo0010/rlite.git
+cd rlite
+make
+make install
+sudo make install
+
+
+
 echo '
 
 5) creating virtual environment...

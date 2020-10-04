@@ -4,6 +4,7 @@
 realpath() {
     [[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"
 }
+echo "Python (t1): `which python`"
 
 
 path_conda="`realpath ~/comrad/lib/miniconda3`"
@@ -16,3 +17,4 @@ export PATH="$path_conda/bin:$PATH"
 conda activate $path_venv
 python -m pip install -r $path_repo/requirements.txt
 
+echo "Python (t2): `which python`"
