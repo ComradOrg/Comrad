@@ -248,12 +248,12 @@ then
 
 
     ## looks like we really do need visual studi c++ tools?
-    cd $path_lib
-    if [ ! -f "vs_BuildTools.exe" ]
-    then
-        wget https://download.visualstudio.microsoft.com/download/pr/e8bc3741-cb70-42aa-9b4e-2bd497de85dd/c180e363efb5c653acd515349e76c4bd5f60526478d5f71d0907294210978d9f/vs_BuildTools.exe
-        cmd //c vs_BuildTools.exe
-    fi
+    # cd $path_lib
+    # if [ ! -f "vs_BuildTools.exe" ]
+    # then
+    #     wget https://download.visualstudio.microsoft.com/download/pr/e8bc3741-cb70-42aa-9b4e-2bd497de85dd/c180e363efb5c653acd515349e76c4bd5f60526478d5f71d0907294210978d9f/vs_BuildTools.exe
+    #     cmd //c vs_BuildTools.exe
+    # fi
 
 
     ### install themis from source
@@ -335,6 +335,11 @@ $condaexec create -y -p "$path_venv" python=3.7 cartopy pip virtualenv rtree
 source "$path_conda/etc/profile.d/conda.sh"
 
 $condaexec activate "$path_venv"
+
+if [ "$machine" = "MinGw" ]
+then
+    $condaexec install libpython m2w64-toolchain -c msys2
+fi
 
 
 echo "Now using python (t2): `which python`"
