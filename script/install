@@ -242,6 +242,9 @@ then
     echo "executing! $wincmd"
     cmd //c "$wincmd"
 
+    export PATH="$path_conda/Library/bin:$path_conda/Scripts:$path_conda:$PATH"
+
+
     
     
 
