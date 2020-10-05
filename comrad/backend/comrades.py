@@ -408,7 +408,7 @@ class ComradX(Caller):
             'meet_pubkey':pubkey,
             'returning':returning,
 
-            **other_data
+            'other_data':other_data,
         }
         self.log('msg_to_op',msg_to_op)
 
