@@ -383,7 +383,7 @@ class ComradX(Caller):
     def meet(self,*x,**y):
         return asyncio.run(self.meet_async(*x,**y))
     
-    async def meet_async(self,name=None,pubkey=None,returning=False):
+    async def meet_async(self,name=None,pubkey=None,returning=False,other_data={}):
         if not name and not pubkey:
             return {'success':False,'status':'Meet whom?'}
         
@@ -406,7 +406,9 @@ class ComradX(Caller):
 
             'meet_name':name,
             'meet_pubkey':pubkey,
-            'returning':returning
+            'returning':returning,
+
+            **other_data
         }
         self.log('msg_to_op',msg_to_op)
 

@@ -323,6 +323,17 @@ class ProfileScreen(ProtectedScreen):
             self.author_desc.font_size='18sp'
             self.author_info_layout.add_widget(self.author_desc)
 
+            def on_touch_down(touch):
+                if self.collide_point(*touch.pos):
+                    asyncio.create_task(
+                        self.app.prompt_meet(
+                            self.app.username
+                        )
+                    )
+            self.author_desc.on_touch_down=on_touch_down
+
+
+
         # this is a contact
         else:
             ## AUTHOR DESCRIPTION

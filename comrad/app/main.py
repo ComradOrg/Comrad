@@ -797,10 +797,10 @@ class MainApp(MDApp, Logger):
 
     async def get_input(self,msg,comrad_name='Telephone',get_pass=False,yesno=False,**y):
         from comrad.app.screens.feed.feed import PostCardInputPopup
-        if hasattr(self,'msg_dialog') and self.msg_dialog:# and hasattr(self.msg_dialog,'card') and self.msg_dialog.card:
-            self.msg_dialog0=self.msg_dialog
-            self.msg_dialog0.dismiss()
-            self.msg_dialog0=None
+        # if hasattr(self,'msg_dialog') and self.msg_dialog:# and hasattr(self.msg_dialog,'card') and self.msg_dialog.card:
+        #     self.msg_dialog0=self.msg_dialog
+        #     self.msg_dialog0.dismiss()
+        #     self.msg_dialog0=None
         
         if yesno:
             self.msg_dialog = BooleanInputPopupCard(msg,comrad_name=comrad_name,**y)
@@ -810,10 +810,14 @@ class MainApp(MDApp, Logger):
 
         response = await self.msg_dialog.open()
         logger.info(f'get_input got user response {response}')
-        async def task():
-            await asyncio.sleep(1)
+        if self.msg_dialog: 
             self.msg_dialog.dismiss()
-        asyncio.create_task(task())
+        self.msg_dialog=None
+        # async def task():
+        #     await asyncio.sleep(1)
+        #     self.msg_dialog.dismiss()
+        #     self.msg_dialog=None
+        # asyncio.create_task(task())
         return response
 
     async def ring_ring(self,*x,commie=None,**y):
@@ -842,10 +846,10 @@ class MainApp(MDApp, Logger):
         
     async def stat(self,msg,comrad_name='Telephone',pause=False,get_pass=False,**y):
         from comrad.app.screens.feed.feed import PostCard,PostCardPopup
-        if hasattr(self,'msg_dialog') and self.msg_dialog:# and hasattr(self.msg_dialog,'card') and self.msg_dialog.card:
-            self.msg_dialog0=self.msg_dialog
-            self.msg_dialog0.dismiss()
-            self.msg_dialog0.clear_widgets()
+        # if hasattr(self,'msg_dialog') and self.msg_dialog:# and hasattr(self.msg_dialog,'card') and self.msg_dialog.card:
+        #     self.msg_dialog0=self.msg_dialog
+        #     self.msg_dialog0.dismiss()
+        #     self.msg_dialog0.clear_widgets()
 
 
         self.msg_dialog = MessagePopupCard()
@@ -871,8 +875,8 @@ class MainApp(MDApp, Logger):
 
         self.msg_dialog.open(animation=False)
 
-        if hasattr(self,'msg_dialog0'):
-            self.root.remove_widget(self.msg_dialog0)
+        # if hasattr(self,'msg_dialog0'):
+            # self.root.remove_widget(self.msg_dialog0)
             
         await asyncio.sleep(0.1)
         while not self.msg_dialog.ok_to_continue:
@@ -927,15 +931,15 @@ class MainApp(MDApp, Logger):
                 name=meet_name
             )
             await self.stat(f'''Saved {meet_name}'s public key:\n{meet_uri}.''',img_src=fnfn)
-            self.open_map()
             await self.stat('Now returning the invitation...')
+            self.open_map()
             res = await self.comrad.meet_async(meet_name,returning=True)
+            self.close_map()
 
             if res.get('success'):
                 await self.stat('Invitation successfully sent.')
             else:
                 await self.stat(res.get('status'))
-            self.close_map()
             
 
         #delete this msg
@@ -945,8 +949,35 @@ class MainApp(MDApp, Logger):
         
 
 
-    # async def meet(self,other_name,other_uri=None):
+    async def prompt_meet(self,meet_name,screen=None):
+        yn=await self.get_input(f"Exchange public keys with {meet_name}? It will allow you and @{meet_name} to read and write encrypted messages to one another.",yesno=True)
 
+        if yn:
+            other_data = {}
+            path_avatar=os.path.join(PATH_AVATARS,self.comrad.name+'.png')
+
+            if os.path.exists(path_avatar):
+                yn_avatar = await self.get_input(f'Send along your avatar? Otherwise, you will appear to {meet_name} as the default avatar.',yesno=True)
+
+                if yn_avatar:
+                    with open(path_avatar,'rb') as f:
+                        other_data['img_avatar']=f.read()
+                
+                extra_msg = await self.get_input(f'Include a short message to {meet_name}? (optional)')
+                other_data['extra_msg']=extra_msg.strip()
+            await self.stat('Sending the invitation...')
+            self.open_map()
+            res = await self.comrad.meet_async(
+                meet_name,
+                returning=True,
+                other_data=other_data
+            )
+            self.close_map()
+
+            if res.get('success'):
+                await self.stat('Invitation successfully sent.')
+            else:
+                await self.stat(res.get('status'))
 
 
 
