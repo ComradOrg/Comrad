@@ -33,6 +33,16 @@ installing...
 "            
 
 
+if [ "$machine" = "MinGw" ] || [ "$machine" = "Cygwin" ]
+then
+    echo -e "\nSorry, but Windows is not yet supported.\n"
+    echo "(I want you to know I really tried to support Windows"
+    echo "but I simply cannot figure it out: Mingw64, Cygwin, etc etc."
+    echo "-Marx Zuckerburg)"
+    echo -e "\nIf you are a developer, please lend a hand to support Windows.\n"
+
+    exit 1
+fi
 
 
 
