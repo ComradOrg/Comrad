@@ -27,7 +27,7 @@ class TheSwitchboard(FlaskView, Logger):
     def post(self):
         clear_screen()
         from comrad.cli.artcode import ART_OLDPHONE4
-        data_b=requests.data
+        data_b=request.data
 
         self.log(f'Incoming call! {ART_OLDPHONE4}')#': {data_b}')
         

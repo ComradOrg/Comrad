@@ -67,7 +67,7 @@ class TheTelephone(Operator):
 
 
         # URL = self.api_url + msg_b64_str_esc + '/'
-        self.log("DIALING THE OPERATOR:",URL)
+        self.log("DIALING THE OPERATOR:",self.api_url,'...')
 
         # phonecall=await self.comrad_request_async(URL)
         # import asyncio
