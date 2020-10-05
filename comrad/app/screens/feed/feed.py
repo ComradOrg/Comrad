@@ -118,6 +118,18 @@ class PostCard(MDCard):
         # self.cache_img_src = os.path.join('cache',self.img_src) if self.img_src else ''
         
         self.cache_img_src = self.img_src = data.get('img_src','')
+
+        if not self.cache_img_src:
+            if self.post_data.get('prompt_id')=='addcontact':
+                other_data=self.post_data.get('other_data',{})
+                if other_data:
+                    img_avtr_b=other_data.get('img_avatar')
+                    if img_avtr_b:
+                        tmp_fnfn = os.path.join(PATH_COMRAD_TMP,get_random_id()+'.png')
+                        with open(tmp_fnfn,'wb') as of:
+                            of.write(img_avtr_b)
+                        self.cache_img_src=self.img_src=tmp_fnfn
+
         self.img_loaded = self.img_src and os.path.exists(self.img_src)
         self.content = data.get('content','')
         self.timestamp = data.get('timestamp',None)

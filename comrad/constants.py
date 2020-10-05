@@ -16,6 +16,7 @@ PATH_COMRAD = os.path.abspath(os.path.join(os.path.expanduser('~'),'comrad','dat
 PATH_COMRAD_KEYS = os.path.join(PATH_COMRAD,'.keys')
 PATH_COMRAD_DATA = os.path.join(PATH_COMRAD,'.data')
 PATH_COMRAD_LIB = os.path.abspath(os.path.join(os.path.expanduser('~'),'comrad','lib'))
+PATH_COMRAD_TMP = os.path.abspath(os.path.join(os.path.expanduser('~'),'comrad','data','tmp'))
 
 PATH_CRYPT_OP_KEYS = os.path.join(PATH_COMRAD_KEYS,'.op.db.keys.crypt')
 PATH_CRYPT_OP_DATA = os.path.join(PATH_COMRAD_DATA,'.op.db.data.crypt')
@@ -35,7 +36,7 @@ PATH_LOG_OUTPUT = os.path.join(PATH_COMRAD,'logs')
 PATH_AVATARS = os.path.join(PATH_COMRAD,'avatars')
 
 
-for x in [PATH_COMRAD,PATH_COMRAD_DATA,PATH_COMRAD_KEYS,PATH_QRCODES,PATH_SECRETS,PATH_SUPER_SECRETS,PATH_LOG_OUTPUT,PATH_AVATARS]:
+for x in [PATH_COMRAD,PATH_COMRAD_DATA,PATH_COMRAD_KEYS,PATH_QRCODES,PATH_SECRETS,PATH_SUPER_SECRETS,PATH_LOG_OUTPUT,PATH_AVATARS,PATH_COMRAD_TMP]:
     if not os.path.exists(x):
         os.makedirs(x)
 
