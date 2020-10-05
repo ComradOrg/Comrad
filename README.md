@@ -137,7 +137,7 @@ bash <(curl -s https://comrad.app/run)
 
 #### ...on Windows
 
-Unfortunately, Windows is not yet supported. We tried and tried, but cannot get everything to install correctly on either Mingw64 or Cygwin; and we also haven't yet packaged a binary release with pyinstaller. If you are a developer, please lend a hand to support Windows. The current attempt at a windows installation is located [here](https://github.com/ComradOrg/Comrad/blob/master/script/install-windows.sh).
+Unfortunately, Windows is not yet supported. We tried and tried, but cannot get everything to install correctly on either Mingw64 or Cygwin; and we also haven't yet been able to package a complete binary release with pyinstaller. If you are a developer, please lend a hand to support Windows. The current attempt at a windows installation is located [here](https://github.com/ComradOrg/Comrad/blob/master/script/install-windows.sh).
 
 ### Run
 
@@ -147,10 +147,9 @@ Install [as above](#on-mac-osx).
 
 Run "Comrad.app" in your Applications folder.
 
-#### ...on Linux or Windows
+#### ...on Linux
 
-
-Open a terminal in Linux, or a [Cygwin shell](https://cygwin.com/install.html) in Windows, and type:
+Open a terminal in Linux, and type:
 
 ```
 comrad-app
@@ -162,32 +161,12 @@ If that doesn't work, try:
 ~/comrad/code/bin/comrad-app
 ```
 
-If that still doesn't work, try pasting the following lines:
-
-```
-source ~/comrad/lib/miniconda3/etc/profile.d/conda.sh
-export PATH="~/comrad/lib/miniconda3/bin:$PATH"
-conda activate ~/comrad/code/venv
-python -m pip install -r ~/comrad/code/requirements.txt
-python ~/comrad/code/comrad/app/main.py
-```
-
 #### Running terminal client
 
 For the terminal client (which may be broken at the moment), run:
 
 ```
 comrad-cli   # or: ~/comrad/code/bin/comrad-cli
-```
-
-or, if necessary, paste the following lines:
-
-```
-source ~/comrad/lib/miniconda3/etc/profile.d/conda.sh
-export PATH="~/comrad/lib/miniconda3/bin:$PATH"
-conda activate ~/comrad/code/venv
-python -m pip install -r ~/comrad/code/requirements.txt
-python ~/comrad/code/comrad/cli/cli.py
 ```
 
 #### Running server (development only)
@@ -197,16 +176,6 @@ To run The Operator server (for development purposes only), run:
 
 ```
 comrad-op   # or: ~/comrad/code/bin/comrad-op
-```
-
-or, if necessary, paste the following lines:
-
-```
-source ~/comrad/lib/miniconda3/etc/profile.d/conda.sh
-export PATH="~/comrad/lib/miniconda3/bin:$PATH"
-conda activate ~/comrad/code/venv
-python -m pip install -r ~/comrad/code/requirements.txt
-python ~/comrad/code/comrad/backend/switchboard.py
 ```
 
 
