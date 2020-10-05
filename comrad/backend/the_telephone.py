@@ -54,12 +54,13 @@ class TheTelephone(Operator):
         # self.log('but going to send just msg?',msg_b)
         
         msg_b=msg_d["msg"]
-        msg_b64 = b64encode(msg_b)
-        msg_b64_str = msg_b64.decode()
-        self.log(f'''Sending the encrypted content package:\n\n{msg_b64_str}''')
+        # msg_b64 = b64encode(msg_b)
+        # msg_b64_str = msg_b64.decode()
+        # self.log(f'''Sending the encrypted content package:\n\n{msg_b64_str}''')
+        self.log(f'''Sending the encrypted content package:\n\n{msg_b}''')
 
         # seal for transport
-        msg_b64_str_esc = msg_b64_str.replace('/','_')
+        # msg_b64_str_esc = msg_b64_str.replace('/','_')
 
         # dial the operator
         
@@ -78,23 +79,34 @@ class TheTelephone(Operator):
             self.log('making first attempt to connect via Tor')
             try:
                 # phonecall=self.comrad_request(URL)
-                phonecall = await texec(self.comrad_request, URL)
+                # phonecall = await texec(self.comrad_request, URL)
+                phonecall = await texec(
+                    self.comrad_request_post,
+                    self.api_url,
+                    msg_b64_str_esc
+                )
+                
                 break
             except (TorSocketConnectError,ConnectionError) as e:
                 self.log(f'!! {e} trying again?')
                 pass
 
         if phonecall.status_code!=200:
-            self.log('!! error in request',phonecall.status_code,phonecall.text)
+            self.log('!! error in request',phonecall.status_code,phonecall)
             return
         
         # response back from Operator!
-        resp_msg_b64_str = phonecall.text
-        self.log(f'{self}: Received response from Operator! We got back:\n\n',resp_msg_b64_str)
+        # resp_msg_b64_str = phonecall.text
+        # self.log(f'{self}: Received response from Operator! We got back:\n\n',resp_msg_b64_str)
 
-        resp_msg_b64 = resp_msg_b64_str.encode()
-        resp_msg_b = b64decode(resp_msg_b64)
+        # resp_msg_b64 = resp_msg_b64_str.encode()
+        # resp_msg_b = b64decode(resp_msg_b64)
         # self.log('resp_msg_b:',resp_msg_b)
+        
+        
+        resp_msg_b = phonecall.data
+        self.log(f'{self}: Received response from Operator! We got back:\n\n',resp_msg_b)
+
         resp_msg_d = pickle.loads(resp_msg_b)
         # self.log('unpickled:',resp_msg_d)
 
@@ -137,6 +149,10 @@ class TheTelephone(Operator):
         return self.tor_request_in_python(url)
         # return tor_request_in_proxy(url)
 
+    def tor_request_post(self,url,data=''):
+        return self.tor_request_in_python_post(url,data=data)
+        # return tor_request_in_proxy_post(url,data=data)
+
     async def tor_request_async(self,url):
         return await self.tor_request_in_python_async(url)
         
@@ -159,6 +175,11 @@ class TheTelephone(Operator):
                 self.log('<-- r',r)
                 return r
 
+    def comrad_request_post(self,url,data='',allow_clearnet = ALLOW_CLEARNET):
+        if '.onion' in url or not allow_clearnet:
+            return self.tor_request_post(url)
+        return requests.post(url,data=data,timeout=60)
+
 
     def tor_request_in_python(self,url):
         tor = TorClient()
@@ -170,6 +191,18 @@ class TheTelephone(Operator):
                 s.mount('http://', adapter)
                 s.mount('https://', adapter)
                 r = s.get(url, timeout=600)
+                return r
+    
+    def tor_request_in_python_post(self,url,data=''):
+        tor = TorClient()
+        with tor.get_guard() as guard:
+            adapter = TorHttpAdapter(guard, 3, retries=RETRIES)
+
+            with requests.Session() as s:
+                s.headers.update({'User-Agent': 'Mozilla/5.0'})
+                s.mount('http://', adapter)
+                s.mount('https://', adapter)
+                r = s.post(url, data=data, timeout=600)
                 return r
 
     def get_tor_proxy_session(self):

@@ -963,8 +963,8 @@ class MainApp(MDApp, Logger):
                     with open(path_avatar,'rb') as f:
                         other_data['img_avatar']=f.read()
                 
-                extra_msg = await self.get_input(f'Include a short message to {meet_name}? (optional)')
-                other_data['extra_msg']=extra_msg.strip()
+                # extra_msg = await self.get_input(f'Include a short message to {meet_name}? (optional)')
+                # other_data['extra_msg']=extra_msg.strip()
             await self.stat('Sending the invitation...')
             self.open_map()
             res = await self.comrad.meet_async(
