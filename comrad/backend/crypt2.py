@@ -73,7 +73,7 @@ class Crypt(Logger):
         
     def hash(self,binary_data):
         # return binary_data
-        return hasher(binary_data,self.secret)
+        return b64enc_s(hasher(b64dec(binary_data),self.secret))
 
     def force_binary(self,k_b):
         if k_b is None: return None
@@ -82,30 +82,29 @@ class Crypt(Logger):
         return k_b
 
     def package_key(self,k,prefix=''):
-        if not k: return b''
-        
-        k_b = self.force_binary(k)
-        k_b2 = self.force_binary(prefix) + k_b
-        return k_b2
+        return b64enc_s(prefix) + b64enc_s(k)
 
-    def package_val(self,k,encrypt=None):
+    def package_val(self,v,encrypt=None):
         if encrypt is None: encrypt=self.encrypt_values
-        k_b = self.force_binary(k)
+        v_b = self.force_binary(v)
         if encrypt:
             try:
-                k_b = self.encryptor_func(k_b)
+                v_b = self.encryptor_func(v_b)
             except ThemisError as e:
                 self.log('!! ENCRYPTION ERROR:',e)
-        return k_b
+        
+        v = b64enc_s(v)
+        return v
 
-    def unpackage_val(self,k_b,encrypt=None):
+    def unpackage_val(self,v,encrypt=None):
+        v_b=b64dec(v)
         if encrypt is None: encrypt=self.encrypt_values
         if encrypt:
             try:
-                k_b = self.decryptor_func(k_b)
+                v_b = self.decryptor_func(v_b)
             except ThemisError as e:
                 self.log('!! DECRYPTION ERROR:',e)
-        return k_b
+        return v_b
 
     def has(self,k,prefix=''):
         got=self.get(k,prefix=prefix)
