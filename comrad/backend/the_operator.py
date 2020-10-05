@@ -816,6 +816,7 @@ class TheOperator(Operator):
         meet_from_name = data.get('name')
         meet_from_uri = data.get('pubkey')
         returning = data.get('returning')
+        other_data = data.get('other_data')
 
         if returning:
             # txt=f'''Comrad @{meet_from_name} has agreed to make your acquaintance.\n\nTheir public key is:\n{meet_from_uri.decode()}.'''
@@ -843,7 +844,8 @@ class TheOperator(Operator):
                 'prompt_id':'addcontact',
                 'meet_name':meet_from_name,
                 'meet':meet_from_uri,
-                'returning':returning
+                'returning':returning,
+                'other_data':other_data
             }
         }
         
