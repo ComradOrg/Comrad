@@ -22,7 +22,7 @@ ipinfo==3.0.0
 isort==5.4.2
 itsdangerous==1.1.0
 Jinja2==2.11.2
-Kivy==2.0.0rc3
+Kivy==https://github.com/org/package/archive/main.zip
 Kivy-Garden==0.1.4
 kivymd==0.104.1
 lazy-object-proxy==1.4.3
