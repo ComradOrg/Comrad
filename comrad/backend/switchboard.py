@@ -29,7 +29,7 @@ class TheSwitchboard(FlaskView, Logger):
         from comrad.cli.artcode import ART_OLDPHONE4
         data_b=requests.data
 
-        self.log(f'Incoming call! {ART_OLDPHONE4}: {data_b}')
+        self.log(f'Incoming call! {ART_OLDPHONE4}')#': {data_b}')
         
         if not data_b:
             self.log('empty request!')
@@ -39,7 +39,7 @@ class TheSwitchboard(FlaskView, Logger):
         resp_data_b = self.op.answer_phone(data_b)
 
         # decode to str
-        self.log('about to send back -->',resp_data_b)
+        # self.log('about to send back -->',resp_data_b)
         return resp_data_b
     
     # def get(self,data_b64_str_esc):

@@ -57,7 +57,7 @@ class TheTelephone(Operator):
         # msg_b64 = b64encode(msg_b)
         # msg_b64_str = msg_b64.decode()
         # self.log(f'''Sending the encrypted content package:\n\n{msg_b64_str}''')
-        self.log(f'''Sending the encrypted content package:\n\n{msg_b}''')
+        # self.log(f'''Sending the encrypted content package:\n\n{msg_b}''')
 
         # seal for transport
         # msg_b64_str_esc = msg_b64_str.replace('/','_')
@@ -66,7 +66,7 @@ class TheTelephone(Operator):
         
 
 
-        URL = self.api_url + msg_b64_str_esc + '/'
+        # URL = self.api_url + msg_b64_str_esc + '/'
         self.log("DIALING THE OPERATOR:",URL)
 
         # phonecall=await self.comrad_request_async(URL)
@@ -83,7 +83,7 @@ class TheTelephone(Operator):
                 phonecall = await texec(
                     self.comrad_request_post,
                     self.api_url,
-                    msg_b64_str_esc
+                    msg_b
                 )
                 
                 break
@@ -105,7 +105,7 @@ class TheTelephone(Operator):
         
         
         resp_msg_b = phonecall.data
-        self.log(f'{self}: Received response from Operator! We got back:\n\n',resp_msg_b)
+        self.log(f'{self}: Received response from Operator!')# We got back:\n\n',resp_msg_b)
 
         resp_msg_d = pickle.loads(resp_msg_b)
         # self.log('unpickled:',resp_msg_d)
