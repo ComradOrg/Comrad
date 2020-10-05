@@ -132,6 +132,7 @@ class Map(Logger):
                 # print(land if value else water, end="")
             # print("")
             # stringl+=['\n']
+            import pandas as pd
             df=pd.DataFrame(ld)
             # self.log(df,'!!')
             df['x_norm']=self.do_norm(df['x'])
@@ -145,6 +146,7 @@ class Map(Logger):
         # self.log('<--',xcol)
         minn=xcol.min()
         maxx=xcol.max()
+        import pandas as pd
         xcol=pd.Series([x + minn for x in xcol])
         minn=xcol.min()
         maxx=xcol.max()
@@ -154,6 +156,7 @@ class Map(Logger):
 
     def add_base_map(self):
         # x,y coords
+        import pandas as pd
         self.base_df=df=pd.read_csv(os.path.join(os.path.dirname(__file__),'data/basemap.csv'))
         # self.log(df)
 

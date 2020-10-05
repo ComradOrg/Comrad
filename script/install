@@ -274,7 +274,7 @@ path_venv="$path_repo/venv"
 # cd $path_comrad
 cd $path_repo
 echo "Now using python 1: `which python`"
-$condaexec create -y -p "$path_venv" python=3.7 cartopy pip virtualenv
+$condaexec create -y -p "$path_venv" python=3.7 cartopy pip virtualenv rtree
 
 #$condaexec activate "$path_venv"
 
