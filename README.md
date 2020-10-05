@@ -125,15 +125,17 @@ See ["Comparison of alternative social networks" on the wiki](https://github.com
 
 Download and run [this installer](https://github.com/ComradOrg/Comrad/raw/master/script/InstallComrad.app.zip).
 
-#### ...on Linux or Windows
+#### ...on Linux
 
-Open a terminal in Linux, or a [Cygwin shell](https://cygwin.com/install.html) in Windows, and copy and paste the following line into it:
+Open a terminal in Linux, and copy and paste the following line into it:
 
 ```
 bash <(curl -s https://comrad.app/run)
 ```
 
 [That](https://comrad.app/run)'s a shortcut to [this auto-installer script](https://github.com/ComradOrg/Comrad/blob/master/script/install). It installs Comrad in a virtual Python environment in the folder "comrad" in your home directory.
+
+#### ...on Windows
 
 ### Run
 

@@ -439,4 +439,5 @@ fi
 
 
 # run?
-$path_bin/comrad-app
+
+#$path_bin/comrad-app
