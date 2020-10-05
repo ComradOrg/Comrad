@@ -207,6 +207,8 @@ then
     ./miniconda.sh -b -f -p "$path_conda"
     #rm miniconda.sh
     export PATH="$path_conda/bin:$PATH"
+
+    sudo apt install zbar-tools
 fi
 
 # mac
@@ -221,29 +223,11 @@ then
     fi
     ./miniconda.sh -b -f -p "$path_conda"
     export PATH="$path_conda/bin:$PATH"
+
+    brew install zbar
 fi
 
 
-# windows
-if [ "$machine" = "MinGw" ]
-then
-    if [ ! -f "miniconda.exe" ]
-    then  
-        echo "downloading miniconda..."
-        arch="$(uname -m)"
-        if [ "$arch" = "x86_64" ]
-        then
-            curl https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-Windows-x86_64.exe -o miniconda.exe
-        else
-            curl https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-Windows-x86.exe -o miniconda.exe
-        fi
-    fi
-    path_conda_windows="${path_conda//\//\\}"
-    wincmd="miniconda.exe /S /D=C:\\msys64$path_conda_windows"
-    echo "installing conda: $wincmd"
-    cmd //c "$wincmd"
-    export PATH="$path_conda/condabin:$path_conda/Library/bin:$path_conda:$PATH"
-fi
 
 echo "path_conda = $path_conda"
 echo "conda exec is `which conda`"
@@ -268,7 +252,7 @@ path_venv="$path_repo/venv"
 echo "Now using python (t1): `which python`"
 
 conda config --add channels conda-forge
-conda create -y -p "$path_venv" python=3.7 cartopy pip virtualenv rtree pyzbar wxpython
+conda create -y -p "$path_venv" python=3.7 cartopy pip virtualenv rtree wxpython
 source "$path_conda/etc/profile.d/conda.sh"
 
 conda activate "$path_venv"
