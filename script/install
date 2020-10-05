@@ -208,7 +208,7 @@ then
     #rm miniconda.sh
     export PATH="$path_conda/bin:$PATH"
 
-    sudo apt install zbar-tools
+    # sudo apt install zbar-tools
 fi
 
 # mac
@@ -224,7 +224,7 @@ then
     ./miniconda.sh -b -f -p "$path_conda"
     export PATH="$path_conda/bin:$PATH"
 
-    brew install zbar
+    # brew install zbar
 fi
 
 
@@ -252,7 +252,7 @@ path_venv="$path_repo/venv"
 echo "Now using python (t1): `which python`"
 
 conda config --add channels conda-forge
-conda create -y -p "$path_venv" python=3.7 cartopy pip virtualenv rtree wxpython pandas numpy scipy
+conda create -y -p "$path_venv" python=3.7 cartopy pip virtualenv rtree wxpython pandas numpy scipy pyzbar
 source "$path_conda/etc/profile.d/conda.sh"
 
 conda activate "$path_venv"
