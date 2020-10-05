@@ -72,7 +72,7 @@ echo '
 #### 
 # Package manager setups
 # 
-pacman -S --needed curl wget unzip gcc make openssl-devel git libcrypt-devel python3 python3-pip mingw-w64-x86_64-python-pandas
+pacman -S --needed curl wget unzip gcc make openssl-devel git libcrypt-devel python3 python3-pip mingw-w64-x86_64-python-pandas python-devel mingw-w64-x86_64-python3-numpy
 
 
 
