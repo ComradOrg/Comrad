@@ -8,10 +8,13 @@ realpath() {
 path_conda="`realpath ~/comrad/lib/miniconda3`"
 path_venv="`realpath ~/comrad/code/venv`"
 path_repo="`realpath ~/comrad/code`"
+path_lib="`realpath ~/comrad/lib`"
+path_themis="$path_lib/themis/build"
 
 source $path_conda/etc/profile.d/conda.sh
 export PATH="$path_conda/bin:$PATH"
 conda activate $path_venv
+export LD_LIBRARY_PATH="$path_themis:$LD_LIBRARY_PATH"
 python -m pip install -r $path_repo/requirements.txt -q
 
 export COMRAD_SHOW_LOG=0

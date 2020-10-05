@@ -94,6 +94,8 @@ path_bin="$path_repo/bin"
 # fi
 
 
+path_themis="$path_lib/themis/build"
+export LD_LIBRARY_PATH="$path_themis:$LD_LIBRARY_PATH"
 
 
 
@@ -104,7 +106,7 @@ echo '
 
 '
 
-echo "Machine $machine detected."    
+echo "$machine detected."    
 
 
 
@@ -276,29 +278,6 @@ python -m pip install -r requirements.txt
 
 
 
-
-
-
-#############################################################
-
-echo '
-Installing other requirements
-
-Rlite, hardware based redis database
-
-'
-
-cd $path_lib
-git clone https://github.com/seppo0010/rlite.git
-cd rlite
-make
-make all
-
-
-# exit 1
-
-
-
 #########################################################################
 
 if [ "$machine" = "Mac" ]
@@ -312,7 +291,7 @@ fi
 
 echo '
 
-Themis, cryptography backend...
+Installing Themis, cryptography backend...
 
 '
 
@@ -322,25 +301,33 @@ then
     echo 'installing themis with brew'
     /usr/local/bin/brew tap cossacklabs/tap
     /usr/local/bin/brew install libthemis
-else
-    if [ ! -f "/usr/local/lib/libthemis.so" ]
-    then
-        if [ ! -f "/usr/lib/libthemis.so" ]
-        then
-            echo 'building themis'
-            cd "$path_lib"
-            # pwd
-            #git clone https://github.com/cossacklabs/themis.git
-            curl https://codeload.github.com/cossacklabs/themis/zip/master -o themis.zip
-            unzip -q -o themis.zip
-            #mv themis-master themis
-            cd themis-master
-            make
-            make install
-            # sudo make install
-        fi
-    fi
 fi
+
+if [ "$machine" = "Linux" ]
+then
+    REQUIRED_PKG="libssl-dev"
+    PKG_OK=$(dpkg-query -W --showformat='${Status}\n' $REQUIRED_PKG|grep "install ok installed")
+    echo "Checking for prerequisite $REQUIRED_PKG: $PKG_OK"
+    if [ "" = "$PKG_OK" ]; then
+        echo "No $REQUIRED_PKG. Setting up $REQUIRED_PKG. This needs sudo."
+        sudo apt-get --yes install $REQUIRED_PKG 
+        # mkdir -p "$path_lib/var/lib/dpkg"
+        # touch "$path_lib/var/lib/dpkg/lock"
+        # apt-get download libssl-dev; dpkg -i --force-not-root --root=$path_lib libssl-dev.deb
+    fi
+
+    echo 'Building Themis...'
+    cd "$path_lib"
+    if [ ! -d "$themis" ]
+    then
+        curl https://codeload.github.com/cossacklabs/themis/zip/master -o themis.zip
+        unzip -q -o themis.zip
+        mv themis-master themis
+    fi
+    cd themis
+    make
+fi
+
 
 
 
