@@ -118,9 +118,9 @@ path_venv="$path_repo/venv"
 echo "Now using python (t1): `which python`"
 python -m pip install -U setuptools pip wheel
 
-pip install virtualenv
+# python -m pip install virtualenv
 
-python -m virtualenv "$path_venv"
+python -m venv "$path_venv"
 source "$path_venv/bin/activate"
 
 echo "Now using python (t2): `which python`"
