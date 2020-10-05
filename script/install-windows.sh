@@ -137,7 +137,7 @@ Install python requirements
 '
 
 cd $path_repo
-python -m pip install -r requirements.txt
+python -m pip install --prefer-binary -r requirements.txt
 
 
 
