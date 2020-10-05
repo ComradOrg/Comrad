@@ -393,13 +393,27 @@ else
 fi
 
 
-echo -e "Now run Comrad with:
+echo -e "Installation successful!
 
-comrad-app    [GUI interface -- alpha]
+You can run Comrad with:
 
-If that doesn't work, try running this series of comands:
 
-$commands_app
+## For the GUI interface:
+
+    comrad-app
+
+or:
+
+    ~/comrad/code/bin/comrad-app
+
+
+## For the terminal client:
+
+    comrad-cli
+
+or:
+
+    ~/comrad/code/bin/comrad-cli
 
 "
 
@@ -425,5 +439,4 @@ fi
 
 
 # run?
-. $path_bin/comrad-app
-
+$path_bin/comrad-app
