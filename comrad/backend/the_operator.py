@@ -818,9 +818,11 @@ class TheOperator(Operator):
         returning = data.get('returning')
 
         if returning:
-            txt=f'''Comrad @{meet_from_name} has agreed to make your acquaintance.\n\nTheir public key is:\n{meet_from_uri.decode()}.'''
+            # txt=f'''Comrad @{meet_from_name} has agreed to make your acquaintance.\n\nTheir public key is:\n{meet_from_uri.decode()}.'''
+            txt=f'''Comrad @{meet_from_name} has agreed to make your acquaintance.'''
         else:
-            txt=f'''Comrad @{meet_from_name} would like to make your acquaintance.\n\nTheir public key is:\n{meet_from_uri.decode()}.'''
+            # txt=f'''Comrad @{meet_from_name} would like to make your acquaintance.\n\nTheir public key is:\n{meet_from_uri.decode()}.'''
+            txt=f'''Comrad @{meet_from_name} would like to make your acquaintance.'''
 
         # txt_encr = SMessage(
         #     self.privkey.data,

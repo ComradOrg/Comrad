@@ -380,7 +380,10 @@ class ComradX(Caller):
 
 
     ### MEETING PEOLPE
-    async def meet(self,name=None,pubkey=None,returning=False):
+    def meet(self,*x,**y):
+        return asyncio.run(self.meet_async(*x,**y))
+    
+    async def meet_async(self,name=None,pubkey=None,returning=False):
         if not name and not pubkey:
             return {'success':False,'status':'Meet whom?'}
         
@@ -960,7 +963,7 @@ class ComradX(Caller):
                 'msg': msg_from_op.get('msg')
             }
         )
-        self.log('msg2me is now v1',msg2me,msg2me.is_encrypted,msg2me.has_embedded_msg)
+        self.log('msg2me is now v1',dict_format(msg2me.msg_d),dict_format(msg2me.data),msg2me.is_encrypted,msg2me.has_embedded_msg)
 
         if not msg2me.is_encrypted:
             return {

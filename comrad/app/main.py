@@ -886,6 +886,30 @@ class MainApp(MDApp, Logger):
             self.remove_widget(self.msg_dialog)
 
 
+    async def prompt_addcontact(self,post_data):
+        meet_name = post_data.get('meet_name')
+        meet_uri = post_data.get('meet').decode()    
+                
+        yn=await self.get_input(f"Exchange public keys with {meet_name}? It will allow you and @{meet_name} to read and write encrypted messages to one another.",yesno=True)
+        
+        if yn:
+            fnfn = self.comrad.save_uri_as_qrcode(
+                uri_id=meet_uri,
+                name=meet_name
+            )
+            await self.stat(f'''Saved {meet_name}'s public key:\n{meet_uri}.''',img_src=fnfn)
+            await self.stat('Now returning the invitation...')
+            res = await self.comrad.meet_async(meet_name,returning=True)
+            if res.get('success'):
+                await self.stat('Invitation successfully sent.')
+                do_pause()
+            else:
+                self.stat(res.get('status'))
+
+
+    # async def meet(self,other_name,other_uri=None):
+
+
 
 
 

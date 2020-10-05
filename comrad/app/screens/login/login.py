@@ -911,7 +911,7 @@ class LoginScreen(BaseScreen):
         self.log('My keychain now looks like v2:',dict_format(commie.keychain()))
 
        
-        await logfunc(f'With this scrambled password we can encrypt your super-sensitive private key to:\n(after) {privkey_encr_obj.discreet}',pause=True,clear=False)
+        await logfunc(f'With this scrambled password we can encrypt your super-sensitive private key to (redacted):\n{privkey_encr_obj.discreet}',pause=True,clear=False)
 
         # store privkey pieces
         commie.crypt_keys.set(uri_id, privkey_encr_obj.data, prefix='/privkey_encr/')

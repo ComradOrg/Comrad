@@ -106,6 +106,7 @@ class PostCard(MDCard):
         # self.log('PostCard() got data: '+str(data))
         self.author = data.get('author','[Anonymous]')
         self.recipient = data.get('to_name','')
+        self.post_data = data.get('post_data', {})
         if not self.recipient:
             self.recipient=self.app.channel
 
@@ -223,6 +224,74 @@ class PostCard(MDCard):
         self.add_widget(scroller)
         # self.add_widget(post_layout)
 
+
+        ### 
+        # Add any buttons? Any prompts?
+        if self.post_data.get('type')=='prompt':
+            # # prepare button layout
+            # self.button_layout = MDBoxLayout()
+            # self.button_layout.adaptive_width=True
+            # self.button_layout.height='56dp'
+            # self.button_layout.spacing='10dp'
+            # self.button_layout.pos_hint={'center_x': .5, 'y':0.05}
+            
+            if self.post_data.get('prompt_id')=='addcontact':
+                def on_touch_down(touch):
+                    if hasattr(self,'_touched') and self._touched: return
+                    if self.collide_point(*touch.pos):
+                        asyncio.create_task(self.app.prompt_addcontact(self.post_data))
+                        self._touched=True
+                self.on_touch_down=on_touch_down
+                
+            #     # self.stat(f"Add @{meet_name}'s public key to your address book? It will allow you and @{meet_name} to read and write encrypted messages to one another.")
+
+
+            #     if do_adduser.strip().lower()=='y':
+                    
+            #         import pyqrcode
+            #         print('meet_uri',meet_uri,'???')
+            #         qr = pyqrcode.create(meet_uri)
+            #         fnfn = os.path.join(PATH_QRCODES,meet_name+'.png') # self.get_path_qrcode(name=name)
+            #         qr.png(fnfn,scale=5)
+
+            #         clear_screen()
+            #         self.stat(f'The public key of @{meet_name} has been saved as a QRcode to {fnfn}')
+            #         print(qrstr)
+            #         do_pause()
+            #         clear_screen()
+            
+            # self.button = MDRectangleFlatButton()
+            # self.post_button = PostButton()
+            # self.post_button.screen = self
+            # self.post_status = PostStatus()
+            # self.post_status_added = False
+            
+
+            # self.button_layout.add_widget(self.upload_button)
+            # self.button_layout.add_widget(self.post_button)
+
+            # self.upload_button.font_size='8sp'
+            # self.post_button.font_size='8sp'
+        
+
+            # self.post_button.md_bg_color=rgb(*COLOR_CARD)
+            # self.upload_button.md_bg_color=rgb(*COLOR_CARD)
+            # self.post_status.md_bg_color=rgb(*COLOR_CARD)
+            
+            # post.add_widget(self.button_layout)
+
+
+
+
+
+
+
+
+
+
+
+
+
         # self.log('?????',self.cache_img_src, os.path.exists(self.cache_img_src), os.stat(self.cache_img_src).st_size)
         if self.cache_img_src and (not os.path.exists(self.cache_img_src) or not os.stat(self.cache_img_src).st_size):
             async def do_download_later():
@@ -308,7 +377,8 @@ class FeedScreen(ProtectedScreen):
                     'author':post.from_name,
                     'to_name':post.to_name,
                     'content':post.msg.get('txt') if type(post.msg)==dict else str(post.msg),
-                    'timestamp':post.timestamp
+                    'timestamp':post.timestamp,
+                    'post_data':post.data,
                 }
                 post_obj = PostCard(data)
                 self.posts.append(post_obj)
