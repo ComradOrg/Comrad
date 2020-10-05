@@ -10,7 +10,7 @@ from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.gridlayout import MDGridLayout
 from kivymd.uix.button import MDFlatButton
 from kivymd.uix.label import MDLabel
-print('\n'.join(sys.path))
+# print('\n'.join(sys.path))
 from comrad.constants import *
 # from comrad.app.main import rgb
 import io
