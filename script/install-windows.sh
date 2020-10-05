@@ -72,7 +72,7 @@ echo '
 #### 
 # Package manager setups
 # 
-pacman -S curl wget unzip gcc make openssl-devel git
+pacman -S curl wget unzip gcc make openssl-devel git libcrypt-devel python3 python3-pip mingw-w64-x86_64-python-pandas
 
 
 
@@ -117,14 +117,11 @@ echo '
 path_venv="$path_repo/venv"
 echo "Now using python (t1): `which python`"
 
-conda config --add channels conda-forge
-conda create -y -p "$path_venv" python=3.7 cartopy pip virtualenv rtree pyzbar wxpython
-# source "$path_conda/etc/profile.d/conda.sh"
-
-conda activate "$path_venv"
+python -m virtualenv "$path_venv"
+source "$path_venv/bin/activate"
 
 echo "Now using python (t2): `which python`"
-python -m pip install -U setuptools
+python -m pip install -U setuptools pip wheel
 
 
 
