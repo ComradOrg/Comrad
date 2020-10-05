@@ -104,7 +104,7 @@ class TheTelephone(Operator):
         # self.log('resp_msg_b:',resp_msg_b)
         
         
-        resp_msg_b = phonecall.data
+        resp_msg_b = phonecall.raw
         self.log(f'{self}: Received response from Operator!')# We got back:\n\n',resp_msg_b)
 
         resp_msg_d = pickle.loads(resp_msg_b)
@@ -177,7 +177,7 @@ class TheTelephone(Operator):
 
     def comrad_request_post(self,url,data='',allow_clearnet = ALLOW_CLEARNET):
         if '.onion' in url or not allow_clearnet:
-            return self.tor_request_post(url)
+            return self.tor_request_post(url,data=data)
         return requests.post(url,data=data,timeout=60)
 
 
@@ -202,7 +202,7 @@ class TheTelephone(Operator):
                 s.headers.update({'User-Agent': 'Mozilla/5.0'})
                 s.mount('http://', adapter)
                 s.mount('https://', adapter)
-                r = s.post(url, data=data, timeout=600)
+                r = s.post(url, data=data, timeout=600, stream=True)
                 return r
 
     def get_tor_proxy_session(self):

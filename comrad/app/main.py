@@ -179,6 +179,7 @@ class MessagePopupCard(MDDialog2):
     def on_touch_down(self,touch):
         self.ok_to_continue=True
         logger.info('oof!')
+        self.dismiss()
         # if hasattr(self,'msg_dialog'):
             # logger.info(str(self.msg_dialog))
 
@@ -797,7 +798,9 @@ class MainApp(MDApp, Logger):
 
     async def get_input(self,msg,comrad_name='Telephone',get_pass=False,yesno=False,**y):
         from comrad.app.screens.feed.feed import PostCardInputPopup
-        # if hasattr(self,'msg_dialog') and self.msg_dialog:# and hasattr(self.msg_dialog,'card') and self.msg_dialog.card:
+        if hasattr(self,'msg_dialog') and self.msg_dialog: self.msg_dialog.dismiss()
+            
+            # and hasattr(self.msg_dialog,'card') and self.msg_dialog.card:
         #     self.msg_dialog0=self.msg_dialog
         #     self.msg_dialog0.dismiss()
         #     self.msg_dialog0=None
@@ -812,6 +815,7 @@ class MainApp(MDApp, Logger):
         logger.info(f'get_input got user response {response}')
         if self.msg_dialog: 
             self.msg_dialog.dismiss()
+            self.root.remove_widget(self.msg_dialog)
         self.msg_dialog=None
         # async def task():
         #     await asyncio.sleep(1)
