@@ -383,7 +383,7 @@ class CLI(Logger):
                 self.stat('Meet whom?')
                 return
             name_or_pubkey = datl[0]
-            res = asyncio.run(self.comrad.meet(name_or_pubkey,returning=returning))
+            res = self.comrad.meet(name_or_pubkey,returning=returning)
             status=res.get('status')
             self.stat(status)
 
