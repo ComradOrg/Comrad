@@ -117,6 +117,8 @@ echo '
 path_venv="$path_repo/venv"
 echo "Now using python (t1): `which python`"
 
+pip install virtualenv
+
 python -m virtualenv "$path_venv"
 source "$path_venv/bin/activate"
 
