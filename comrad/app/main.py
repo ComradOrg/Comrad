@@ -314,11 +314,13 @@ class BooleanInputPopupCard(MDDialog2):
         # logger.info('say_yes got:',str(x))
         self.ok_to_continue=True
         self.response=True
+        self.dismiss()
         return self.response
     def say_no(self,x):
         # logger.info('say_no got:',str(x))
         self.ok_to_continue=True
         self.response=False
+        self.dismiss()
         return self.response
     
     def __init__(self,msg,*x,**y):

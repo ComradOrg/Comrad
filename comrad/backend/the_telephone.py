@@ -104,7 +104,7 @@ class TheTelephone(Operator):
         # self.log('resp_msg_b:',resp_msg_b)
         
         
-        resp_msg_b = phonecall.raw
+        resp_msg_b = phonecall.content
         self.log(f'{self}: Received response from Operator!')# We got back:\n\n',resp_msg_b)
 
         resp_msg_d = pickle.loads(resp_msg_b)
@@ -202,7 +202,7 @@ class TheTelephone(Operator):
                 s.headers.update({'User-Agent': 'Mozilla/5.0'})
                 s.mount('http://', adapter)
                 s.mount('https://', adapter)
-                r = s.post(url, data=data, timeout=600, stream=True)
+                r = s.post(url, data=data, timeout=600)
                 return r
 
     def get_tor_proxy_session(self):
