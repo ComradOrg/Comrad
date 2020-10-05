@@ -144,7 +144,7 @@ class PostScreen(ProtectedScreen):
         inp_towhom.width = '100sp'
         inp_towhom.font_name='assets/font.otf'
         # inp_towhom.height = '75sp'
-        
+        # self.post_card.to_name = inp_towhom.text
         inp_towhom.adaptive_height=True
         inp_towhom.background_color=rgb(*COLOR_CARD)
         inp_towhom.color=rgb(*COLOR_CARD)
@@ -327,7 +327,13 @@ class PostScreen(ProtectedScreen):
             #await self.app.post(content=content, channel = channel, file_id=file_id, file_ext=file_ext)
             # post?
             
-            res = await self.app.comrad.post_async(content)
+            if recipient==WORLD_NAME:
+                res = await self.app.comrad.post_async(content)
+            else:
+                res = await self.app.comrad.msg_async(
+                    recipient,
+                    content
+                )
             self.log('GOT BACK RES:',res)
             
 

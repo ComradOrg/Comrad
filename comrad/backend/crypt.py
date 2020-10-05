@@ -14,7 +14,8 @@ from pythemis.exception import ThemisError
 
 LOG_GET_SET = 0
 
-
+# [ComradX.get_inbox_crypt()] --> inbox crypt: VUVDMgAAAC2WUhTIAlSExnnuWskKUYTzK/PoKBPztt/GNvXCusQCsHHD9Rx0 /inbox/mbot/ []
+# [ComradX.get_inbox_crypt()] --> inbox crypt: b'VUVDMgAAAC2xvQhQA3SLt8rXwiDmuRKip4BsmnPqbhNxFEkZbqZGUAVCFd9S' /inbox/mbot/ [b'ODIyY2MyNTY5Njg0NDJhYTk0ODVhODBlYTBhOTE3YWI=']
 
 
 
@@ -141,10 +142,9 @@ class Crypt(Logger):
     def delete(self,k,prefix=''):
         k_b=self.package_key(k,prefix=prefix)
         k_b_hash = self.hash(k_b)
-
+        self.log(f'deleting {k_b_hash}')
         v = self.db.command('del',k_b_hash)
-        self.log('<--',v)
-        
+        self.log('<-- # keys removed:',v,'did key exist?',self.has(k,prefix=prefix))
         return v
         
 
@@ -225,11 +225,12 @@ class CryptList(Crypt):  # like inbox
         return vals
 
     def remove(self,val):
-        self.log('<--',val)
+        self.log('<-- removing value:',val,'\nfrom values:',self.values)
         if type(val)==list: return [self.remove(x) for x in val]
         val_x = self.package_val(val)
-        self.db.command('lrem',self.keyname,'0',val_x)
-
+        res = self.db.command('lrem',self.keyname,'0',val_x)
+        self.log('res remove:',res)
+        return val if res else None
 
 
 

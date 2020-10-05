@@ -319,6 +319,9 @@ class Operator(Keymaker):
         if not crypt: crypt=self.crypt_data
         if not uri: uri=self.uri
         prefix+=self.name+'/'
+        
+        self.log(f'I am {self.name} and my uri is {self.uri}.')
+        
         inbox_crypt = CryptList(
             crypt=self.crypt_data,
             keyname=uri,
@@ -339,30 +342,39 @@ class Operator(Keymaker):
         # delete from posts
         deleted_post_ids=[]
         for post_id in post_ids:
-            if self.crypt_data.delete(
+            self.log('deleting post id?',post_id)
+            del_res = self.crypt_data.delete(
                 post_id,
-                prefix=post_prefix
-            ):
+                prefix=f'{post_prefix}{self.name}/',
+            )
+            #del_res = 1
+            self.log('del_res =',del_res)
+            if del_res:
                 deleted_post_ids.append(post_id)
         self.log('deleted_post_ids',deleted_post_ids,'...')
         
         res = {
-            'deleted':post_ids,
+            'deleted':deleted_post_ids,
         }
 
         # delete from inbox
-        inbox_uri = self.uri if not inbox_uri else inbox_uri
-        if inbox_uri:
-            inbox_db=self.get_inbox_crypt(
-                uri=inbox_uri,
-            )
-            res['deleted_from_inbox']=inbox_db.remove(
-                deleted_post_ids
-            )
+        #inbox_uri = self.uri if not inbox_uri else inbox_uri
+        # if inbox_uri:
+        #     inbox_db=self.get_inbox_crypt(
+        #         uri=inbox_uri,
+        #     )
+        #     res['deleted_from_inbox']=inbox_db.remove(
+        #         deleted_post_ids
+        #     )
+        inbox_db=self.get_inbox_crypt(
+            prefix='/inbox/'
+        )
+        self.log('inbox!?',inbox_db.values)
+        res['deleted_from_inbox']=inbox_db.remove(post_ids)
         
         self.log('-->',res)
         res['success']=True
-        res['status']=f'Deleted {len(post_ids)} posts.'
+        res['status']=f'Deleted {len(deleted_post_ids)} posts.'
         return res
 
 

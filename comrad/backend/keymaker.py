@@ -281,21 +281,21 @@ class Keymaker(Logger):
 
 
     def find_pubkey(self,name=None):
-        self.log('<-',name)
+        # self.log('<-',name)
         if not name: name=self.name
-        self.log('<---',name)
+        # self.log('<---',name)
         if self.name==name and 'pubkey' in self._keychain and self._keychain['pubkey']:
             pk=self._keychain['pubkey']
             return ComradAsymmetricPublicKey(b64dec(pk)) if type(pk)==bytes else pk
         
         res = self.crypt_keys.get(name, prefix='/pubkey/')
-        self.log(f'crypt_keys({name}) -->',res)
+        # self.log(f'crypt_keys({name}) -->',res)
         if not res:
             res = self.load_qr(name)
-            self.log(f'load_qr({name}) -->',res)
+            # self.log(f'load_qr({name}) -->',res)
         if not res: return
         key = ComradAsymmetricPublicKey(b64dec(res))
-        self.log('-->',key)
+        # self.log('-->',key)
         return key
         # self.log('I don\'t know my public key! Do I need to register?')
         # raise ComradException(f'I don\'t know my public key!\n{self}\n{self._keychain}')
@@ -385,10 +385,8 @@ class Keymaker(Logger):
 
     @property
     def uri_id(self):
-        if not self._uri_id:
-            pubkey = self.pubkey #find_pubkey()
-            self._uri_id = pubkey.data_b64
-        return self._uri_id
+        pubkey = self.find_pubkey()
+        return pubkey.data_b64
 
     @property
     def uri(self):

@@ -858,7 +858,12 @@ class ComradX(Caller):
             'post':post_obj
         }
 
+
+
     def msgs(self,*x,**y): return self.messages(*x,**y)
+
+    
+
 
     def messages(self,
             unread=None,
@@ -919,7 +924,15 @@ class ComradX(Caller):
                 prefix=f'{post_prefix}{self.name}/',
             )
         self.log('found encrypted post store:',post_encr)
-    
+        if not post_encr:
+            #  this is an invalid post_id!
+            self.delete_post(
+                post_id=post_id,
+                inbox_uri=self.uri,
+                inbox_prefix='/inbox/'
+            )
+            return {'success':False,'status':'No post found.'}
+
         # first from op to me?
         try:
             msg_from_op_b_encr = post_encr
@@ -928,7 +941,7 @@ class ComradX(Caller):
                 self.privkey.data,
                 self.op.pubkey.data
             ).unwrap(msg_from_op_b_encr)
-            self.log('decrypted??',msg_from_op_b)
+            # self.log('decrypted??',msg_from_op_b)
         except (ThemisError,TypeError) as e:
             self.log(f'!!!!! {e} !!!!!')
             return {
@@ -938,9 +951,9 @@ class ComradX(Caller):
 
         # decoded?
         msg_from_op = pickle.loads(msg_from_op_b)
-        self.log('decoded?',msg_from_op)
+        # self.log('decoded?',msg_from_op)
 
-        self.log('msg_from_op is now',msg_from_op)
+        # self.log('msg_from_op is now',msg_from_op)
 
         # this really to me?
         if msg_from_op.get('to_name') != self.name:

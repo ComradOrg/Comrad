@@ -277,8 +277,11 @@ class TextInputPopupCard(MDDialog2):
         )
         self.ids.text.text_color=rgb(*COLOR_TEXT)
         self.ids.text.font_name=FONT_PATH
-        self.size=('333sp','111sp')
+        self.size=('400sp','400sp')
         self.adaptive_height=True
+        self.ids.text.font_size='28sp'
+        for widget in self.ids.button_box.children:
+            widget.font_size='18sp'
 
     # wait and show
     async def open(self,maxwait=666,pulse=0.1):
@@ -348,6 +351,11 @@ class BooleanInputPopupCard(MDDialog2):
 
         self.ids.text.text_color=rgb(*COLOR_TEXT)
         self.ids.text.font_name=FONT_PATH
+        self.ids.text.font_size='22sp'
+
+        for widget in self.ids.button_box.children:
+            widget.font_size='22sp'
+
 
     # wait and show
     async def open(self,maxwait=666,pulse=0.1):
@@ -587,6 +595,17 @@ class MainApp(MDApp, Logger):
     #     commie = Comrad(username)
     #     if self.exists_locally_as_contact()
 
+    def open_map(self):
+        if self.map is None:
+            from comrad.app.screens.map import MapWidget
+            self.map = MapWidget()
+            self.map.open()
+    
+    def close_map(self):
+        if self.map is not None:
+            self.map.dismiss()
+            self.map=None
+
     @property
     def callbacks(self):
         return {
@@ -785,6 +804,7 @@ class MainApp(MDApp, Logger):
         
         if yesno:
             self.msg_dialog = BooleanInputPopupCard(msg,comrad_name=comrad_name,**y)
+            
         else:
             self.msg_dialog = TextInputPopupCard(msg,password=get_pass,comrad_name=comrad_name,**y)
 
@@ -886,11 +906,20 @@ class MainApp(MDApp, Logger):
             self.remove_widget(self.msg_dialog)
 
 
-    async def prompt_addcontact(self,post_data):
+    async def prompt_addcontact(self,post_data,screen=None,post_id=None,post_card=None):
         meet_name = post_data.get('meet_name')
         meet_uri = post_data.get('meet').decode()    
                 
         yn=await self.get_input(f"Exchange public keys with {meet_name}? It will allow you and @{meet_name} to read and write encrypted messages to one another.",yesno=True)
+
+
+        if screen:
+            num_slides=len(screen.carousel.slides)
+            i=screen.carousel.index
+            self.log('changing slide??',num_slides,i)
+            screen.carousel.index=(i+1 if i<num_slides else 0)
+            if post_card is not None:
+                screen.carousel.remove_widget(post_card)    
         
         if yn:
             fnfn = self.comrad.save_uri_as_qrcode(
@@ -898,13 +927,22 @@ class MainApp(MDApp, Logger):
                 name=meet_name
             )
             await self.stat(f'''Saved {meet_name}'s public key:\n{meet_uri}.''',img_src=fnfn)
+            self.open_map()
             await self.stat('Now returning the invitation...')
             res = await self.comrad.meet_async(meet_name,returning=True)
+
             if res.get('success'):
                 await self.stat('Invitation successfully sent.')
-                do_pause()
             else:
-                self.stat(res.get('status'))
+                await self.stat(res.get('status'))
+            self.close_map()
+            
+
+        #delete this msg
+        if post_id:
+           self.comrad.delete_post(post_id)
+        
+        
 
 
     # async def meet(self,other_name,other_uri=None):

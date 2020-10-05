@@ -107,6 +107,8 @@ class PostCard(MDCard):
         self.author = data.get('author','[Anonymous]')
         self.recipient = data.get('to_name','')
         self.post_data = data.get('post_data', {})
+        self.screen=data.get('screen')
+        self.post_id=data.get('post_id')
         if not self.recipient:
             self.recipient=self.app.channel
 
@@ -226,64 +228,23 @@ class PostCard(MDCard):
 
 
         ### 
-        # Add any buttons? Any prompts?
+        # Any prompts?
         if self.post_data.get('type')=='prompt':
-            # # prepare button layout
-            # self.button_layout = MDBoxLayout()
-            # self.button_layout.adaptive_width=True
-            # self.button_layout.height='56dp'
-            # self.button_layout.spacing='10dp'
-            # self.button_layout.pos_hint={'center_x': .5, 'y':0.05}
-            
+
             if self.post_data.get('prompt_id')=='addcontact':
                 def on_touch_down(touch):
                     if hasattr(self,'_touched') and self._touched: return
                     if self.collide_point(*touch.pos):
-                        asyncio.create_task(self.app.prompt_addcontact(self.post_data))
-                        self._touched=True
+                        asyncio.create_task(
+                            self.app.prompt_addcontact(
+                                self.post_data,
+                                screen=self.screen,
+                                post_id=self.post_id,
+                                post_card=self,
+                            )
+                        )
+                        # self._touched=True
                 self.on_touch_down=on_touch_down
-                
-            #     # self.stat(f"Add @{meet_name}'s public key to your address book? It will allow you and @{meet_name} to read and write encrypted messages to one another.")
-
-
-            #     if do_adduser.strip().lower()=='y':
-                    
-            #         import pyqrcode
-            #         print('meet_uri',meet_uri,'???')
-            #         qr = pyqrcode.create(meet_uri)
-            #         fnfn = os.path.join(PATH_QRCODES,meet_name+'.png') # self.get_path_qrcode(name=name)
-            #         qr.png(fnfn,scale=5)
-
-            #         clear_screen()
-            #         self.stat(f'The public key of @{meet_name} has been saved as a QRcode to {fnfn}')
-            #         print(qrstr)
-            #         do_pause()
-            #         clear_screen()
-            
-            # self.button = MDRectangleFlatButton()
-            # self.post_button = PostButton()
-            # self.post_button.screen = self
-            # self.post_status = PostStatus()
-            # self.post_status_added = False
-            
-
-            # self.button_layout.add_widget(self.upload_button)
-            # self.button_layout.add_widget(self.post_button)
-
-            # self.upload_button.font_size='8sp'
-            # self.post_button.font_size='8sp'
-        
-
-            # self.post_button.md_bg_color=rgb(*COLOR_CARD)
-            # self.upload_button.md_bg_color=rgb(*COLOR_CARD)
-            # self.post_status.md_bg_color=rgb(*COLOR_CARD)
-            
-            # post.add_widget(self.button_layout)
-
-
-
-
-
 
 
 
@@ -350,7 +311,8 @@ class FeedScreen(ProtectedScreen):
     def on_pre_enter(self):
         if not super().on_pre_enter(): return
         if self.updated:
-            if not self.app.comrad.updated or self.updated>=self.app.comrad.updated:
+            if False: # @HACK!!!
+            # if not self.app.comrad.updated or self.updated>=self.app.comrad.updated:
                 self.log('NOT UPDATING!')
                 return
         # self.root.clear_widgets()
@@ -360,6 +322,7 @@ class FeedScreen(ProtectedScreen):
             self.root.remove_widget(self.app.map)
         if not hasattr(self,'get_posts'): self.get_posts=self.app.comrad.posts
         
+        self.carousel = self.ids.post_carousel
         for post in self.posts:
             self.ids.post_carousel.remove_widget(post)
         
@@ -379,6 +342,8 @@ class FeedScreen(ProtectedScreen):
                     'content':post.msg.get('txt') if type(post.msg)==dict else str(post.msg),
                     'timestamp':post.timestamp,
                     'post_data':post.data,
+                    'screen':self,
+                    'post_id':post.post_id,
                 }
                 post_obj = PostCard(data)
                 self.posts.append(post_obj)
