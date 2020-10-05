@@ -459,7 +459,7 @@ class CLI(Logger):
         # res_login=res.get('res_login',{})
         # if not self.do_login(res_login): return
         # self.stat('',res['status'],comrad_name='Operator',**statd)
-
+        self.help()
         return res
 
 
