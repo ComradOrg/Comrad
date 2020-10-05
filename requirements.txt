@@ -7,6 +7,7 @@ cffi==1.14.2
 chardet==3.0.4
 click==7.1.2
 colorama==0.4.3
+cryptography==3.0
 docutils==0.16
 fire==0.3.1
 Flask==1.1.2
@@ -28,9 +29,10 @@ kivymd==0.104.1
 lazy-object-proxy==1.4.3
 MarkupSafe==1.1.1
 mccabe==0.6.1
-numpy
+numpy==1.19.1
+pandas==1.1.2
 pathtools==0.1.2
-Pillow
+Pillow==7.2.0
 plyer==1.4.3
 pycparser==2.20
 pyfiglet==0.8.post1
@@ -56,7 +58,9 @@ termcolor==1.1.0
 text2art==0.2.0
 toml==0.10.1
 torpy==1.1.3
+typed-ast==1.4.1
 u-msgpack-python==2.7.0
+ujson==3.1.0
 urllib3==1.25.10
 utm==0.6.0
 watchdog==0.10.3
