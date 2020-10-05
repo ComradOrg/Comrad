@@ -2,6 +2,9 @@ import os,sys; sys.path.append(os.path.abspath(os.path.join(os.path.abspath(os.p
 from comrad.app.screens.dialog import MDDialog2
 import cartopy
 import cartopy.crs as ccrs
+import matplotlib
+matplotlib.use('Agg')
+
 import matplotlib.pyplot as plt
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.gridlayout import MDGridLayout
