@@ -39,7 +39,9 @@ then
     echo "(I want you to know I really tried to support Windows"
     echo "but I simply cannot figure it out: Mingw64, Cygwin, etc etc."
     echo "-Marx Zuckerburg)"
-    echo -e "\nIf you are a developer, please lend a hand to support Windows.\n"
+    echo -e "\nIf you are a developer, please lend a hand to support Windows."
+    echo "The attempt at a windows installation is located here:"
+    echo "https://github.com/ComradOrg/Comrad/blob/master/script/install-windows.sh"
 
     exit 1
 fi
