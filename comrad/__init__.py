@@ -7,7 +7,7 @@ from .cli.artcode import *
 import os,sys
 from collections import defaultdict
 from base64 import b64encode,b64decode
-import ujson as json
+import json
 import binascii,asyncio
 from pprint import pprint
 

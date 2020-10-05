@@ -210,6 +210,12 @@ class CryptList(Crypt):  # like inbox
             # res = self.db.lpush(self.keyname,val_x)
         # res = self.db.command('rpush',self.keyname,val_x)
         oldval = self.db.get(self.keyname)
+        if oldval:
+            newval = oldval + [val_x]
+        else:
+            newval = [val_x]
+        res=self.db.set(self.keyname, newval)
+        
         self.log('-->',res)
         return res
 
@@ -217,13 +223,20 @@ class CryptList(Crypt):  # like inbox
         self.log('<--val',val)
         if type(val)==list: return [self.prepend(x) for x in val]
         val_x = self.package_val(val)
-        res = self.db.command('lpush',self.keyname,val_x)
+        # res = self.db.command('lpush',self.keyname,val_x)
+        oldval = self.db.get(self.keyname)
+        if oldval:
+            newval = [val_x] + oldval
+        else:
+            newval = [val_x]
+        res=self.db.set(self.keyname, newval)
         self.log('-->',res)
         return res
 
     @property
     def values(self):
-        l = self.db.command('lrange',self.keyname, '0', '-1')
+        #l = self.db.command('lrange',self.keyname, '0', '-1')
+        l=self.db.get(self.keyname)
         self.log('<-- l',l)
         if not l: return []
         vals = [self.unpackage_val(x) for x in l]
@@ -234,8 +247,10 @@ class CryptList(Crypt):  # like inbox
         self.log('<--',val)
         if type(val)==list: return [self.remove(x) for x in val]
         val_x = self.package_val(val)
-        self.db.command('lrem',self.keyname,'0',val_x)
-
+        #self.db.command('lrem',self.keyname,'0',val_x)
+        l = self.db.get(self.keyname)
+        l = [x for x in l if x!=val_x]
+        self.db.set(self.keyname,l)
 
 
 

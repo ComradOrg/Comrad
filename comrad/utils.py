@@ -307,8 +307,8 @@ def hasher(dat,secret=None):
 
 
 from base64 import b64encode,b64decode
-import ujson as json
 import pickle
+import json
 def package_for_transmission(data_json):
     # print('package_for_transmission.data_json =',data_json)
     
