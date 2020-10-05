@@ -37,7 +37,7 @@ if [ "$machine" = "MinGw" ] || [ "$machine" = "Cygwin" ]
 then
     echo -e "\nSorry, but Windows is not yet supported."
     echo -e "\nIf you are a developer, please lend a hand to support Windows."
-    echo "The currentattempt at a windows installation is located here:"
+    echo "The current attempt at a windows installation is located here:"
     echo "https://github.com/ComradOrg/Comrad/blob/master/script/install-windows.sh"
   
     exit 1

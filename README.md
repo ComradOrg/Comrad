@@ -137,6 +137,8 @@ bash <(curl -s https://comrad.app/run)
 
 #### ...on Windows
 
+Unfortunately, Windows is not yet supported. We tried and tried, but cannot get everything to install correctly on either Mingw64 or Cygwin; and we also haven't yet packaged a binary release with pyinstaller. If you are a developer, please lend a hand to support Windows. The current attempt at a windows installation is located [here](https://github.com/ComradOrg/Comrad/blob/master/script/install-windows.sh).
+
 ### Run
 
 #### ...on Mac OSX
