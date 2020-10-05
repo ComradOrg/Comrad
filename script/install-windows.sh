@@ -141,7 +141,7 @@ python -m pip install -r requirements.txt
 
 
 
-
+exit 1
 #############################################################
 
 # echo '
