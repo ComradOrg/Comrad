@@ -61,10 +61,8 @@ class Crypt(Logger):
         # self.store = RedisStore(redis.StrictRedis())
         # self.db = Vedis(self.fn)
         # self.db = WalrusLite(self.fn)
-        # import hirlite
-        # self.db = hirlite.Rlite(path=self.fn)
-        from pupdb.core import PupDB
-        self.db = PupDB(self.fn)
+        import hirlite
+        self.db = hirlite.Rlite(path=self.fn)
 
 
     def log(self,*x,**y):
@@ -127,8 +125,7 @@ class Crypt(Logger):
         #self.store.put(k_b_hash,v_b)
         #with self.db.transaction():
             # self.db[k_b_hash]=v_b
-        # return self.db.command('set',k_b_hash,v_b)
-        return self.db.set(k_b_hash,v_b)
+        return self.db.command('set',k_b_hash,v_b)
         # return True
 
     def exists(self,k,prefix=''):
@@ -145,8 +142,7 @@ class Crypt(Logger):
         k_b=self.package_key(k,prefix=prefix)
         k_b_hash = self.hash(k_b)
 
-        # v = self.db.command('del',k_b_hash)
-        v = self.db.remove(k_b_hash)
+        v = self.db.command('del',k_b_hash)
         self.log('<--',v)
         
         return v
@@ -160,8 +156,7 @@ class Crypt(Logger):
         self.log('getting k_b',k_b)
         self.log('getting k_b_hash',k_b_hash)
         
-        # v = self.db.command('get',k_b_hash)
-        v = self.db.get(k_b_hash)
+        v = self.db.command('get',k_b_hash)
         self.log('<--',v)
 
         v_b=self.unpackage_val(v)
@@ -208,14 +203,7 @@ class CryptList(Crypt):  # like inbox
         val_x = self.package_val(val)
         # with self.db.transaction():
             # res = self.db.lpush(self.keyname,val_x)
-        # res = self.db.command('rpush',self.keyname,val_x)
-        oldval = self.db.get(self.keyname)
-        if oldval:
-            newval = oldval + [val_x]
-        else:
-            newval = [val_x]
-        res=self.db.set(self.keyname, newval)
-        
+        res = self.db.command('rpush',self.keyname,val_x)
         self.log('-->',res)
         return res
 
@@ -223,20 +211,13 @@ class CryptList(Crypt):  # like inbox
         self.log('<--val',val)
         if type(val)==list: return [self.prepend(x) for x in val]
         val_x = self.package_val(val)
-        # res = self.db.command('lpush',self.keyname,val_x)
-        oldval = self.db.get(self.keyname)
-        if oldval:
-            newval = [val_x] + oldval
-        else:
-            newval = [val_x]
-        res=self.db.set(self.keyname, newval)
+        res = self.db.command('lpush',self.keyname,val_x)
         self.log('-->',res)
         return res
 
     @property
     def values(self):
-        #l = self.db.command('lrange',self.keyname, '0', '-1')
-        l=self.db.get(self.keyname)
+        l = self.db.command('lrange',self.keyname, '0', '-1')
         self.log('<-- l',l)
         if not l: return []
         vals = [self.unpackage_val(x) for x in l]
@@ -247,10 +228,8 @@ class CryptList(Crypt):  # like inbox
         self.log('<--',val)
         if type(val)==list: return [self.remove(x) for x in val]
         val_x = self.package_val(val)
-        #self.db.command('lrem',self.keyname,'0',val_x)
-        l = self.db.get(self.keyname)
-        l = [x for x in l if x!=val_x]
-        self.db.set(self.keyname,l)
+        self.db.command('lrem',self.keyname,'0',val_x)
+
 
 
 

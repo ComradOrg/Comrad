@@ -297,19 +297,18 @@ python -m pip install -r requirements.txt
 
 #############################################################
 
-# echo '
-# Installing other requirements
+echo '
+Installing other requirements
 
-# Rlite, hardware based redis database
+Rlite, hardware based redis database
 
-# '
+'
 
-# cd $path_lib
-# git clone https://github.com/seppo0010/rlite.git
-# cd rlite
-# make
-# make all
-
+cd $path_lib
+git clone https://github.com/seppo0010/rlite.git
+cd rlite
+make
+make all
 
 
 # exit 1
@@ -393,8 +392,15 @@ else
 fi
 
 
-echo -e "Installation successful!
+echo -e "Installation successful!"
 
+if [ "$machine" = "Mac" ]
+then
+    cd /Applications
+    unzip -q -o "$path_bin/Comrad.app.zip"
+    echo "You may run the app by looking for 'Comrad.app' in your /Applications folder."
+else
+    echo -e "
 You can run Comrad with:
 
 
@@ -416,13 +422,6 @@ or:
     ~/comrad/code/bin/comrad-cli
 
 "
-
-
-if [ "$machine" = "Mac" ]
-then
-    cd /Applications
-    unzip -q -o "$path_bin/Comrad.app.zip"
-    echo "You may run the app by looking for 'Comrad.app' in your /Applications folder."
 fi
 
 
