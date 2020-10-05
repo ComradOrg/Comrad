@@ -281,8 +281,8 @@ class TextInputPopupCard(MDDialog2):
         self.size=('400sp','400sp')
         self.adaptive_height=True
         self.ids.text.font_size='28sp'
-        for widget in self.ids.button_box.children:
-            widget.font_size='18sp'
+        # for widget in self.ids.button_box.children:
+            # widget.font_size='18sp'
 
     # wait and show
     async def open(self,maxwait=666,pulse=0.1):
@@ -356,8 +356,8 @@ class BooleanInputPopupCard(MDDialog2):
         self.ids.text.font_name=FONT_PATH
         self.ids.text.font_size='22sp'
 
-        for widget in self.ids.button_box.children:
-            widget.font_size='22sp'
+        # for widget in self.ids.button_box.children:
+        #     widget.font_size='18sp'
 
 
     # wait and show
