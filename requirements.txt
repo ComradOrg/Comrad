@@ -29,7 +29,6 @@ lazy-object-proxy==1.4.3
 MarkupSafe==1.1.1
 mccabe==0.6.1
 numpy
-pandas
 pathtools==0.1.2
 Pillow
 plyer==1.4.3

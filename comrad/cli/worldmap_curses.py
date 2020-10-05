@@ -11,7 +11,7 @@ import pyproj,math,os
 import rtree
 import curses,random,time
 from comrad.utils import Logger
-import pandas as pd
+# import pandas as pd
 import numpy as np
 
 import warnings
