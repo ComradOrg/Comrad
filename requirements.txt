@@ -29,8 +29,8 @@ kivymd==0.104.1
 lazy-object-proxy==1.4.3
 MarkupSafe==1.1.1
 mccabe==0.6.1
-numpy==1.19.1
-pandas==1.1.2
+numpy
+pandas
 pathtools==0.1.2
 Pillow==7.2.0
 plyer==1.4.3
