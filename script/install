@@ -6,24 +6,52 @@ realpath() {
 }
 
 echo "$1 $2 $3"
+
+unameOut="$(uname -s)"
+case "${unameOut}" in
+    Linux*)     machine=Linux;;
+    Darwin*)    machine=Mac;;
+    CYGWIN*)    machine=Cygwin;;
+    MINGW*)     machine=MinGw;;
+    MSYS*)      machine=MinGw;;
+    *)          machine="UNKNOWN:${unameOut}"
+esac
    
 
 # install pyenv?
 
 echo "
-              #  #   ##   #  #  ###    ##   ###   #### 
-              # #   #  #  ####  #  #  #  #  #  #  #    
-              ##    #  #  ####  ###   #  #  #  #  ###  
-              # #   #  #  #  #  # #   ####  #  #  #    
-              #  #   ##   #  #  #  #  #  #  ###   #### 
+                 ###   ##   #  #  ###    ##   ###                
+                #     #  #  ####  #  #  #  #  #  #               
+                #     #  #  ####  ###   #  #  #  #               
+                #     #  #  #  #  # #   ####  #  #               
+                 ###   ##   #  #  #  #  #  #  ###                
 
-
+                                                           
 installing...
 
 "            
 
+
+if [ "$machine" = "MinGw" ] || [ "$machine" = "Cygwin" ]
+then
+    echo -e "\nSorry, but Windows is not yet supported."
+    echo -e "\nIf you are a developer, please lend a hand to support Windows."
+    echo "The current attempt at a windows installation is located here:"
+    echo "https://github.com/ComradOrg/Comrad/blob/master/script/install-windows.sh"
+  
+    exit 1
+fi
+
+
+
+###
+# Create paths
+######
+
+
 echo '
-1) setting up folder...
+1) setting up folders...
 
 '
 # install dir?
@@ -56,7 +84,9 @@ then
     echo "created $path_lib"
 fi
    
-path_bin="$path_comrad/code/bin"
+
+path_repo="$path_comrad/code"
+path_bin="$path_repo/bin"
 # if [ ! -d "$path_bin" ]
 # then
 #     mkdir -p $path_bin
@@ -65,203 +95,152 @@ path_bin="$path_comrad/code/bin"
 
 
 
+
+
+
+
+echo '
+2) configuring OS environment...
+
+'
+
+echo "Machine $machine detected."    
+
+
+
+
+#### 
+# Package manager setups
+# 
+
+# windows
+if [ "$machine" = "MinGw" ]
+then
+    echo "Installing base development packages"
+    pacman -S curl wget unzip gcc make openssl-devel git
+fi
+
+# mac
+if [ "$machine" = "Mac" ]
+then
+    if ! command -v brew &> /dev/null
+    then
+        echo "Installing homebrew..."
+        cd "$path_lib"
+        mkdir homebrew && curl -L https://github.com/Homebrew/brew/tarball/master | tar xz --strip 1 -C homebrew
+    fi
+
+    if ! command -v git &> /dev/null
+    then
+        echo "Installing git with brew..."
+        brew install git
+    fi
+fi
+
+# linux
+if [ "$machine" = "Linux" ]
+then
+    if ! command -v git &> /dev/null
+    then
+        echo "Installing git with apt..."
+        sudo apt install git
+    fi
+fi
+
+
+
+
+
+
+
+
+
+
+### Downloading via git!
+
 echo '
 
 2) downloading Comrad...
 
 '
-
-path_repo="$path_comrad/code"
-if command -v git &> /dev/null
-then
-    echo "using git..."
-    if [ -d "$path_repo" ]
-    then 
-        cd $path_repo
-        git pull
-    else
-        cd $path_comrad
-        
-        if [ "$1" = "-n" ]
-        then
-            echo "Use HTTPS or SSH for git?"
-            read -p "[HTTPS/ssh] " git_method
-        else
-            git_method="https"
-        fi
-
-        if [ "$git_method" = "ssh" ]
-        then
-            echo "using ssh..."
-            git clone git@github.com:ComradOrg/Comrad.git
-            git checkout installer
-        else
-            git clone https://github.com/ComradOrg/Comrad.git
-            git checkout installer
-        fi
-        mv Comrad code
-    fi
+# if exists, pull
+if [ -d "$path_repo" ]
+then 
+    cd $path_repo
+    git pull
 else
     cd $path_comrad
-    curl -s -LO https://github.com/ComradOrg/Comrad/archive/installer.zip
-    unzip installer.zip
-    rm installer.zip
-    cp -rT Comrad-installer code
-    rm -r Comrad-installer
+    git clone https://github.com/ComradOrg/Comrad.git
+    mv Comrad code
 fi
 
 
-#########################################################
 
-
-
-##########################################################
 
 
 
 echo '
 
-4) setting up python...
+4) setting up python miniconda...
 
 # '
 
 
 
+#################
+##  MINICONDA  ##
+#################
+
 
 cd $path_comrad
-
 path_conda="$path_comrad/lib/miniconda3"
-# ### Detect if python 3.7?
-# pyv="$(python3 -c 'import sys; print(sys.version_info[0:2])')"
-# if [ ! "$pyv" = "(3, 7)" ]
-# then
-unameOut="$(uname -s)"
-case "${unameOut}" in
-    Linux*)     machine=Linux;;
-    Darwin*)    machine=Mac;;
-    CYGWIN*)    machine=Cygwin;;
-    MINGW*)     machine=MinGw;;
-    *)          machine="UNKNOWN:${unameOut}"
-esac
-#echo ${machine}
+
 
 if [ "$machine" = "Linux" ]
 then
     if [ ! -f "miniconda.sh" ]
     then
+        echo "downloading miniconda..."
         curl https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-Linux-x86_64.sh -o miniconda.sh
         chmod +x miniconda.sh
     fi
     ./miniconda.sh -b -f -p "$path_conda"
     #rm miniconda.sh
+    export PATH="$path_conda/bin:$PATH"
 
-    ### install themis from source
-
-    if [ ! -f "/usr/local/lib/libthemis.so" ]
-    then
-        if [ ! -f "/usr/lib/libthemis.so" ]
-        then
-            echo '
-
-            3) building Themis, cryptography backend...
-
-            '
-            cd "$path_lib"
-            # pwd
-            git clone https://github.com/cossacklabs/themis.git
-            cd themis
-            make
-            sudo make install
-        fi
-    fi
-
-    ### install zbar library
     sudo apt install zbar-tools
-
 fi
+
+# mac
 
 if [ "$machine" = "Mac" ]
 then
     if [ ! -f "miniconda.sh" ]
     then
+        echo "downloading miniconda..."
         curl https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-MacOSX-x86_64.sh -o miniconda.sh
         chmod +x miniconda.sh
     fi
     ./miniconda.sh -b -f -p "$path_conda"
-    # rm miniconda.sh
+    export PATH="$path_conda/bin:$PATH"
 
-    if command -v /usr/local/bin/brew &> /dev/null
-    then
-        cd "$path_lib"
-        mkdir homebrew && curl -L https://github.com/Homebrew/brew/tarball/master | tar xz --strip 1 -C homebrew
-    fi
-
-    # brew install 
-    /usr/local/bin/brew tap cossacklabs/tap
-    /usr/local/bin/brew install libthemis
-    
-
-    # install zbar library
-    /usr/local/bin/brew install zbar
-
-
-fi
-
-if [ "$machine" = "Cygwin" ]
-then
-    arch="$(uname -m)"
-    if [ "$arch" = "x86_64" ]
-    then
-        curl https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-Windows-x86_64.exe -o miniconda.exe
-    else
-        curl https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-Windows-x86.exe -o miniconda.exe
-    fi
-
-    ./miniconda.exe -b -f -p "$path_conda"
-    # rm miniconda.exe
-
-    ### install themis from source
-    if [ ! -f "/usr/local/lib/libthemis.so" ]
-    then
-        if [ ! -f "/usr/lib/libthemis.so" ]
-        then
-            echo '
-
-            3) building Themis, cryptography backend...
-
-            '
-            cd "$path_lib"
-            # pwd
-            git clone https://github.com/cossacklabs/themis.git
-            cd themis
-            make
-            sudo make install
-        fi
-    fi
-
-    ### install zbar using apt-cyg
-    # installing apt-cyg
-    if ! command -v apt-cyg &> /dev/null
-    then
-        echo "installing apt-cyg"
-        lynx -source https://raw.githubusercontent.com/transcode-open/apt-cyg/master/apt-cyg > apt-cyg
-        install apt-cyg /bin
-    fi
-    # installing zbar
-    apt-cyg install zbar
+    brew install zbar
 fi
 
 
 
-# activate conda
-export PATH="$path_conda/bin:$PATH"
-
+echo "path_conda = $path_conda"
+echo "conda exec is `which conda`"
 source "$path_conda/etc/profile.d/conda.sh"
+echo "conda exec is `which conda`"
 
-condaexec="conda"
-pythonexec="python"
+#$condaexec
 
 
+
+
+
+############################################################
 
 
 echo '
@@ -270,26 +249,105 @@ echo '
 
 '
 path_venv="$path_repo/venv"
+echo "Now using python (t1): `which python`"
 
-# cd $path_comrad
-cd $path_repo
-echo "Now using python 1: `which python`"
-$condaexec create -y -p "$path_venv" python=3.7 cartopy pip virtualenv rtree
+conda config --add channels conda-forge
+conda create -y -p "$path_venv" python=3.7 cartopy pip virtualenv rtree wxpython pandas numpy scipy
+source "$path_conda/etc/profile.d/conda.sh"
 
-#$condaexec activate "$path_venv"
+conda activate "$path_venv"
+
+echo "Now using python (t2): `which python`"
+python -m pip install -U setuptools
 
 
-echo "Now using python 2: `which python`"
-# $pythonexec -m pip install virtualenv
-# $pythonexec -m virtualenv venv
-# . venv/bin/activate
-echo "Now using python 3: `which python`"
 
-python -m pip install -r requirements.txt
+
+###########################################################
 
 echo '
 
-6) adding comrad bin folder to path
+Install python requirements
+
+'
+
+cd $path_repo
+python -m pip install -r requirements.txt
+
+
+
+
+
+
+#############################################################
+
+echo '
+Installing other requirements
+
+Rlite, hardware based redis database
+
+'
+
+cd $path_lib
+git clone https://github.com/seppo0010/rlite.git
+cd rlite
+make
+make all
+
+
+# exit 1
+
+
+
+#########################################################################
+
+if [ "$machine" = "Mac" ]
+then
+    echo "Installing Mac native GUI bridge"
+    python -m pip install git+https://github.com/kivy/pyobjus
+fi
+
+
+#######################################
+
+echo '
+
+Themis, cryptography backend...
+
+'
+
+
+if [ "$machine" = "Mac" ]
+then
+    echo 'installing themis with brew'
+    /usr/local/bin/brew tap cossacklabs/tap
+    /usr/local/bin/brew install libthemis
+else
+    if [ ! -f "/usr/local/lib/libthemis.so" ]
+    then
+        if [ ! -f "/usr/lib/libthemis.so" ]
+        then
+            echo 'building themis'
+            cd "$path_lib"
+            # pwd
+            #git clone https://github.com/cossacklabs/themis.git
+            curl https://codeload.github.com/cossacklabs/themis/zip/master -o themis.zip
+            unzip -q -o themis.zip
+            #mv themis-master themis
+            cd themis-master
+            make
+            make install
+            # sudo make install
+        fi
+    fi
+fi
+
+
+
+
+echo '
+
+Completing...
 
 '
 
@@ -318,33 +376,51 @@ else
 fi
 
 
-echo -e "Now run Comrad with:
-
-comrad-app    [GUI interface -- alpha]
-
-If that doesn't work, try running this series of comands:
-
-$commands_app
-
-"
-
+echo -e "Installation successful!"
 
 if [ "$machine" = "Mac" ]
 then
     cd /Applications
-    unzip "$path_bin/Comrad.app.zip"
-    # cp "$path_bin/Comrad.app" /Applications/
-
+    unzip -q -o "$path_bin/Comrad.app.zip"
     echo "You may run the app by looking for 'Comrad.app' in your /Applications folder."
+else
+    echo -e "
+You can run Comrad with:
+
+
+## For the GUI interface:
+
+    comrad-app
+
+or:
+
+    ~/comrad/code/bin/comrad-app
+
+
+## For the terminal client:
+
+    comrad-cli
+
+or:
+
+    ~/comrad/code/bin/comrad-cli
+
+"
 fi
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # run?
-. $path_bin/comrad-app
 
-
-
-
-if [ "$machine" = "Mac" ]
-then
-    echo "You may run the app by looking for 'Comrad.app' in your /Applications folder."
-fi
+#$path_bin/comrad-app

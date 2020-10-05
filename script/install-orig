@@ -1,0 +1,350 @@
+#!/bin/bash
+
+# funcs (mac doesnt have realpath)
+realpath() {
+    [[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"
+}
+
+echo "$1 $2 $3"
+   
+
+# install pyenv?
+
+echo "
+              #  #   ##   #  #  ###    ##   ###   #### 
+              # #   #  #  ####  #  #  #  #  #  #  #    
+              ##    #  #  ####  ###   #  #  #  #  ###  
+              # #   #  #  #  #  # #   ####  #  #  #    
+              #  #   ##   #  #  #  #  #  #  ###   #### 
+
+
+installing...
+
+"            
+
+echo '
+1) setting up folder...
+
+'
+# install dir?
+echo "Where should comrad live on your device?"
+path_comrad_default="`realpath ~/comrad`"
+
+if [ "$1" = "-n" ]
+then
+    read -p "[$path_comrad_default] " path_comrad
+else
+    path_comrad=$path_comrad_default
+fi
+
+
+if [ -z "$path_comrad" ]
+then
+    path_comrad=$path_comrad_default
+fi
+
+if [ ! -d "$path_comrad" ]
+then
+    mkdir -p $path_comrad
+    echo "created $path_comrad"
+fi
+
+path_lib="$path_comrad/lib"
+if [ ! -d "$path_lib" ]
+then
+    mkdir -p $path_lib
+    echo "created $path_lib"
+fi
+   
+path_bin="$path_comrad/code/bin"
+# if [ ! -d "$path_bin" ]
+# then
+#     mkdir -p $path_bin
+#     echo "created $path_bin"
+# fi
+
+
+
+echo '
+
+2) downloading Comrad...
+
+'
+
+path_repo="$path_comrad/code"
+if command -v git &> /dev/null
+then
+    echo "using git..."
+    if [ -d "$path_repo" ]
+    then 
+        cd $path_repo
+        git pull
+    else
+        cd $path_comrad
+        
+        if [ "$1" = "-n" ]
+        then
+            echo "Use HTTPS or SSH for git?"
+            read -p "[HTTPS/ssh] " git_method
+        else
+            git_method="https"
+        fi
+
+        if [ "$git_method" = "ssh" ]
+        then
+            echo "using ssh..."
+            git clone git@github.com:ComradOrg/Comrad.git
+            git checkout installer
+        else
+            git clone https://github.com/ComradOrg/Comrad.git
+            git checkout installer
+        fi
+        mv Comrad code
+    fi
+else
+    cd $path_comrad
+    curl -s -LO https://github.com/ComradOrg/Comrad/archive/installer.zip
+    unzip installer.zip
+    rm installer.zip
+    cp -rT Comrad-installer code
+    rm -r Comrad-installer
+fi
+
+
+#########################################################
+
+
+
+##########################################################
+
+
+
+echo '
+
+4) setting up python...
+
+# '
+
+
+
+
+cd $path_comrad
+
+path_conda="$path_comrad/lib/miniconda3"
+# ### Detect if python 3.7?
+# pyv="$(python3 -c 'import sys; print(sys.version_info[0:2])')"
+# if [ ! "$pyv" = "(3, 7)" ]
+# then
+unameOut="$(uname -s)"
+case "${unameOut}" in
+    Linux*)     machine=Linux;;
+    Darwin*)    machine=Mac;;
+    CYGWIN*)    machine=Cygwin;;
+    MINGW*)     machine=MinGw;;
+    *)          machine="UNKNOWN:${unameOut}"
+esac
+#echo ${machine}
+
+if [ "$machine" = "Linux" ]
+then
+    if [ ! -f "miniconda.sh" ]
+    then
+        curl https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-Linux-x86_64.sh -o miniconda.sh
+        chmod +x miniconda.sh
+    fi
+    ./miniconda.sh -b -f -p "$path_conda"
+    #rm miniconda.sh
+
+    ### install themis from source
+
+    if [ ! -f "/usr/local/lib/libthemis.so" ]
+    then
+        if [ ! -f "/usr/lib/libthemis.so" ]
+        then
+            echo '
+
+            3) building Themis, cryptography backend...
+
+            '
+            cd "$path_lib"
+            # pwd
+            git clone https://github.com/cossacklabs/themis.git
+            cd themis
+            make
+            sudo make install
+        fi
+    fi
+
+    ### install zbar library
+    sudo apt install zbar-tools
+
+fi
+
+if [ "$machine" = "Mac" ]
+then
+    if [ ! -f "miniconda.sh" ]
+    then
+        curl https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-MacOSX-x86_64.sh -o miniconda.sh
+        chmod +x miniconda.sh
+    fi
+    ./miniconda.sh -b -f -p "$path_conda"
+    # rm miniconda.sh
+
+    if command -v /usr/local/bin/brew &> /dev/null
+    then
+        cd "$path_lib"
+        mkdir homebrew && curl -L https://github.com/Homebrew/brew/tarball/master | tar xz --strip 1 -C homebrew
+    fi
+
+    # brew install 
+    /usr/local/bin/brew tap cossacklabs/tap
+    /usr/local/bin/brew install libthemis
+    
+
+    # install zbar library
+    /usr/local/bin/brew install zbar
+
+
+fi
+
+if [ "$machine" = "Cygwin" ]
+then
+    arch="$(uname -m)"
+    if [ "$arch" = "x86_64" ]
+    then
+        curl https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-Windows-x86_64.exe -o miniconda.exe
+    else
+        curl https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-Windows-x86.exe -o miniconda.exe
+    fi
+
+    ./miniconda.exe -b -f -p "$path_conda"
+    # rm miniconda.exe
+
+    ### install themis from source
+    if [ ! -f "/usr/local/lib/libthemis.so" ]
+    then
+        if [ ! -f "/usr/lib/libthemis.so" ]
+        then
+            echo '
+
+            3) building Themis, cryptography backend...
+
+            '
+            cd "$path_lib"
+            # pwd
+            git clone https://github.com/cossacklabs/themis.git
+            cd themis
+            make
+            sudo make install
+        fi
+    fi
+
+    ### install zbar using apt-cyg
+    # installing apt-cyg
+    if ! command -v apt-cyg &> /dev/null
+    then
+        echo "installing apt-cyg"
+        lynx -source https://raw.githubusercontent.com/transcode-open/apt-cyg/master/apt-cyg > apt-cyg
+        install apt-cyg /bin
+    fi
+    # installing zbar
+    apt-cyg install zbar
+fi
+
+
+
+# activate conda
+export PATH="$path_conda/bin:$PATH"
+
+source "$path_conda/etc/profile.d/conda.sh"
+
+condaexec="conda"
+pythonexec="python"
+
+
+
+
+echo '
+
+5) creating virtual environment...
+
+'
+path_venv="$path_repo/venv"
+
+# cd $path_comrad
+cd $path_repo
+echo "Now using python 1: `which python`"
+$condaexec create -y -p "$path_venv" python=3.7 cartopy pip virtualenv rtree
+
+#$condaexec activate "$path_venv"
+
+
+echo "Now using python 2: `which python`"
+# $pythonexec -m pip install virtualenv
+# $pythonexec -m virtualenv venv
+# . venv/bin/activate
+echo "Now using python 3: `which python`"
+
+python -m pip install -r requirements.txt
+
+echo '
+
+6) adding comrad bin folder to path
+
+'
+
+commands_app="
+    source $path_conda/etc/profile.d/conda.sh\n
+    export PATH=\"$path_conda/bin:\$PATH\"\n
+    conda activate $path_venv\n
+    python -m pip install -r $path_repo/requirements.txt\n
+    python $path_repo/comrad/app/main.py\n
+"
+
+
+
+export PATH="$path_bin:$PATH"
+bashline="export PATH=\"$path_bin:\$PATH\"     # comrad installation"
+bashfn="`realpath ~/.bashrc`"
+
+# add to bashrc?
+if grep -Fxq "$bashline" "$bashfn"
+then
+    # code if found
+    echo "setting already in $bashfn: $bashline"
+else
+    # code if not found
+    echo "$bashline" >> "$bashfn"
+fi
+
+
+echo -e "Now run Comrad with:
+
+comrad-app    [GUI interface -- alpha]
+
+If that doesn't work, try running this series of comands:
+
+$commands_app
+
+"
+
+
+if [ "$machine" = "Mac" ]
+then
+    cd /Applications
+    unzip "$path_bin/Comrad.app.zip"
+    # cp "$path_bin/Comrad.app" /Applications/
+
+    echo "You may run the app by looking for 'Comrad.app' in your /Applications folder."
+fi
+
+# run?
+. $path_bin/comrad-app
+
+
+
+
+if [ "$machine" = "Mac" ]
+then
+    echo "You may run the app by looking for 'Comrad.app' in your /Applications folder."
+fi
