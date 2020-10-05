@@ -17,23 +17,21 @@ esac
 realpath() {
     [[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"
 }
-path_conda="`realpath ~/comrad/lib`"
+
+path_lib="`realpath ~/comrad/lib`"
 path_conda="`realpath ~/comrad/lib/miniconda3`"
 path_venv="`realpath ~/comrad/code/venv`"
 path_repo="`realpath ~/comrad/code`"
 
 source $path_conda/etc/profile.d/conda.sh
-export PATH="$path_conda/Library/bin:$path_conda/Scripts:$path_conda:$PATH"
+# export PATH="$path_conda/Library/bin:$path_conda/Scripts:$path_conda:$PATH"
 export PATH="$path_conda/bin:$PATH"
-export PATH="$path_lib/themis-master/build:/usr/local/bin:$PATH"
+# export PATH="$path_lib/themis-master/build:/usr/local/bin:$PATH"
 
-
-if [ "$machine" = "MinGw" ]
-then
-    cmd //c call "$path_conda/Scripts/activate"
-fi
 
 conda activate $path_venv
+
+
 
 # update?
 path_repo_git="$path_repo/.git"

@@ -72,7 +72,7 @@ echo '
 #### 
 # Package manager setups
 # 
-pacman -S --needed curl wget unzip gcc make openssl-devel git libcrypt-devel python3 python3-pip mingw-w64-x86_64-python-pandas python-devel mingw-w64-x86_64-python3-numpy
+pacman -S --needed curl wget unzip gcc make openssl-devel git libcrypt-devel mingw-w64-x86_64-python mingw-w64-x86_64-python-pip mingw-w64-x86_64-python-pandas python-devel mingw-w64-x86_64-python3-numpy mingw-w64-x86_64-python-pep517
 
 
 
@@ -116,6 +116,7 @@ echo '
 '
 path_venv="$path_repo/venv"
 echo "Now using python (t1): `which python`"
+python -m pip install -U setuptools pip wheel
 
 pip install virtualenv
 
