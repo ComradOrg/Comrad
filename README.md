@@ -47,7 +47,6 @@ We present a simplified set of social media features drawn from everything that'
   * Curate a profile with photo and posts (~Twitter)
   * Show profile to world (~Twitter)
   * Show profile only to those you trust (~Facebook)
-  * Show profile only to your local area (~Nextdoor)
 
 #### Posting
   * Post up to 1 image and/or 1000 characters
