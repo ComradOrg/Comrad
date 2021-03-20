@@ -22,7 +22,7 @@ import==0.0.1
 ipinfo==3.0.0
 isort==5.4.2
 itsdangerous==1.1.0
-Jinja2==2.11.2
+Jinja2==2.11.3
 Kivy==2.0.0rc3
 Kivy-Garden==0.1.4
 kivymd==0.104.1
