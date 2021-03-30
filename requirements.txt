@@ -36,7 +36,7 @@ Pillow==7.2.0
 plyer==1.4.3
 pycparser==2.20
 pyfiglet==0.8.post1
-Pygments==2.6.1
+Pygments==2.7.4
 pylint==2.6.0
 pypng==0.0.20
 PyQRCode==1.2.1
